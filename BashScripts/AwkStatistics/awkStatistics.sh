@@ -1,6 +1,6 @@
 ####################################################################################
-# Author:    Reto Scheiwiller, 2014
-# License:   General Public License 
+# Author:    Reto Scheiwiller, 2017
+# License:   MIT License
 #
 # AWK Statistics
 # --------------
