@@ -1,6 +1,7 @@
 #!/bin/bash
 ###########################################################################################
 # Author: Reto Scheiwiller, 2016
+# Licence: MIT License
 #
 # Metric Collector
 # -----------------
