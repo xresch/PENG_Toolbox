@@ -1,13 +1,13 @@
 //###############################################################
-//
+// Author: Reto Scheiwiller, 2017
+// Licence: MIT License
+// https://github.com/xresch/PENG_Toolbox
+// 
 // commons.bhd
 // -----------
 // This file contains common useful functions for browser driven
 // load test scripts.
 //
-// Author: Reto Scheiwiller, 2017
-// Licence: MIT License
-// 
 //###############################################################
 
 use "Kernel.bdh"
