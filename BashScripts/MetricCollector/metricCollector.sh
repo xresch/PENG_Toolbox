@@ -12,18 +12,20 @@
 # All arguments are optional, if "-p" is not used no collections from a process will be done.
 # 
 # The following information gets collected:
-#   >> output from vmstat
-#   >> netstat tcp states and established connections
+#   >> statistics from vmstat
+#   >> statistics from iostat
+#   >> top 10 processes from top
+#   >> netstat tcp states (optional with -e: list of established connections)
 #   >> information from /proc/fd
 #   >> jstat -gc output
 #   >> jstat -class output
 #   >> CPU%, MEM% and ThreadCount from top and ps-command for specific ProcessID
 #   >> disk usage for each mounted device from df-command
 #
-# Syntax:   metricCollector.sh [-c <numberCollections> -s <sleepTime> -f <Filter> -p <processID>] [ -o -g <directory>] 
+# Syntax:   metricCollector.sh [-c <numberCollections> -s <sleepTime> -f <Filter> -p <processID> -e] [ -o -g <directory>] 
 # 
-# Examples:  >> metricCollector.sh -c 480 -s 60 -f "ws-backplane" -p 11111
-#               480 collections each 1 minute (ca. 8 hours) for process 11111 and netstat output
+# Examples:  >> metricCollector.sh -c 480 -s 60 -f "ws-backplane" -p 1234
+#               480 collections each 1 minute (ca. 8 hours) for process 1234 and netstat output
 #               filtered by "ws-backplane". Create graphs after all collections are done.
 #
 #            >> metricCollector.sh -c 480 -s 60 -o
@@ -36,15 +38,12 @@
 #               Only create graphs for the given result directory.
 #
 # Options:  -c <numberCollections> 
-#              Number of collections that should be taken (Default: 1000000)
+#              Number of collections that should be taken (Default: 1. Mio ~ "infinite")
 #
 #           -s <sleepTime>
 #              Sleep time between two collections in seconds (Default: 30)
 #
 #           -d Delay before the collection starts in seconds (Default: 0) 
-#
-#           -f <Filter>
-#              Filter for grepping the netstat output for specific lines (Default: "")
 #
 #           -p <processID>
 #              ProcessID to collect information from (Optional)
@@ -57,6 +56,13 @@
 #
 #           -u 
 #              enables "Unstoppable-Mode", will collect even if the ProcessID cannot be found
+#
+#           -f <Filter>
+#              Filter for netstat tcp states (Default: "")
+#
+#           -e 
+#              enables collecting a list of all established tcp connections(filtered by option -f)
+#              As this collects a lot of data, this is disabled by default
 #
 #           -h 
 #              Prints this documentation.
@@ -81,6 +87,11 @@
 # 
 # >> 2016-10-21: 
 #     - Added the option -d to delay the script
+#
+# >> 2018-01-18: 
+#     - Added the option -e to enable collection of established tcp connections
+#     - Added iostat collection
+#     - added collection of top 10 processes
 # 
 ###########################################################################################
 
@@ -99,6 +110,7 @@ FILTER=""
 PROCESSID="NOTSET"
 FLAG_ONLY_COLLECT="FALSE"
 FLAG_UNSTOPPABLE="FALSE"
+FLAG_COLLECT_TCP_ESTABLISHED="FALSE"
 
 #------------------------------
 # Files and Folders
@@ -114,6 +126,8 @@ FILE_JSTAT_CLASS="${RESULT_FOLDER}/data_jstat_classloading.csv"
 FILE_PS_TOP="${RESULT_FOLDER}/data_process_cpu_mem_threads.csv"
 FILE_DF_USAGE="${RESULT_FOLDER}/data_disk_usage.csv"
 FILE_MACHINE_CPU="${RESULT_FOLDER}/data_machine_cpu_usage.csv"
+FILE_TOP_FIRST_TEN_PROCESSES="${RESULT_FOLDER}/data_top_first10_processes.dat"
+FILE_IOSTAT_PATTERN="${RESULT_FOLDER}/data_iostat_device_"
 
 #------------------------------
 # Other variables
@@ -214,6 +228,39 @@ function collect_jstat_class(){
 
 }
 
+########################################
+# Function: Collect top
+########################################
+function collect_top_first10_processes(){
+
+	echo "============= $TIMESTAMP =============" >> ${FILE_TOP_FIRST_TEN_PROCESSES}
+	top -n1 | gawk "NR>6 && NR<=16 {print}" >> ${FILE_TOP_FIRST_TEN_PROCESSES}
+}
+
+########################################
+# Function: Collect iostat
+########################################
+function collect_iostat(){
+
+iostat -x -y -d 1 1 | egrep -v "^[\t ]*$" | awk '
+				BEGIN {
+                        doprint = "false"; 
+						OFS = ";"
+                }
+                {       
+                        if(doprint == "false" && $0 ~ "Device:.*" ){
+                                doprint = "true";
+                                next;
+                        }
+                        
+                        if(doprint == "true"){
+                                print "'${TIMESTAMP}'", $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14 >> FILE_IOSTAT_PATTERN $1 ".csv" ;
+                        }
+                }
+                
+                ' FILE_IOSTAT_PATTERN=${FILE_IOSTAT_PATTERN}
+}
+
 
 ########################################
 # Function: Collect /proc/<pid>/fd
@@ -258,7 +305,8 @@ function collect_machine_cpu_usage(){
 	top -bn2 | 
 	grep "Cpu(s)" | 
 	tail -1 | 
-	sed -r -e "s/Cpu\(s\): +([0-9.]+?)%us, +([0-9.]+?)%sy, +([0-9.]+?)%ni, +([0-9.]+?)%id, +([0-9.]+?)%wa, +([0-9.]+?)%hi, +([0-9.]+?)%si.*/\1 \2 \3 \4 \5 \6 \7/" |
+	sed -r -e "s/%Cpu\(s\): +([0-9.]+?) us, +([0-9.]+?) sy, +([0-9.]+?) ni, +([0-9.]+?) id, +([0-9.]+?) wa, +([0-9.]+?) hi, +([0-9.]+?) si.*/\1 \2 \3 \4 \5 \6 \7/" |
+	#sed -r -e "s/Cpu\(s\): +([0-9.]+?)%us, +([0-9.]+?)%sy, +([0-9.]+?)%ni, +([0-9.]+?)%id, +([0-9.]+?)%wa, +([0-9.]+?)%hi, +([0-9.]+?)%si.*/\1 \2 \3 \4 \5 \6 \7/" |
 	gawk "{print \"${TIMESTAMP};\" 100 - \$4 \";\" \$1 \";\" \$2 \";\" \$3 \";\" \$4  \";\" \$5 \";\" \$6 \";\" \$7 }" >> ${FILE_MACHINE_CPU}
 	
 	#top -bn2 | grep "Cpu(s)" | tail -1 | sed -r -e "s/.*, ([0-9.]+?)%id,.*/\1/" | gawk "{print \"${TIMESTAMP};\" 100 - \$1}" >> ${FILE_MACHINE_CPU}
@@ -779,6 +827,7 @@ do
 		s)	SLEEP_SECS="$OPTARG";;
 		d)	STARTDELAY_SECS="$OPTARG";;
 		f)	FILTER="$OPTARG";;
+		e)  FLAG_COLLECT_TCP_ESTABLISHED="TRUE";;
 		p)  PROCESSID="$OPTARG";;
 		o)  FLAG_ONLY_COLLECT="TRUE";;
 		u)  FLAG_UNSTOPPABLE="TRUE";;
@@ -793,6 +842,8 @@ do
 			FILE_PS_TOP="${RESULT_FOLDER}/data_process_cpu_mem_threads.csv"
 			FILE_DF_USAGE="${RESULT_FOLDER}/data_disk_usage.csv"
 			FILE_MACHINE_CPU="${RESULT_FOLDER}/data_machine_cpu_usage.csv"
+			FILE_TOP_FIRST_TEN_PROCESSES="${RESULT_FOLDER}/data_top_first10_processes.dat"
+			FILE_IOSTAT_PATTERN="${RESULT_FOLDER}/data_iostat_device_"
 			PROCESSID="UnknownPID"
 			createPlotsAndExit
 			;;
@@ -835,9 +886,52 @@ then
 	echo "TIMESTAMP;ProcessCPUCore%;ProcessCPUUsage%;ProcessMEM%;ProcessThreadCount" >> ${FILE_PS_TOP}
 fi
 
+#------------------------------
+# Create iostat Files with Headers
+# Timestamp;Device;rrqm/s;wrqm/s;r/s;w/s;rkB/s;wkB/s;avgrq-sz;avgqu-sz;await;r_await;w_await;svctm;%util
+
+DEVICES=$(iostat -x -y -d 1 1 | egrep -v "^[\t ]*$" | awk '
+						BEGIN {
+				doprint = "false";
+										OFS = ";"
+		}
+		{
+								if($0 ~ "Device:.*" ){
+												doprint = "true";
+												next;
+								}
+
+								if(doprint == "true"){
+						print $1 ;
+				}
+
+		}')
+
+echo "DEVICES: ${DEVICES}"
+touch "${FILE_IOSTAT_PATTERN}"
+
+for DEVICE in ${DEVICES} ; do
+
+        FILENAME="${FILE_IOSTAT_PATTERN}${DEVICE}.csv"
+        if ! [ -e "${FILENAME}" ]
+        then
+
+                iostat -x -y -d 1 1 | egrep -v "^${DEVICE}.*$" | awk '
+                BEGIN{ OFS=";"; }
+                {
+					if($0 ~ "Device:.*" ){
+									print "Timestamp", "Device", $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14 >> FILENAME_DEVICE ;
+									exit;
+					}
+                }
+                ' FILENAME_DEVICE=${FILENAME}
+        fi
+
+done;
+
 
 ########################################
-# Collection Loops
+# Collection Loop
 ########################################
 
 # Delayed start
@@ -851,9 +945,16 @@ for (( i=1; i<=${NUMBER_COLLECTIONS}; i++ )) ; do
 	
 	collect_vmstat &
 	collect_tcpstates &
-	collect_tcpestablished &
+	
 	collect_df &
 	collect_machine_cpu_usage &
+	collect_top_first10_processes &
+	collect_iostat&
+	
+	if [ "${FLAG_COLLECT_TCP_ESTABLISHED}" != "TRUE" ]
+	then
+		collect_tcpestablished &
+	fi
 	
 	#check if PID was set
 	if [ "${PROCESSID}" != "NOTSET" ]
@@ -886,6 +987,7 @@ done
 ########################################
 
 createPlotsAndExit 
+
 
 
 
