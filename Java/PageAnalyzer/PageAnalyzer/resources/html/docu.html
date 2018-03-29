@@ -1,0 +1,41 @@
+
+
+<h1>Documentation</h1>
+<div>
+	<h2>Introduction</h2>
+	<p>
+		The Page Analyzer is a customized, YSlow setup based on <a target="_blank" href="http://yslow.org/">YSlow</a> running on NodeJS server, which provides a to upload HAR-Files.<br />
+		<br />
+		How it works:
+		<ul>
+			<li>It will analyze all the data present in the HAR-File and will present them in one statistic. </li>
+			<li>You can analyze a single page or multiple pages. If you analyze multiple pages it will aggregate all the pages in the result. </li>
+			<li>The rules and the analysis is highly customized and is not comparable to other YSlow tools.</li>
+			<li>The rules rather blame to much, therefore it might give false positives.</li>
+			<li>The results always have to be evaluated through some human mind(or other species with similar intelligence). As anyway each action you do in our application needs time, a rule might blame it even if it is the best way to do it in your page architecture.</li>
+		</ul>
+	</p>
+	
+	<h2>How to analyze a Website</h2>
+	<p>1. Create a .har-File using Chrome, Firefox, or Fiddler:</p>
+	<ul>
+		<li><strong>Chrome: </strong>Open the developer tools, capture network traffic, right click and save as .har-File. </li>
+		<li><strong>Firefox: </strong>Open the developer tools, capture network traffic, right click and save as .har-File. </li>
+		<li><strong>Internet Explorer:</strong> Use Fiddler. <span style="color: red;">IMPORTANT:</span> The rule "Compress with GZIP" will show wrong results when using Internet Explorer, as it doesn't save in the .har-File if a response is gzipped.</strong> </li>
+		<li><strong>Fiddler: </strong>Capture network traffic and go to &quot;File &gt;&gt; Export Sessions &gt;&gt; All Sessions&quot; and choose &quot;HTTP Archive v1.2&quot; as export format. </li>
+	</ul>
+	
+	<p>2. After creating a .har-File upload it on the page &quot;HAR Upload&quot;. </p>
+	<p>3. The summary will be displayed, please be aware that in the menu bar additional items where added where you can get other views as well. </p>
+	
+	
+	
+	<h2>Useful Links</h2>
+	<ul>
+		<li><strong>Tuning Guide - Google(PageSpeed): </strong><a target="_blank" href="https://developers.google.com/speed/docs/insights/rules">https://developers.google.com/speed/docs/insights/rules</a></li>
+		<li><strong>Tuning Guide - Yahoo(YSlow): </strong><a target="_blank" href="https://developer.yahoo.com/performance/rules.html">https://developer.yahoo.com/performance/rules.html</a></li>
+		<li><strong>Tuning Guide - GTMetrix: </strong><a target="_blank" href="https://gtmetrix.com/avoid-bad-requests.html">https://gtmetrix.com/avoid-bad-requests.html</a></li>
+	</ul>
+	
+</div>
+

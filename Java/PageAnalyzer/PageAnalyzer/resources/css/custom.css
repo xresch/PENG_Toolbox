@@ -1,0 +1,39 @@
+/*************************************************************************
+ * 
+ * @author Reto Scheiwiller, 2018
+ * 
+ * Distributed under the MIT license
+ *************************************************************************/
+
+.result-view-tabs{
+	visibility: hidden;
+}
+
+code {
+	color: black;
+}
+
+h3 {
+	margin-top: 40px;
+	border-bottom: 1px solid black;
+}
+
+h4 {
+	margin-top: 20px;
+	border-bottom: 1px solid black;
+}
+#pa-content {
+	min-height: 90%;
+	padding-top: 60px;
+}
+
+#pa-footer {
+	padding: 20px;
+	min-height: 10%;
+	background-color: black;
+}
+
+#pa-footer a {
+	padding: 5px;
+	color: #ccc;
+}

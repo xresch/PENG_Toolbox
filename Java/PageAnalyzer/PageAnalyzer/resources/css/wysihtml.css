@@ -1,0 +1,79 @@
+
+h1, .h1-class{ border-bottom: solid 1px; padding: 5px 5px 5px 5px;}
+h2, .h2-class{ border-bottom: solid 1px; padding: 5px 5px 5px 5px;}
+h3, .h3-class{ padding: 5px 5px 5px 5px;}
+h4, .h4-class{ padding: 5px 5px 5px 5px;}
+
+.wysiwyg-font-size-smaller {font-size: smaller;}
+.wysiwyg-font-size-larger {font-size: larger;}
+.wysiwyg-font-size-xx-large {font-size: xx-large;}
+.wysiwyg-font-size-x-large {font-size: x-large;}
+.wysiwyg-font-size-large {font-size: large;}
+.wysiwyg-font-size-medium {font-size: medium;}
+.wysiwyg-font-size-small {font-size: small;}
+.wysiwyg-font-size-x-small {font-size: x-small;}
+.wysiwyg-font-size-xx-small {font-size: xx-small;}
+
+.editor-color-div {
+    vertical-align: middle;
+    width: 80px;
+    display: table-cell;
+}
+
+.wysiwyg-color-black {color: #000000;}
+.wysiwyg-color-gray01 {color: #484848;}
+.wysiwyg-color-gray02 {color: #727272;}
+.wysiwyg-color-gray03 {color: #969696;}
+.wysiwyg-color-white {color: #ffffff;}
+
+.wysiwyg-color-red01 {color: #880000;}
+.wysiwyg-color-red02 {color: #cc0000;}
+.wysiwyg-color-red03 {color: #ff0000;}
+.wysiwyg-color-red04 {color: #ff4444;}
+.wysiwyg-color-red05 {color: #ff8888;}
+
+.wysiwyg-color-orange01 {color: #884400;}
+.wysiwyg-color-orange02 {color: #cc6600;}
+.wysiwyg-color-orange03 {color: #ff8800;}
+.wysiwyg-color-orange04 {color: #ffaa44;}
+.wysiwyg-color-orange05 {color: #ffcc88;}
+
+.wysiwyg-color-yellow01 {color: #888800;}
+.wysiwyg-color-yellow02 {color: #cccc00;}
+.wysiwyg-color-yellow03 {color: #ffff00;}
+.wysiwyg-color-yellow04 {color: #ffff44;}
+.wysiwyg-color-yellow05 {color: #ffff88;}
+
+.wysiwyg-color-green01 {color: #008800;}
+.wysiwyg-color-green02 {color: #00cc00;}
+.wysiwyg-color-green03 {color: #00ff00;}
+.wysiwyg-color-green04 {color: #44ff44;}
+.wysiwyg-color-green05 {color: #88ff88;}
+
+.wysiwyg-color-cyan01 {color: #008888;}
+.wysiwyg-color-cyan02 {color: #00cccc;}
+.wysiwyg-color-cyan03 {color: #00ffff;}
+.wysiwyg-color-cyan04 {color: #44ffff;}
+.wysiwyg-color-cyan05 {color: #88ffff;}
+
+.wysiwyg-color-blue01 {color: #000088;}
+.wysiwyg-color-blue02 {color: #0000cc;}
+.wysiwyg-color-blue03 {color: #0000ff;}
+.wysiwyg-color-blue04 {color: #4444ff;}
+.wysiwyg-color-blue05 {color: #8888ff;}
+
+.wysiwyg-color-purple01 {color: #880088;}
+.wysiwyg-color-purple02 {color: #cc00cc;}
+.wysiwyg-color-purple03 {color: #ff00ff;}
+.wysiwyg-color-purple04 {color: #ff44ff;}
+.wysiwyg-color-purple05 {color: #ff88ff;}
+
+.wysiwyg-text-align-right {text-align: right;}
+.wysiwyg-text-align-center {text-align: center;}
+.wysiwyg-text-align-left {text-align: left;}
+
+.wysiwyg-text-align-justify {text-align: justify;}
+.wysiwyg-float-left {float: left; margin: 0 8px 8px 0;}
+.wysiwyg-float-right {float: right; margin: 0 0 8px 8px;}
+.wysiwyg-clear-right {clear: right;}
+.wysiwyg-clear-left {clear: left;}
