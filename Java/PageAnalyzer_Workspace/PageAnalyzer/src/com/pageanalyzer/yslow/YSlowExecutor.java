@@ -1,6 +1,8 @@
 package com.pageanalyzer.yslow;
 
 import java.io.StringWriter;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -24,6 +26,9 @@ public class YSlowExecutor extends Application {
 	
 	private WebView view;
 	private WebEngine engine;
+	
+	private static Logger logger = LogManager.getLogManager().getLogger(YSlowExecutor.class.getName());
+    
 	
 	
 	@Override

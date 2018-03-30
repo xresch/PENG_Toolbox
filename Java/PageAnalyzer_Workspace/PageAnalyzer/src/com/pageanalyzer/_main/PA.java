@@ -88,18 +88,6 @@ public class PA {
 	
 	public static void initialize() throws IOException{
 		
-		//------------------------------
-		//initialize Logging
-		try {
-			ClassLoader.getSystemClassLoader().loadClass("com.pageanalyzer.logging.PALogger");
-			ClassLoader.getSystemClassLoader().loadClass("com.pageanalyzer.logging.PALogFormatterJSON");
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	    //------------------------------
-	    //initialize Logging
 		PALogger log = new PALogger(logger).method("initialize").start();
 		
 		URL[] urls = {folder.toURI().toURL()};

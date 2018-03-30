@@ -67,12 +67,9 @@ public class HARUploadServlet extends HttpServlet
 
 			log.start().method("doPost()-StreamAndCacheHarFile");
 				String harContents = PA.readContentsFromInputStream(harFile.getInputStream());
-				int index = CacheUtils.cacheHARFile(harContents);
 			log.end();
 						
-			log.start().method("doPost()-NodeJSAnalysis");
-				String results = YSlow.instance().analyzeHarString(harContents);
-			log.end();
+			String results = YSlow.instance().analyzeHarString(harContents);
 			
 			content.append("<div id=\"yslow-results\"></div>");
 			

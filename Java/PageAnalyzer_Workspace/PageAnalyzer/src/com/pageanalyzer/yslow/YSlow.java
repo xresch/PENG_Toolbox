@@ -1,5 +1,10 @@
 package com.pageanalyzer.yslow;
 
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+import com.pageanalyzer.logging.PALogger;
+
 import javafx.application.Platform;
 
 public class YSlow {
@@ -12,6 +17,9 @@ public class YSlow {
 	private YSlowExecutorThread thread;
 	
 	private boolean isResultUpdated;
+	
+	private static Logger logger = LogManager.getLogManager().getLogger(YSlow.class.getName());
+    
 	
 	private YSlow(){
 		
@@ -42,6 +50,10 @@ public class YSlow {
 	
 	public String analyzeHarString(String harString){
 		
+		PALogger log = new PALogger(logger);
+		
+		log.start().method("analyzeHarString");
+		
 		// Execute the Java FX Application.
 		// It will set the Result on the singelton instance
 		synchronized(lock){
@@ -60,11 +72,12 @@ public class YSlow {
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.severe("Thread was interrupted.", e);
 				}
 			}
 		}
+		
+		log.end();
 		return result;
 	}
 
