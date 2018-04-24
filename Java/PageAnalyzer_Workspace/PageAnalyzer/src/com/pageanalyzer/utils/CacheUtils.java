@@ -1,7 +1,8 @@
 package com.pageanalyzer.utils;
 
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
+
+import com.pageanalyzer.logging.PALogger;
 
 /*************************************************************************
  * 
@@ -14,7 +15,7 @@ public class CacheUtils {
 	private static String[] harFiles = new String[15];
 	private static int harFileCounter = 0;
 
-	private static Logger logger = LogManager.getLogManager().getLogger(CacheUtils.class.getName());
+	private static Logger logger = PALogger.getLogger(CacheUtils.class.getName());
 	
 	/***********************************************************************
 	 * Caches up to 15 har files

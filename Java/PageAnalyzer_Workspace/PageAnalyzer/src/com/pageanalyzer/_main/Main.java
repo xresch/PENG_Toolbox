@@ -15,6 +15,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.pageanalyzer.handlers.RequestHandler;
+import com.pageanalyzer.phantomjs.PhantomJSInterface;
+import com.pageanalyzer.servlets.AnalyzeURLServlet;
 import com.pageanalyzer.servlets.DocuServlet;
 import com.pageanalyzer.servlets.HARDownloadServlet;
 import com.pageanalyzer.servlets.HARUploadServlet;
@@ -45,19 +47,21 @@ public class Main extends Application {
                 
         servletContextHandler.setContextPath("/"+PA.config("pa_application_name"));
         
-
+        // 100MB
         int maxSize = 1024*1024*100;
         MultipartConfigElement multipartConfig = new MultipartConfigElement(null, maxSize, maxSize, maxSize);
         
         ServletHolder uploadHolder = new ServletHolder(new HARUploadServlet());
         uploadHolder.getRegistration().setMultipartConfig(multipartConfig);
         servletContextHandler.addServlet(uploadHolder, "/harupload");
+        servletContextHandler.addServlet(uploadHolder, "/");
         
         ServletHolder apiHolder = new ServletHolder(new RestAPIServlet());
         apiHolder.getRegistration().setMultipartConfig(multipartConfig);
         servletContextHandler.addServlet(apiHolder, "/api");
 
         servletContextHandler.addServlet(HARDownloadServlet.class, "/hardownload");
+        servletContextHandler.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
         servletContextHandler.addServlet(DocuServlet.class, "/docu");
 
         
@@ -82,7 +86,7 @@ public class Main extends Application {
         // Configure the ResourceHandler. Setting the resource base indicates where the files should be served out of.
         // In this example it is the current directory but it can be configured to anything that the jvm has access to.
         resource_handler.setDirectoriesListed(true);
-        resource_handler.setWelcomeFiles(new String[]{ "index.html" });
+        //resource_handler.setWelcomeFiles(new String[]{ "/"+PA.config("pa_application_name")+"/harupload" });
         resource_handler.setResourceBase("./resources");
  
         // Add the ResourceHandler to the server.
@@ -103,6 +107,11 @@ public class Main extends Application {
         server.start();
         server.join();
        
+    }
+    
+    public void testPhantomJS(){
+    	
+    	
     }
 
 	@Override

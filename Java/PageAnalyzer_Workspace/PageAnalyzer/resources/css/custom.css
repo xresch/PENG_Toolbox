@@ -22,9 +22,12 @@ h4 {
 	margin-top: 20px;
 	border-bottom: 1px solid black;
 }
+
+#messages {
+	padding-top: 60px;
+}
 #pa-content {
 	min-height: 90%;
-	padding-top: 60px;
 }
 
 #pa-footer {

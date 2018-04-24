@@ -1,0 +1,12 @@
+########################################
+# Page Analyzer v 0.6
+########################################
+- Analyze URL, use PhantomJS to get HAR JSON string
+- YSlow: decode URLs and add page time to result
+
+########################################
+# Page Analyzer v 0.5
+########################################
+- Initial Version
+- HAR Upload 
+- REST API for HAR Upload

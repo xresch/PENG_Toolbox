@@ -12,6 +12,7 @@ import com.pageanalyzer.response.AbstractTemplateHTML;
 public class PALogger {
 	
 	protected Logger logger;
+	
 	protected boolean saveLogging = false;
 	
 
@@ -142,7 +143,7 @@ public class PALogger {
 	 * This is the main log method that handles all the logging.
 	 * 
 	 ***********************************************************************/
-	private void log(Level level, String message, Throwable throwable){
+	public void log(Level level, String message, Throwable throwable){
 		
 		//check logging level before proceeding
 		if(logger != null && logger.isLoggable(level)){
@@ -199,13 +200,16 @@ public class PALogger {
 					
 					this.estimatedResponseSizeChars = template.getEstimatedSizeChars();
 					
-					if(this.exception != null){
+					if(level == Level.SEVERE || level == Level.WARNING){
 						
-						int alertType = level == Level.SEVERE ? PA.ALERT_ERROR : PA.ALERT_WARN;
+						int alertType = ( level == Level.SEVERE ? PA.ALERT_ERROR : PA.ALERT_WARN );
 						
 						if(template instanceof AbstractTemplateHTML){
 							((AbstractTemplateHTML)template).addAlert(alertType, message);
-							((AbstractTemplateHTML)template).addSupportInfo("Exception: ", this.exception);
+							
+							if(this.exception != null){
+								((AbstractTemplateHTML)template).addSupportInfo("Exception: ", this.exception);
+							}
 						}
 					}
 				}

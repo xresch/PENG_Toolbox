@@ -18,7 +18,7 @@ public class YSlow {
 	
 	private boolean isResultUpdated;
 	
-	private static Logger logger = LogManager.getLogManager().getLogger(YSlow.class.getName());
+	private static Logger logger = Logger.getLogger(YSlow.class.getName());
     
 	
 	private YSlow(){

@@ -1,7 +1,7 @@
 package com.pageanalyzer.yslow;
 
 import java.io.StringWriter;
-import java.util.logging.LogManager;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.transform.Transformer;
@@ -27,7 +27,7 @@ public class YSlowExecutor extends Application {
 	private WebView view;
 	private WebEngine engine;
 	
-	private static Logger logger = LogManager.getLogManager().getLogger(YSlowExecutor.class.getName());
+	private static Logger logger = Logger.getLogger(YSlowExecutor.class.getName());
     
 	
 	
@@ -47,7 +47,8 @@ public class YSlowExecutor extends Application {
 		engine = view.getEngine();
 		
 		WebConsoleListener.setDefaultListener((webView, message, lineNumber, sourceId) -> {
-		    System.out.println("[JS at line "+ lineNumber + "]"+ message);
+		    String log = "[JS at line "+ lineNumber + "]"+ message;
+			PA.javafxLogWorkaround(Level.INFO, log, "YSlowJavascriptConsoleOutput");
 		});
 
 		engine.setJavaScriptEnabled(true);

@@ -96,7 +96,7 @@ function loadData(data){
 	SUMMARY.requests		= data.r;
 	SUMMARY.requestsCached	= data.r_c;
 	SUMMARY.ruleset			= data.i;
-	SUMMARY.loadtime		= data.lt;
+	SUMMARY.loadtime		= data.resp;
 
 	
 	//===================================================
@@ -537,7 +537,7 @@ function printSummary(parent){
 	if(SUMMARY.requests != null){ 			list.append('<li><strong>Request Count:&nbsp;</strong>'+SUMMARY.requests+'</li>');}
 	if(SUMMARY.requestsCached != null){ 	list.append('<li><strong>Cached Requests Count:&nbsp;</strong>'+SUMMARY.requestsCached+'</li>');}
 	if(SUMMARY.loadtime != null 
-	&& SUMMARY.loadtime != "-1"){ 			list.append('<li><strong>Page Load Time:&nbsp;</strong>'+SUMMARY.loadtime+' ms</li>');}
+	&& SUMMARY.loadtime != "-1"){ 			list.append('<li><strong>Load Time:&nbsp;</strong>'+SUMMARY.loadtime+' ms</li>');}
 	
 	if(SUMMARY.ruleset != null){ 			list.append('<li><strong>YSlow Ruleset:&nbsp;</strong>'+SUMMARY.ruleset+'</li>');}
 	

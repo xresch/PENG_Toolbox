@@ -1220,6 +1220,7 @@ YSLOW.context = function (doc) {
     this.PAGE = {
         totalSize: 0,
         totalRequests: 0,
+        duration: 0,
         totalObjCount: {},
         totalObjSize: {},
 
@@ -2806,8 +2807,10 @@ YSLOW.util = {
 
         params.w = parseInt(yscontext.PAGE.totalSize, 10);
         params.o = parseInt(yscontext.PAGE.overallScore, 10);
-        params.u = encodeURIComponent(yscontext.result_set.url);
+        params.u = yscontext.result_set.url;
         params.r = parseInt(yscontext.PAGE.totalRequests, 10);
+        params.resp = parseInt(yscontext.PAGE.duration, 10);
+        
         spaceid = YSLOW.util.getPageSpaceid(yscontext.component_set);
         if (spaceid) {
             params.s = encodeURI(spaceid);
@@ -2861,7 +2864,7 @@ YSLOW.util = {
                             url = comp.url;
                         }
                         if (url) {
-                            url = encodeURIComponent(url.replace(reButton, ''));
+                            url = url.replace(reButton, '');
                             obj.components.push(url);
                         }
                     }
@@ -2900,10 +2903,10 @@ YSLOW.util = {
             comps = yscontext.component_set.components;
             for (i = 0, len = comps.length; i < len; i += 1) {
                 comp = comps[i];
-                encoded_url = encodeURIComponent(comp.url);
+                //encoded_url = encodeURIComponent(comp.url);
                 obj = {
                     'type': comp.type,
-                    'url': encoded_url,
+                    'url': comp.url,
                     'size': comp.size,
                     'resp': comp.respTime
                 };
@@ -6227,14 +6230,18 @@ function run (doct, har, ruleset) {
     //----------------------------------------------------
     // get the earliest start time from the entries
     startTimestamp = null;
+    endTimestamp = null;
     for (j = 0, lenJ = entries.length; j < lenJ; j += 1) {
     	entry = entries[j];
     	entryTime = new Date(new Date(entry.startedDateTime)).getTime();
+    	
     	if (startTimestamp > entryTime || startTimestamp == null){
     		startTimestamp = entryTime;
-    		onloadTimestamp = entryTime;
     	}
+    	
     }
+    
+    onloadTimestamp = startTimestamp;
     
     	
     //----------------------------------------------------
@@ -6248,6 +6255,7 @@ function run (doct, har, ruleset) {
         content = response.content;
         type = (content.mimeType || '').toLowerCase();
         idx = type.indexOf(';');
+        
         if (idx > -1) {
             type = type.slice(0, idx);
         }
@@ -6256,6 +6264,14 @@ function run (doct, har, ruleset) {
         if (status === 301 || status === 302) {
             type = 'redirect';
         }
+        
+        //---------------------------
+        // get endTime for the whole page loading
+        entryTime = new Date(new Date(entry.startedDateTime)).getTime();
+        entryTime = entryTime + entry.time;
+    	if (endTimestamp < entryTime || endTimestamp == null){
+    		endTimestamp = entryTime;
+    	}
 
         if (!type || status === 204) {
         //if (!type || status === 204 || entry.pageref !== pageId) {
@@ -6272,7 +6288,7 @@ function run (doct, har, ruleset) {
             doc.innerHTML = '<base href="' + base + '" />' + html;
 
             cset = new YSLOW.ComponentSet(doc, onloadTimestamp);
-            cset.startTimestamp = startTimestamp
+            cset.startTimestamp = startTimestamp;
         }
 
         comps.push({
@@ -6347,8 +6363,12 @@ function run (doct, har, ruleset) {
     yscontext.result_set.url = baseHref;
     score = yscontext.PAGE.overallScore;
     yscontext.PAGE.t_done = tDone;
+    yscontext.PAGE.startTimestamp = startTimestamp;
+    yscontext.PAGE.endTimestamp = endTimestamp;
+    yscontext.PAGE.duration = endTimestamp - startTimestamp;
     yscontext.collectStats();
 
+    console.log("yscontext.PAGE.duration="+yscontext.PAGE.duration);
     //----------------------------------------------------
     // Return Results
     return {

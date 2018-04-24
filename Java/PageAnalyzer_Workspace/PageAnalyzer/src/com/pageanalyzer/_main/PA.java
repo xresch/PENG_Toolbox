@@ -36,8 +36,9 @@ public class PA {
 	// GLOBAL
 	//##############################################################################
 	public static Logger logger = PALogger.getLogger(PA.class.getName());
+	protected static PALogger log = new PALogger(logger);
 	
-	public static final String TIME_FORMAT = "YYYY-MM-dd'T'HH:mm:SS.sss";
+	public static final String TIME_FORMAT = "YYYY-MM-dd'T'HH:mm:ss.SSS";
 	public static final Properties CONFIG = new Properties();
 	
 	public static final String REQUEST_ATTR_ID = "requestID";
@@ -195,6 +196,14 @@ public class PA {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(PA.TIME_FORMAT);
 
 		return dateFormatter.format(date);
+	}
+	
+	/*
+	 * Workaround for classloading issue
+	 */
+	public static void javafxLogWorkaround(Level level, String message, String method){
+		
+		log.method(method).log(level, message, null);
 	}
 	
 	//public static void localizeString(HttpServletRequest request, String localize){
