@@ -15,13 +15,12 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.pageanalyzer.handlers.RequestHandler;
-import com.pageanalyzer.phantomjs.PhantomJSInterface;
 import com.pageanalyzer.servlets.AnalyzeURLServlet;
+import com.pageanalyzer.servlets.CustomContentServlet;
 import com.pageanalyzer.servlets.DocuServlet;
 import com.pageanalyzer.servlets.HARDownloadServlet;
 import com.pageanalyzer.servlets.HARUploadServlet;
 import com.pageanalyzer.servlets.RestAPIServlet;
-import com.pageanalyzer.yslow.YSlow;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -63,7 +62,7 @@ public class Main extends Application {
         servletContextHandler.addServlet(HARDownloadServlet.class, "/hardownload");
         servletContextHandler.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
         servletContextHandler.addServlet(DocuServlet.class, "/docu");
-
+        servletContextHandler.addServlet(CustomContentServlet.class, "/custom");
         
         //-------------------------------
         // Create HandlerChain
