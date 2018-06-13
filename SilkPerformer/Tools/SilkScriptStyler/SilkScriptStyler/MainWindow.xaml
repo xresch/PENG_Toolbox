@@ -1,0 +1,36 @@
+﻿<Window x:Name="Silk_Script_Styler" x:Class="SilkScriptStyler.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SilkScriptStyler"
+        mc:Ignorable="d"
+        Title="Silk Script Styler" Height="556.929" Width="958.909">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="195*"/>
+            <RowDefinition Height="331*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260*"/>
+            <ColumnDefinition Width="257*"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="Silk Script Formatter" HorizontalAlignment="Left" Height="32" Margin="10,10,0,0" VerticalAlignment="Top" Width="200" FontWeight="Bold" FontSize="16"/>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Grid.Row="1">
+            <TextBox x:Name="inputText" TextWrapping="NoWrap" AcceptsReturn="True" AcceptsTab="true" TextChanged="inputText_TextChanged" />
+        </ScrollViewer>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Grid.Row="1"  Grid.Column="1">
+            <TextBox x:Name="outputText" TextWrapping="NoWrap" AcceptsReturn="True" AcceptsTab="true" TextChanged="inputText_TextChanged" />
+        </ScrollViewer>
+        <CheckBox x:Name="browserClickCheckbox" Content="Replace comments on BrowserClick() with variable" HorizontalAlignment="Left" Margin="10,175,0,0" VerticalAlignment="Top" Unchecked="CheckBox_Changed" Checked="CheckBox_Changed" IsChecked="True" Height="15" Width="284" />
+        <CheckBox x:Name="replaceThinkTimesCheckbox" Content="Replace Think Times" HorizontalAlignment="Left" Margin="10,155,0,0" VerticalAlignment="Top" Unchecked="CheckBox_Changed" Checked="CheckBox_Changed" IsChecked="True" Height="15" Width="127" />
+        <CheckBox x:Name="removeBlankLinesCheckbox" Content="Remove Blank Lines" HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top" Unchecked="CheckBox_Changed" Checked="CheckBox_Changed" IsChecked="True" Height="15" Width="124" />
+        <Label Content="Start Method:" HorizontalAlignment="Left" Height="23" Margin="10,46,0,0" VerticalAlignment="Top" Width="90"/>
+        <Label Content="Stop Method:" HorizontalAlignment="Left" Height="23" Margin="10,70,0,0" VerticalAlignment="Top" Width="94"/>
+        <TextBox x:Name="startMethodTextBox" HorizontalAlignment="Left" Height="22" Margin="100,46,0,0" TextWrapping="Wrap" Text="CustomStart" TextChanged="textBox_TextChanged" VerticalAlignment="Top" Width="189"/>
+        <TextBox x:Name="stopMethodTextBox" HorizontalAlignment="Left" Height="22" Margin="100,70,0,0" TextWrapping="Wrap" Text="CustomStop" TextChanged="textBox_TextChanged" VerticalAlignment="Top" Width="189"/>
+        <Label Content="Variable:" HorizontalAlignment="Left" Height="23" Margin="10,93,0,0" VerticalAlignment="Top" Width="90"/>
+        <TextBox x:Name="variableTextBox" HorizontalAlignment="Left" Height="22" Margin="100,93,0,0" TextWrapping="Wrap" Text="sMeasure" TextChanged="textBox_TextChanged" VerticalAlignment="Top" Width="189"/>
+
+    </Grid>
+</Window>

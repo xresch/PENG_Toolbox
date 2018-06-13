@@ -1,0 +1,9 @@
+D:\Dev\VisualStudio\XMLParser\XMLParser\obj\x86\Release\ResultExtractor.csprojResolveAssemblyReference.cache
+D:\Dev\VisualStudio\XMLParser\XMLParser\obj\x86\Release\com.peng.toolbox.resultextractor.Properties.Resources.resources
+D:\Dev\VisualStudio\XMLParser\XMLParser\obj\x86\Release\com.peng.toolbox.resultextractor.XMLParserDialog.resources
+D:\Dev\VisualStudio\XMLParser\XMLParser\obj\x86\Release\ResultExtractor.csproj.GenerateResource.Cache
+D:\Dev\VisualStudio\XMLParser\XMLParser\obj\x86\Release\ResultExtractor.csproj.CoreCompileInputs.cache
+D:\Dev\VisualStudio\XMLParser\XMLParser\obj\x86\Release\XMLParser.exe
+D:\Dev\VisualStudio\XMLParser\XMLParser\obj\x86\Release\XMLParser.pdb
+D:\Dev\VisualStudio\XMLParser\XMLParser\bin\Release\XMLParser.exe
+D:\Dev\VisualStudio\XMLParser\XMLParser\bin\Release\XMLParser.pdb

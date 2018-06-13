@@ -1,0 +1,9 @@
+C:\dev\workspaces\XMLParser\XMLParser\bin\Debug\XMLParser.exe
+C:\dev\workspaces\XMLParser\XMLParser\bin\Debug\XMLParser.pdb
+C:\dev\workspaces\XMLParser\XMLParser\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\dev\workspaces\XMLParser\XMLParser\obj\x86\Debug\XMLParser.exe
+C:\dev\workspaces\XMLParser\XMLParser\obj\x86\Debug\XMLParser.pdb
+C:\dev\workspaces\XMLParser\XMLParser\obj\x86\Debug\bjb.silk.xmlparser.XMLParserDialog.resources
+C:\dev\workspaces\XMLParser\XMLParser\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\dev\workspaces\XMLParser\XMLParser\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\dev\workspaces\XMLParser\XMLParser\obj\x86\Debug\bjb.silk.xmlparser.Properties.Resources.resources

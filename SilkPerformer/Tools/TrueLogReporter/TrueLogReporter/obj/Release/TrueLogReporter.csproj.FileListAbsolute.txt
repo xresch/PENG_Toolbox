@@ -1,0 +1,15 @@
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\MainWindow.g.cs
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\App.g.cs
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\TrueLogReporter_MarkupCompile.cache
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\TrueLogReporter_MarkupCompile.lref
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\bin\Release\TrueLogReporter.exe.config
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\bin\Release\TrueLogReporter.exe
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\bin\Release\TrueLogReporter.pdb
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\MainWindow.baml
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\TrueLogReporter.g.resources
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\TrueLogReporter.Properties.Resources.resources
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\TrueLogReporter.csproj.GenerateResource.Cache
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\TrueLogReporter.csproj.CoreCompileInputs.cache
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\TrueLogReporter.exe
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\TrueLogReporter.pdb
+D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\TrueLogReporter.csprojResolveAssemblyReference.cache

@@ -1,0 +1,20 @@
+﻿<Window x:Class="TrueLogReporter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TrueLogReporter"
+        mc:Ignorable="d"
+        Title="True Log Reporter
+        " Height="527.003" Width="728.619">
+    <Grid>
+        <Button Content="Select..." Margin="0,141,28,0" Click="inputSearch_Click" HorizontalAlignment="Right" Width="75" Height="20" VerticalAlignment="Top"/>
+        <TextBox x:Name="inputPath" Margin="25,141,118,0" TextWrapping="NoWrap" Height="20" VerticalAlignment="Top"/>
+        <Button Content="Generate" Margin="0,168,28,0" Click="generateClick" HorizontalAlignment="Right" Width="75" Height="20" VerticalAlignment="Top"/>
+        <TextBox x:Name="consoleArea" Margin="25,201,27,19" TextWrapping="Wrap" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Background="#FF2C2C2C" Foreground="#FFE4E4E4"/>
+        <Label Content="Console:" HorizontalAlignment="Left" Margin="25,170,0,0" VerticalAlignment="Top" Width="99"/>
+        <Label Content="True Log Reporter" Margin="25,10,436,444" FontSize="16" FontWeight="Bold"/>
+        <TextBlock Margin="25,42,28,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="84"><Run Text="This tool generates a use case description based on Silk Performer True"/><Run Text=" "/><Run Text="L"/><Run Text="og files. "/><Run Text="Open an .xlg-file to create a report."/><LineBreak/><Run FontWeight="Bold" Text="For .TLZ-Files: "/><Run Text="E"/><Run Text="xtract a .tlz-File and select"/><Run Text=" the &quot;document.xlg&quot; file"/><Run Text="."/><LineBreak/><Run Text="C"/><Run Text="lick generate, let the tool do some magic in the background until the Word document appears. =)"/><LineBreak/><Run/><LineBreak/><Run Text="Currently only BrowserAPI Methods are supported!"/><LineBreak/><Run/></TextBlock>
+
+    </Grid>
+</Window>
