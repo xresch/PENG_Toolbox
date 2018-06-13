@@ -1,4 +1,11 @@
 ########################################
+# Page Analyzer v 0.7
+########################################
+- Added custom content possibilities
+- YSlow: decode URLs reverted as causing issues
+
+
+########################################
 # Page Analyzer v 0.6
 ########################################
 - Analyze URL, use PhantomJS to get HAR JSON string
