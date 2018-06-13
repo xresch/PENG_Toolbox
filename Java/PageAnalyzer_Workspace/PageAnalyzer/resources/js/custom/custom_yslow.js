@@ -2807,7 +2807,7 @@ YSLOW.util = {
 
         params.w = parseInt(yscontext.PAGE.totalSize, 10);
         params.o = parseInt(yscontext.PAGE.overallScore, 10);
-        params.u = yscontext.result_set.url;
+        params.u = encodeURIComponent(yscontext.result_set.url);
         params.r = parseInt(yscontext.PAGE.totalRequests, 10);
         params.resp = parseInt(yscontext.PAGE.duration, 10);
         
@@ -2864,7 +2864,7 @@ YSLOW.util = {
                             url = comp.url;
                         }
                         if (url) {
-                            url = url.replace(reButton, '');
+                            url = encodeURIComponent(url.replace(reButton, ''));
                             obj.components.push(url);
                         }
                     }
@@ -2903,10 +2903,10 @@ YSLOW.util = {
             comps = yscontext.component_set.components;
             for (i = 0, len = comps.length; i < len; i += 1) {
                 comp = comps[i];
-                //encoded_url = encodeURIComponent(comp.url);
+                encoded_url = encodeURIComponent(comp.url);
                 obj = {
                     'type': comp.type,
-                    'url': comp.url,
+                    'url': encoded_url,
                     'size': comp.size,
                     'resp': comp.respTime
                 };
