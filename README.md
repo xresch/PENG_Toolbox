@@ -21,8 +21,8 @@ An overview of the tools and a short description what they do and how to start.
     * Tools
 	  * **Result Extractor:** Windows application which extracts values from Silk Performer .ovr-Files and converts them to CSV format.
 	    * **Quickstart:** Get the .exe-File from SilkPerformer\Tools\ResultExtractor\XMLParser\bin\Release
-      **Silk Skript Styler:** Windows application which helps creating script structures based on //-comments.
+      * **Silk Skript Styler:** Windows application which helps creating script structures based on //-comments.
 	    * **Quickstart:** Get the .exe-File from \SilkPerformer\Tools\SilkScriptStyler\SilkScriptStyler\bin\Release
-      **True Log Reporter:** Windows application which creates reports from true log .xlg-Files.
+      * **True Log Reporter:** Windows application which creates reports from true log .xlg-Files.
 	    * **Quickstart:** Get the .exe-File from SilkPerformer\Tools\ResultExtractor\XMLParser\bin\Release\SilkPerformer\Tools\TrueLogReporter\TrueLogReporter\bin\Release
 		
