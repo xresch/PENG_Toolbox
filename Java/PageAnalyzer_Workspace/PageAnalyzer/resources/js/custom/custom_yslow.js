@@ -221,39 +221,42 @@ YSLOW.ComponentSet.prototype = {
             url = YSLOW.util.makeAbsoluteUrl(url, base_href);
             // For security purpose
             url = YSLOW.util.escapeHtml(url);
-
+            
+            
             found = typeof this.component_info[url] !== 'undefined';
+            
             isDoc = type === 'doc';
 
             // make sure this component is not already in this component set,
             // but also check if a doc is coming after a redirect using same url
-            if (!found || isDoc) {
-                this.component_info[url] = {
-                    'state': 'NONE',
-                    'count': found ? this.component_info[url].count : 0
-                };
+            
+            // WE WANT DUPLICATES AND EVERYTHING!!!
+            //if (!found || isDoc) {
+            this.component_info[url] = {
+                'state': 'NONE',
+                'count': found ? this.component_info[url].count+1 : 1
+            };
 
-                comp = new YSLOW.Component(url, type, this, o);
-                if (comp) {
-                    comp.id = this.nextID += 1;
-                    this.components[this.components.length] = comp;
+            comp = new YSLOW.Component(url, type, this, o);
+            if (comp) {
+                comp.id = this.nextID += 1;
+                this.components[this.components.length] = comp;
 
-                    // shortcup for document component
-                    if (!this.doc_comp && isDoc) {
-                        this.doc_comp = comp;
-                    }
-
-                    if (this.component_info[url].state === 'NONE') {
-                        // net.js has probably made an async request.
-                        this.component_info[url].state = 'REQUESTED';
-                        this.outstanding_net_request += 1;
-                    }
-                } else {
-                    this.component_info[url].state = 'ERROR';
-                    YSLOW.util.event.fire("componentFetchError");
+                // shortcup for document component
+                if (!this.doc_comp && isDoc) {
+                    this.doc_comp = comp;
                 }
+
+                if (this.component_info[url].state === 'NONE') {
+                    // net.js has probably made an async request.
+                    this.component_info[url].state = 'REQUESTED';
+                    this.outstanding_net_request += 1;
+                }
+            } else {
+                this.component_info[url].state = 'ERROR';
+                YSLOW.util.event.fire("componentFetchError");
             }
-            this.component_info[url].count += 1;
+            //}
         }
 
         return comp;
@@ -265,17 +268,16 @@ YSLOW.ComponentSet.prototype = {
      * @param {String} type type of component
      * @param {String} base_href base href of document that the component belongs.
      */
-    addComponentNoDuplicate: function (url, type, base_href) {
+    addComponentWithDuplicate: function (url, type, base_href) {
 
         if (url && type) {
             // For security purpose
             url = YSLOW.util.escapeHtml(url);
             url = YSLOW.util.makeAbsoluteUrl(url, base_href);
-            if (this.component_info[url] === undefined) {
+            //if (this.component_info[url] === undefined) {
                 return this.addComponent(url, type, base_href);
-            }
+            //}
         }
-
     },
 
     /**
@@ -987,7 +989,7 @@ YSLOW.Component.prototype.populateProperties = function (resolveRedirect, ignore
     // bookmarklet and har already handle redirects
     if (that.headers.location && resolveRedirect) {
         // Add a new component.
-        comp = that.parent.addComponentNoDuplicate(that.headers.location,
+        comp = that.parent.addComponentWithDuplicate(that.headers.location,
             (that.type !== 'redirect' ? that.type : 'unknown'), that.url);
         if (comp && that.after_onload) {
             comp.after_onload = true;
@@ -5752,7 +5754,7 @@ YSLOW.peeler = {
                 if (imgs[j].indexOf("favicon.ico") !== -1) {
                     type = 'favicon';
                 }
-                component_set.addComponentNoDuplicate(imgs[j], type, base_href);
+                component_set.addComponentWithDuplicate(imgs[j], type, base_href);
             }
         }
 
@@ -5760,7 +5762,7 @@ YSLOW.peeler = {
         for (i = 0; i < types.length; i += 1) {
             objs = YSLOW.net.getResponseURLsByType(types[i]);
             for (j = 0; j < objs.length; j += 1) {
-                component_set.addComponentNoDuplicate(objs[j], types[i], base_href);
+                component_set.addComponentWithDuplicate(objs[j], types[i], base_href);
             }
         }
     },
@@ -6425,6 +6427,7 @@ YSLOW.doc.addRuleInfo('pafavicon', 'Make favicon small and cacheable', 'A favico
 YSLOW.doc.addRuleInfo('panoiframes', 'Avoid using iframes', 'iFrames are an overhead for the browser to maintain, also it prevents the onload event from executing until all iframes are loaded.');
 YSLOW.doc.addRuleInfo('paexpires', 'Leverage Browser Caching', 'Web pages are becoming increasingly complex with more scripts, style sheets, images, and Flash on them.  A first-time visit to a page may require several HTTP requests to load all the components.  By using Expires headers these components become cacheable, which avoids unnecessary HTTP requests on subsequent page views.  Expires headers are most often associated with images, but they can and should be used on all page components including scripts, style sheets, and Flash.');
 YSLOW.doc.addRuleInfo('padeferjavascript', 'Defer Javascript Execution', 'JavaScript scripts block parallel downloads; that is, when a script is downloading, the browser will not start any other downloads.  To help the page load faster, move scripts to the bottom of the page if they are deferrable. Also the browser will be interrupted creating the DOM tree when he has to download and executed a script, what will stall the rendering of the page.');
+YSLOW.doc.addRuleInfo('paduplicatedrequests', 'Avoid Duplicated Requests', 'Avoid doing the same requests multiple times, as this will add unneccessary overhead to your application. This rule will also hit on POST-Requests even when they have different request bodies.');
 
 
 //####################################################################
@@ -7726,6 +7729,72 @@ YSLOW.registerRule({
     }
 });
 
+/*******************************************************
+ * Avoid Duplicated Requests
+ *******************************************************/
+YSLOW.registerRule({
+    id: 'paduplicatedrequests',
+    url: 'http://developer.yahoo.com/performance/rules.html',
+    category: ['server'],
+    config: {
+        points: 15 // how many points for each violation
+    },
+
+    lint: function (doc, cset, config) {
+    	
+    	//---------------------------------
+        // Variables
+        //---------------------------------
+    	var i, len, comp, score,
+            offenders = [],
+            inline = cset.inline,
+            inlinescripts = (inline && inline.scripts) || [],
+            comps = cset.components;
+            offenders = [];
+        
+        //---------------------------------
+        // Evaluate Rule
+        //---------------------------------
+
+        var infos = cset.component_info;
+        
+        for(key in infos){
+        	if(infos[key].count > 1){
+        		offenders.push("The URL is called "+infos[key].count+" times: "+key);
+        	}
+        }
+        /*var offenderCount = 0;
+        for (i = 0, len = comps.length; i < len; i += 1) {
+
+        	for (j = 0, len2 = comps.length; j < len2; j += 1) {
+	        	if( i != j && comps[i].url == comps[j] ){
+	        		offenderCount++;
+	        	}
+        	}
+        	if(offenderCount > 0){
+        		var message = "The URL is called "+offenderCount+" times: "+comp[i].url;
+        		if(!offenders.includes(message)){
+        			offenders.push(message);
+        		}
+        	}
+        	offenderCount = 0;
+        }*/
+
+        score = 100 - offenders.length * parseInt(config.points, 10);
+
+        //---------------------------------
+        // return Results
+        //---------------------------------
+        if(YSLOW.DEBUG){ console.log("paduplicatedrequests score: "+score); }
+        
+        return {
+            score: score,
+            message: (offenders.length > 0) ? "There are duplicated requests on the analyzed page." : '',
+            components: offenders
+        };
+    }
+});
+
 //#################################################
 //Ruleset
 //#################################################
@@ -7752,6 +7821,7 @@ YSLOW.registerRuleset({
   	panoiframes: {},
   	paexpires: {},
   	padeferjavascript: {},
+  	paduplicatedrequests: {},
   	  ynumreq: {},
       ycdn: {},
       yemptysrc: {},
@@ -7795,6 +7865,7 @@ YSLOW.registerRuleset({
   	panoiframes: 15,
   	paexpires: 10,
   	padeferjavascript: 5,
+  	paduplicatedrequests: 8,
       ynumreq: 8,
       ycdn: 6,
       yemptysrc: 30,

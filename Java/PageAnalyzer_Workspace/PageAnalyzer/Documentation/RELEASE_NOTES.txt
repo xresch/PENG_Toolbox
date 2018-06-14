@@ -1,4 +1,10 @@
 ########################################
+# Page Analyzer in progress
+########################################
+- Rule paduplicatedrequests: Check for duplicated requests
+- Fixed YSlow "ignoring" duplicated requests
+
+########################################
 # Page Analyzer v 0.7
 ########################################
 - Added custom content possibilities
