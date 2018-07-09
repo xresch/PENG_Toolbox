@@ -251,7 +251,7 @@ function printRuleDetails(parent, rule){
 		var list = $('<ul>');
 		parent.append(list);
 		for(var key in rule.components){
-			list.append('<li>'+decodeURIComponent(rule.components[key])+'</li>');
+			list.append('<li>'+rule.components[key]+'</li>');
 		}
 	}
 	

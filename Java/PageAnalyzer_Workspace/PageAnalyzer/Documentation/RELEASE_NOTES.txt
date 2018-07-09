@@ -1,6 +1,11 @@
 ########################################
 # Page Analyzer in progress
 ########################################
+
+########################################
+# Page Analyzer v 0.8
+########################################
+- Added exception propagation for to end user for exceptions thrown by custom_yslow.js
 - Rule paduplicatedrequests: Check for duplicated requests
 - Fixed YSlow "ignoring" duplicated requests
 

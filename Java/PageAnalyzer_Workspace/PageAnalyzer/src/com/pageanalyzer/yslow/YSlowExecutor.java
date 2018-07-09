@@ -68,10 +68,14 @@ public class YSlowExecutor extends Application {
 	}
 	
 	public void analyzeHARString(String harString){
-		
-		JSObject window = (JSObject)engine.executeScript("window");
-		String result = (String) window.call("analyzeHARString", harString);
-		YSlow.instance().setResult(result);
+		try{
+			JSObject window = (JSObject)engine.executeScript("window");
+			String result = (String) window.call("analyzeHARString", harString);
+			YSlow.instance().setResult(result);
+		}catch(Exception e){
+			PA.javafxLogWorkaround(Level.INFO, e.getMessage(), e, "YSlowExecutor.analyzeHARString()");
+			YSlow.instance().setResult("{\"error\": \""+e.getMessage()+" - Check if your HAR file is a valid JSON file. \"}");
+		}
 				
 	}
 

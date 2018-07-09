@@ -198,12 +198,20 @@ public class PA {
 		return dateFormatter.format(date);
 	}
 	
-	/*
+	/********************************************************
 	 * Workaround for classloading issue
-	 */
+	 ********************************************************/
 	public static void javafxLogWorkaround(Level level, String message, String method){
 		
 		log.method(method).log(level, message, null);
+	}
+	
+	/********************************************************
+	 * Workaround for classloading issue
+	 ********************************************************/
+	public static void javafxLogWorkaround(Level level, String message, Throwable e, String method){
+		
+		log.method(method).log(level, message, e);
 	}
 	
 	//public static void localizeString(HttpServletRequest request, String localize){
