@@ -1,0 +1,94 @@
+package com.peng.spm.extention.agent;
+
+import java.io.ByteArrayInputStream;
+import java.io.PrintWriter;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.IllegalClassFormatException;
+import java.security.ProtectionDomain;
+
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.LoaderClassPath;
+
+public class SnapshotViewTransformer implements ClassFileTransformer {
+	
+	
+	public byte[] transform(ClassLoader loader, String className,
+			Class classBeingRedefined, ProtectionDomain protectionDomain,
+			byte[] classfileBuffer) throws IllegalClassFormatException {
+		
+		byte[] byteCode = classfileBuffer;
+
+		//Agent.log("[INFO] "+className);
+		
+		if (className.equals("com/segue/vision/webgui/module/units/reporting/projectList/SnapshotView")) {
+
+			try {
+				ClassPool pool = ClassPool.getDefault();
+				pool.insertClassPath(new LoaderClassPath(loader));
+				
+				CtClass snapshotView = pool.makeClass(new ByteArrayInputStream(classfileBuffer));
+
+				Agent.log("[INFO] Start Instrumenting SnapshotView..."+className);
+				
+				//------------------------
+				// Change Html Method
+				//------------------------
+				CtClass printWriterClass = pool.get("java.io.PrintWriter");
+				CtMethod toHtml = snapshotView.getDeclaredMethod("toHtml", new CtClass[]{printWriterClass});
+				
+				CtClass[] paramTypes = toHtml.getParameterTypes();
+				Agent.log("Parameter Type Count:"+ paramTypes.length);
+
+				toHtml.addLocalVariable("myOut", printWriterClass);
+				//toHtml.addLocalVariable("path", pool.get("java.nio.file.Path"));
+				
+				toHtml.setBody(
+						"{ java.io.PrintWriter myOut = $1; "+
+						  "try{"
+							+ "java.io.File file = new java.io.File(\"./wwwroot/silkroot/custom/content.html\");"
+							+ "java.nio.file.Path path = java.nio.file.Paths.get(file.toURI());"
+							+ "java.util.List fileContent = java.nio.file.Files.readAllLines(path);"
+							
+							+ "for(int i = 0; i < fileContent.size(); i++) {" 
+							+    "myOut.print(fileContent.get(i).toString());"
+							+ "}"
+						+ "}catch (Exception e) {"
+							+ "myOut.print(\"ERROR reading file content.html: \"+ e.getMessage()); "
+							+ "com.peng.spm.extention.agent.Agent.log(\"ERROR reading file content.html:\", e);"
+							
+						+ "}"	+ 
+						" }");
+				
+				try {
+					java.io.File file = new java.io.File("./wwwroot/silkroot/custom/content.html");
+					java.nio.file.Path path = java.nio.file.Paths.get(file.toURI());
+					java.util.List fileContent = java.nio.file.Files.readAllLines(path);
+					
+					for(int i = 0; i < fileContent.size(); i++) {
+						fileContent.get(i).toString();
+					}
+				} catch (Exception e) {
+					//com.peng.spm.extention.agent.Agent.log("ERROR reading file content.html:", e);
+				}
+				
+				byteCode = snapshotView.toBytecode();
+				snapshotView.detach();
+				
+				Agent.toggleInstrumented(true);
+				
+			} catch (Exception e) {
+				Agent.log("[ERROR] SnapshotViewTransformer.transform()", e);
+				
+			} 
+			
+			Agent.log("[INFO] End Instrumenting SnapshotView...");
+			
+		}
+		return byteCode;
+
+	}
+
+}
