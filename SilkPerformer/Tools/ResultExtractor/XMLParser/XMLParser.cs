@@ -27,7 +27,7 @@ namespace com.peng.toolbox.resultextractor
         * percentile   Percentile value (e.g. 95)
         * timerFilter  Timername filter pattern 
         */
-        public void buildResultFile(string inputFile, string outputFile, string percentiles, string timerFilter, string separator)
+        public void buildResultFile(string inputFile, string outputFile, string percentiles, string metricTypeFilter, string timerFilter, string separator)
         {
 
             System.IO.StreamWriter outputText = new System.IO.StreamWriter(outputFile);
@@ -68,7 +68,7 @@ namespace com.peng.toolbox.resultextractor
             foreach (XmlNode node in nodeList)
             {
 
-                if (node.SelectSingleNode(".//Percentiles") != null)
+                if (node.SelectSingleNode(".//SumSum") != null)
                 {
 
                     // search Name and Percentiles values within Measure node
@@ -76,25 +76,28 @@ namespace com.peng.toolbox.resultextractor
                     foreach (XmlNode mNode in measure)
                     {
                         //only grab nodes which match the filter
-                        if ( Regex.IsMatch(mNode.SelectSingleNode(".//Name").InnerText.Trim(), timerFilter) )
+                        if ( mNode.SelectSingleNode(".//Type").InnerText.Trim().Equals(metricTypeFilter)
+                          && Regex.IsMatch(mNode.SelectSingleNode(".//Name").InnerText.Trim(), timerFilter) )
                         {
+
+
+                            string[] ucAndUsrGrp = node.SelectSingleNode(".//Name").InnerText.Trim().Split('/');
+                            string[] usrGrp = ucAndUsrGrp[1].Split('-');
+
+                            // write Usecase-, Timer- and Usergroup-Name to outputfile
+                            outputText.Write(ucAndUsrGrp[0]);
+                            outputText.Write(separator + usrGrp[0]);
+                            outputText.Write(separator + mNode.SelectSingleNode(".//Name").InnerText.Trim());
+                            outputText.Write(separator + mNode.SelectSingleNode(".//SumCount1").InnerText);
+                            outputText.Write(separator + mNode.SelectSingleNode(".//SumCount2").InnerText);
+                            outputText.Write(separator + mNode.SelectSingleNode(".//MinMin").InnerText);
+                            outputText.Write(separator + mNode.SelectSingleNode(".//Avg").InnerText);
+                            outputText.Write(separator + mNode.SelectSingleNode(".//MaxMax").InnerText);
+                            outputText.Write(separator + mNode.SelectSingleNode(".//Stdd").InnerText);
 
                             // display only Percentiles value
                             if (mNode.SelectSingleNode(".//Percentiles") != null)
                             {
-                                string[] ucAndUsrGrp = node.SelectSingleNode(".//Name").InnerText.Trim().Split('/');
-                                string[] usrGrp = ucAndUsrGrp[1].Split('-');
-
-                                // write Usecase-, Timer- and Usergroup-Name to outputfile
-                                outputText.Write(ucAndUsrGrp[0]);
-                                outputText.Write(separator + usrGrp[0]);
-                                outputText.Write(separator + mNode.SelectSingleNode(".//Name").InnerText.Trim());
-                                outputText.Write(separator + mNode.SelectSingleNode(".//SumCount1").InnerText);
-                                outputText.Write(separator + mNode.SelectSingleNode(".//SumCount2").InnerText);
-                                outputText.Write(separator + mNode.SelectSingleNode(".//MinMin").InnerText);
-                                outputText.Write(separator + mNode.SelectSingleNode(".//Avg").InnerText);
-                                outputText.Write(separator + mNode.SelectSingleNode(".//MaxMax").InnerText);
-                                outputText.Write(separator + mNode.SelectSingleNode(".//Stdd").InnerText);
                                 //-------------------------------------------------------
                                 // search for percentile values and print them
 
@@ -111,9 +114,10 @@ namespace com.peng.toolbox.resultextractor
                                         }
                                     }
                                 }
-
-                                outputText.Write(Environment.NewLine);
                             }
+
+                            outputText.Write(Environment.NewLine);
+
                         }
                     }
                 }
