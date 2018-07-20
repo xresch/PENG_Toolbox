@@ -251,7 +251,13 @@ function printRuleDetails(parent, rule){
 		var list = $('<ul>');
 		parent.append(list);
 		for(var key in rule.components){
-			list.append('<li>'+rule.components[key]+'</li>');
+			var compText = "";
+			try{
+				compText = decodeURIComponent(rule.components[key]);
+			}catch(err){
+				compText = rule.components[key];
+			}
+			list.append('<li>'+compText+'</li>');
 		}
 	}
 	
@@ -364,7 +370,13 @@ function printJIRAText(parent){
 		if(rule.components.length > 0){ 			
 			div.append('*Details:*</br>');
 			for(var key in rule.components){
-				div.append('*&nbsp;'+decodeURIComponent(rule.components[key])+'</br>');
+				var compText = "";
+				try{
+					compText = decodeURIComponent(rule.components[key]);
+				}catch(err){
+					compText = rule.components[key];
+				}
+				div.append('<li>'+compText+'</li>');
 			}
 		}
 		
@@ -485,7 +497,13 @@ function printTable(parent, data, title){
 			}else{
 				var list = $('<ul>');
 				for(var key in currentData.components){
-					list.append('<li>'+decodeURIComponent(currentData.components[key])+'</li>');
+					var compText = "";
+					try{
+						compText = decodeURIComponent(rule.components[key]);
+					}catch(err){
+						compText = rule.components[key];
+					}
+					list.append('<li>'+compText+'</li>');
 				}
 				var cell = $("<td>");
 				cell.append(list);
