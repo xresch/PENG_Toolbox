@@ -1,6 +1,7 @@
 ########################################
 # Page Analyzer in progress
 ########################################
+- custom.js: fixed decodeURIComponent errors
 
 ########################################
 # Page Analyzer v 0.8
