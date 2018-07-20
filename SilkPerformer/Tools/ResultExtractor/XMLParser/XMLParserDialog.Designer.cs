@@ -57,12 +57,16 @@
             this.separatorTextBox = new System.Windows.Forms.TextBox();
             this.availablePercentilesBox = new System.Windows.Forms.TextBox();
             this.percentileComboBox = new System.Windows.Forms.ComboBox();
+            this.metricCombo = new System.Windows.Forms.ComboBox();
+            this.pictureBox7 = new System.Windows.Forms.PictureBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
             this.SuspendLayout();
             // 
             // openFileDialog
@@ -106,15 +110,15 @@
             // 
             // timerFilter
             // 
-            this.timerFilter.Location = new System.Drawing.Point(105, 292);
+            this.timerFilter.Location = new System.Drawing.Point(105, 321);
             this.timerFilter.Name = "timerFilter";
             this.timerFilter.Size = new System.Drawing.Size(336, 20);
             this.timerFilter.TabIndex = 5;
-            this.timerFilter.Text = "SV_";
+            this.timerFilter.Text = ".*";
             // 
             // startParsing
             // 
-            this.startParsing.Location = new System.Drawing.Point(308, 371);
+            this.startParsing.Location = new System.Drawing.Point(308, 400);
             this.startParsing.Name = "startParsing";
             this.startParsing.Size = new System.Drawing.Size(82, 23);
             this.startParsing.TabIndex = 6;
@@ -124,11 +128,11 @@
             // 
             // cancel
             // 
-            this.cancel.Location = new System.Drawing.Point(404, 371);
+            this.cancel.Location = new System.Drawing.Point(404, 400);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 7;
-            this.cancel.Text = "Cancel";
+            this.cancel.Text = "Close";
             this.cancel.UseVisualStyleBackColor = true;
             this.cancel.Click += new System.EventHandler(this.cancel_Click);
             // 
@@ -155,7 +159,7 @@
             // percentileLabel
             // 
             this.percentileLabel.AutoSize = true;
-            this.percentileLabel.Location = new System.Drawing.Point(35, 155);
+            this.percentileLabel.Location = new System.Drawing.Point(35, 184);
             this.percentileLabel.Name = "percentileLabel";
             this.percentileLabel.Size = new System.Drawing.Size(57, 13);
             this.percentileLabel.TabIndex = 10;
@@ -164,7 +168,7 @@
             // TimerFilterLabel
             // 
             this.TimerFilterLabel.AutoSize = true;
-            this.TimerFilterLabel.Location = new System.Drawing.Point(35, 292);
+            this.TimerFilterLabel.Location = new System.Drawing.Point(35, 321);
             this.TimerFilterLabel.Name = "TimerFilterLabel";
             this.TimerFilterLabel.Size = new System.Drawing.Size(61, 13);
             this.TimerFilterLabel.TabIndex = 11;
@@ -174,7 +178,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::com.peng.toolbox.resultextractor.Properties.Resources.icon_question_mark;
-            this.pictureBox1.Location = new System.Drawing.Point(10, 292);
+            this.pictureBox1.Location = new System.Drawing.Point(10, 321);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(17, 13);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -186,7 +190,7 @@
             // pictureBox2
             // 
             this.pictureBox2.Image = global::com.peng.toolbox.resultextractor.Properties.Resources.icon_question_mark;
-            this.pictureBox2.Location = new System.Drawing.Point(10, 155);
+            this.pictureBox2.Location = new System.Drawing.Point(10, 184);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(17, 13);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -198,7 +202,7 @@
             // pictureBox5
             // 
             this.pictureBox5.Image = global::com.peng.toolbox.resultextractor.Properties.Resources.icon_question_mark;
-            this.pictureBox5.Location = new System.Drawing.Point(10, 322);
+            this.pictureBox5.Location = new System.Drawing.Point(10, 351);
             this.pictureBox5.Name = "pictureBox5";
             this.pictureBox5.Size = new System.Drawing.Size(17, 13);
             this.pictureBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -234,7 +238,7 @@
             // pictureBox6
             // 
             this.pictureBox6.Image = global::com.peng.toolbox.resultextractor.Properties.Resources.icon_question_mark;
-            this.pictureBox6.Location = new System.Drawing.Point(83, 182);
+            this.pictureBox6.Location = new System.Drawing.Point(83, 211);
             this.pictureBox6.Name = "pictureBox6";
             this.pictureBox6.Size = new System.Drawing.Size(17, 13);
             this.pictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -266,7 +270,7 @@
             // SeparatorLabel
             // 
             this.SeparatorLabel.AutoSize = true;
-            this.SeparatorLabel.Location = new System.Drawing.Point(35, 322);
+            this.SeparatorLabel.Location = new System.Drawing.Point(35, 351);
             this.SeparatorLabel.Name = "SeparatorLabel";
             this.SeparatorLabel.Size = new System.Drawing.Size(56, 13);
             this.SeparatorLabel.TabIndex = 19;
@@ -274,7 +278,7 @@
             // 
             // separatorTextBox
             // 
-            this.separatorTextBox.Location = new System.Drawing.Point(105, 322);
+            this.separatorTextBox.Location = new System.Drawing.Point(105, 351);
             this.separatorTextBox.Name = "separatorTextBox";
             this.separatorTextBox.Size = new System.Drawing.Size(336, 20);
             this.separatorTextBox.TabIndex = 20;
@@ -283,7 +287,7 @@
             // availablePercentilesBox
             // 
             this.availablePercentilesBox.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.availablePercentilesBox.Location = new System.Drawing.Point(106, 182);
+            this.availablePercentilesBox.Location = new System.Drawing.Point(106, 211);
             this.availablePercentilesBox.Multiline = true;
             this.availablePercentilesBox.Name = "availablePercentilesBox";
             this.availablePercentilesBox.Size = new System.Drawing.Size(335, 101);
@@ -301,18 +305,70 @@
             "50, 75, 80, 90, 95, 99",
             "10, 20, 30, 40, 50, 60, 70, 80, 90, 100",
             "All Available Percentiles"});
-            this.percentileComboBox.Location = new System.Drawing.Point(106, 155);
+            this.percentileComboBox.Location = new System.Drawing.Point(106, 184);
             this.percentileComboBox.Name = "percentileComboBox";
             this.percentileComboBox.Size = new System.Drawing.Size(335, 21);
             this.percentileComboBox.TabIndex = 23;
             this.percentileComboBox.Text = "90";
             this.percentileComboBox.SelectedIndexChanged += new System.EventHandler(this.percentileComboBox_SelectedIndexChanged);
             // 
+            // metricCombo
+            // 
+            this.metricCombo.FormattingEnabled = true;
+            this.metricCombo.Items.AddRange(new object[] {
+            "Response time[s]",
+            "Action time[s]",
+            "DOM interactive[s]",
+            "DOM complete[s]",
+            "First paint[s]",
+            "Load end[s]",
+            "Request data sent[kB]",
+            "Requests sent",
+            "Responses received",
+            "Http cache hits",
+            "Http cookies received",
+            "Http cookies sent",
+            "Http hits",
+            "Transactions",
+            "Trans. ok[s]",
+            "Trans.(busy) ok[s]"});
+            this.metricCombo.Location = new System.Drawing.Point(106, 154);
+            this.metricCombo.Name = "metricCombo";
+            this.metricCombo.Size = new System.Drawing.Size(335, 21);
+            this.metricCombo.TabIndex = 26;
+            this.metricCombo.Text = "Response time[s]";
+            this.metricCombo.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // pictureBox7
+            // 
+            this.pictureBox7.Image = global::com.peng.toolbox.resultextractor.Properties.Resources.icon_question_mark;
+            this.pictureBox7.Location = new System.Drawing.Point(10, 154);
+            this.pictureBox7.Name = "pictureBox7";
+            this.pictureBox7.Size = new System.Drawing.Size(17, 13);
+            this.pictureBox7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox7.TabIndex = 25;
+            this.pictureBox7.TabStop = false;
+            this.toolTipPercentile.SetToolTip(this.pictureBox7, "The metric which should be extrated.");
+            this.pictureBox7.Click += new System.EventHandler(this.pictureBox7_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(35, 154);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(66, 13);
+            this.label1.TabIndex = 24;
+            this.label1.Text = "Metric Type:";
+            this.label1.Click += new System.EventHandler(this.label1_Click_1);
+            // 
             // XMLParserDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(491, 407);
+            this.ClientSize = new System.Drawing.Size(491, 436);
+            this.Controls.Add(this.metricCombo);
+            this.Controls.Add(this.pictureBox7);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.percentileComboBox);
             this.Controls.Add(this.pictureBox6);
             this.Controls.Add(this.availablePercentilesBox);
@@ -345,6 +401,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -379,5 +436,8 @@
         private System.Windows.Forms.TextBox availablePercentilesBox;
         private System.Windows.Forms.PictureBox pictureBox6;
         private System.Windows.Forms.ComboBox percentileComboBox;
+        private System.Windows.Forms.ComboBox metricCombo;
+        private System.Windows.Forms.PictureBox pictureBox7;
+        private System.Windows.Forms.Label label1;
     }
 }

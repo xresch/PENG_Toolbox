@@ -19,6 +19,7 @@ namespace com.peng.toolbox.resultextractor
         private string percentile;
         private string timerfilter;
         private string separator;
+        private string metricType;
 
         public XMLParserDialog()
         {
@@ -66,9 +67,10 @@ namespace com.peng.toolbox.resultextractor
             InputFile = inputFileName.Text;
             OutputFile = outputFileName.Text;
             Separator = separatorTextBox.Text;
+            metricType = metricCombo.Text;
 
             XMLParser xmlParser = new XMLParser();
-            xmlParser.buildResultFile(InputFile, OutputFile, Percentile, TimerFilter, Separator);
+            xmlParser.buildResultFile(InputFile, OutputFile, Percentile, metricType, TimerFilter, Separator);
 
             DialogResult dialogResult = MessageBox.Show("All done. Do you wan't to open the result file?", "Parsing Done!!!", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
@@ -224,6 +226,21 @@ namespace com.peng.toolbox.resultextractor
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
