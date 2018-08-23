@@ -1,20 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml;
 using Microsoft.Office.Interop.Word;
 
@@ -36,7 +25,7 @@ namespace TrueLogReporter
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
-            openFileDialog.Filter = "True Log File (*.xlg)|*.xlg";
+            openFileDialog.Filter = "True Log Files (*.xlg, *.tlz)|*.xlg;*.tlz";
 
             DialogResult result = openFileDialog.ShowDialog();
 
@@ -102,12 +91,26 @@ namespace TrueLogReporter
             //----------------------------------------
             System.Xml.XmlDocument doc = new XmlDocument();
             
-            String filepath = filePath.Substring(0, filePath.LastIndexOf(@"\")+1);
-            String mediaFolderPath = filepath + @"media\";
+            String parentFolder = filePath.Substring(0, filePath.LastIndexOf(@"\")+1);
+            String mediaFolderPath = parentFolder + @"media\";
 
-            printConsole(0, "Load File:"+filepath);
+            if (filePath.Contains(".tlz")) {
+                int random = new Random().Next();
+                String systemTempFolder = Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine);
+                String tempPath = systemTempFolder+ @"\truelogreporter-" + random;
+                printConsole(0, "Extract .tlz-File to:" + tempPath);
+
+                ZipFile.ExtractToDirectory(filePath, tempPath);
+
+                filePath = tempPath+@"\truelog\document.xlg";
+                mediaFolderPath = tempPath + @"\truelog\media\";
+            }
 
             doc.Load(filePath);
+
+            printConsole(0, "Load File:"+parentFolder);
+
+            
 
             //----------------------------------------
             // Get Transaction Info

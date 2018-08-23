@@ -9,6 +9,11 @@ namespace TrueLogReporter
     class DialogUtils
     {
 
+        public static void showDialog(String message)
+        {
+            System.Windows.Forms.MessageBox.Show("Message", message);
+        }
+
         public static void showExceptionDialog(String message, Exception e)
         {
             String text = "Message: " + message +
@@ -18,5 +23,7 @@ namespace TrueLogReporter
 
             System.Windows.Forms.MessageBox.Show(text, "Error Occured");
         }
+
+
     }
 }

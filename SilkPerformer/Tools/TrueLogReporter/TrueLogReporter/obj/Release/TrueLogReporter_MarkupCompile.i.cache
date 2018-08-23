@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Release\
+C:\dev\Workspaces\PENG_Toolbox\SilkPerformer\Tools\TrueLogReporter\TrueLogReporter\obj\Release\
 TrueLogReporter
 none
 false
 TRACE
-D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\App.xaml
+C:\dev\Workspaces\PENG_Toolbox\SilkPerformer\Tools\TrueLogReporter\TrueLogReporter\App.xaml
 11151548125
 
-12-1715751572
-16850286861
+12826320572
+18347617802
 MainWindow.xaml;
 
-True
+False
 
