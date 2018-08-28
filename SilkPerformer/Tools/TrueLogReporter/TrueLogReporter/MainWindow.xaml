@@ -6,15 +6,24 @@
         xmlns:local="clr-namespace:TrueLogReporter"
         mc:Ignorable="d"
         Title="True Log Reporter
-        " Height="527.003" Width="728.619">
+        " Height="575.803" Width="728.619">
     <Grid>
-        <Button Content="Select..." Margin="0,141,28,0" Click="inputSearch_Click" HorizontalAlignment="Right" Width="75" Height="20" VerticalAlignment="Top"/>
-        <TextBox x:Name="inputPath" Margin="25,141,118,0" TextWrapping="NoWrap" Height="20" VerticalAlignment="Top"/>
-        <Button Content="Generate" Margin="0,168,28,0" Click="generateClick" HorizontalAlignment="Right" Width="75" Height="20" VerticalAlignment="Top"/>
-        <TextBox x:Name="consoleArea" Margin="25,201,27,19" TextWrapping="Wrap" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Background="#FF2C2C2C" Foreground="#FFE4E4E4"/>
-        <Label Content="Console:" HorizontalAlignment="Left" Margin="25,170,0,0" VerticalAlignment="Top" Width="99"/>
+        <Button Content="Select..." Margin="0,174,28.4,0" Click="inputSearch_Click" HorizontalAlignment="Right" Width="75" Height="20" VerticalAlignment="Top"/>
+        <TextBox x:Name="inputPath" Margin="25,174,118.4,0" TextWrapping="NoWrap" Height="20" VerticalAlignment="Top"/>
+        <Button Content="Generate" Margin="0,201,28.4,0" Click="generateClick" HorizontalAlignment="Right" Width="75" Height="20" VerticalAlignment="Top"/>
+        <TextBox x:Name="consoleArea" Margin="25,238,27.4,19" TextWrapping="Wrap" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Background="#FF2C2C2C" Foreground="#FFE4E4E4"/>
+        <Label Content="Console:" HorizontalAlignment="Left" Margin="25,203,0,0" VerticalAlignment="Top" Width="99"/>
         <Label Content="True Log Reporter" Margin="25,10,436,444" FontSize="16" FontWeight="Bold"/>
-        <TextBlock Margin="25,42,28,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="84"><Run Text="This tool generates a use case description based on Silk Performer True"/><Run Text=" "/><Run Text="L"/><Run Text="og files. "/><Run Text="Open an .xlg-file to create a report."/><LineBreak/><Run FontWeight="Bold" Text="For .TLZ-Files: "/><Run Text="E"/><Run Text="xtract a .tlz-File and select"/><Run Text=" the &quot;document.xlg&quot; file"/><Run Text="."/><LineBreak/><Run Text="C"/><Run Text="lick generate, let the tool do some magic in the background until the Word document appears. =)"/><LineBreak/><Run/><LineBreak/><Run Text="Currently only BrowserAPI Methods are supported!"/><LineBreak/><Run/></TextBlock>
+        <TextBlock Margin="25,42,28.4,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="67"><Run Text="This tool generates a use case description based on Silk Performer True"/><Run Text=" "/><Run Text="L"/><Run Text="og files. "/><Run Text="Open an .xlg-"/><Run Text=" or .tlz-F"/><Run Text="ile to create a report."/><LineBreak/><Run Text="C"/><Run Text="lick generate, let the tool do some magic in the background until the Word document appears. =)"/><LineBreak/><Run/><LineBreak/><Run Text="Currently only BrowserAPI Methods are supported!"/><LineBreak/><Run/></TextBlock>
+        <CheckBox x:Name="resizeCheckbox" Content="Resize Screenshots to fit:" HorizontalAlignment="Left" Margin="26,126,0,0" VerticalAlignment="Top" Checked="resizeCheckBox_Checked" Unchecked="resizeCheckBox_Unchecked" IsChecked="True"/>
+        <ComboBox x:Name="dimensionCombobox" HorizontalAlignment="Left" Margin="263,124,0,0" VerticalAlignment="Top" Width="93" SelectionChanged="dimensionComboboxChanged">
+            <ComboBoxItem IsSelected="True"  Content="Width"  HorizontalAlignment="Left" Width="118.4"/>
+            <ComboBoxItem Content="Height" HorizontalAlignment="Left" Width="118.4"/>
+        </ComboBox>
+        <Label Content="px" HorizontalAlignment="Left" Height="32" Margin="232,122,0,0" VerticalAlignment="Top" Width="23"/>
+        <TextBox x:Name="resizeTextbox" HorizontalAlignment="Left" Height="22" Margin="182,124,0,0" TextWrapping="Wrap" Text="600" VerticalAlignment="Top" Width="49" RenderTransformOrigin="0.5,0.5" TextAlignment="Right">
+        </TextBox>
+        <CheckBox x:Name="resizeSmallerCheckbox" Content="Resize if smaller" HorizontalAlignment="Left" Margin="367,126,0,0" VerticalAlignment="Top" IsChecked="True"/>
 
     </Grid>
 </Window>

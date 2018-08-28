@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +11,10 @@ namespace TrueLogReporter
 {
     class ImageUtils
     {
-
+        public enum Dimension { Width, Height };
+        /***********************************************************************************
+         * 
+         ***********************************************************************************/
         public static Image getImageFromPath(string imagePath)
         {
             Image image = Image.FromFile(imagePath);
@@ -17,6 +22,9 @@ namespace TrueLogReporter
             return image;
         }
 
+        /***********************************************************************************
+         * 
+         ***********************************************************************************/
         public static Image getImageFromBase64String(string base64)
         {
             Byte[] bitmapData = Convert.FromBase64String(FixBase64ForImage(base64));
@@ -26,6 +34,9 @@ namespace TrueLogReporter
             return bitImage;
         }
 
+        /***********************************************************************************
+         * 
+         ***********************************************************************************/
         public static string FixBase64ForImage(string Image)
         {
             System.Text.StringBuilder sbText = new System.Text.StringBuilder(Image, Image.Length);
@@ -33,6 +44,9 @@ namespace TrueLogReporter
             return sbText.ToString();
         }
 
+        /***********************************************************************************
+         * 
+         ***********************************************************************************/
         public static void addRectangle(Image image, string trueLogCoordinates)
         {
 
@@ -64,6 +78,9 @@ namespace TrueLogReporter
 
         }
 
+        /***********************************************************************************
+         * 
+         ***********************************************************************************/
         public static void addMouseCursor(Image image, string trueLogCoordinates)
         {
 
@@ -93,6 +110,9 @@ namespace TrueLogReporter
 
         }
 
+        /***********************************************************************************
+         * 
+         ***********************************************************************************/
         private static RectangleF getRectangle(string trueLogCoordinates)
         {
 
@@ -102,6 +122,9 @@ namespace TrueLogReporter
             return rectangle;
         }
 
+        /***********************************************************************************
+         * 
+         ***********************************************************************************/
         private static Point getMousePoint(string trueLogCoordinates)
         {
             
@@ -113,6 +136,9 @@ namespace TrueLogReporter
             return point;
         }
 
+        /***********************************************************************************
+         * 
+         ***********************************************************************************/
         private static float[] getCoordinates(string trueLogCoordinates)
         {
 
@@ -127,7 +153,9 @@ namespace TrueLogReporter
 
             return floats;
         }
-
+        /***********************************************************************************
+         * 
+         ***********************************************************************************/
         private static int[] getCoordinatesInt(string trueLogCoordinates)
         {
 
@@ -141,6 +169,71 @@ namespace TrueLogReporter
             }
 
             return intArray;
+        }
+
+        /***********************************************************************************
+         * 
+         ***********************************************************************************/
+        public static Image resizeImageFitToSize(Image image, Dimension dimension, int targetSizePixel, bool growIfSmaller)
+        {
+            //--------------------------------
+            // Evaluate Size
+            int currentSize = 0;
+            float percentage = 0;
+            if (dimension == Dimension.Width)
+            {
+                currentSize = image.Width;
+            }
+            else{
+                currentSize = image.Height;
+            }
+            
+            percentage = (float)targetSizePixel / currentSize;
+            Console.WriteLine("percentage:" + percentage);
+            //--------------------------------
+            // Evaluate Size
+            if (currentSize > targetSizePixel
+            || (currentSize < targetSizePixel && growIfSmaller) )
+            { 
+                return resizeImage(image, percentage);
+            }
+
+            return image;
+        }
+
+        /***********************************************************************************
+         * 
+         ***********************************************************************************/
+        public static Image resizeImage(Image image, float percentage)
+        {
+            int newWidth =  (int)(image.Width * percentage);
+            int newHeight = (int)(image.Height * percentage);
+
+            ReportGenerator.printConsole(1, "Resize Image - From: "+ image.Width +"/"+ image.Height+
+                                                           ", To: " + newWidth + "/" + newHeight+
+                                                           ", Percentage: "+percentage+"%");
+
+            var destRect = new Rectangle(0, 0, newWidth, newHeight);
+            var destImage = new Bitmap(newWidth, newHeight);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return (Image)destImage;
         }
 
     }
