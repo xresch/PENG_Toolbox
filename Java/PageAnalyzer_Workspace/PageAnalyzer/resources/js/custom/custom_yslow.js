@@ -1,21 +1,21 @@
 /*global YSLOW:true*/
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true */
 
-/**
+/*********************************************************************************************************
  * @module YSLOW
  * @class YSLOW
  * @static
- */
+ *********************************************************************************************************/
 if (typeof YSLOW === 'undefined') {
     YSLOW = {};
 }
 
-/**
+/*********************************************************************************************************
  * Enable/disable debbuging messages
- */
+ *********************************************************************************************************/
 YSLOW.DEBUG = true;
 
-/**
+/*********************************************************************************************************
  *
  * Adds a new rule to the pool of rules.
  *
@@ -30,13 +30,13 @@ YSLOW.DEBUG = true;
  * </ul>
  *
  * @param {YSLOW.Rule} rule A new rule object to add
- */
+ *********************************************************************************************************/
 YSLOW.registerRule = function (rule) {
     YSLOW.controller.addRule(rule);
 };
 
 
-/**
+/*********************************************************************************************************
  *
  * Adds a new ruleset (new grading algorithm).
  *
@@ -50,94 +50,50 @@ YSLOW.registerRule = function (rule) {
  * </ul>
  *
  * @param {YSLOW.Ruleset} ruleset The new ruleset object to be registered
- */
+ *********************************************************************************************************/
 YSLOW.registerRuleset = function (ruleset) {
     YSLOW.controller.addRuleset(ruleset);
 };
 
-/**
- * Register a renderer.
- *
- * Renderer objects must implement the renderer interface.
- * The interface is as follows:
- * <ul>
- * <li><code>id</code></li>
- * <li><code>supports</code> a hash of view_name => 1 or 0 to indicate what views are supported</li>
- * <li>and the methods</li>
- * </ul>
- *
- * For instance if you define a JSON renderer that only render grade. Your renderer object will look like this:
- * { id: 'json',
- *    supports: { reportcard: 1, components: 0, stats: 0, cookies: 0},
- *    reportcardView: function(resultset) { ... }
- * }
- *
- * Refer to YSLOW.HTMLRenderer for the function prototype.
- *
- *
- * @param {YSLOW.renderer} renderer The new renderer object to be registered.
- */
-YSLOW.registerRenderer = function (renderer) {
-    YSLOW.controller.addRenderer(renderer);
-};
 
-/**
- * Adds a new tool.
- *
- * Tool objects must implement the tool interface or an error will be thrown.
- * The interface of a tool object is as follows:
- * <ul>
- *   <li><code>id</code>, e.g. 'mytool'</li>
- *   <li><code>name</code>, eg. 'Custom tool #3'</li>
- *   <li><code>print_output</code>, whether this tool will produce output.</li>
- *   <li><code>run</code>, function that takes doc and componentset object, return content to be output</li>
- * </ul>
- *
- * @param {YSLOW.Tool} tool The new tool object to be registered
- */
-YSLOW.registerTool = function (tool) {
-    YSLOW.Tools.addCustomTool(tool);
-};
-
-
-/**
+/*********************************************************************************************************
  * Register an event listener
  *
  * @param {String} event_name Name of the event
  * @param {Function} callback A function to be called when the event fires
  * @param {Object} that Object to be assigned to the "this" value of the callback function
- */
+ *********************************************************************************************************/
 YSLOW.addEventListener = function (event_name, callback, that) {
     YSLOW.util.event.addListener(event_name, callback, that);
 };
 
-/**
+/*********************************************************************************************************
  * Unregister an event listener.
  *
  * @param {String} event_name Name of the event
  * @param {Function} callback The callback function that was added as a listener
  * @return {Boolean} TRUE is the listener was removed successfully, FALSE otherwise (for example in cases when the listener doesn't exist)
- */
+ *********************************************************************************************************/
 YSLOW.removeEventListener = function (event_name, callback) {
     return YSLOW.util.event.removeListener(event_name, callback);
 };
 
-/**
+/*********************************************************************************************************
  * @namespace YSLOW
  * @constructor
  * @param {String} name Error type
  * @param {String} message Error description
- */
+ *********************************************************************************************************/
 YSLOW.Error = function (name, message) {
-    /**
+    /*********************************************************************************************************
      * Type of error, e.g. "Interface error"
      * @type String
-     */
+     *********************************************************************************************************/
     this.name = name;
-    /**
+    /*********************************************************************************************************
      * Error description
      * @type String
-     */
+     *********************************************************************************************************/
     this.message = message;
 };
 
@@ -147,21 +103,21 @@ YSLOW.Error.prototype = {
     }
 };
 YSLOW.version = '3.1.0';
-/**
+/*********************************************************************************************************
  * Copyright (c) 2012, Yahoo! Inc.  All rights reserved.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
+ *********************************************************************************************************/
 
 /*global YSLOW,MutationEvent*/
 /*jslint browser: true, continue: true, sloppy: true, maxerr: 50, indent: 4 */
 
-/**
+/*********************************************************************************************************
  * ComponentSet holds an array of all the components and get the response info from net module for each component.
  *
  * @constructor
  * @param {DOMElement} node DOM Element
  * @param {Number} onloadTimestamp onload timestamp
- */
+ *********************************************************************************************************/
 YSLOW.ComponentSet = function (node, onloadTimestamp) {
 
     //
@@ -179,20 +135,20 @@ YSLOW.ComponentSet = function (node, onloadTimestamp) {
 
 YSLOW.ComponentSet.prototype = {
 
-    /**
+    /*********************************************************************************************************
      * Call this function when you don't use the component set any more.
      * A chance to do proper clean up, e.g. remove event listener.
-     */
+     *********************************************************************************************************/
     clear: function () {
         this.components = [];
         this.component_info = [];
         this.cleared = true;
         if (this.outstanding_net_request > 0) {
-            YSLOW.util.dump("YSLOW.ComponentSet.Clearing component set before all net requests finish.");
+        	console.log("YSLOW.ComponentSet.Clearing component set before all net requests finish.");
         }
     },
 
-    /**
+    /*********************************************************************************************************
      * Add a new component to the set.
      * @param {String} url URL of component
      * @param {String} type type of component
@@ -200,7 +156,7 @@ YSLOW.ComponentSet.prototype = {
      * @param {Object} obj DOMElement (for image type only)
      * @return Component object that was added to ComponentSet
      * @type ComponentObject
-     */
+     *********************************************************************************************************/
     addComponent: function (url, type, base_href, o) {
         var comp, found, isDoc;
 
@@ -262,12 +218,12 @@ YSLOW.ComponentSet.prototype = {
         return comp;
     },
 
-    /**
+    /*********************************************************************************************************
      * Add a new component to the set, ignore duplicate.
      * @param {String} url url of component
      * @param {String} type type of component
      * @param {String} base_href base href of document that the component belongs.
-     */
+     *********************************************************************************************************/
     addComponentWithDuplicate: function (url, type, base_href) {
 
         if (url && type) {
@@ -280,7 +236,7 @@ YSLOW.ComponentSet.prototype = {
         }
     },
 
-    /**
+    /*********************************************************************************************************
      * Get components by type.
      *
      * @param {String|Array} type The type of component to get, e.g. "js" or
@@ -293,7 +249,7 @@ YSLOW.ComponentSet.prototype = {
      *        include
      * @return An array of matching components
      * @type Array
-     */
+     *********************************************************************************************************/
     getComponentsByType: function (type, includeAfterOnload, includeBeacons) {
         var i, j, len, lenJ, t, comp, info,
             components = this.components,
@@ -348,11 +304,11 @@ YSLOW.ComponentSet.prototype = {
         return comps;
     },
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Get fetching progress.
      * @return { 'total' => total number of component, 'received' => number of components fetched  }
-     */
+     *********************************************************************************************************/
     getProgress: function () {
         var i,
             total = 0,
@@ -374,10 +330,10 @@ YSLOW.ComponentSet.prototype = {
         };
     },
 
-    /**
+    /*********************************************************************************************************
      * Event callback when component's GetInfoState changes.
      * @param {Object} event object
-     */
+     *********************************************************************************************************/
     onComponentGetInfoStateChange: function (event_object) {
         var comp, state, progress;
 
@@ -391,7 +347,7 @@ YSLOW.ComponentSet.prototype = {
         }
         if (typeof this.component_info[comp.url] === 'undefined') {
             // this should not happen.
-            YSLOW.util.dump("YSLOW.ComponentSet.onComponentGetInfoStateChange(): Unexpected component: " + comp.url);
+        	console.log("YSLOW.ComponentSet.onComponentGetInfoStateChange(): Unexpected component: " + comp.url);
             return;
         }
 
@@ -409,7 +365,7 @@ YSLOW.ComponentSet.prototype = {
             }
         } else {
             // how does this happen?
-            YSLOW.util.dump("Unexpected component info state: [" + comp.type + "]" + comp.url + "state: " + state + " comp_info_state: " + this.component_info[comp.url].state);
+        	console.log("Unexpected component info state: [" + comp.type + "]" + comp.url + "state: " + state + " comp_info_state: " + this.component_info[comp.url].state);
         }
 
         // fire event.
@@ -421,10 +377,10 @@ YSLOW.ComponentSet.prototype = {
         });
     },
 
-    /**
+    /*********************************************************************************************************
      * This is called when peeler is done.
      * If ComponentSet has all the component info, fire componentFetchDone event.
-     */
+     *********************************************************************************************************/
     notifyPeelDone: function () {
         if (this.outstanding_net_request === 0 && !this.notified_fetch_done) {
             this.notified_fetch_done = true;
@@ -434,11 +390,11 @@ YSLOW.ComponentSet.prototype = {
         }
     },
 
-    /**
+    /*********************************************************************************************************
      * After onload guess (simple version)
      * Checkes for elements with src or href attributes within
      * the original document html source
-     */
+     *********************************************************************************************************/
     setSimpleAfterOnload: function (callback, obj) {
         var i, j, comp, doc_el, doc_comps, src,
             indoc, url, el, type, len, lenJ,
@@ -458,7 +414,7 @@ YSLOW.ComponentSet.prototype = {
 
         // skip testing when doc not found
         if (!docBody) {
-            YSLOW.util.dump('doc body is empty');
+        	console.log('doc body is empty');
             return callback(that);
         }
 
@@ -491,11 +447,11 @@ YSLOW.ComponentSet.prototype = {
         callback(that);
     },
 
-    /**
+    /*********************************************************************************************************
      * After onload guess
      * Checkes for inserted elements with src or href attributes after the
      * page onload event triggers using an iframe with original doc html
-     */
+     *********************************************************************************************************/
     setAfterOnload: function (callback, obj) {
         var ifrm, idoc, iwin, timer, done, noOnloadTimer,
             that, docBody, doc, components, ret, enough, triggered,
@@ -651,18 +607,18 @@ YSLOW.ComponentSet.prototype = {
     }
 };
 
-/*
+/*********************************************************************************************************
  * List of protocols to ignore in component set.
- */
+ *********************************************************************************************************/
 YSLOW.ComponentSet.ignoreProtocols = ['data', 'chrome', 'javascript', 'about',
     'resource', 'jar', 'chrome-extension', 'file'];
 
-/**
+/*********************************************************************************************************
  * @private
  * Check if url has an allowed protocol (no chrome://, about:)
  * @param url
  * @return false if url does not contain hostname.
- */
+ *********************************************************************************************************/
 YSLOW.ComponentSet.isValidProtocol = function (s) {
     var i, index, protocol,
         ignoreProtocols = this.ignoreProtocols,
@@ -683,12 +639,12 @@ YSLOW.ComponentSet.isValidProtocol = function (s) {
 };
 
 
-/**
+/*********************************************************************************************************
  * @private
  * Check if passed url has hostname specified.
  * @param url
  * @return false if url does not contain hostname.
- */
+ *********************************************************************************************************/
 YSLOW.ComponentSet.isValidURL = function (url) {
     var arr, host;
 
@@ -711,30 +667,30 @@ YSLOW.ComponentSet.isValidURL = function (url) {
 
     return true;
 };
-/**
+/*********************************************************************************************************
  * Copyright (c) 2012, Yahoo! Inc.  All rights reserved.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
+ *********************************************************************************************************/
 
 /*global YSLOW*/
 /*jslint white: true, onevar: true, undef: true, newcap: true, nomen: true, plusplus: true, bitwise: true, browser: true, maxerr: 50, indent: 4 */
 
-/**
+/*********************************************************************************************************
  * @namespace YSLOW
  * @class Component
  * @constructor
- */
+ *********************************************************************************************************/
 YSLOW.Component = function (url, type, parent_set, o) {
     var obj = o && o.obj,
         comp = (o && o.comp) || {};
 
-    /**
+    /*********************************************************************************************************
      * URL of the component
      * @type String
-     */
+     *********************************************************************************************************/
     this.url = url;
 
-    /**
+    /*********************************************************************************************************
      * Component type, one of the following:
      * <ul>
      *  <li>doc</li>
@@ -743,12 +699,12 @@ YSLOW.Component = function (url, type, parent_set, o) {
      *  <li>...</li>
      * </ul>
      * @type String
-     */
+     *********************************************************************************************************/
     this.type = type;
 
-    /**
+    /*********************************************************************************************************
      * Parent component set.
-     */
+     *********************************************************************************************************/
     this.parent = parent_set;
 
     this.headers = {};
@@ -972,9 +928,9 @@ YSLOW.Component.prototype.setComponentDetails = function (o) {
     }
 };
 
-/**
+/*********************************************************************************************************
  * Return the state of getting detail info from the net.
- */
+ *********************************************************************************************************/
 YSLOW.Component.prototype.getInfoState = function () {
     return this.get_info_state;
 };
@@ -1092,9 +1048,9 @@ YSLOW.Component.prototype.populateProperties = function (resolveRedirect, ignore
     }
 };
 
-/**
+/*********************************************************************************************************
  *  Return true if this object has a last-modified date significantly in the past.
- */
+ *********************************************************************************************************/
 YSLOW.Component.prototype.hasOldModifiedDate = function () {
     var now = Number(new Date()),
         modified_date = this.headers['last-modified'];
@@ -1107,12 +1063,12 @@ YSLOW.Component.prototype.hasOldModifiedDate = function () {
     return false;
 };
 
-/**
+/*********************************************************************************************************
  * Return true if this object has a far future Expires.
  * @todo: make the "far" interval configurable
  * @param expires Date object
  * @return true if this object has a far future Expires.
- */
+ *********************************************************************************************************/
 YSLOW.Component.prototype.hasFarFutureExpiresOrMaxAge = function () {
     var expires_in_seconds,
         now = Number(new Date()),
@@ -1150,11 +1106,11 @@ YSLOW.Component.prototype.getMaxAge = function () {
     return expires;
 };
 
-/**
+/*********************************************************************************************************
  * Return total size of Set-Cookie headers of this component.
  * @return total size of Set-Cookie headers of this component.
  * @type Number
- */
+ *********************************************************************************************************/
 YSLOW.Component.prototype.getSetCookieSize = function () {
     // only return total size of cookie received.
     var aCookies, k,
@@ -1173,11 +1129,11 @@ YSLOW.Component.prototype.getSetCookieSize = function () {
     return size;
 };
 
-/**
+/*********************************************************************************************************
  * Return total size of Cookie HTTP Request headers of this component.
  * @return total size of Cookie headers Request of this component.
  * @type Number
- */
+ *********************************************************************************************************/
 YSLOW.Component.prototype.getReceivedCookieSize = function () {
     // only return total size of cookie sent.
     var aCookies, k,
@@ -1194,20 +1150,20 @@ YSLOW.Component.prototype.getReceivedCookieSize = function () {
 
     return size;
 };
-/**
+/*********************************************************************************************************
  * Copyright (c) 2012, Yahoo! Inc.  All rights reserved.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
+ *********************************************************************************************************/
 
 /*global YSLOW*/
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true */
 
-/**
+/*********************************************************************************************************
  * YSlow context object that holds components set, result set and statistics of current page.
  *
  * @constructor
  * @param {Document} doc Document object of current page.
- */
+ *********************************************************************************************************/
 YSLOW.context = function (doc) {
     this.document = doc;
     this.component_set = null;
@@ -1246,13 +1202,13 @@ YSLOW.context.prototype = {
 
     defaultview: "ysPerfButton",
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Compute statistics of current page.
      * @param {Boolean} bCacheFull set to true if based on primed cache, false for empty cache.
      * @return stats object
      * @type Object
-     */
+     *********************************************************************************************************/
     computeStats: function (bCacheFull) {
         var comps, comp, compType, i, len, size, totalSize, aTypes,
             canvas_data, sType,
@@ -1261,7 +1217,7 @@ YSLOW.context.prototype = {
             nHttpRequests = 0;
 
         if (!this.component_set) {
-            /* need to run peeler first */
+            /* need to run peeler first *********************************************************************************************************/
             return;
         }
 
@@ -1319,9 +1275,9 @@ YSLOW.context.prototype = {
         };
     },
 
-    /**
+    /*********************************************************************************************************
      * Collect Statistics of the current page.
-     */
+     *********************************************************************************************************/
     collectStats: function () {
         var stats = this.computeStats();
         if (stats !== undefined) {
@@ -1342,98 +1298,20 @@ YSLOW.context.prototype = {
         }
     },
 
-    /**
-     * Call registered renderer to generate Grade view with the passed output format.
-     *
-     * @param {String} output_format output format, e.g. 'html', 'xml'
-     * @return Grade in the passed output format.
-     */
-    genPerformance: function (output_format, doc) {
-        if (this.result_set === null) {
-            if (!doc) {
-                doc = this.document;
-            }
-            YSLOW.controller.lint(doc, this);
-        }
-        return YSLOW.controller.render(output_format, 'reportcard', {
-            'result_set': this.result_set
-        });
-    },
-
-    /**
-     * Call registered renderer to generate Stats view with the passed output format.
-     *
-     * @param {String} output_format output format, e.g. 'html', 'xml'
-     * @return Stats in the passed output format.
-     */
-    genStats: function (output_format) {
-        var stats = {};
-        if (!this.PAGE.totalSize) {
-            // collect stats
-            this.collectStats();
-        }
-        stats.PAGE = this.PAGE;
-        return YSLOW.controller.render(output_format, 'stats', {
-            'stats': stats
-        });
-    },
-
-    /**
-     * Call registered renderer to generate Components view with the passed output format.
-     *
-     * @param {String} output_format output format, e.g. 'html', 'xml'
-     * @return Components in the passed output format.
-     */
-    genComponents: function (output_format) {
-        if (!this.PAGE.totalSize) {
-            // collect stats
-            this.collectStats();
-        }
-        return YSLOW.controller.render(output_format, 'components', {
-            'comps': this.component_set.components,
-            'total_size': this.PAGE.totalSize
-        });
-    },
-
-    /**
-     * Call registered renderer to generate Tools view with the passed output format.
-     *
-     * @param {String} output_format output format, e.g. 'html'
-     * @return Tools in the passed output format.
-     */
-    genToolsView: function (output_format) {
-        var tools = YSLOW.Tools.getAllTools();
-        return YSLOW.controller.render(output_format, 'tools', {
-            'tools': tools
-        });
-    },
-
-    /**
-     * Call registered renderer to generate Ruleset Settings view with the passed output format.
-     *
-     * @param {String} output_format output format, e.g. 'html'
-     * @return Ruleset Settings in the passed output format.
-     */
-    genRulesetEditView: function (output_format) {
-        return YSLOW.controller.render(output_format, 'rulesetEdit', {
-            'rulesets': YSLOW.controller.getRegisteredRuleset()
-        });
-    }
-
 };
-/**
+/*********************************************************************************************************
  * Copyright (c) 2012, Yahoo! Inc.  All rights reserved.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
+ *********************************************************************************************************/
 
-/*global YSLOW*/
+/*global YSLOW */
 /*jslint white: true, browser: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true */
 
-/**
+/*********************************************************************************************************
  * @namespace YSLOW
  * @class controller
  * @static
- */
+ *********************************************************************************************************/
 
 YSLOW.controller = {
 
@@ -1449,53 +1327,14 @@ YSLOW.controller = {
 
     run_pending: 0,
 
-    /**
-     * Init code.  Add event listeners.
-     */
-    init: function () {
-        var arr_rulesets, i, obj, value;
-
-        // listen to onload event.
-        YSLOW.util.event.addListener("onload", function (e) {
-            this.onloadTimestamp = e.time;
-            YSLOW.util.setTimer(function () {
-                YSLOW.controller.run_pending_event();
-            });
-        }, this);
-
-        // listen to onunload event.
-        YSLOW.util.event.addListener("onUnload", function (e) {
-            this.run_pending = 0;
-            this.onloadTimestamp = null;
-        }, this);
-
-        // load custom ruleset
-        arr_rulesets = YSLOW.util.Preference.getPrefList("customRuleset.", undefined);
-        if (arr_rulesets && arr_rulesets.length > 0) {
-            for (i = 0; i < arr_rulesets.length; i += 1) {
-                value = arr_rulesets[i].value;
-                if (typeof value === "string" && value.length > 0) {
-                    obj = JSON.parse(value, null);
-                    obj.custom = true;
-                    this.addRuleset(obj);
-                }
-            }
-        }
-
-        this.default_ruleset_id = YSLOW.util.Preference.getPref("defaultRuleset", 'ydefault');
-
-        // load rule config preference
-        this.loadRulePreference();
-    },
-
-    /**
+    /*********************************************************************************************************
      * Run controller to start peeler. Don't start if the page is not done loading.
      * Delay the running until onload event.
      *
      * @param {Window} win window object
      * @param {YSLOW.context} yscontext YSlow context to use.
      * @param {Boolean} autorun value to indicate if triggered by autorun
-     */
+     *********************************************************************************************************/
     run: function (win, yscontext, autorun) {
         var cset, line,
             doc = win.document;
@@ -1535,17 +1374,7 @@ YSLOW.controller = {
         cset.notifyPeelDone();
     },
 
-    /**
-     * Start pending run function.
-     */
-    run_pending_event: function () {
-        if (this.run_pending) {
-            this.run(this.run_pending.win, this.run_pending.yscontext, false);
-            this.run_pending = 0;
-        }
-    },
-
-    /**
+    /*********************************************************************************************************
      * Run lint function of the ruleset matches the passed rulset_id.
      * If ruleset_id is undefined, use Controller's default ruleset.
      * @param {Document} doc Document object of the page to run lint.
@@ -1553,7 +1382,7 @@ YSLOW.controller = {
      * @param {String} ruleset_id ID of the ruleset to run.
      * @return Lint result
      * @type YSLOW.ResultSet
-     */
+     *********************************************************************************************************/
     lint: function (doc, yscontext, ruleset_id) {
         var rule, rules, i, conf, result, weight, score,
             ruleset = [],
@@ -1635,7 +1464,7 @@ YSLOW.controller = {
 
                     results[results.length] = result;
                 } catch (err) {
-                    YSLOW.util.dump("YSLOW.controller.lint: " + i, err);
+                	console.log("YSLOW.controller.lint: " + i, err);
                     YSLOW.util.event.fire("lintError", {
                         'rule': i,
                         'message': err
@@ -1654,82 +1483,14 @@ YSLOW.controller = {
         return yscontext.result_set;
     },
 
-    /**
-     * Run tool that matches the passed tool_id
-     * @param {String} tool_id ID of the tool to be run.
-     * @param {YSLOW.context} yscontext YSlow context
-     * @param {Object} param parameters to be passed to run method of tool.
-     */
-    runTool: function (tool_id, yscontext, param) {
-        var result, html, doc, h, css, uri, req2, l, s, message, body,
-            tool = YSLOW.Tools.getTool(tool_id);
 
-        try {
-            if (typeof tool === "object") {
-                result = tool.run(yscontext.document, yscontext.component_set, param);
-                if (tool.print_output) {
-                    html = '';
-                    if (typeof result === "object") {
-                        html = result.html;
-                    } else if (typeof result === "string") {
-                        html = result;
-                    }
-                    doc = YSLOW.util.getNewDoc();
-                    body = doc.body || doc.documentElement;
-                    body.innerHTML = html;
-                    h = doc.getElementsByTagName('head')[0];
-                    if (typeof result.css === "undefined") {
-                        // use default.
-                        uri = 'chrome://yslow/content/yslow/tool.css';
-                        req2 = new XMLHttpRequest();
-                        req2.open('GET', uri, false);
-                        req2.send(null);
-                        css = req2.responseText;
-                    } else {
-                        css = result.css;
-                    }
-                    if (typeof css === "string") {
-                        l = doc.createElement("style");
-                        l.setAttribute("type", "text/css");
-                        l.appendChild(doc.createTextNode(css));
-                        h.appendChild(l);
-                    }
-
-                    if (typeof result.js !== "undefined") {
-                        s = doc.createElement("script");
-                        s.setAttribute("type", "text/javascript");
-                        s.appendChild(doc.createTextNode(result.js));
-                        h.appendChild(s);
-                    }
-                    if (typeof result.plot_component !== "undefined" && result.plot_component === true) {
-                        // plot components
-                        YSLOW.renderer.plotComponents(doc, yscontext);
-                    }
-                }
-            } else {
-                message = tool_id + " is not a tool.";
-                YSLOW.util.dump(message);
-                YSLOW.util.event.fire("toolError", {
-                    'tool_id': tool_id,
-                    'message': message
-                });
-            }
-        } catch (err) {
-            YSLOW.util.dump("YSLOW.controller.runTool: " + tool_id, err);
-            YSLOW.util.event.fire("toolError", {
-                'tool_id': tool_id,
-                'message': err
-            });
-        }
-    },
-
-    /**
+    /*********************************************************************************************************
      * Find a registered renderer with the passed id to render the passed view.
      * @param {String} id ID of renderer to be used. eg. 'html'
      * @param {String} view id of view, e.g. 'reportcard', 'stats' and 'components'
      * @param {Object} params parameter object to pass to XXXview method of renderer.
      * @return content the renderer generated.
-     */
+     *********************************************************************************************************/
     render: function (id, view, params) {
         var renderer = this.renderers[id],
             content = '';
@@ -1757,17 +1518,17 @@ YSLOW.controller = {
 
     },
 
-    /**
+    /*********************************************************************************************************
      * Get registered renderer with the passed id.
      * @param {String} id ID of the renderer
-     */
+     *********************************************************************************************************/
     getRenderer: function (id) {
         return this.renderers[id];
     },
 
-    /**
+    /*********************************************************************************************************
      * @see YSLOW.registerRule
-     */
+     *********************************************************************************************************/
     addRule: function (rule) {
         var i, doc_obj,
             required = ['id', 'name', 'config', 'info', 'lint'];
@@ -1794,9 +1555,9 @@ YSLOW.controller = {
         this.rules[rule.id] = rule;
     },
 
-    /**
+    /*********************************************************************************************************
      * @see YSLOW.registerRuleset
-     */
+     *********************************************************************************************************/
     addRuleset: function (ruleset, update) {
         var i, required = ['id', 'name', 'rules'];
 
@@ -1811,10 +1572,10 @@ YSLOW.controller = {
         this.rulesets[ruleset.id] = ruleset;
     },
 
-    /**
+    /*********************************************************************************************************
      * Remove ruleset from controller.
      * @param {String} ruleset_id ID of the ruleset to be deleted.
-     */
+     *********************************************************************************************************/
     removeRuleset: function (ruleset_id) {
         var ruleset = this.rulesets[ruleset_id];
 
@@ -1832,72 +1593,49 @@ YSLOW.controller = {
         return null;
     },
 
-    /**
+    /*********************************************************************************************************
      * Save ruleset to preference.
      * @param {YSLOW.Ruleset} ruleset ruleset to be saved.
-     */
+     *********************************************************************************************************/
     saveRulesetToPref: function (ruleset) {
         if (ruleset.custom === true) {
             YSLOW.util.Preference.setPref("customRuleset." + ruleset.id, JSON.stringify(ruleset, null, 2));
         }
     },
 
-    /**
+    /*********************************************************************************************************
      * Remove ruleset from preference.
      * @param {YSLOW.Ruleset} ruleset ruleset to be deleted.
-     */
+     *********************************************************************************************************/
     deleteRulesetFromPref: function (ruleset) {
         if (ruleset.custom === true) {
             YSLOW.util.Preference.deletePref("customRuleset." + ruleset.id);
         }
     },
 
-    /**
+    /*********************************************************************************************************
      * Get ruleset with the passed id.
      * @param {String} ruleset_id ID of ruleset to be retrieved.
-     */
+     *********************************************************************************************************/
     getRuleset: function (ruleset_id) {
         return this.rulesets[ruleset_id];
     },
 
-    /**
-     * @see YSLOW.registerRenderer
-     */
-    addRenderer: function (renderer) {
-        this.renderers[renderer.id] = renderer;
-    },
-
-    /**
-     * Return a hash of registered ruleset objects.
-     * @return a hash of rulesets with ruleset_id => ruleset
-     */
-    getRegisteredRuleset: function () {
-        return this.rulesets;
-    },
-
-    /**
-     * Return a hash of registered rule objects.
-     * @return all the registered rule objects in a hash. rule_id => rule object
-     */
-    getRegisteredRules: function () {
-        return this.rules;
-    },
-
-    /**
+    /*********************************************************************************************************
      * Return the rule object identified by rule_id
      * @param {String} rule_id ID of rule object to be retrieved.
      * @return rule object.
-     */
+     *********************************************************************************************************/
     getRule: function (rule_id) {
         return this.rules[rule_id];
     },
 
-    /**
+    /*********************************************************************************************************
      * Check if name parameter is conflict with any existing ruleset name.
      * @param {String} name Name to check.
      * @return true if name conflicts, false otherwise.
      * @type Boolean
-     */
+     *********************************************************************************************************/
     checkRulesetName: function (name) {
         var id, ruleset,
             rulesets = this.rulesets;
@@ -1914,71 +1652,28 @@ YSLOW.controller = {
         }
 
         return false;
-    },
-
-    /**
-     * Set default ruleset.
-     * @param {String} id ID of the ruleset to be used as default.
-     */
-    setDefaultRuleset: function (id) {
-        if (this.rulesets[id] !== undefined) {
-            this.default_ruleset_id = id;
-            // save to pref
-            YSLOW.util.Preference.setPref("defaultRuleset", id);
-        }
-    },
-
-    /**
-     * Get default ruleset.
-     * @return default ruleset
-     * @type YSLOW.Ruleset
-     */
-    getDefaultRuleset: function () {
-        if (this.rulesets[this.default_ruleset_id] === undefined) {
-            this.setDefaultRuleset('ydefault');
-        }
-        return this.rulesets[this.default_ruleset_id];
-    },
-
-    /**
-     * Get default ruleset id
-     * @return ID of the default ruleset
-     * @type String
-     */
-    getDefaultRulesetId: function () {
-        return this.default_ruleset_id;
-    },
-
-    /**
-     * Load user preference for some rules. This is needed before enabling user writing ruleset yslow plugin.
-     */
-    loadRulePreference: function () {
-        var rule = this.getRule('yexpires'),
-            minSeconds = YSLOW.util.Preference.getPref("minFutureExpiresSeconds", 2 * 24 * 60 * 60);
-
-        if (minSeconds > 0 && rule) {
-            rule.config.howfar = minSeconds;
-        }
     }
+
+
 };
-/*global YSLOW, Firebug, Components, ActiveXObject, gBrowser, window, getBrowser*/
+/*global YSLOW, Firebug, Components, ActiveXObject, gBrowser, window, getBrowser */
 /*jslint white: true, onevar: true, undef: true, newcap: true, nomen: true, regexp: true, plusplus: true, browser: true, devel: true, maxerr: 50, indent: 4 */
 
-/**
+/*********************************************************************************************************
  * @namespace YSLOW
  * @class util
  * @static
- */
+ *********************************************************************************************************/
 YSLOW.util = {
 
-    /**
+    /*********************************************************************************************************
      * merges two objects together, the properties of the second
      * overwrite the properties of the first
      *
      * @param {Object} a Object a
      * @param {Object} b Object b
      * @return {Object} A new object, result of the merge
-     */
+     *********************************************************************************************************/
     merge: function (a, b) {
         var i, o = {};
 
@@ -1994,66 +1689,6 @@ YSLOW.util = {
         }
         return o;
 
-    },
-
-
-    /**
-     * Dumps debug information in FB console, Error console or alert
-     *
-     * @param {Object} what Object to dump
-     */
-    dump: function () {
-        var args;
-
-        // skip when debbuging is disabled
-        if (!YSLOW.DEBUG) {
-            return;
-        }
-
-        // get arguments and normalize single parameter
-        args = Array.prototype.slice.apply(arguments);
-        args = args && args.length === 1 ? args[0] : args;
-
-        try {
-            if (typeof Firebug !== 'undefined' && Firebug.Console
-                    && Firebug.Console.log) { // Firebug
-                Firebug.Console.log(args);
-            } else if (typeof Components !== 'undefined' && Components.classes
-                    && Components.interfaces) { // Firefox
-                Components.classes['@mozilla.org/consoleservice;1']
-                    .getService(Components.interfaces.nsIConsoleService)
-                    .logStringMessage(JSON.stringify(args, null, 2));
-            }
-        } catch (e1) {
-            try {
-                console.log(args);
-            } catch (e2) {
-                // alert shouldn't be used due to its annoying modal behavior
-            }
-        } 
-    },
-
-    /**
-     * Filters an object/hash using a callback
-     *
-     * The callback function will be passed two params - a key and a value of each element
-     * It should return TRUE is the element is to be kept, FALSE otherwise
-     *
-     * @param {Object} hash Object to be filtered
-     * @param {Function} callback A callback function
-     * @param {Boolean} rekey TRUE to return a new array, FALSE to return an object and keep the keys/properties
-     */
-    filter: function (hash, callback, rekey) {
-        var i,
-            result = rekey ? [] : {};
-
-        for (i in hash) {
-            if (hash.hasOwnProperty(i) && callback(i, hash[i])) {
-                result[rekey ? result.length : i] = hash[i];
-            }
-        }
-
-        return result;
     },
 
     expires_month: {
@@ -2072,14 +1707,14 @@ YSLOW.util = {
     },
 
 
-    /**
+    /*********************************************************************************************************
      * Make a pretty string out of an Expires object.
      *
      * @todo Remove or replace by a general-purpose date formatting method
      *
      * @param {String} s_expires Datetime string
      * @return {String} Prity date
-     */
+     *********************************************************************************************************/
     prettyExpiresDate: function (expires) {
         var month;
 
@@ -2092,12 +1727,12 @@ YSLOW.util = {
         return 'invalid date object';
     },
 
-    /**
+    /*********************************************************************************************************
      * Converts cache-control: max-age=? into a JavaScript date
      *
      * @param {Integer} seconds Number of seconds in the cache-control header
      * @return {Date} A date object coresponding to the expiry date
-     */
+     *********************************************************************************************************/
     maxAgeToDate: function (seconds) {
         var d = new Date();
 
@@ -2105,7 +1740,7 @@ YSLOW.util = {
         return new Date(d);
     },
 
-    /**
+    /*********************************************************************************************************
      * Produces nicer sentences accounting for single/plural occurences.
      *
      * For example: "There are 3 scripts" vs "There is 1 script".
@@ -2116,7 +1751,7 @@ YSLOW.util = {
      * @param {String} template A template with tags, like "There %are% %num% script%s%"
      * @param {Integer} num An integer value that replaces %num% and also deternmines how the other tags will be replaced
      * @return {String} The text after substitution
-     */
+     *********************************************************************************************************/
     plural: function (template, number) {
         var i,
             res = template,
@@ -2137,29 +1772,8 @@ YSLOW.util = {
         return res;
     },
 
-    /**
-     * Counts the number of expression in a given piece of stylesheet.
-     *
-     * Expressions are identified by the presence of the literal string "expression(".
-     * There could be false positives in commented out styles.
-     *
-     * @param {String} content Text to inspect for the presence of expressions
-     * @return {Integer} The number of expressions in the text
-     */
-    countExpressions: function (content) {
-        var num_expr = 0,
-            index;
 
-        index = content.indexOf("expression(");
-        while (index !== -1) {
-            num_expr += 1;
-            index = content.indexOf("expression(", index + 1);
-        }
-
-        return num_expr;
-    },
-
-    /**
+    /*********************************************************************************************************
      * Counts the number of AlphaImageLoader filter in a given piece of stylesheet.
      *
      * AlphaImageLoader filters are identified by the presence of the literal string "filter:" and
@@ -2168,7 +1782,7 @@ YSLOW.util = {
      *
      * @param {String} content Text to inspect for the presence of filters
      * @return {Hash} 'filter type' => count. For Example, {'_filter' : count }
-     */
+     *********************************************************************************************************/
     countAlphaImageLoaderFilter: function (content) {
         var index, colon, filter_hack, value,
             num_filter = 0,
@@ -2207,25 +1821,25 @@ YSLOW.util = {
         return result;
     },
 
-    /**
+    /*********************************************************************************************************
      * Returns the hostname (domain) for a given URL
      * 
      * @param {String} url The absolute URL to get hostname from
      * @return {String} The hostname
-     */
+     *********************************************************************************************************/
     getHostname: function (url) {
         var hostname = url.split('/')[2];
 
         return (hostname && hostname.split(':')[0]) || '';
     },
 
-    /**
+    /*********************************************************************************************************
      * Returns an array of unique domain names, based on a given array of components
      *
      * @param {Array} comps An array of components (not a @see ComponentSet)
      * @param {Boolean} exclude_ips Whether to exclude IP addresses from the list of domains (for DNS check purposes)
      * @return {Array} An array of unique domian names
-     */
+     *********************************************************************************************************/
     getUniqueDomains: function (comps, exclude_ips) {
         var i, len, parts,
             domains = {},
@@ -2311,7 +1925,7 @@ YSLOW.util = {
         return retval;
     },
 
-    /**
+    /*********************************************************************************************************
      * Checks if a given piece of text (sctipt, stylesheet) is minified.
      *
      * The logic is: we strip consecutive spaces, tabs and new lines and
@@ -2319,7 +1933,7 @@ YSLOW.util = {
      *
      * @param {String} contents The text to be checked for minification
      * @return {Object} 
-     */
+     *********************************************************************************************************/
     isMinified: function (contents) {
         var len = contents.length,
             striplen;
@@ -2351,7 +1965,7 @@ YSLOW.util = {
         return minifyData;
     },
     
-    /**
+    /*********************************************************************************************************
      * Inspects the ETag.
      *
      * Returns FALSE (bad ETag) only if the server is Apache or IIS and the ETag format
@@ -2362,7 +1976,7 @@ YSLOW.util = {
      *
      * @param {String} etag ETag response header
      * @return {Boolean} TRUE if ETag is good, FALSE otherwise
-     */
+     *********************************************************************************************************/
     isETagGood: function (etag) {
         var reIIS = /^[0-9a-f]+:[0-9a-f]+$/,
             reApache = /^[0-9a-f]+\-[0-9a-f]+\-[0-9a-f]+$/;
@@ -2375,39 +1989,12 @@ YSLOW.util = {
         return !(reApache.test(etag) || reIIS.test(etag));
     },
 
-    /**
-     * Get internal component type from passed mime type.
-     * @param {String} content_type mime type of the content.
-     * @return yslow internal component type
-     * @type String
-     */
-    getComponentType: function (content_type) {
-        var c_type = 'unknown';
 
-        if (content_type && typeof content_type === "string") {
-            if (content_type === "text/html" || content_type === "text/plain") {
-                c_type = 'doc';
-            } else if (content_type === "text/css") {
-                c_type = 'css';
-            } else if (/javascript/.test(content_type)) {
-                c_type = 'js';
-            } else if (/flash/.test(content_type)) {
-                c_type = 'flash';
-            } else if (/image/.test(content_type)) {
-                c_type = 'image';
-            } else if (/font/.test(content_type)) {
-                c_type = 'font';
-            }
-        }
-
-        return c_type;
-    },
-
-    /**
+    /*********************************************************************************************************
      * base64 encode the data. This works with data that fails win.atob.
      * @param {bytes} data data to be encoded.
      * @return bytes array of data base64 encoded.
-     */
+     *********************************************************************************************************/
     base64Encode: function (data) {
         var i, a, b, c, new_data = '',
             padding = 0,
@@ -2445,11 +2032,11 @@ YSLOW.util = {
         return new_data;
     },
 
-    /**
+    /*********************************************************************************************************
      * Creates x-browser XHR objects
      *
      * @return {XMLHTTPRequest} A new XHR object
-     */
+     *********************************************************************************************************/
     getXHR: function () {
         var i = 0,
             xhr = null,
@@ -2471,14 +2058,14 @@ YSLOW.util = {
         return xhr;
     },
 
-    /**
+    /*********************************************************************************************************
      * Returns the computed style
      *
      * @param {HTMLElement} el A node
      * @param {String} st Style identifier, e.g. "backgroundImage"
      * @param {Boolean} get_url Whether to return a url
      * @return {String|Boolean} The value of the computed style, FALSE if get_url is TRUE and the style is not a URL
-     */
+     *********************************************************************************************************/
     getComputedStyle: function (el, st, get_url) {
         var style, urlMatch,
             res = '';
@@ -2510,25 +2097,25 @@ YSLOW.util = {
         }
     },
 
-    /**
+    /*********************************************************************************************************
      * escape '<' and '>' in the passed html code.
      * @param {String} html code to be escaped.
      * @return escaped html code
      * @type String
-     */
+     *********************************************************************************************************/
     escapeHtml: function (html) {
         return (html || '').toString()
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;");
     },
 
-    /**
+    /*********************************************************************************************************
      * escape quotes in the passed html code.
      * @param {String} str string to be escaped.
      * @param {String} which type of quote to be escaped. 'single' or 'double'
      * @return escaped string code
      * @type String
-     */
+     *********************************************************************************************************/
     escapeQuotes: function (str, which) {
         if (which === 'single') {
             return str.replace(/\'/g, '\\\''); // '
@@ -2539,12 +2126,12 @@ YSLOW.util = {
         return str.replace(/\'/g, '\\\'').replace(/\"/g, '\\\"'); // ' and "
     },
 
-    /**
+    /*********************************************************************************************************
      * Convert a HTTP header name to its canonical form,
      * e.g. "content-length" => "Content-Length".
      * @param headerName the header name (case insensitive)
      * @return {String} the formatted header name
-     */
+     *********************************************************************************************************/
     formatHeaderName: (function () {
         var specialCases = {
             'content-md5': 'Content-MD5',
@@ -2571,25 +2158,25 @@ YSLOW.util = {
         };
     }()),
 
-    /**
+    /*********************************************************************************************************
      * Math mod method.
      * @param {Number} divisee
      * @param {Number} base
      * @return mod result
      * @type Number
-     */
+     *********************************************************************************************************/
     mod: function (divisee, base) {
         return Math.round(divisee - (Math.floor(divisee / base) * base));
     },
 
-    /**
+    /*********************************************************************************************************
      * Abbreviate the passed url to not exceed maxchars.
      * (Just display the hostname and first few chars after the last slash.
      * @param {String} url originial url
      * @param {Number} maxchars max. number of characters in the result string.
      * @return abbreviated url
      * @type String
-     */
+     *********************************************************************************************************/
     briefUrl: function (url, maxchars) {
         var iDoubleSlash, iQMark, iFirstSlash, iLastSlash;
 
@@ -2622,7 +2209,7 @@ YSLOW.util = {
         return url;
     },
 
-    /**
+    /*********************************************************************************************************
      * Return a string with an anchor around a long piece of text.
      * (It's confusing, but often the "long piece of text" is the URL itself.)
      * Snip the long text if necessary.
@@ -2636,7 +2223,7 @@ YSLOW.util = {
      * @param {String} rel rel attribute of anchor.
      * @return html code for the anchor.
      * @type String
-     */
+     *********************************************************************************************************/
     prettyAnchor: function (text, url, sClass, bBriefUrl, maxChars, numLines, rel) {
         var escaped_dq_url,
             sTitle = '',
@@ -2694,21 +2281,21 @@ YSLOW.util = {
         return sResults;
     },
 
-    /**
+    /*********************************************************************************************************
      * Convert a number of bytes into a readable KB size string.
      * @param {Number} size
      * @return readable KB size string
      * @type String
-     */
+     *********************************************************************************************************/
     kbSize: function (size) {
         var remainder = size % (size > 100 ? 100 : 10);
         size -= remainder;
         return parseFloat(size / 1000) + (0 === (size % 1000) ? ".0" : "") + "K";
     },
 
-    /**
+    /*********************************************************************************************************
      * @final
-     */
+     *********************************************************************************************************/
     prettyTypes: {
         "image": "Image",
         "doc": "HTML/Text",
@@ -2730,17 +2317,17 @@ YSLOW.util = {
      * @param {String} sType component type
      * @return display name of component type
      * @type String
-     */
+     *********************************************************************************************************/
     prettyType: function (sType) {
         return YSLOW.util.prettyTypes[sType];
     },
 
-    /**
+    /*********************************************************************************************************
      *  Return a letter grade for a score.
      * @param {String or Number} iScore
      * @return letter grade for a score
      * @type String
-     */
+     *********************************************************************************************************/
     prettyScore: function (score) {
         var letter = 'F';
 
@@ -2766,13 +2353,13 @@ YSLOW.util = {
         return letter;
     },
 
-    /**
+    /*********************************************************************************************************
      * Returns YSlow results as an Object.
      * @param {YSLOW.context} yscontext yslow context.
      * @param {String|Array} info Information to be shown
      *        (basic|grade|stats|comps|all) [basic].
      * @return {Object} the YSlow results object.
-     */
+     *********************************************************************************************************/
     getResults: function (yscontext, info) {
         var i, l, results, url, type, comps, comp, encoded_url, obj, cr,
             cs, etag, name, len, include_grade, include_comps, include_stats,
@@ -2938,72 +2525,15 @@ YSLOW.util = {
         return params;
     },
 
-    /**
-     * Send YSlow beacon.
-     * @param {Object} results Results object
-     *        generated by {@link YSLOW.util.getResults}.
-     * @param {String|Array} info Information to be beaconed
-     *        (basic|grade|stats|comps|all).
-     * @param {String} url The URL to fire beacon to.
-     * @return {String} The beacon content sent.
-     */
-    sendBeacon: function (results, info, url) {
-        var i, len, req, name, img,
-            beacon = '',
-            util = YSLOW.util,
-            pref = util.Preference,
-            method = 'get';
 
-        // default
-        info = (info || 'basic').split(',');
-
-        for (i = 0, len = info.length; i < len; i += 1) {
-            if (info[i] === 'all') {
-                method = 'post';
-                break;
-            } else {
-                switch (info[i]) {
-                case 'grade':
-                    method = 'post';
-                    break;
-                case 'stats':
-                    method = 'post';
-                    break;
-                case 'comps':
-                    method = 'post';
-                    break;
-                }
-            }
-        }
-
-        if (method === 'post') {
-            beacon = JSON.stringify(results, null);
-            req = util.getXHR();
-            req.open('POST', url, true);
-            req.setRequestHeader('Content-Length', beacon.length);
-            req.setRequestHeader('Content-Type', 'application/json');
-            req.send(beacon);
-        } else {
-            for (name in results) {
-                if (results.hasOwnProperty(name)) {
-                    beacon += name + '=' + results[name] + '&';
-                }
-            }
-            img = new Image();
-            img.src = url + '?' + beacon;
-        }
-
-        return beacon;
-    },
-
-    /**
+    /*********************************************************************************************************
      * Get the dictionary of params used in results.
      * @param {String|Array} info Results information
      *        (basic|grade|stats|comps|all).
      * @param {String} ruleset The Results ruleset used
      *        (ydefault|yslow1|yblog).
      * @return {Object} The dictionary object {key: value}.
-     */
+     *********************************************************************************************************/
     getDict: function (info, ruleset) {
         var i, len, include_grade, include_stats, include_comps,
             weights, rs,
@@ -3073,20 +2603,20 @@ YSLOW.util = {
         return dict;
     },
 
-    /**
+    /*********************************************************************************************************
      * Check if input is an Object
      * @param {Object} the input to check wheter it's an object or not
      * @return {Booleam} true for Object
-     */
+     *********************************************************************************************************/
     isObject: function (o) {
         return Object.prototype.toString.call(o).indexOf('Object') > -1;
     },
 
-    /**
+    /*********************************************************************************************************
      * Check if input is an Array
      * @param {Array} the input to check wheter it's an array or not
      * @return {Booleam} true for Array
-     */
+     *********************************************************************************************************/
     isArray: function (o) {
         if (Array.isArray) {
             return Array.isArray(o);
@@ -3095,11 +2625,11 @@ YSLOW.util = {
         }
     },
     
-    /**
+    /*********************************************************************************************************
      * Convert milliseconds to human readable time
      * @param {Integer} milliseconds
      * @return {String} Human readable time
-     */
+     *********************************************************************************************************/
     millisToTime: function (s) {
 
     	  var millis = s;
@@ -3135,12 +2665,12 @@ YSLOW.util = {
     	  return result;
     	},
 
-    /**
+    /*********************************************************************************************************
      * convert Object to XML
      * @param {Object} obj the Object to be converted to XML
      * @param {String} root the XML root (default = results)
      * @return {String} the XML
-     */
+     *********************************************************************************************************/
     objToXML: function (obj, root) {
         var toXML,
             util = YSLOW.util,
@@ -3194,11 +2724,11 @@ YSLOW.util = {
         return xml;
     },
 
-    /**
+    /*********************************************************************************************************
      * Pretty print results
      * @param {Object} obj the Object with YSlow results
      * @return {String} the results in plain text (pretty preinted)
-     */
+     *********************************************************************************************************/
     prettyPrintResults: function (obj) {
         var pp,
             util = YSLOW.util,
@@ -3280,12 +2810,12 @@ YSLOW.util = {
         return str;
     },
 
-    /**
+    /*********************************************************************************************************
      *  Try to find a spaceid in the HTML document source.
      * @param {YSLOW.ComponentSet} cset Component set.
      * @return spaceID string
      * @type string
-     */
+     *********************************************************************************************************/
     getPageSpaceid: function (cset) {
         var sHtml, aDelims, aTerminators, i, sDelim, i1, i2, spaceid,
             reDigits = /^\d+$/,
@@ -3314,18 +2844,18 @@ YSLOW.util = {
         return "";
     },
 
-    /**
+    /*********************************************************************************************************
      *  Dynamically add a stylesheet to the document.
      * @param {String} url URL of the css file
      * @param {Document} doc Documnet object
      * @return CSS element
      * @type HTMLElement
-     */
+     *********************************************************************************************************/
     loadCSS: function (url, doc) {
         var newCss;
 
         if (!doc) {
-            YSLOW.util.dump('YSLOW.util.loadCSS: doc is not specified');
+            console.log('YSLOW.util.loadCSS: doc is not specified');
             return '';
         }
 
@@ -3338,10 +2868,10 @@ YSLOW.util = {
         return newCss;
     },
 
-    /**
+    /*********************************************************************************************************
      * Open a link.
      * @param {String} url URL of page to be opened.
-     */
+     *********************************************************************************************************/
     openLink: function (url) {
         if (YSLOW.util.Preference.getPref("browser.link.open_external") === 3) {
             gBrowser.selectedTab = gBrowser.addTab(url);
@@ -3350,66 +2880,12 @@ YSLOW.util = {
         }
     },
 
-    /**
-     * Sends a URL to smush.it for optimization
-     * Example usage:
-     * <code>YSLOW.util.smushIt('http://smush.it/css/skin/screenshot.png', function(resp){alert(resp.dest)});</code>
-     * This code alerts the path to the optimized result image.
-     *
-     * @param {String} imgurl URL of the image to optimize
-     * @param {Function} callback Callback function that accepts an object returned from smush.it
-     */
-    smushIt: function (imgurl, callback) {
-        var xhr,
-            smushurl = this.getSmushUrl(),
-            url = smushurl + '/ws.php?img=' + encodeURIComponent(imgurl),
-            req = YSLOW.util.getXHR();
-
-        req.open('GET', url, true);
-        req.onreadystatechange = function (e) {
-            xhr = (e ? e.target : req);
-            if (xhr.readyState === 4) {
-                callback(JSON.parse(xhr.responseText));
-            }
-        };
-        req.send(null);
-    },
-
-    /**
-     * Get SmushIt server URL.
-     * @return URL of SmushIt server.
-     * @type String
-     */
-    getSmushUrl: function () {
-        var g_default_smushit_url = 'http://www.smushit.com/ysmush.it';
-
-        return YSLOW.util.Preference.getPref('smushItURL', g_default_smushit_url) + '/';
-    },
-
-    /**
-     * Create new tab and return its document object
-     * @return document object of the new tab content.
-     * @type Document
-     */
-    getNewDoc: function () {
-        var generatedPage = null,
-            request = new XMLHttpRequest();
-
-        getBrowser().selectedTab = getBrowser().addTab('about:blank');
-        generatedPage = window;
-        request.open("get", "about:blank", false);
-        request.overrideMimeType('text/html');
-        request.send(null);
-
-        return generatedPage.content.document;
-    },
-
-    /**
+    /*********************************************************************************************************
      * Make absolute url.
      * @param url
      * @param base href
      * @return absolute url built with base href.
-     */
+     *********************************************************************************************************/
     makeAbsoluteUrl: function (url, baseHref) {
         var hostIndex, path, lpath, protocol;
 
@@ -3442,10 +2918,10 @@ YSLOW.util = {
         return url;
     },
 
-    /**
+    /*********************************************************************************************************
      * Prevent event default action
      * @param {Object} event the event to prevent default action from
-     */
+     *********************************************************************************************************/
     preventDefault: function (event) {
         if (typeof event.preventDefault === 'function') {
             event.preventDefault();
@@ -3454,10 +2930,10 @@ YSLOW.util = {
         }
     },
 
-    /**
+    /*********************************************************************************************************
      * String Trim
      * @param string s the string to remove trail and header spaces
-     */
+     *********************************************************************************************************/
     trim: function (s) {
         try {
             return (s && s.trim) ? s.trim() : s.replace(/^\s+|\s+$/g, '');
@@ -3466,12 +2942,12 @@ YSLOW.util = {
         }
     },
 
-    /**
+    /*********************************************************************************************************
      * Add Event Listener
      * @param HTMLElement el the element to add an event listener
      * @param string ev the event name to be added
      * @param function fn the function to be invoked by event listener
-     */
+     *********************************************************************************************************/
     addEventListener: function (el, ev, fn) {
         var util = YSLOW.util;
 
@@ -3491,12 +2967,12 @@ YSLOW.util = {
         util.addEventListener(el, ev, fn);
     },
 
-    /**
+    /*********************************************************************************************************
      * Remove Event Listener
      * @param HTMLElement el the element to remove event listener from
      * @param string ev the event name to be removed
      * @param function fn the function invoked by the removed listener
-     */
+     *********************************************************************************************************/
     removeEventListener: function (el, ev, fn) {
         var util = YSLOW.util;
 
@@ -3516,25 +2992,25 @@ YSLOW.util = {
         util.removeEventListener(el, ev, fn);
     },
 
-    /**
+    /*********************************************************************************************************
      * Normalize currentTarget
      * @param evt the event received
      * @return HTMLElement the normilized currentTarget
-     */
+     *********************************************************************************************************/
     getCurrentTarget: function (evt) {
         return evt.currentTarget || evt.srcElement;
     },
 
-    /**
+    /*********************************************************************************************************
      * Normalize target
      * @param evt the event received
      * @return HTMLElement the normilized target
-     */
+     *********************************************************************************************************/
     getTarget: function (evt) {
         return evt.target || evt.srcElement;
     },
 
-    /**
+    /*********************************************************************************************************
      * Get all inline elements (style and script) from a document
      * @param doc (optional) the document to get all inline elements
      * @param head (optional) the head node to get inline elements, ignores doc
@@ -3542,7 +3018,7 @@ YSLOW.util = {
      * @return object with scripts and styles arrays with the following info:
      * containerNode: either head or body
      * body: the innerHTML content
-     */
+     *********************************************************************************************************/
     getInlineTags: function (doc, head, body) {
         var styles, scripts,
 
@@ -3557,6 +3033,8 @@ YSLOW.util = {
                 els = node.getElementsByTagName(tag);
                 for (i = 0, len = els.length; i < len; i += 1) {
                     el = els[i]; 
+                    
+                    //only get inline styles and css
                     if (!el.src) {
                     	
                         objs.push({
@@ -3586,31 +3064,31 @@ YSLOW.util = {
         };
     },
 
-    /**
+    /*********************************************************************************************************
      * Count all DOM elements from a node
      * @param node the root node to count all DOM elements from
      * @return number of DOM elements found on given node
-     */
+     *********************************************************************************************************/
     countDOMElements: function (node) {
         return (node && node.getElementsByTagName('*').length) || 0;
     },
 
-    /**
+    /*********************************************************************************************************
      * Get cookies from a document
      * @param doc the document to get the cookies from
      * @return the cookies string
-     */
+     *********************************************************************************************************/
     getDocCookies: function (doc) {
         return (doc && doc.cookie) || '';
     },
 
-    /**
+    /*********************************************************************************************************
      * identifies injected elements (js, css, iframe, flash, image)
      * @param doc the document to create/manipulate dom elements 
      * @param comps the component set components
      * @param body the root (raw) document body (html)
      * @return the same components with injected info
-     */
+     *********************************************************************************************************/
     setInjected: function (doc, comps, body) {
         var i, len, els, el, src, comp, found, div,
             nodes = {};
@@ -3714,7 +3192,7 @@ YSLOW.util = {
     }
 };
 
-/**
+/*********************************************************************************************************
  * Class that implements the observer pattern.
  *
  * Oversimplified usage:
@@ -3743,22 +3221,22 @@ YSLOW.util = {
  * @namespace YSLOW.util
  * @class event
  * @static
- */
+ *********************************************************************************************************/
 YSLOW.util.event = {
-    /**
+    /*********************************************************************************************************
      * Hash of subscribers where the key is the event name and the value is an array of callbacks-type objects
      * The callback objects have keys "callback" which is the function to be called and "that" which is the value
      * to be assigned to the "this" object when the function is called
-     */
+     *********************************************************************************************************/
     subscribers: {},
 
-    /**
+    /*********************************************************************************************************
      * Adds a new listener
      *
      * @param {String} event_name Name of the event
      * @param {Function} callback A function to be called when the event fires
      * @param {Object} that Object to be assigned to the "this" value of the callback function
-     */
+     *********************************************************************************************************/
     addListener: function (eventName, callback, that) {
         var subs = this.subscribers,
             subscribers = subs[eventName];
@@ -3772,13 +3250,13 @@ YSLOW.util.event = {
         });
     },
 
-    /**
+    /*********************************************************************************************************
      * Removes a listener
      *
      * @param {String} event_name Name of the event
      * @param {Function} callback The callback function that was added as a listener
      * @return {Boolean} TRUE is the listener was removed successfully, FALSE otherwise (for example in cases when the listener doesn't exist)
-     */
+     *********************************************************************************************************/
     removeListener: function (eventName, callback) {
         var i,
             subscribers = this.subscribers[eventName],
@@ -3794,12 +3272,12 @@ YSLOW.util.event = {
         return false;
     },
 
-    /**
+    /*********************************************************************************************************
      * Fires the event
      *
      * @param {String} event_nama Name of the event
      * @param {Object} event_object Any object that will be passed to the subscribers, can be anything
-     */
+     *********************************************************************************************************/
     fire: function (event_name, event_object) {
         var i, listener;
 
@@ -3819,34 +3297,34 @@ YSLOW.util.event = {
 
 };
 
-/**
+/*********************************************************************************************************
  * Class that implements setting and unsetting preferences
  *
  * @namespace YSLOW.util
  * @class Preference
  * @static
  *
- */
+ *********************************************************************************************************/
 YSLOW.util.Preference = {
 
-    /**
+    /*********************************************************************************************************
      * @private
-     */
+     *********************************************************************************************************/
     nativePref: null,
 
-    /**
+    /*********************************************************************************************************
      * Register native preference mechanism.
-     */
+     *********************************************************************************************************/
     registerNative: function (o) {
         this.nativePref = o;
     },
 
-    /**
+    /*********************************************************************************************************
      * Get Preference with default value.  If the preference does not exist,
      * return the passed default_value.
      * @param {String} name name of preference
      * @return preference value or default value.
-     */
+     *********************************************************************************************************/
     getPref: function (name, default_value) {
         if (this.nativePref) {
             return this.nativePref.getPref(name, default_value);
@@ -3854,12 +3332,12 @@ YSLOW.util.Preference = {
         return default_value;
     },
 
-    /**
+    /*********************************************************************************************************
      * Get child preference list in branch.
      * @param {String} branch_name
      * @return array of preference values.
      * @type Array
-     */
+     *********************************************************************************************************/
     getPrefList: function (branch_name, default_value) {
         if (this.nativePref) {
             return this.nativePref.getPrefList(branch_name, default_value);
@@ -3867,41 +3345,41 @@ YSLOW.util.Preference = {
         return default_value;
     },
 
-    /**
+    /*********************************************************************************************************
      * Set Preference with passed value.
      * @param {String} name name of preference
      * @param {value type} value value to be used to set the preference
-     */
+     *********************************************************************************************************/
     setPref: function (name, value) {
         if (this.nativePref) {
             this.nativePref.setPref(name, value);
         }
     },
 
-    /**
+    /*********************************************************************************************************
      * Delete Preference with passed name.
      * @param {String} name name of preference to be deleted
-     */
+     *********************************************************************************************************/
     deletePref: function (name) {
         if (this.nativePref) {
             this.nativePref.deletePref(name);
         }
     }
 };
-/**
+/*********************************************************************************************************
  * Copyright (c) 2012, Yahoo! Inc.  All rights reserved.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
+ *********************************************************************************************************/
 
-/*global YSLOW*/
-/*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true */
+/*global YSLOW */
+/*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true*/
 
-/**
+/*********************************************************************************************************
  * A class that collects all in-product text.
  * @namespace YSLOW
  * @class doc
  * @static
- */
+ *********************************************************************************************************/
 YSLOW.doc = {
 
     tools_desc: undefined,
@@ -3954,11 +3432,7 @@ YSLOW.doc.addRuleInfo('yjsbottom', 'Put JavaScript at bottom', 'JavaScript scrip
 
 YSLOW.doc.addRuleInfo('yexpressions', 'Avoid CSS expressions', 'CSS expressions (supported in IE beginning with Version 5) are a powerful, and dangerous, way to dynamically set CSS properties.  These expressions are evaluated frequently:  when the page is rendered and resized, when the page is scrolled, and even when the user moves the mouse over the page.  These frequent evaluations degrade the user experience.');
 
-YSLOW.doc.addRuleInfo('yexternal', 'Make JavaScript and CSS external', 'Using external JavaScript and CSS files generally produces faster pages because the files are cached by the browser.  JavaScript and CSS that are inlined in HTML documents get downloaded each time the HTML document is requested.  This reduces the number of HTTP requests but increases the HTML document size.  On the other hand, if the JavaScript and CSS are in external files cached by the browser, the HTML document size is reduced without increasing the number of HTTP requests.');
-
 YSLOW.doc.addRuleInfo('ydns', 'Reduce DNS lookups', 'The Domain Name System (DNS) maps hostnames to IP addresses, just like phonebooks map people\'s names to their phone numbers.  When you type URL www.yahoo.com into the browser, the browser contacts a DNS resolver that returns the server\'s IP address.  DNS has a cost; typically it takes 20 to 120 milliseconds for it to look up the IP address for a hostname.  The browser cannot download anything from the host until the lookup completes.');
-
-YSLOW.doc.addRuleInfo('yminify', 'Minify JavaScript and CSS', 'Minification removes unnecessary characters from a file to reduce its size, thereby improving load times.  When a file is minified, comments and unneeded white space characters (space, newline, and tab) are removed.  This improves response time since the size of the download files is reduced.');
 
 YSLOW.doc.addRuleInfo('yredirects', 'Avoid URL redirects', 'URL redirects are made using HTTP status codes 301 and 302.  They tell the browser to go to another location.  Inserting a redirect between the user and the final HTML document delays everything on the page since nothing on the page can be rendered and no components can be downloaded until the HTML document arrives.');
 
@@ -3966,23 +3440,11 @@ YSLOW.doc.addRuleInfo('ydupes', 'Remove duplicate JavaScript and CSS', 'Duplicat
 
 YSLOW.doc.addRuleInfo('yetags', 'Configure entity tags (ETags)', 'Entity tags (ETags) are a mechanism web servers and the browser use to determine whether a component in the browser\'s cache matches one on the origin server.  Since ETags are typically constructed using attributes that make them unique to a specific server hosting a site, the tags will not match when a browser gets the original component from one server and later tries to validate that component on a different server.');
 
-YSLOW.doc.addRuleInfo('yxhr', 'Make AJAX cacheable', 'One of AJAX\'s benefits is it provides instantaneous feedback to the user because it requests information asynchronously from the backend web server.  However, using AJAX does not guarantee the user will not wait for the asynchronous JavaScript and XML responses to return.  Optimizing AJAX responses is important to improve performance, and making the responses cacheable is the best way to optimize them.');
-
-YSLOW.doc.addRuleInfo('yxhrmethod', 'Use GET for AJAX requests', 'When using the XMLHttpRequest object, the browser implements POST in two steps:  (1) send the headers, and (2) send the data.  It is better to use GET instead of POST since GET sends the headers and the data together (unless there are many cookies).  IE\'s maximum URL length is 2 KB, so if you are sending more than this amount of data you may not be able to use GET.');
-
 YSLOW.doc.addRuleInfo('ymindom', 'Reduce the number of DOM elements', 'A complex page means more bytes to download, and it also means slower DOM access in JavaScript.  Reduce the number of DOM elements on the page to improve performance.');
-
-YSLOW.doc.addRuleInfo('yno404', 'Avoid HTTP 404 (Not Found) error', 'Making an HTTP request and receiving a 404 (Not Found) error is expensive and degrades the user experience.  Some sites have helpful 404 messages (for example, "Did you mean ...?"), which may assist the user, but server resources are still wasted.');
-
-YSLOW.doc.addRuleInfo('ymincookie', 'Reduce cookie size', 'HTTP cookies are used for authentication, personalization, and other purposes.  Cookie information is exchanged in the HTTP headers between web servers and the browser, so keeping the cookie size small minimizes the impact on response time.');
 
 YSLOW.doc.addRuleInfo('ycookiefree', 'Use cookie-free domains', 'When the browser requests a static image and sends cookies with the request, the server ignores the cookies.  These cookies are unnecessary network traffic.  To workaround this problem, make sure that static components are requested with cookie-free requests by creating a subdomain and hosting them there.');
 
 YSLOW.doc.addRuleInfo('ynofilter', 'Avoid AlphaImageLoader filter', 'The IE-proprietary AlphaImageLoader filter attempts to fix a problem with semi-transparent true color PNG files in IE versions less than Version 7.  However, this filter blocks rendering and freezes the browser while the image is being downloaded.  Additionally, it increases memory consumption.  The problem is further multiplied because it is applied per element, not per image.');
-
-YSLOW.doc.addRuleInfo('yimgnoscale', 'Do not scale images in HTML', 'Web page designers sometimes set image dimensions by using the width and height attributes of the HTML image element.  Avoid doing this since it can result in images being larger than needed.  For example, if your page requires image myimg.jpg which has dimensions 240x720 but displays it with dimensions 120x360 using the width and height attributes, then the browser will download an image that is larger than necessary.');
-
-YSLOW.doc.addRuleInfo('yfavicon', 'Make favicon small and cacheable', 'A favicon is an icon associated with a web page; this icon resides in the favicon.ico file in the server\'s root.  Since the browser requests this file, it needs to be present; if it is missing, the browser returns a 404 error (see "Avoid HTTP 404 (Not Found) error" above).  Since favicon.ico resides in the server\'s root, each time the browser requests this file, the cookies for the server\'s root are sent.  Making the favicon small and reducing the cookie size for the server\'s root cookies improves performance for retrieving the favicon.  Making favicon.ico cacheable avoids frequent requests for it.');
 
 YSLOW.doc.addRuleInfo('yemptysrc', 'Avoid empty src or href', 'You may expect a browser to do nothing when it encounters an empty image src.  However, it is not the case in most browsers. IE makes a request to the directory in which the page is located; Safari, Chrome, Firefox 3 and earlier make a request to the actual page itself. This behavior could possibly corrupt user data, waste server computing cycles generating a page that will never be viewed, and in the worst case, cripple your servers by sending a large amount of unexpected traffic.');
 
@@ -4002,8 +3464,6 @@ YSLOW.doc.addToolInfo('jsminified', 'All JS Minified', 'Show all JavaScript code
 YSLOW.doc.addToolInfo('allcss', 'All CSS', 'Show all CSS code in this document');
 
 YSLOW.doc.addToolInfo('cssmin', 'YUI CSS Compressor', 'Show all CSS code in the document in a minified format');
-
-YSLOW.doc.addToolInfo('smushItAll', 'All Smush.it&trade;', 'Run Smush.it&trade; on all image components in this document');
 
 YSLOW.doc.addToolInfo('printableview', 'Printable View', 'Show a printable view of grades, component lists, and statistics');
 
@@ -4043,10 +3503,10 @@ YSLOW.doc.view_names = {
 
 // copyright text
 YSLOW.doc.copyright = 'Copyright &copy; ' + (new Date()).getFullYear() + ' Yahoo! Inc. All rights reserved.';
-/*global YSLOW*/
-/*jslint white: true, onevar: true, undef: true, nomen: true, regexp: true, continue: true, plusplus: true, bitwise: true, newcap: true, type: true, unparam: true, maxerr: 50, indent: 4*/
+/*global YSLOW*********************************************************************************************************/
+/*jslint white: true, onevar: true, undef: true, nomen: true, regexp: true, continue: true, plusplus: true, bitwise: true, newcap: true, type: true, unparam: true, maxerr: 50, indent: 4*********************************************************************************************************/
 
-/**
+/*********************************************************************************************************
  *
  * Example of a rule object:
  *
@@ -4071,7 +3531,7 @@ YSLOW.doc.copyright = 'Copyright &copy; ' + (new Date()).getFullYear() + ' Yahoo
  *     }
  * });
   </pre>
- */
+ *********************************************************************************************************/
 
 //
 // 3/2/2009
@@ -4499,10 +3959,25 @@ YSLOW.registerRule({
             score = 100,
             total = 0;
 
+        //Internal function to count expressions
+        this.countExpressions = function (content) {
+            var num_expr = 0,
+                index;
+
+            index = content.indexOf("expression(");
+            while (index !== -1) {
+                num_expr += 1;
+                index = content.indexOf("expression(", index + 1);
+            }
+
+            return num_expr;
+        };
+        
+        
         for (i = 0, len = comps.length; i < len; i += 1) {
             comp = comps[i];
             if (typeof comp.expr_count === 'undefined') {
-                expr_count = YSLOW.util.countExpressions(comp.body);
+                expr_count = this.countExpressions(comp.body);
                 comp.expr_count = expr_count;
             } else {
                 expr_count = comp.expr_count;
@@ -4520,7 +3995,7 @@ YSLOW.registerRule({
         }
 
         for (i = 0, len = instyles.length; i < len; i += 1) {
-            expr_count = YSLOW.util.countExpressions(instyles[i].body);
+            expr_count = this.countExpressions(instyles[i].body);
             if (expr_count > 0) {
                 offenders.push('inline &lt;style&gt; tag #' + (i + 1) + ' (' +
                     YSLOW.util.plural(
@@ -4545,43 +4020,6 @@ YSLOW.registerRule({
     }
 });
 
-YSLOW.registerRule({
-    id: 'yexternal',
-    //name: 'Make JS and CSS external',
-    url: 'http://developer.yahoo.com/performance/rules.html#external',
-    category: ['javascript', 'css'],
-    config: {},
-
-    lint: function (doc, cset, config) {
-        var message,
-            inline = cset.inline,
-            styles = (inline && inline.styles) || [],
-            scripts = (inline && inline.scripts) || [],
-            offenders = [];
-
-        if (styles.length) {
-            message = YSLOW.util.plural(
-                'There are a total of %num% inline css',
-                styles.length
-            );
-            offenders.push(message);
-        }
-
-        if (scripts.length) {
-            message = YSLOW.util.plural(
-                'There are a total of %num% inline script%s%',
-                scripts.length
-            );
-            offenders.push(message);
-        }
-
-        return {
-            score: 'n/a',
-            message: 'Only consider this if your property is a common user home page.',
-            components: offenders
-        };
-    }
-});
 
 YSLOW.registerRule({
     id: 'ydns',
@@ -4633,64 +4071,6 @@ YSLOW.registerRule({
     }
 });
 
-YSLOW.registerRule({
-    id: 'yminify',
-    //name: 'Minify JS and CSS',
-    url: 'http://developer.yahoo.com/performance/rules.html#minify',
-    category: ['javascript', 'css'],
-
-    config: {
-        // penalty for each unminified component
-        points: 10,
-        // types of components to inspect for minification
-        types: ['js', 'css']
-    },
-
-    lint: function (doc, cset, config) {
-        var i, len, score, minified, comp,
-            inline = cset.inline,
-            styles = (inline && inline.styles) || [],
-            scripts = (inline && inline.scripts) || [],
-            comps = cset.getComponentsByType(config.types),
-            offenders = [];
-
-        // check all peeled components
-        for (i = 0, len = comps.length; i < len; i += 1) {
-            comp = comps[i];
-            // set/get minified flag
-            if (typeof comp.minified === 'undefined') {
-                minified = YSLOW.util.isMinified(comp.body);
-                comp.minified = minified.minified;
-            } else {
-                minified = comp.minified;
-            }
-
-            if (!minified) {
-                offenders.push(comp);
-            }
-        }
-
-        // check inline scripts/styles/whatever
-        for (i = 0, len = styles.length; i < len; i += 1) {
-            if (!YSLOW.util.isMinified(styles[i].body)) {
-                offenders.push('inline &lt;style&gt; tag #' + (i + 1));
-            }
-        }
-        for (i = 0, len = scripts.length; i < len; i += 1) {
-            if (!YSLOW.util.isMinified(scripts[i].body)) {
-                offenders.push('inline &lt;script&gt; tag #' + (i + 1));
-            }
-        }
-
-        score = 100 - offenders.length * config.points;
-
-        return {
-            score: score,
-            message: (offenders.length > 0) ? YSLOW.util.plural('There %are% %num% component%s% that can be minified', offenders.length) : '',
-            components: offenders
-        };
-    }
-});
 
 YSLOW.registerRule({
     id: 'yredirects',
@@ -4816,98 +4196,6 @@ YSLOW.registerRule({
     }
 });
 
-YSLOW.registerRule({
-    id: 'yxhr',
-    //name: 'Make Ajax cacheable',
-    url: 'http://developer.yahoo.com/performance/rules.html#cacheajax',
-    category: ['content'],
-
-    config: {
-        // points to take out for each non-cached XHR
-        points: 5,
-        // at least an hour in cache.
-        min_cache_time: 3600
-    },
-
-    lint: function (doc, cset, config) {
-        var i, expiration, ts, score, cache_control,
-            // far-ness in milliseconds
-            min = parseInt(config.min_cache_time, 10) * 1000,
-            offenders = [],
-            comps = cset.getComponentsByType('xhr');
-
-        for (i = 0; i < comps.length; i += 1) {
-            // check for cache-control: no-cache and cache-control: no-store
-            cache_control = comps[i].headers['cache-control'];
-            if (cache_control) {
-                if (cache_control.indexOf('no-cache') !== -1 ||
-                        cache_control.indexOf('no-store') !== -1) {
-                    continue;
-                }
-            }
-
-            expiration = comps[i].expires;
-            if (typeof expiration === 'object' &&
-                    typeof expiration.getTime === 'function') {
-                // looks like a Date object
-                ts = new Date().getTime();
-                if (expiration.getTime() > ts + min) {
-                    continue;
-                }
-                // expires less than min_cache_time => BAD.
-            }
-            offenders.push(comps[i]);
-        }
-
-        score = 100 - offenders.length * parseInt(config.points, 10);
-
-        return {
-            score: score,
-            message: (offenders.length > 0) ? YSLOW.util.plural(
-                'There %are% %num% XHR component%s% that %are% not cacheable',
-                offenders.length
-            ) : '',
-            components: offenders
-        };
-    }
-});
-
-YSLOW.registerRule({
-    id: 'yxhrmethod',
-    //name: 'Use GET for AJAX Requests',
-    url: 'http://developer.yahoo.com/performance/rules.html#ajax_get',
-    category: ['server'],
-
-    config: {
-        // points to take out for each ajax request
-        // that uses http method other than GET.
-        points: 5
-    },
-
-    lint: function (doc, cset, config) {
-        var i, score,
-            offenders = [],
-            comps = cset.getComponentsByType('xhr');
-
-        for (i = 0; i < comps.length; i += 1) {
-            if (typeof comps[i].method === 'string') {
-                if (comps[i].method !== 'GET' && comps[i].method !== 'unknown') {
-                    offenders.push(comps[i]);
-                }
-            }
-        }
-        score = 100 - offenders.length * parseInt(config.points, 10);
-
-        return {
-            score: score,
-            message: (offenders.length > 0) ? YSLOW.util.plural(
-                'There %are% %num% XHR component%s% that %do% not use GET HTTP method',
-                offenders.length
-            ) : '',
-            components: offenders
-        };
-    }
-});
 
 YSLOW.registerRule({
     id: 'ymindom',
@@ -4941,78 +4229,7 @@ YSLOW.registerRule({
     }
 });
 
-YSLOW.registerRule({
-    id: 'yno404',
-    //name: 'No 404s',
-    url: 'http://developer.yahoo.com/performance/rules.html#no404',
-    category: ['content'],
 
-    config: {
-        // points to take out for each 404 response.
-        points: 5,
-        // component types to be inspected for expires headers
-        types: ['css', 'js', 'image', 'cssimage', 'flash', 'xhr', 'favicon']
-    },
-
-    lint: function (doc, cset, config) {
-        var i, len, comp, score,
-            offenders = [],
-            comps = cset.getComponentsByType(config.types);
-
-        for (i = 0, len = comps.length; i < len; i += 1) {
-            comp = comps[i];
-            if (parseInt(comp.status, 10) === 404) {
-                offenders.push(comp);
-            }
-        }
-        score = 100 - offenders.length * parseInt(config.points, 10);
-        return {
-            score: score,
-            message: (offenders.length > 0) ? YSLOW.util.plural(
-                'There %are% %num% request%s% that %are% 404 Not Found',
-                offenders.length
-            ) : '',
-            components: offenders
-        };
-    }
-});
-
-YSLOW.registerRule({
-    id: 'ymincookie',
-    //name: 'Reduce Cookie Size',
-    url: 'http://developer.yahoo.com/performance/rules.html#cookie_size',
-    category: ['cookie'],
-
-    config: {
-        // points to take out if cookie size is more than config.max_cookie_size
-        points: 10,
-        // 1000 bytes.
-        max_cookie_size: 1000
-    },
-
-    lint: function (doc, cset, config) {
-        var n,
-            cookies = cset.cookies,
-            cookieSize = (cookies && cookies.length) || 0,
-            message = '',
-            score = 100;
-
-        if (cookieSize > config.max_cookie_size) {
-            n = Math.floor(cookieSize / config.max_cookie_size);
-            score -= 1 + n * parseInt(config.points, 10);
-            message = YSLOW.util.plural(
-                'There %are% %num% byte%s% of cookies on this page',
-                cookieSize
-            );
-        }
-
-        return {
-            score: score,
-            message: message,
-            components: []
-        };
-    }
-});
 
 YSLOW.registerRule({
     id: 'ycookiefree',
@@ -5146,107 +4363,6 @@ YSLOW.registerRule({
 });
 
 YSLOW.registerRule({
-    id: 'yimgnoscale',
-    //name: 'Don\'t Scale Images in HTML',
-    url: 'http://developer.yahoo.com/performance/rules.html#no_scale',
-    category: ['images'],
-
-    config: {
-        points: 5 // points to take out for each image that scaled.
-    },
-
-    lint: function (doc, cset, config) {
-        var i, prop, score,
-            offenders = [],
-            comps = cset.getComponentsByType('image');
-
-        for (i = 0; i < comps.length; i += 1) {
-            prop = comps[i].object_prop;
-            if (prop && typeof prop.width !== 'undefined' &&
-                    typeof prop.height !== 'undefined' &&
-                    typeof prop.actual_width !== 'undefined' &&
-                    typeof prop.actual_height !== 'undefined') {
-                if (prop.width < prop.actual_width ||
-                        prop.height < prop.actual_height) {
-                    // allow scale up
-                    offenders.push(comps[i]);
-                }
-            }
-        }
-        score = 100 - offenders.length * parseInt(config.points, 10);
-
-        return {
-            score: score,
-            message: (offenders.length > 0) ? YSLOW.util.plural(
-                'There %are% %num% image%s% that %are% scaled down',
-                offenders.length
-            ) : '',
-            components: offenders
-        };
-    }
-});
-
-YSLOW.registerRule({
-    id: 'yfavicon',
-    //name: 'Make favicon Small and Cacheable',
-    url: 'http://developer.yahoo.com/performance/rules.html#favicon',
-    category: ['images'],
-
-    config: {
-        // points to take out for each offend.
-        points: 5,
-        // deduct point if size of favicon is more than this number.
-        size: 2000,
-        // at least this amount of seconds in cache to consider cacheable.
-        min_cache_time: 3600
-    },
-
-    lint: function (doc, cset, config) {
-        var ts, expiration, comp, score, cacheable,
-            messages = [],
-            min = parseInt(config.min_cache_time, 10) * 1000,
-            comps = cset.getComponentsByType('favicon');
-
-        if (comps.length) {
-            comp = comps[0];
-
-            // check if favicon was found
-            if (parseInt(comp.status, 10) === 404) {
-                messages.push('Favicon was not found');
-            }
-
-            // check size
-            if (comp.size > config.size) {
-                messages.push(YSLOW.util.plural(
-                    'Favicon is more than %num% bytes',
-                    config.size
-                ));
-            }
-            // check cacheability
-            expiration = comp.expires;
-
-            if (typeof expiration === 'object' &&
-                    typeof expiration.getTime === 'function') {
-                // looks like a Date object
-                ts = new Date().getTime();
-                cacheable = expiration.getTime() >= ts + min;
-            }
-            if (!cacheable) {
-                messages.push('Favicon is not cacheable');
-            }
-        }
-        score = 100 - messages.length * parseInt(config.points, 10);
-
-        return {
-            score: score,
-            message: (messages.length > 0) ? messages.join('\n') : '',
-            components: []
-        };
-    }
-
-});
-
-YSLOW.registerRule({
     id: 'yemptysrc',
     // name: 'Avoid empty src or href',
     url: 'http://developer.yahoo.com/performance/rules.html#emptysrc',
@@ -5285,215 +4401,22 @@ YSLOW.registerRule({
     }
 });
 
-/**
- * YSLOW.registerRuleset({
- *
- *     id: 'myalgo',
- *     name: 'The best algo',
- *     rules: {
- *         myrule: {
- *             ever: 2,
- *         }
- *     }
- *
- * });
- */
 
-YSLOW.registerRuleset({ // yahoo default with default configuration
-    id: 'ydefault',
-    name: 'YSlow(V2)',
-    rules: {
-        ynumreq: {},
-        //  1
-        ycdn: {},
-        //  2
-        yemptysrc: {},
-        yexpires: {},
-        //  3
-        ycompress: {},
-        //  4
-        ycsstop: {},
-        //  5
-        yjsbottom: {},
-        //  6
-        yexpressions: {},
-        //  7
-        yexternal: {},
-        //  8
-        ydns: {},
-        //  9
-        yminify: {},
-        // 10
-        yredirects: {},
-        // 11
-        ydupes: {},
-        // 12
-        yetags: {},
-        // 13
-        yxhr: {},
-        // 14
-        yxhrmethod: {},
-        // 16
-        ymindom: {},
-        // 19
-        yno404: {},
-        // 22
-        ymincookie: {},
-        // 23
-        ycookiefree: {},
-        // 24
-        ynofilter: {},
-        // 28
-        yimgnoscale: {},
-        // 31
-        yfavicon: {} // 32
-    },
-    weights: {
-        ynumreq: 8,
-        ycdn: 6,
-        yemptysrc: 30,
-        yexpires: 10,
-        ycompress: 8,
-        ycsstop: 4,
-        yjsbottom: 4,
-        yexpressions: 3,
-        yexternal: 4,
-        ydns: 3,
-        yminify: 4,
-        yredirects: 4,
-        ydupes: 4,
-        yetags: 2,
-        yxhr: 4,
-        yxhrmethod: 3,
-        ymindom: 3,
-        yno404: 4,
-        ymincookie: 3,
-        ycookiefree: 3,
-        ynofilter: 4,
-        yimgnoscale: 3,
-        yfavicon: 2
-    }
-
-});
-
-YSLOW.registerRuleset({
-
-    id: 'yslow1',
-    name: 'Classic(V1)',
-    rules: {
-        ynumreq: {},
-        //  1
-        ycdn: {},
-        //  2
-        yexpires: {},
-        //  3
-        ycompress: {},
-        //  4
-        ycsstop: {},
-        //  5
-        yjsbottom: {},
-        //  6
-        yexpressions: {},
-        //  7
-        yexternal: {},
-        //  8
-        ydns: {},
-        //  9
-        yminify: { // 10
-            types: ['js'],
-            check_inline: false
-        },
-        yredirects: {},
-        // 11
-        ydupes: { // 12
-            types: ['js']
-        },
-        yetags: {} // 13
-    },
-    weights: {
-        ynumreq: 8,
-        ycdn: 6,
-        yexpires: 10,
-        ycompress: 8,
-        ycsstop: 4,
-        yjsbottom: 4,
-        yexpressions: 3,
-        yexternal: 4,
-        ydns: 3,
-        yminify: 4,
-        yredirects: 4,
-        ydupes: 4,
-        yetags: 2
-    }
-
-});
-
-YSLOW.registerRuleset({
-    id: 'yblog',
-    name: 'Small Site or Blog',
-    rules: {
-        ynumreq: {},
-        //  1
-        yemptysrc: {},
-        ycompress: {},
-        //  4
-        ycsstop: {},
-        //  5
-        yjsbottom: {},
-        //  6
-        yexpressions: {},
-        //  7
-        ydns: {},
-        //  9
-        yminify: {},
-        // 10
-        yredirects: {},
-        // 11
-        ydupes: {},
-        // 12
-        ymindom: {},
-        // 19
-        yno404: {},
-        // 22
-        ynofilter: {},
-        // 28
-        yimgnoscale: {},
-        // 31
-        yfavicon: {} // 32
-    },
-    weights: {
-        ynumreq: 8,
-        yemptysrc: 30,
-        ycompress: 8,
-        ycsstop: 4,
-        yjsbottom: 4,
-        yexpressions: 3,
-        ydns: 3,
-        yminify: 4,
-        yredirects: 4,
-        ydupes: 4,
-        ymindom: 3,
-        yno404: 4,
-        ynofilter: 4,
-        yimgnoscale: 3,
-        yfavicon: 2
-    }
-});
-/**
+/*********************************************************************************************************
  * Copyright (c) 2012, Yahoo! Inc.  All rights reserved.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
+ *********************************************************************************************************/
 
-/*global YSLOW*/
-/*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true */
+/*global YSLOW*********************************************************************************************************/
+/*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true *********************************************************************************************************/
 
-/**
+/*********************************************************************************************************
  * ResultSet class
  * @constructor
  * @param {Array} results array of lint result
  * @param {Number} overall_score overall score
  * @param {YSLOW.Ruleset} ruleset_applied Ruleset used to generate the result.
- */
+ *********************************************************************************************************/
 YSLOW.ResultSet = function (results, overall_score, ruleset_applied) {
     this.ruleset_applied = ruleset_applied;
     this.overall_score = overall_score;
@@ -5502,59 +4425,59 @@ YSLOW.ResultSet = function (results, overall_score, ruleset_applied) {
 
 YSLOW.ResultSet.prototype = {
 
-    /**
+    /*********************************************************************************************************
      * Get results array from ResultSet.
      * @return results array
      * @type Array
-     */
+     *********************************************************************************************************/
     getResults: function () {
         return this.results;
     },
 
-    /**
+    /*********************************************************************************************************
      * Get ruleset applied from ResultSet
      * @return ruleset applied
      * @type YSLOW.Ruleset
-     */
+     *********************************************************************************************************/
     getRulesetApplied: function () {
         return this.ruleset_applied;
     },
 
-    /**
+    /*********************************************************************************************************
      * Get overall score from ResultSet
      * @return overall score
      * @type Number
-     */
+     *********************************************************************************************************/
     getOverallScore: function () {
         return this.overall_score;
     }
 
 };
-/**
+/*********************************************************************************************************
  * Copyright (c) 2012, Yahoo! Inc.  All rights reserved.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
+ *********************************************************************************************************/
 
-/*global YSLOW*/
-/*jslint white: true, onevar: true, undef: true, newcap: true, nomen: true, plusplus: true, bitwise: true, continue: true, maxerr: 50, indent: 4 */
+/*global YSLOW*********************************************************************************************************/
+/*jslint white: true, onevar: true, undef: true, newcap: true, nomen: true, plusplus: true, bitwise: true, continue: true, maxerr: 50, indent: 4 *********************************************************************************************************/
 
-/**
+/*********************************************************************************************************
  * @todo:
  * - need better way to discover @import stylesheets, the current one doesn't find them
  * - add request type - post|get - when possible, maybe in the net part of the peeling process
  *
- */
+ *********************************************************************************************************/
 
-/**
+/*********************************************************************************************************
  * Peeler singleton
  * @class
  * @static
- */
+ *********************************************************************************************************/
 YSLOW.peeler = {
 
-    /**
+    /*********************************************************************************************************
      * @final
-     */
+     *********************************************************************************************************/
     types: ['doc', 'js', 'css', 'iframe', 'flash', 'cssimage', 'image',
         'favicon', 'xhr', 'redirect', 'font'],
 
@@ -5565,13 +4488,13 @@ YSLOW.peeler = {
 
 /*
      * http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSRule
-     */
+     *********************************************************************************************************/
     CSSRULE: {
         IMPORT_RULE: 3,
         FONT_FACE_RULE: 5
     },
 
-    /**
+    /*********************************************************************************************************
      * Start peeling the document in passed window object.
      * The component may be requested asynchronously.
      *
@@ -5579,18 +4502,18 @@ YSLOW.peeler = {
      * @param {Number} onloadTimestamp onload timestamp
      * @return ComponentSet
      * @type YSLOW.ComponentSet
-     */
+     *********************************************************************************************************/
     peel: function (node, onloadTimestamp) {
         // platform implementation goes here
     },
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Finds all frames/iframes recursively
      * @param {DOMElement} node object
      * @return an array of documents in the passed DOM node.
      * @type Array
-     */
+     *********************************************************************************************************/
     findDocuments: function (node) {
         var frames, doc, docUrl, type, i, len, el, frameDocs, parentDoc,
             allDocs = {};
@@ -5639,7 +4562,7 @@ YSLOW.peeler = {
                     docUrl = !node.getAttribute('src') ? '' : 'about:blank';
                 }
             } catch (err) {
-                YSLOW.util.dump(err);
+            	console.log("An error occured: "+err);
             }
         } else {
             return allDocs;
@@ -5670,13 +4593,13 @@ YSLOW.peeler = {
                 }
             }
         } catch (e) {
-            YSLOW.util.dump(e);
+        	console.log("An error occured: "+e);
         }
 
         return allDocs;
     },
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Find all components in the passed node.
      * @param {DOMElement} node DOM object
@@ -5684,47 +4607,47 @@ YSLOW.peeler = {
      * @param {String} baseHref href
      * @return array of object (array[] = {'type': object.type, 'href': object.href } )
      * @type Array
-     */
+     *********************************************************************************************************/
     findComponentsInNode: function (node, baseHref, type) {
         var comps = [];
         
         try {
             comps = this.findStyleSheets(node, baseHref);
         } catch (e1) {
-            YSLOW.util.dump(e1);
+        	console.log("An error occured:"+e1);
         }
         try {
             comps = comps.concat(this.findScripts(node));
         } catch (e2) {
-            YSLOW.util.dump(e2);
+        	console.log("Warning: Error occured during comps.concat: "+e2);
         }
         try {
             comps = comps.concat(this.findFlash(node));
         } catch (e3) {
-            YSLOW.util.dump(e3);
+        	console.log("Warning: Error occured during comps.concat: "+e3);
         }
         try {
             comps = comps.concat(this.findCssImages(node));
         } catch (e4) {
-            YSLOW.util.dump(e4);
+        	console.log("Warning: Error occured during comps.concat: "+e4);
         }
         try {
             comps = comps.concat(this.findImages(node));
         } catch (e5) {
-            YSLOW.util.dump(e5);
+        	console.log("Warning: Error occured during comps.concat: "+e5);
         }
         try {
             if (type === 'doc') {
                 comps = comps.concat(this.findFavicon(node, baseHref));
             }
         } catch (e6) {
-            YSLOW.util.dump(e6);
+        	console.log("Warning: Error occured during comps.concat: "+e6);
         }
         
         return comps;
     },
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Add components in Net component that are not component list found by
      * peeler. These can be xhr requests or images that are preloaded by
@@ -5733,7 +4656,7 @@ YSLOW.peeler = {
      * @param {YSLOW.ComponentSet} component_set ComponentSet to be checked
      * against.
      * @param {String} base_herf base href
-     */
+     *********************************************************************************************************/
     addComponentsNotInNode: function (component_set, base_href) {
         var i, j, imgs, type, objs,
             types = ['flash', 'js', 'css', 'doc', 'redirect'],
@@ -5767,7 +4690,7 @@ YSLOW.peeler = {
         }
     },
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Find all stylesheets in the passed DOM node.
      * @param {DOMElement} node DOM object
@@ -5775,7 +4698,7 @@ YSLOW.peeler = {
      * @param {String} base_href base href
      * @return array of object (array[] = {'type' : 'css', 'href': object.href})
      * @type Array
-     */
+     *********************************************************************************************************/
     findStyleSheets: function (node, baseHref) {
         var styles, style, i, len,
             head = node.getElementsByTagName('head')[0],
@@ -5828,7 +4751,7 @@ YSLOW.peeler = {
         return comps;
     },
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Given a css rule, if it's an "@import" rule then add the style sheet
      * component. Also, do a recursive check to see if this imported stylesheet
@@ -5836,7 +4759,7 @@ YSLOW.peeler = {
      * @param {DOMElement} stylesheet DOM stylesheet object
      * @return array of object
      * @type Array
-     */
+     *********************************************************************************************************/
     findImportedStyleSheets: function (styleSheet, parentUrl) {
         var i, rules, rule, cssUrl, ff, len,
             reFile = /url\s*\(["']*([^"'\)]+)["']*\)/i,
@@ -5876,19 +4799,19 @@ YSLOW.peeler = {
                 }
             }
         } catch (e) {
-            YSLOW.util.dump(e);
+        	console.log("Warning: Error occured in findImportedStyleSheets():"+e);
         }
 
         return comps;
     },
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Find all scripts in the passed DOM node.
      * @param {DOMElement} node DOM object
      * @return array of object (array[] = {'type': 'js', 'href': object.href})
      * @type Array
-     */
+     *********************************************************************************************************/
     findScripts: function (node) {
         var comps = [],
             head = node.getElementsByTagName('head')[0],
@@ -5935,13 +4858,13 @@ YSLOW.peeler = {
         return comps;
     },
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Find all flash in the passed DOM node.
      * @param {DOMElement} node DOM object
      * @return array of object (array[] =  {'type' : 'flash', 'href': object.href } )
      * @type Array
-     */
+     *********************************************************************************************************/
     findFlash: function (node) {
         var i, el, els, len,
             comps = [];
@@ -5977,13 +4900,13 @@ YSLOW.peeler = {
         return comps;
     },
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Find all css images in the passed DOM node.
      * @param {DOMElement} node DOM object
      * @return array of object (array[] = {'type' : 'cssimage', 'href': object.href } )
      * @type Array
-     */
+     *********************************************************************************************************/
     findCssImages: function (node) {
         var i, j, el, els, prop, url, len,
             comps = [],
@@ -6016,13 +4939,13 @@ YSLOW.peeler = {
         return comps;
     },
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Find all images in the passed DOM node.
      * @param {DOMElement} node DOM object
      * @return array of object (array[] = {'type': 'image', 'href': object.href} )
      * @type Array
-     */
+     *********************************************************************************************************/
     findImages: function (node) {
         var i, img, imgs, src, len,
             comps = [],
@@ -6054,13 +4977,13 @@ YSLOW.peeler = {
         return comps;
     },
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Find favicon link.
      * @param {DOMElement} node DOM object
      * @return array of object (array[] = {'type': 'favicon', 'href': object.href} )
      * @type Array
-     */
+     *********************************************************************************************************/
     findFavicon: function (node, baseHref) {
         var i, len, link, links, rel,
             comps = [];
@@ -6096,13 +5019,13 @@ YSLOW.peeler = {
         return comps;
     },
 
-    /**
+    /*********************************************************************************************************
      * @private
      * Get base href of document.  If <base> element is not found, use doc.location.
      * @param {Document} doc Document object
      * @return base href
      * @type String
-     */
+     *********************************************************************************************************/
     getBaseHref: function (doc) {
         var base;
         
@@ -6110,16 +5033,16 @@ YSLOW.peeler = {
             base = doc.getElementsByTagName('base')[0];
             base = (base && base.href) || doc.URL; 
         } catch (e) {
-            YSLOW.util.dump(e);
+        	console.log("Warning: Error occured in getBaseHref: "+e);
         }
 
         return base;
     }
 };
-/**
+/*********************************************************************************************************
  * Copyright (c) 2012, Yahoo! Inc.  All rights reserved.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
+ *********************************************************************************************************/
 
 var types = {
         'text/javascript': 'js',
@@ -6199,11 +5122,11 @@ splitHtml = function (doc, base, html) {
 }
 
 
-/**
+/*********************************************************************************************************
  * Import har file
  * @param doct host document to support dom level 0 methods
  * @param har the har object
- */
+ *********************************************************************************************************/
 function run (doct, har, ruleset) {
     var i, j, page, pageId, entry, entryTime, comp, doc, len, lenJ, split, status,
         content, baseHref, base, onloadTimestamp, cset, html, tDone,
@@ -6387,10 +5310,10 @@ function run (doct, har, ruleset) {
 YSLOW.harImporter = {
 run: run
 };
-/**
+/*********************************************************************************************************
  * Copyright (c) 2012, Yahoo! Inc.  All rights reserved.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
+ *********************************************************************************************************/
 
 if (typeof exports !== 'undefined') {
     exports.YSLOW = YSLOW;
@@ -6435,7 +5358,7 @@ YSLOW.doc.addRuleInfo('paduplicatedrequests', 'Avoid Duplicated Requests', 'Avoi
 //####################################################################
 
 /*******************************************************
- * Make CSS external
+ * Make CSS external (modified and splitted yexternal)
  *******************************************************/
 YSLOW.registerRule({
   id: 'paexternalcss',
@@ -6504,7 +5427,7 @@ YSLOW.registerRule({
 });
 
 /*******************************************************
- * Make JS external
+ * Make JS external (modified and splitted yexternal)
  *******************************************************/
 YSLOW.registerRule({
   id: 'paexternaljavascript',
@@ -6577,7 +5500,7 @@ YSLOW.registerRule({
 });
 
 /*******************************************************
- * Minify CSS
+ * Minify CSS (modified and splitted yminify)
  *******************************************************/
 YSLOW.registerRule({
   id: 'paminifycss',
@@ -6663,7 +5586,7 @@ YSLOW.registerRule({
 });
 
 /*******************************************************
- * Minify JS
+ * Minify JS (modified and splitted yminify)
  *******************************************************/
 YSLOW.registerRule({
   id: 'paminifyjavascript',
@@ -7288,7 +6211,7 @@ YSLOW.registerRule({
 });
 
 /*******************************************************
- * Reduce Cookie Size
+ * Reduce Cookie Size (modified ymincookie)
  *******************************************************/
 YSLOW.registerRule({
     id: 'pamincookie',
@@ -7347,7 +6270,7 @@ YSLOW.registerRule({
 });
 
 /*******************************************************
- * Don't Scale Images in HTML
+ * Don't Scale Images in HTML (modified yimgnoscale)
  *******************************************************/
 YSLOW.registerRule({
     id: 'paimgnoscale',
@@ -7414,7 +6337,7 @@ YSLOW.registerRule({
 });
 
 /*******************************************************
- * Make favicon Small and Cacheable
+ * Make favicon Small and Cacheable (modified yfavicon)
  *******************************************************/
 YSLOW.registerRule({
     id: 'pafavicon',
@@ -7504,7 +6427,7 @@ YSLOW.registerRule({
     id: 'panoiframes',
     //name: 'Don\'t Scale Images in HTML',
     url: 'https://developer.yahoo.com/performance/rules.html#iframes',
-    category: ['images'],
+    category: ['browser'],
 
     config: {
     	//points to take for each offend.
@@ -7799,6 +6722,25 @@ YSLOW.registerRule({
 //Ruleset
 //#################################################
 
+/*********************************************************************************************************
+ * Register ruleset example
+ * ========================
+ * YSLOW.registerRuleset({
+ *
+ *     id: 'myalgo',
+ *     name: 'The best algo',
+ *     rules: {
+ *         myrule: {
+ *             ever: 2,
+ *         }
+ *     },
+ *     weights: {
+ *     		myrule: 15
+ *     }
+ *
+ * });
+ *********************************************************************************************************/
+
 YSLOW.registerRuleset({
   id: 'pageanalyzer',
   name: 'Page Analyzer',
@@ -7828,22 +6770,15 @@ YSLOW.registerRuleset({
       //yexpires: {},
       ycompress: {},
       ycsstop: {},
-      //yjsbottom: {},
+      //yjsbottom: {}, // Note: Check if this can be done by counting Dome nodes or something
       yexpressions: {},
-      //yexternal: {},
       ydns: {},
-      //yminify: {},
       yredirects: {},
       ydupes: {},
       yetags: {},
-      //yxhr: {},
-      //yxhrmethod: {},
       ymindom: {},
-      //yno404: {},
-      //ymincookie: {},
       ycookiefree: {},
       ynofilter: {},
-      //yimgnoscale: {},
       //yfavicon: {} 
   },
   weights: {
@@ -7874,17 +6809,11 @@ YSLOW.registerRuleset({
       ycsstop: 4,
       //yjsbottom: 4,
       yexpressions: 3,
-      //yexternal: 4,
       ydns: 3,
-      //yminify: 4,
       yredirects: 4,
       ydupes: 4,
       yetags: 2,
-      //yxhr: 4,
-      //yxhrmethod: 3,
       ymindom: 3,
-      //yno404: 4,
-      //ymincookie: 3,
       ycookiefree: 3,
       ynofilter: 4,
       //yimgnoscale: 3,

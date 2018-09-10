@@ -2,6 +2,7 @@
 # Page Analyzer in progress
 ########################################
 - custom.js: fixed decodeURIComponent errors
+- code cleanup
 
 ########################################
 # Page Analyzer v 0.8
@@ -15,7 +16,6 @@
 ########################################
 - Added custom content possibilities
 - YSlow: decode URLs reverted as causing issues
-
 
 ########################################
 # Page Analyzer v 0.6
