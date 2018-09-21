@@ -3,6 +3,7 @@
 ########################################
 - custom.js: fixed decodeURIComponent errors
 - code cleanup
+-fixed log format
 
 ########################################
 # Page Analyzer v 0.8
