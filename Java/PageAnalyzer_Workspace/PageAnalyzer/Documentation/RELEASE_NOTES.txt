@@ -4,6 +4,8 @@
 - custom.js: fixed decodeURIComponent errors
 - code cleanup
 -fixed log format
+- fixed first analysis returns nothing.
+- support multi-threading 
 
 ########################################
 # Page Analyzer v 0.8

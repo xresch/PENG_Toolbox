@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
 import com.pengtoolbox.pageanalyzer.response.AbstractTemplate;
+import com.pengtoolbox.pageanalyzer.yslow.YSlow;
+import com.pengtoolbox.pageanalyzer.yslow.YSlowExecutor;
 
 public class PA {
 	
@@ -91,9 +93,19 @@ public class PA {
 		
 		PALogger log = new PALogger(logger).method("initialize").start();
 		
+		//------------------------------------
+		// Initialize YSlow Singleton
+		// prevents error on first analysis request.
+		YSlow.instance();
+		YSlowExecutor.instance();
+		
+		//------------------------------------
+		// Classloader
 		URL[] urls = {folder.toURI().toURL()};
 		urlClassLoader = new URLClassLoader(urls);
 		
+		//------------------------------------
+		// Load Configuration
 		CONFIG.load(new FileReader(new File("./config/pageanalyzer.properties")));
 		
 		String om_caching_file_enabled = CONFIG.getProperty("pa_caching_file_enabled");
