@@ -57,7 +57,10 @@ public class YSlowExecutor extends Application {
 		
 		String yslowJS = PA.getFileContent(null, "./resources/js/custom/custom_yslow.js");
 		
-		for(int i = 0; i < 10; i++) {
+		int contextCount = PA.configAsInt("pa_analysis_threads");
+		
+		PA.javafxLogWorkaround(Level.INFO, "Create "+contextCount+" execution context for analysis", "YSlowExecutor.start()");
+		for(int i = 0; i < PA.configAsInt("pa_analysis_threads"); i++) {
 			
 			//--------------------------
 			// Create Web View

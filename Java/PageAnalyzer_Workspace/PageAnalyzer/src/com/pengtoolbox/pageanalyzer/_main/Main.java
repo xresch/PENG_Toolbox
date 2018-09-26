@@ -45,6 +45,7 @@ public class Main extends Application {
     	
 	    PA.initialize();
 	    
+	    String appURL = "/"+PA.config("pa_application_name");
         Server server = new Server(Integer.parseInt(PA.config("pa_server_port")));
 
         //###################################################################
@@ -52,7 +53,7 @@ public class Main extends Application {
         //###################################################################
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
                 
-        servletContextHandler.setContextPath("/"+PA.config("pa_application_name"));
+        servletContextHandler.setContextPath("/");
         
         // 100MB
         int maxSize = 1024*1024*100;
@@ -60,17 +61,17 @@ public class Main extends Application {
         
         ServletHolder uploadHolder = new ServletHolder(new HARUploadServlet());
         uploadHolder.getRegistration().setMultipartConfig(multipartConfig);
-        servletContextHandler.addServlet(uploadHolder, "/harupload");
+        servletContextHandler.addServlet(uploadHolder, appURL+"/harupload");
         servletContextHandler.addServlet(uploadHolder, "/");
         
         ServletHolder apiHolder = new ServletHolder(new RestAPIServlet());
         apiHolder.getRegistration().setMultipartConfig(multipartConfig);
-        servletContextHandler.addServlet(apiHolder, "/api");
+        servletContextHandler.addServlet(apiHolder, appURL+"/api");
 
-        servletContextHandler.addServlet(HARDownloadServlet.class, "/hardownload");
-        servletContextHandler.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
-        servletContextHandler.addServlet(DocuServlet.class, "/docu");
-        servletContextHandler.addServlet(CustomContentServlet.class, "/custom");
+        servletContextHandler.addServlet(HARDownloadServlet.class, appURL+"/hardownload");
+        servletContextHandler.addServlet(AnalyzeURLServlet.class, appURL+"/analyzeurl");
+        servletContextHandler.addServlet(DocuServlet.class, appURL+"/docu");
+        servletContextHandler.addServlet(CustomContentServlet.class, appURL+"/custom");
         
         //-------------------------------
         // Create HandlerChain
@@ -92,9 +93,9 @@ public class Main extends Application {
         ResourceHandler resource_handler = new ResourceHandler();
         // Configure the ResourceHandler. Setting the resource base indicates where the files should be served out of.
         // In this example it is the current directory but it can be configured to anything that the jvm has access to.
-        resource_handler.setDirectoriesListed(true);
+        resource_handler.setDirectoriesListed(false);
         //resource_handler.setWelcomeFiles(new String[]{ "/"+PA.config("pa_application_name")+"/harupload" });
-        resource_handler.setResourceBase("./resources");
+        resource_handler.setResourceBase(appURL+"/resources");
  
         // Add the ResourceHandler to the server.
         GzipHandler resourceGzipHandler = new GzipHandler();
@@ -107,7 +108,7 @@ public class Main extends Application {
         // Create HandlerCollection
         //###################################################################
         HandlerCollection handlerCollection = new HandlerCollection();
-        handlerCollection.setHandlers(new Handler[] { servletGzipHandler, resourceGzipHandler, new DefaultHandler() });
+        handlerCollection.setHandlers(new Handler[] {servletGzipHandler, resourceGzipHandler, new DefaultHandler() });
         server.setHandler(handlerCollection);
         
         // Start things up!
