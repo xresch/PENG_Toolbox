@@ -12,6 +12,8 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
+import org.eclipse.jetty.server.session.HashSessionIdManager;
+import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -22,6 +24,7 @@ import com.pengtoolbox.pageanalyzer.servlets.CustomContentServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DocuServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARDownloadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARUploadServlet;
+import com.pengtoolbox.pageanalyzer.servlets.RedirectServlet;
 import com.pengtoolbox.pageanalyzer.servlets.RestAPIServlet;
 
 import javafx.application.Application;
@@ -62,7 +65,6 @@ public class Main extends Application {
         ServletHolder uploadHolder = new ServletHolder(new HARUploadServlet());
         uploadHolder.getRegistration().setMultipartConfig(multipartConfig);
         servletContextHandler.addServlet(uploadHolder, appURL+"/harupload");
-        servletContextHandler.addServlet(uploadHolder, "/");
         
         ServletHolder apiHolder = new ServletHolder(new RestAPIServlet());
         apiHolder.getRegistration().setMultipartConfig(multipartConfig);
@@ -73,19 +75,35 @@ public class Main extends Application {
         servletContextHandler.addServlet(DocuServlet.class, appURL+"/docu");
         servletContextHandler.addServlet(CustomContentServlet.class, appURL+"/custom");
         
+        servletContextHandler.addServlet(RedirectServlet.class, "/");
+        
+        //-------------------------------
+        // Create Session Manager
+        //-------------------------------
+        HashSessionIdManager idmanager = new HashSessionIdManager();
+        server.setSessionIdManager(idmanager);
+        HashSessionManager manager = new HashSessionManager();
+        manager.setMaxInactiveInterval(3600);
+        
+        SessionHandler sessionHandler = new SessionHandler(manager);
+        SessionCookieConfig sessionConfig = sessionHandler.getSessionManager().getSessionCookieConfig();
+        sessionConfig.setMaxAge(3600); //doesn't work
+        
+        
+
+        
         //-------------------------------
         // Create HandlerChain
         //-------------------------------
         GzipHandler servletGzipHandler = new GzipHandler();
         RequestHandler requestHandler = new RequestHandler();
-        SessionHandler sessionHandler = new SessionHandler();
         
-        SessionCookieConfig sessionConfig = sessionHandler.getSessionManager().getSessionCookieConfig();
-        sessionConfig.setMaxAge(3600); //doesn't work
+
 
         servletGzipHandler.setHandler(sessionHandler);
         sessionHandler.setHandler(requestHandler);
         requestHandler.setHandler(servletContextHandler);
+       
         
         //###################################################################
         // Create ResourceHandler
@@ -104,14 +122,17 @@ public class Main extends Application {
         handlers.setHandlers(new Handler[] { resource_handler, new DefaultHandler() });
         resourceGzipHandler.setHandler(handlers);
         
+        
         //###################################################################
-        // Create HandlerCollection
+        // Create Handler Collection
         //###################################################################
         HandlerCollection handlerCollection = new HandlerCollection();
         handlerCollection.setHandlers(new Handler[] {servletGzipHandler, resourceGzipHandler, new DefaultHandler() });
         server.setHandler(handlerCollection);
         
-        // Start things up!
+        //###################################################################
+        // Startup
+        //###################################################################
         server.start();
         server.join();
        
