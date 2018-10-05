@@ -20,15 +20,15 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 		
 		this.pageTitle = pageTitle;
 		
-		this.addCSSFile("/css/bootstrap.min.css");
-		this.addCSSFile("/css/bootstrap-theme.css");
-		this.addCSSFile("/css/font-awesome.css");
-		this.addCSSFile("/css/custom.css");
+		this.addCSSFile("/resources/css/bootstrap.min.css");
+		this.addCSSFile("/resources/css/bootstrap-theme.css");
+		this.addCSSFile("/resources/css/font-awesome.css");
+		this.addCSSFile("/resources/css/custom.css");
 		
-		this.addJSFileBottom("/js/jquery-2.2.3.js");
+		this.addJSFileBottom("/resources/js/jquery-2.2.3.js");
 		//this.addJSFileBottom("/js/jquery-ui.js");
-		this.addJSFileBottom("/js/custom/custom.js");
-		this.addJSFileBottom("/js/bootstrap.js");
+		this.addJSFileBottom("/resources/js/custom/custom.js");
+		this.addJSFileBottom("/resources/js/bootstrap.js");
 		
 	}
 		

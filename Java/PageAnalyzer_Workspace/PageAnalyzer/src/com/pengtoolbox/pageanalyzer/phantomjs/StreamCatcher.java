@@ -19,18 +19,33 @@ class StreamCatcher extends Thread
     
     public void run()
     {
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
+        
         try
         {
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
+        	
+	        while(!br.ready()) {
+	    		Thread.sleep(200);
+	    	}
+
             String line=null;
-            while ( (line = br.readLine()) != null)
+            while ((line = br.readLine()) != null) {
                 //DEBUG System.out.println(type + ">" + line); 
             	catchedData.append(line+"\n");
-            } catch (IOException ioe)
-              {
-                ioe.printStackTrace();  
-              }
+            }      
+        } catch (IOException ioe){
+            ioe.printStackTrace();  
+        } catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally{
+        	try {
+				br.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
     }
     
     public String getCatchedData(){

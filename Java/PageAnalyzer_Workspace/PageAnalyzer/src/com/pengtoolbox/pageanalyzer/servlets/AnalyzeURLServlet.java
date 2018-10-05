@@ -50,7 +50,9 @@ public class AnalyzeURLServlet extends HttpServlet
 		
 		PALogger log = new PALogger(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
-			
+		
+		//--------------------------
+		// Create Content
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 		StringBuffer content = html.getContent();
 		content.append(PA.getFileContent(request, "./resources/html/analyzeurl.html"));
@@ -58,15 +60,30 @@ public class AnalyzeURLServlet extends HttpServlet
 		content.append("<h1>Results</h1>");
 		content.append("<p>Use the links in the menu to change the view. </p>");
 		
-		String url = request.getParameter("url");
+		String analyzeURL = request.getParameter("analyzeurl");
 		
-		if(url == null){
+		if(analyzeURL == null){
 			html.addAlert(PA.ALERT_ERROR, "Please specify a URL.");
 		}else {
 
-			String harContents = PhantomJSInterface.getHARStringForWebsite(request, url);
-	        	        
+			//--------------------------
+			// Create HAR for URL and
+			// cut out additional strings
+			String harContents = PhantomJSInterface.instance().getHARStringForWebsite(request, analyzeURL);
+			
+			int jsonIndex = harContents.indexOf("{");
+			if(jsonIndex != 0) {
+				String infoString = harContents.substring(0,jsonIndex-1);
+				log.warn("PhantomJS returned Information: "+ infoString);
+				harContents = harContents.substring(jsonIndex);
+			}
+			
+			PA.writeFileContent(request, "./debug/PhantomJS_HARResult"+PA.currentTimestamp().replaceAll(":", "")+".txt", harContents);
+			
+			//--------------------------
+			// Analyze HAR
 			String results = YSlow.instance().analyzeHarString(harContents);
+			
 			
 			content.append("<div id=\"yslow-results\"></div>");
 			
@@ -77,5 +94,8 @@ public class AnalyzeURLServlet extends HttpServlet
 			javascript.append("<script defer>initialize();</script>");
 				
 		}
+		
+        response.setContentType("text/html");
+        response.setStatus(HttpServletResponse.SC_OK);
 	}
 }

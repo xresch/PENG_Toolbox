@@ -1,2 +1,1 @@
-
-- prevent cmd injection
+- Fix redirect issue, rewriting resource path

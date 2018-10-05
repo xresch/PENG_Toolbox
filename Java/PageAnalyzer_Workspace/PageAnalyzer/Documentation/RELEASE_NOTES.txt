@@ -8,6 +8,7 @@
 - support multi-threading 
 - Add thread count configuration
 - add redirect to base path
+- fixed handling quotes in javascript errors.
 
 ########################################
 # Page Analyzer v 0.8

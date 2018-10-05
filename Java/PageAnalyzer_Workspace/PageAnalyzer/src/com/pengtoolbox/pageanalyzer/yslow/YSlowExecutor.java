@@ -107,7 +107,7 @@ public class YSlowExecutor extends Application {
 			context.setResult(result);
 		}catch(Exception e){
 			PA.javafxLogWorkaround(Level.INFO, e.getMessage(), e, "YSlowExecutor.analyzeHARString()");
-			context.setResult("{\"error\": \""+e.getMessage()+" - Check if your HAR file is a valid JSON file. \"}");
+			context.setResult("{\"error\": \""+e.getMessage().replace("\"", "'")+" - Check if your HAR file is a valid JSON file. \"}");
 		}
 				
 	}

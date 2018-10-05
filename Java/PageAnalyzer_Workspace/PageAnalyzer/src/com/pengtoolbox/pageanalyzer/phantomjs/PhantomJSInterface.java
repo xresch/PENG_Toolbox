@@ -1,18 +1,28 @@
 package com.pengtoolbox.pageanalyzer.phantomjs;
 
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
-import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
 
 public class PhantomJSInterface
 {
 	private static Logger logger = PALogger.getLogger(PhantomJSInterface.class.getName());
+	private static PhantomJSInterface INSTANCE = null;
 	
-    public static String getHARStringForWebsite(HttpServletRequest request, String url)
+	private PhantomJSInterface() {
+		
+	}
+	public static PhantomJSInterface instance() {
+		if(INSTANCE == null) {
+			INSTANCE = new PhantomJSInterface();
+		}
+		
+		return INSTANCE;
+	}
+	
+    public String getHARStringForWebsite(HttpServletRequest request, String url)
     {
     	PALogger log = new PALogger(logger, request).method("getHARStringForWebsite");
     	
@@ -27,8 +37,8 @@ public class PhantomJSInterface
         }else{
         	
         	if(!url.startsWith("http")){
-        		log.warn("URL does not start with required 'http*'. Prepend 'https://' and try it.");
-        		url = "https://"+url;
+        		log.warn("URL does not start with required 'http*'. We prepend 'http://' for you and try it again.");
+        		url = "http://"+url;
         	}
 	        try
 	        {            
@@ -48,11 +58,11 @@ public class PhantomJSInterface
 	                
 	                // any output?
 	                StreamCatcher outputCatcher = new StreamCatcher(proc.getInputStream(), "OUTPUT");
-	                    
+	                
 	                // kick them off
 	                errorCatcher.start();
 	                outputCatcher.start();
-	                                        
+	                
 	                // any error???
 	                int exitValue = proc.waitFor();
 	                

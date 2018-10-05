@@ -3,10 +3,13 @@ package com.pengtoolbox.pageanalyzer._main;
 import java.io.File;
 
 import javax.servlet.MultipartConfigElement;
-import javax.servlet.SessionCookieConfig;
 
+import org.eclipse.jetty.client.RedirectProtocolHandler;
+import org.eclipse.jetty.rewrite.handler.RedirectRegexRule;
+import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -24,7 +27,6 @@ import com.pengtoolbox.pageanalyzer.servlets.CustomContentServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DocuServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARDownloadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARUploadServlet;
-import com.pengtoolbox.pageanalyzer.servlets.RedirectServlet;
 import com.pengtoolbox.pageanalyzer.servlets.RestAPIServlet;
 
 import javafx.application.Application;
@@ -56,7 +58,7 @@ public class Main extends Application {
         //###################################################################
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
                 
-        servletContextHandler.setContextPath("/");
+        servletContextHandler.setContextPath(appURL);
         
         // 100MB
         int maxSize = 1024*1024*100;
@@ -64,18 +66,16 @@ public class Main extends Application {
         
         ServletHolder uploadHolder = new ServletHolder(new HARUploadServlet());
         uploadHolder.getRegistration().setMultipartConfig(multipartConfig);
-        servletContextHandler.addServlet(uploadHolder, appURL+"/harupload");
+        servletContextHandler.addServlet(uploadHolder, "/harupload");
         
         ServletHolder apiHolder = new ServletHolder(new RestAPIServlet());
         apiHolder.getRegistration().setMultipartConfig(multipartConfig);
-        servletContextHandler.addServlet(apiHolder, appURL+"/api");
+        servletContextHandler.addServlet(apiHolder, "/api");
 
-        servletContextHandler.addServlet(HARDownloadServlet.class, appURL+"/hardownload");
-        servletContextHandler.addServlet(AnalyzeURLServlet.class, appURL+"/analyzeurl");
-        servletContextHandler.addServlet(DocuServlet.class, appURL+"/docu");
-        servletContextHandler.addServlet(CustomContentServlet.class, appURL+"/custom");
-        
-        servletContextHandler.addServlet(RedirectServlet.class, "/");
+        servletContextHandler.addServlet(HARDownloadServlet.class, "/hardownload");
+        servletContextHandler.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
+        servletContextHandler.addServlet(DocuServlet.class, "/docu");
+        servletContextHandler.addServlet(CustomContentServlet.class, "/custom");
         
         //-------------------------------
         // Create Session Manager
@@ -83,14 +83,26 @@ public class Main extends Application {
         HashSessionIdManager idmanager = new HashSessionIdManager();
         server.setSessionIdManager(idmanager);
         HashSessionManager manager = new HashSessionManager();
-        manager.setMaxInactiveInterval(3600);
         
         SessionHandler sessionHandler = new SessionHandler(manager);
-        SessionCookieConfig sessionConfig = sessionHandler.getSessionManager().getSessionCookieConfig();
-        sessionConfig.setMaxAge(3600); //doesn't work
         
+        // workaround maxInactiveInterval=-1 issue
+        // set inactive interval in RequestHandler
         
+        // manager.setMaxInactiveInterval(3600);
+        
+        //-------------------------------
+        // Create Rewrite Handler
+        //-------------------------------
+        RewriteHandler rewriteHandler = new RewriteHandler();
+        rewriteHandler.setRewriteRequestURI(true);
+        rewriteHandler.setRewritePathInfo(true);
+        rewriteHandler.setOriginalPathAttribute("requestedPath");
 
+        RedirectRegexRule mainRedirect = new RedirectRegexRule();
+        mainRedirect.setRegex("^/$|/pageanalyzer|/pageanalyzer/");
+        mainRedirect.setReplacement("/pageanalyzer/harupload");
+        rewriteHandler.addRule(mainRedirect);	
         
         //-------------------------------
         // Create HandlerChain
@@ -98,36 +110,42 @@ public class Main extends Application {
         GzipHandler servletGzipHandler = new GzipHandler();
         RequestHandler requestHandler = new RequestHandler();
         
-
-
+        rewriteHandler.setHandler(servletGzipHandler);
         servletGzipHandler.setHandler(sessionHandler);
         sessionHandler.setHandler(requestHandler);
         requestHandler.setHandler(servletContextHandler);
-       
+        
+//        servletGzipHandler.setHandler(requestHandler);
+//        sessionHandler.setHandler(requestHandler);
+//        requestHandler.setHandler(servletContextHandler);
+//        servletContextHandler.setSessionHandler(sessionHandler);
         
         //###################################################################
         // Create ResourceHandler
         //###################################################################
-        ResourceHandler resource_handler = new ResourceHandler();
+        
+        ResourceHandler resourceHandler = new ResourceHandler();
         // Configure the ResourceHandler. Setting the resource base indicates where the files should be served out of.
         // In this example it is the current directory but it can be configured to anything that the jvm has access to.
-        resource_handler.setDirectoriesListed(false);
+        resourceHandler.setDirectoriesListed(false);
         //resource_handler.setWelcomeFiles(new String[]{ "/"+PA.config("pa_application_name")+"/harupload" });
-        resource_handler.setResourceBase(appURL+"/resources");
+        resourceHandler.setResourceBase("./resources");
  
         // Add the ResourceHandler to the server.
+        ContextHandler resourceContextHandler = new ContextHandler();
+        resourceContextHandler.setContextPath("/resources");
+        
         GzipHandler resourceGzipHandler = new GzipHandler();
-        server.setHandler(resourceGzipHandler);
-        HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[] { resource_handler, new DefaultHandler() });
-        resourceGzipHandler.setHandler(handlers);
+        
+        resourceContextHandler.setHandler(resourceGzipHandler);
+        resourceGzipHandler.setHandler(resourceHandler);
         
         
         //###################################################################
         // Create Handler Collection
         //###################################################################
         HandlerCollection handlerCollection = new HandlerCollection();
-        handlerCollection.setHandlers(new Handler[] {servletGzipHandler, resourceGzipHandler, new DefaultHandler() });
+        handlerCollection.setHandlers(new Handler[] {rewriteHandler, resourceContextHandler, new DefaultHandler() });
         server.setHandler(handlerCollection);
         
         //###################################################################
@@ -138,10 +156,6 @@ public class Main extends Application {
        
     }
     
-    public void testPhantomJS(){
-    	
-    	
-    }
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {

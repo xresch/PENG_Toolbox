@@ -2,7 +2,6 @@ package com.pengtoolbox.pageanalyzer._main;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,8 +10,11 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -198,7 +200,37 @@ public class PA {
 		}
 	}
 	
-	public static String curentTimestamp(){
+	/***********************************************************************
+	 * Write a string to a file.
+	 * 
+	 * 
+	 * @param request the request that is currently handled
+	 * @param path the path 
+	 * @param content to be written
+	 *   
+	 * @return String content of the file or null if an exception occurred.
+	 * 
+	 ***********************************************************************/
+	public static void writeFileContent(HttpServletRequest request, String path, String content){
+		PALogger omlogger = new PALogger(logger, request).method("writeFileContent");
+		
+		omlogger.finest("Read from disk into cache");
+			
+		try{
+			Files.write(Paths.get(path), content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+			
+			
+		} catch (IOException e) {
+			//TODO: Localize message
+			new PALogger(logger, request)
+				.method("writeFileContent")
+				.severe("Could not write file: "+path, e);
+		}
+			
+	}
+	
+	
+	public static String currentTimestamp(){
 		
 		return PA.formatDate(new Date());
 	}

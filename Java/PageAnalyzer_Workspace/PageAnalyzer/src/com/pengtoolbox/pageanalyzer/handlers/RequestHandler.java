@@ -7,13 +7,13 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 
 import com.pengtoolbox.pageanalyzer._main.PA;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
-import com.pengtoolbox.pageanalyzer.response.AbstractTemplateHTML;
  
 public class RequestHandler extends HandlerWrapper
 {
@@ -68,9 +68,13 @@ public class RequestHandler extends HandlerWrapper
     	
     	request.setAttribute(PA.REQUEST_ATTR_ID, requestID);
     	
-    	request.getSession();
-    	
-    	
+    	//##################################
+    	// Get Session
+    	//##################################
+    	HttpSession session = request.getSession();
+    	//workaround maxInactiveInterval=-1 issue
+    	session.setMaxInactiveInterval(3600);
+
     	//##################################
     	// Call Wrapped Handler
     	//##################################
