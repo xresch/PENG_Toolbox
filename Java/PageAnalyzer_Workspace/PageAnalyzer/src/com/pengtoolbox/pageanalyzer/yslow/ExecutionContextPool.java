@@ -7,8 +7,8 @@ import com.pengtoolbox.pageanalyzer.logging.PALogger;
 
 public class ExecutionContextPool {
 	
-	private static Stack<ExecutionContext> freeExecutorPool = new Stack<ExecutionContext>();
-	private static Stack<ExecutionContext> lockedExecutorPool = new Stack<ExecutionContext>();
+	private static Stack<ExecutionContext> freeContextPool = new Stack<ExecutionContext>();
+	private static Stack<ExecutionContext> lockedContextPool = new Stack<ExecutionContext>();
 
 	private static Logger logger = Logger.getLogger(ExecutionContextPool.class.getName());
 	
@@ -22,7 +22,7 @@ public class ExecutionContextPool {
 		}
 		
 		//wait for first executor to initialize, max 50 seconds
-		for(int i = 0; freeExecutorPool.isEmpty() && i < 100; i++){
+		for(int i = 0; freeContextPool.isEmpty() && i < 100; i++){
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
@@ -38,22 +38,22 @@ public class ExecutionContextPool {
 	public static ExecutionContext lockContext() {
 		
 		new PALogger(logger).method("releaseExecutor")
-		.info("Before Lock: lockedExecutorPool["+lockedExecutorPool.size()+"], freeExecutorPool["+freeExecutorPool.size()+"]");
+		.info("Before Lock: lockedExecutorPool["+lockedContextPool.size()+"], freeExecutorPool["+freeContextPool.size()+"]");
 		
-		ExecutionContext executor = null;
-		while(executor == null) {
+		ExecutionContext context = null;
+		while(context == null) {
 			
-			synchronized(freeExecutorPool) {
-				if(!freeExecutorPool.isEmpty()) {
-					executor =  freeExecutorPool.pop();
-					
-					synchronized(lockedExecutorPool) {
-						lockedExecutorPool.push(executor);
+			synchronized(freeContextPool) {
+				if(!freeContextPool.isEmpty()) {
+					context =  freeContextPool.pop();
+					context.reset();
+					synchronized(lockedContextPool) {
+						lockedContextPool.push(context);
 					}
 				}
 			}
 			
-			if(executor == null) {
+			if(context == null) {
 				try {
 					Thread.sleep(200);
 					new PALogger(logger).method("lockExecutor").fine("Thread waiting for free executor.");
@@ -65,31 +65,33 @@ public class ExecutionContextPool {
 		}
 		
 		new PALogger(logger).method("releaseExecutor")
-		.info("After Lock: lockedExecutorPool["+lockedExecutorPool.size()+"], freeExecutorPool["+freeExecutorPool.size()+"]");
+		.info("After Lock: lockedExecutorPool["+lockedContextPool.size()+"], freeExecutorPool["+freeContextPool.size()+"]");
 		
-		return executor;
+		return context;
 	}
 	
 	/***********************************************************************
 	 * Release a context by unlocking it.
 	 ***********************************************************************/
-	public static void releaseContext(ExecutionContext executor) {
-		synchronized(lockedExecutorPool) {
-			lockedExecutorPool.remove(executor);
+	public static void releaseContext(ExecutionContext context) {
+		context.reset();
+		synchronized(lockedContextPool) {
+			lockedContextPool.remove(context);
 		}
-		synchronized(freeExecutorPool) {
-			freeExecutorPool.push(executor);
+		synchronized(freeContextPool) {
+			freeContextPool.push(context);
 		}
+
 		new PALogger(logger).method("releaseExecutor")
-		.info("After Release: lockedExecutorPool["+lockedExecutorPool.size()+"], freeExecutorPool["+freeExecutorPool.size()+"]");
+		.info("After Release: lockedExecutorPool["+lockedContextPool.size()+"], freeExecutorPool["+freeContextPool.size()+"]");
 	}
 
 	/***********************************************************************
 	 * 
 	 ***********************************************************************/
 	public static void addExecutor(ExecutionContext executor) {
-		synchronized(freeExecutorPool) {
-			freeExecutorPool.add(executor);
+		synchronized(freeContextPool) {
+			freeContextPool.add(executor);
 		}
 	}
 }

@@ -5351,7 +5351,7 @@ YSLOW.doc.addRuleInfo('panoiframes', 'Avoid using iframes', 'iFrames are an over
 YSLOW.doc.addRuleInfo('paexpires', 'Leverage Browser Caching', 'Web pages are becoming increasingly complex with more scripts, style sheets, images, and Flash on them.  A first-time visit to a page may require several HTTP requests to load all the components.  By using Expires headers these components become cacheable, which avoids unnecessary HTTP requests on subsequent page views.  Expires headers are most often associated with images, but they can and should be used on all page components including scripts, style sheets, and Flash.');
 YSLOW.doc.addRuleInfo('padeferjavascript', 'Defer Javascript Execution', 'JavaScript scripts block parallel downloads; that is, when a script is downloading, the browser will not start any other downloads.  To help the page load faster, move scripts to the bottom of the page if they are deferrable. Also the browser will be interrupted creating the DOM tree when he has to download and executed a script, what will stall the rendering of the page.');
 YSLOW.doc.addRuleInfo('paduplicatedrequests', 'Avoid Duplicated Requests', 'Avoid doing the same requests multiple times, as this will add unneccessary overhead to your application. This rule will also hit on POST-Requests even when they have different request bodies.');
-
+YSLOW.doc.addRuleInfo('paurllength', 'Avoid Long URLs', 'Servers ought to be cautious about depending on URI lengths above 255 bytes, because some older client or proxy implementations might not properly support these lengths. Long URLs will also cause overhead for network transfer and request parameter parsing.');
 
 //####################################################################
 //Rules
@@ -6686,22 +6686,7 @@ YSLOW.registerRule({
         		offenders.push("The URL is called "+infos[key].count+" times: "+key);
         	}
         }
-        /*var offenderCount = 0;
-        for (i = 0, len = comps.length; i < len; i += 1) {
 
-        	for (j = 0, len2 = comps.length; j < len2; j += 1) {
-	        	if( i != j && comps[i].url == comps[j] ){
-	        		offenderCount++;
-	        	}
-        	}
-        	if(offenderCount > 0){
-        		var message = "The URL is called "+offenderCount+" times: "+comp[i].url;
-        		if(!offenders.includes(message)){
-        			offenders.push(message);
-        		}
-        	}
-        	offenderCount = 0;
-        }*/
 
         score = 100 - offenders.length * parseInt(config.points, 10);
 
@@ -6717,6 +6702,53 @@ YSLOW.registerRule({
         };
     }
 });
+
+/*******************************************************
+ * Avoid Long URLs
+ *******************************************************/
+YSLOW.registerRule({
+    id: 'paurllength',
+    url: 'https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.2.1',
+    category: ['browser'],
+    config: {
+        points: 15, // how many points for each violation
+        bytes: 255
+    },
+
+    lint: function (doc, cset, config) {
+    	
+    	//---------------------------------
+        // Variables
+        //---------------------------------
+    	var i, len, comp, score,
+            offenders = [],
+            comps = cset.components;
+        
+        //---------------------------------
+        // Evaluate Rule
+        //---------------------------------
+        for (i = 0, len = comps.length; i < len; i += 1) {
+        	comp = comps[i];
+        	if(comp.url.length > config.bytes){
+        		offenders.push("(Length: "+comp.url.length+" Bytes) URL: "+comp.url);
+        	}
+        }
+
+        score = 100 - offenders.length * parseInt(config.points, 10);
+
+        //---------------------------------
+        // return Results
+        //---------------------------------
+        if(YSLOW.DEBUG){ console.log("paurllength score: "+score); }
+        
+        return {
+            score: score,
+            message: (offenders.length > 0) ? "The following requests have a URL longer than "+config.bytes+" bytes." : '',
+            components: offenders
+        };
+    }
+});
+
 
 //#################################################
 //Ruleset
@@ -6764,6 +6796,7 @@ YSLOW.registerRuleset({
   	paexpires: {},
   	padeferjavascript: {},
   	paduplicatedrequests: {},
+  	paurllength: {},
   	  ynumreq: {},
       ycdn: {},
       yemptysrc: {},
@@ -6801,6 +6834,7 @@ YSLOW.registerRuleset({
   	paexpires: 10,
   	padeferjavascript: 5,
   	paduplicatedrequests: 8,
+  	paurllength: 5,
       ynumreq: 8,
       ycdn: 6,
       yemptysrc: 30,
@@ -6822,13 +6856,6 @@ YSLOW.registerRuleset({
 
 });
 
-function helloWorld(value){
-	
-	var string = "Hello "+value+"!";
-	
-	console.log(string);
-	return string;
-}
 
 function analyzeHARString(harString){
 	

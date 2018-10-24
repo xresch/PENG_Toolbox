@@ -1,9 +1,16 @@
 ########################################
 # Page Analyzer in progress
 ########################################
+
+########################################
+# Page Analyzer v 0.9
+########################################
+- added rule paurllength
 - custom.js: fixed decodeURIComponent errors
-- code cleanup
--fixed log format
+- code cleanups
+- fixed log format
+- Analyze URL: fixed return previous result
+- Analyze URL: Increased stability
 - fixed first analysis returns nothing.
 - support multi-threading 
 - Add thread count configuration

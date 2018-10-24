@@ -4,7 +4,6 @@ import java.io.File;
 
 import javax.servlet.MultipartConfigElement;
 
-import org.eclipse.jetty.client.RedirectProtocolHandler;
 import org.eclipse.jetty.rewrite.handler.RedirectRegexRule;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Handler;
@@ -12,7 +11,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.server.session.HashSessionIdManager;
@@ -28,6 +26,7 @@ import com.pengtoolbox.pageanalyzer.servlets.DocuServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARDownloadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARUploadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.RestAPIServlet;
+import com.pengtoolbox.pageanalyzer.utils.HandlerChainBuilder;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -109,6 +108,11 @@ public class Main extends Application {
         //-------------------------------
         GzipHandler servletGzipHandler = new GzipHandler();
         RequestHandler requestHandler = new RequestHandler();
+        
+//        new HandlerChainBuilder(rewriteHandler)
+//        	.chain(servletGzipHandler)
+//        	.chain(sessionHandler)
+//	        .chain(requestHandler);
         
         rewriteHandler.setHandler(servletGzipHandler);
         servletGzipHandler.setHandler(sessionHandler);
