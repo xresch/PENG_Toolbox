@@ -30,6 +30,11 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 		this.addJSFileBottom("/resources/js/custom/custom.js");
 		this.addJSFileBottom("/resources/js/bootstrap.js");
 		
+		String signedIn = (String)request.getSession().getAttribute(PA.SESSION_SIGNED_IN);
+		if(signedIn != null && signedIn.equals("true")) {
+			this.setMenu(new StringBuffer("<li class=\"nav-item\"><a class=\"nav-link\" href=\"./logout\">Logout</a></li>"));
+		}
+      
 	}
 		
 	@Override

@@ -49,6 +49,10 @@ public class PA {
 	public static final String REQUEST_ATTR_TEMPLATE = "pageTemplate";
 	public static final String REQUEST_ATTR_STARTNANOS = "starttime";
 	public static final String REQUEST_ATTR_ENDNANOS = "endtime";
+	
+	public static final String SESSION_SIGNED_IN = "signedIn";
+	
+	public static String BASE_URL = "/";
  
 	
 	//##############################################################################
@@ -120,12 +124,19 @@ public class PA {
 			System.out.println("don't cache files");
 		}
 		
+		BASE_URL = "/"+PA.config("pa_application_name");
+		
 		log.end();
 	}
 	
 	public static String config(String key){
 		
 		return (String)CONFIG.get(key);
+	}
+	
+	public static boolean configAsBoolean(String key){
+		
+		return CONFIG.get(key).toString().toLowerCase().equals("true") ? true : false;
 	}
 	
 	public static int configAsInt(String key){

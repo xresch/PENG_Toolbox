@@ -19,12 +19,15 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+import com.pengtoolbox.pageanalyzer.handlers.AuthenticationHandler;
 import com.pengtoolbox.pageanalyzer.handlers.RequestHandler;
 import com.pengtoolbox.pageanalyzer.servlets.AnalyzeURLServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CustomContentServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DocuServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARDownloadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARUploadServlet;
+import com.pengtoolbox.pageanalyzer.servlets.LoginServlet;
+import com.pengtoolbox.pageanalyzer.servlets.LogoutServlet;
 import com.pengtoolbox.pageanalyzer.servlets.RestAPIServlet;
 import com.pengtoolbox.pageanalyzer.utils.HandlerChainBuilder;
 
@@ -36,7 +39,6 @@ public class Main extends Application {
     public static void main( String[] args ) throws Exception
     {
 
-    	
         //###################################################################
         // Initialize
         //###################################################################
@@ -49,7 +51,6 @@ public class Main extends Application {
     	
 	    PA.initialize();
 	    
-	    String appURL = "/"+PA.config("pa_application_name");
         Server server = new Server(Integer.parseInt(PA.config("pa_server_port")));
 
         //###################################################################
@@ -57,7 +58,7 @@ public class Main extends Application {
         //###################################################################
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
                 
-        servletContextHandler.setContextPath(appURL);
+        servletContextHandler.setContextPath(PA.BASE_URL);
         
         // 100MB
         int maxSize = 1024*1024*100;
@@ -74,7 +75,13 @@ public class Main extends Application {
         servletContextHandler.addServlet(HARDownloadServlet.class, "/hardownload");
         servletContextHandler.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
         servletContextHandler.addServlet(DocuServlet.class, "/docu");
+
         servletContextHandler.addServlet(CustomContentServlet.class, "/custom");
+        
+        if(PA.configAsBoolean("pa_enable_authentication")) {
+            servletContextHandler.addServlet(LoginServlet.class, "/login");
+            servletContextHandler.addServlet(LogoutServlet.class, "/logout");
+        }
         
         //-------------------------------
         // Create Session Manager
@@ -83,12 +90,16 @@ public class Main extends Application {
         server.setSessionIdManager(idmanager);
         HashSessionManager manager = new HashSessionManager();
         
+        manager.setHttpOnly(false);
+        manager.setUsingCookies(true);
+
         SessionHandler sessionHandler = new SessionHandler(manager);
+        
         
         // workaround maxInactiveInterval=-1 issue
         // set inactive interval in RequestHandler
+        manager.setMaxInactiveInterval(3600);
         
-        // manager.setMaxInactiveInterval(3600);
         
         //-------------------------------
         // Create Rewrite Handler
@@ -99,8 +110,8 @@ public class Main extends Application {
         rewriteHandler.setOriginalPathAttribute("requestedPath");
 
         RedirectRegexRule mainRedirect = new RedirectRegexRule();
-        mainRedirect.setRegex("^/$|/pageanalyzer|/pageanalyzer/");
-        mainRedirect.setReplacement("/pageanalyzer/harupload");
+        mainRedirect.setRegex("^/$|"+PA.BASE_URL+"|"+PA.BASE_URL+"/");
+        mainRedirect.setReplacement(PA.BASE_URL+"/harupload");
         rewriteHandler.addRule(mainRedirect);	
         
         //-------------------------------
@@ -108,21 +119,14 @@ public class Main extends Application {
         //-------------------------------
         GzipHandler servletGzipHandler = new GzipHandler();
         RequestHandler requestHandler = new RequestHandler();
+        AuthenticationHandler authenticationHandler = new AuthenticationHandler();
         
-//        new HandlerChainBuilder(rewriteHandler)
-//        	.chain(servletGzipHandler)
-//        	.chain(sessionHandler)
-//	        .chain(requestHandler);
-        
-        rewriteHandler.setHandler(servletGzipHandler);
-        servletGzipHandler.setHandler(sessionHandler);
-        sessionHandler.setHandler(requestHandler);
-        requestHandler.setHandler(servletContextHandler);
-        
-//        servletGzipHandler.setHandler(requestHandler);
-//        sessionHandler.setHandler(requestHandler);
-//        requestHandler.setHandler(servletContextHandler);
-//        servletContextHandler.setSessionHandler(sessionHandler);
+        new HandlerChainBuilder(rewriteHandler)
+        	.chain(servletGzipHandler)
+        	.chain(sessionHandler)
+	        .chain(requestHandler)
+	        .chain(authenticationHandler)
+            .chain(servletContextHandler);
         
         //###################################################################
         // Create ResourceHandler
