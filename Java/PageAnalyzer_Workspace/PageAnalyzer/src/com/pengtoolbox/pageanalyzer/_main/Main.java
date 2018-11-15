@@ -42,6 +42,16 @@ public class Main extends Application {
         //###################################################################
         // Initialize
         //###################################################################
+    	
+    	//---------------------------------------
+    	// General 
+	    PA.initialize();
+	    
+        Server server = new Server(Integer.parseInt(PA.config("pa_server_port")));
+        
+    	//---------------------------------------
+    	// Login
+    	
     	File logFolder = new File("./log");
     	if(!logFolder.isDirectory()) {
     		logFolder.mkdir();
@@ -49,9 +59,13 @@ public class Main extends Application {
     	
     	System.setProperty("java.util.logging.config.file", "./config/logging.properties");
     	
-	    PA.initialize();
-	    
-        Server server = new Server(Integer.parseInt(PA.config("pa_server_port")));
+    	//---------------------------------------
+    	// Datastore 
+    	File datastoreFolder = new File(PA.GLOBAL_DATASTORE_PATH);
+    	if(!datastoreFolder.isDirectory()) {
+    		datastoreFolder.mkdir();
+    	}
+    	
 
         //###################################################################
         // Create ServletContext

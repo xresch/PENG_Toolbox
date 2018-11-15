@@ -10,9 +10,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
@@ -50,7 +48,9 @@ public class PA {
 	public static final String REQUEST_ATTR_STARTNANOS = "starttime";
 	public static final String REQUEST_ATTR_ENDNANOS = "endtime";
 	
-	public static final String SESSION_SIGNED_IN = "signedIn";
+	public static final String SESSION_DATA = "sessionData";
+	
+	public static final String GLOBAL_DATASTORE_PATH = "./datastore";
 	
 	public static String BASE_URL = "/";
  

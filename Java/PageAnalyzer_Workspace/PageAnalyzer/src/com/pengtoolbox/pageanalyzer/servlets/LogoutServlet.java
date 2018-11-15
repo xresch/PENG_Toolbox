@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import com.pengtoolbox.pageanalyzer._main.PA;
+import com.pengtoolbox.pageanalyzer._main.SessionData;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
 import com.pengtoolbox.pageanalyzer.phantomjs.PhantomJSInterface;
 import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
@@ -32,8 +33,11 @@ public class LogoutServlet extends HttpServlet
     {
 		PALogger log = new PALogger(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
-			
-		request.getSession().setAttribute(PA.SESSION_SIGNED_IN, "false");
+		
+		SessionData data = (SessionData)request.getSession().getAttribute(PA.SESSION_DATA); 	
+		data.setLoggedIn(false);
+		data.setUsername("");
+		
 		response.sendRedirect(response.encodeRedirectURL(PA.BASE_URL+"/login"));
         
     }

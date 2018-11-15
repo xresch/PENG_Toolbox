@@ -1,7 +1,6 @@
 package com.pengtoolbox.pageanalyzer.handlers;
 
 import java.io.IOException;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -13,6 +12,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 
 import com.pengtoolbox.pageanalyzer._main.PA;
+import com.pengtoolbox.pageanalyzer._main.SessionData;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
  
 public class AuthenticationHandler extends HandlerWrapper
@@ -33,8 +33,8 @@ public class AuthenticationHandler extends HandlerWrapper
         	//##################################
         	HttpSession session = request.getSession();
         	
-        	if(session.getAttribute(PA.SESSION_SIGNED_IN) != null
-        	&& session.getAttribute(PA.SESSION_SIGNED_IN).equals("true")) {
+        	SessionData data = (SessionData)session.getAttribute(PA.SESSION_DATA); 
+        	if(data.isLoggedIn()) {
 
 	        	//##################################
 	        	// Call Wrapped Handler

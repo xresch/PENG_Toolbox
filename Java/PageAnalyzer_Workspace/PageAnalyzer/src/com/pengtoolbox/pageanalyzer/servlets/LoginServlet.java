@@ -8,8 +8,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.pengtoolbox.pageanalyzer._main.PA;
+import com.pengtoolbox.pageanalyzer._main.SessionData;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
 import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
 
@@ -103,7 +105,11 @@ public class LoginServlet extends HttpServlet
 			
 			if(password.equals(passwordFromFile)) {
 				//Login success
-				request.getSession().setAttribute(PA.SESSION_SIGNED_IN, "true");
+				HttpSession session = request.getSession();
+				SessionData data = (SessionData)session.getAttribute(PA.SESSION_DATA); 
+				data.setLoggedIn(true);
+				data.setUsername(username);
+				
 				response.sendRedirect(response.encodeRedirectURL(PA.BASE_URL+"/harupload"));
 			}else {
 				//Login Failure

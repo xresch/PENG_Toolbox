@@ -2,8 +2,11 @@
 This license is for all code regarding the Page Analyzer, and all customizations in the custom_yslow.js.
 All used third party components are licenced under their respective license.
 
-Licensor: Reto Scheiwiller, reto.scheiwiller5[at]bluewin.ch, all rights reserved
+For clarifying the below CreativeCommons license, the following rules are superior to the below overcomplicated lawyer text:
+  - You are allowed to use and change the PageAnalyzer for your private or company internal purposes.
+  - You are not allowed to use any information gained from a PageAnalyzer analysis commercially without prior agreement with the licensor.
 
+Licensor: Reto Scheiwiller, reto.scheiwiller5[at]bluewin.ch, all rights reserved
 
 Attribution-NonCommercial-NoDerivatives 4.0 International
 =======================================================================
