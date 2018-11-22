@@ -2,6 +2,7 @@
 # Page Analyzer in progress
 ########################################
 - added Login / Logout 
+- added rule paetags
 
 ########################################
 # Page Analyzer v 0.9

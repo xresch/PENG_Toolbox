@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.pageanalyzer._main.PA;
+import com.pengtoolbox.pageanalyzer._main.SessionData;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
 
 public class TemplateHTMLDefault extends AbstractTemplateHTML {
@@ -30,8 +31,8 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 		this.addJSFileBottom("/resources/js/custom/custom.js");
 		this.addJSFileBottom("/resources/js/bootstrap.js");
 		
-		String signedIn = (String)request.getSession().getAttribute(PA.SESSION_SIGNED_IN);
-		if(signedIn != null && signedIn.equals("true")) {
+		SessionData data = (SessionData)request.getSession().getAttribute(PA.SESSION_DATA);
+		if(data.isLoggedIn()) {
 			this.setMenu(new StringBuffer("<li class=\"nav-item\"><a class=\"nav-link\" href=\"./logout\">Logout</a></li>"));
 		}
       

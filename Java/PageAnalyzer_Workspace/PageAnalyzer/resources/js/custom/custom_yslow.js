@@ -818,6 +818,7 @@ YSLOW.Component.prototype.setComponentDetails = function (o) {
                 header = response.headers[i];
                 comp.headers[header.name.toLowerCase()] = header.value;
                 comp.raw_headers += header.name + ': ' + header.value + '\n';
+                
             }
             comp.req_headers = {};
             for (i = 0, len = request.headers.length; i < len; i += 1) {
@@ -3438,7 +3439,7 @@ YSLOW.doc.addRuleInfo('yredirects', 'Avoid URL redirects', 'URL redirects are ma
 
 YSLOW.doc.addRuleInfo('ydupes', 'Remove duplicate JavaScript and CSS', 'Duplicate JavaScript and CSS files hurt performance by creating unnecessary HTTP requests (IE only) and wasted JavaScript execution (IE and Firefox).  In IE, if an external script is included twice and is not cacheable, it generates two HTTP requests during page loading.  Even if the script is cacheable, extra HTTP requests occur when the user reloads the page.  In both IE and Firefox, duplicate JavaScript scripts cause wasted time evaluating the same scripts more than once.  This redundant script execution happens regardless of whether the script is cacheable.');
 
-YSLOW.doc.addRuleInfo('yetags', 'Configure entity tags (ETags)', 'Entity tags (ETags) are a mechanism web servers and the browser use to determine whether a component in the browser\'s cache matches one on the origin server.  Since ETags are typically constructed using attributes that make them unique to a specific server hosting a site, the tags will not match when a browser gets the original component from one server and later tries to validate that component on a different server.');
+YSLOW.doc.addRuleInfo('yetags', 'Configure Entity Tags (ETags)', 'Entity tags (ETags) are a mechanism web servers and the browser use to determine whether a component in the browser\'s cache matches one on the origin server.  Since ETags are typically constructed using attributes that make them unique to a specific server hosting a site, the tags will not match when a browser gets the original component from one server and later tries to validate that component on a different server.');
 
 YSLOW.doc.addRuleInfo('ymindom', 'Reduce the number of DOM elements', 'A complex page means more bytes to download, and it also means slower DOM access in JavaScript.  Reduce the number of DOM elements on the page to improve performance.');
 
@@ -5352,6 +5353,7 @@ YSLOW.doc.addRuleInfo('paexpires', 'Leverage Browser Caching', 'Web pages are be
 YSLOW.doc.addRuleInfo('padeferjavascript', 'Defer Javascript Execution', 'JavaScript scripts block parallel downloads; that is, when a script is downloading, the browser will not start any other downloads.  To help the page load faster, move scripts to the bottom of the page if they are deferrable. Also the browser will be interrupted creating the DOM tree when he has to download and executed a script, what will stall the rendering of the page.');
 YSLOW.doc.addRuleInfo('paduplicatedrequests', 'Avoid Duplicated Requests', 'Avoid doing the same requests multiple times, as this will add unneccessary overhead to your application. This rule will also hit on POST-Requests even when they have different request bodies.');
 YSLOW.doc.addRuleInfo('paurllength', 'Avoid Long URLs', 'Servers ought to be cautious about depending on URI lengths above 255 bytes, because some older client or proxy implementations might not properly support these lengths. Long URLs will also cause overhead for network transfer and request parameter parsing.');
+YSLOW.doc.addRuleInfo('paetags', 'Configure Entity Tags (ETags)', 'Entity tags (ETags) are a mechanism web servers and the browser use to determine whether a component in the browser\'s cache matches one on the origin server. If the version matches the server returns with HTTP-304 Not Modified, therefore the resource can be used from cache what reduces network traffic and loading time.');
 
 //####################################################################
 //Rules
@@ -6749,6 +6751,59 @@ YSLOW.registerRule({
     }
 });
 
+/*******************************************************
+ * ETags
+ *******************************************************/
+YSLOW.registerRule({
+    id: 'paetags',
+    //name: 'Configure ETags',
+    url: 'http://developer.yahoo.com/performance/rules.html#etags',
+    category: ['server'],
+
+    config: {
+        // points to take out for each misconfigured etag
+        points: 3,
+        // types to inspect for etags
+        types: ['flash', 'js', 'css', "json", 'cssimage', 'image', 'favicon']
+    },
+
+    lint: function (doc, cset, config) {
+
+    	//---------------------------------
+        // Variables
+        //---------------------------------
+        var i, len, score, comp, etag,
+            offenders = [],
+            comps = cset.getComponentsByType(config.types);
+
+    	//---------------------------------
+        // Evaluate Rule
+        //---------------------------------
+        for (i = 0, len = comps.length; i < len; i += 1) {
+            comp = comps[i];
+            
+            etag = comp.headers['etag'];
+            if (etag == null || etag.length == 0) {
+                offenders.push(comp);
+            }
+        }
+
+    	//---------------------------------
+        // Return Results
+        //---------------------------------
+        score = 100 - offenders.length * parseInt(config.points, 10);
+
+        return {
+            score: score,
+            message: (offenders.length > 0) ? YSLOW.util.plural(
+                'There %are% %num% component%s% without an ETag header.',
+                offenders.length
+            ) : '',
+            components: offenders
+        };
+    }
+});
+
 
 //#################################################
 //Ruleset
@@ -6797,6 +6852,7 @@ YSLOW.registerRuleset({
   	padeferjavascript: {},
   	paduplicatedrequests: {},
   	paurllength: {},
+  	paetags: {},
   	  ynumreq: {},
       ycdn: {},
       yemptysrc: {},
@@ -6808,7 +6864,7 @@ YSLOW.registerRuleset({
       ydns: {},
       yredirects: {},
       ydupes: {},
-      yetags: {},
+      //yetags: {},
       ymindom: {},
       ycookiefree: {},
       ynofilter: {},
@@ -6835,6 +6891,7 @@ YSLOW.registerRuleset({
   	padeferjavascript: 5,
   	paduplicatedrequests: 8,
   	paurllength: 5,
+  	paetags: 5,
       ynumreq: 8,
       ycdn: 6,
       yemptysrc: 30,
@@ -6846,7 +6903,7 @@ YSLOW.registerRuleset({
       ydns: 3,
       yredirects: 4,
       ydupes: 4,
-      yetags: 2,
+      //yetags: 2,
       ymindom: 3,
       ycookiefree: 3,
       ynofilter: 4,
