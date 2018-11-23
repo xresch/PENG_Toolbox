@@ -13,6 +13,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 
 import com.pengtoolbox.pageanalyzer._main.PA;
+import com.pengtoolbox.pageanalyzer.utils.FileUtils;
 import com.sun.javafx.webkit.WebConsoleListener;
 
 import javafx.application.Application;
@@ -55,7 +56,7 @@ public class YSlowExecutor extends Application {
 	 ***********************************************************************/
 	public void start(Stage stage){
 		
-		String yslowJS = PA.getFileContent(null, "./resources/js/custom/custom_yslow.js");
+		String yslowJS = FileUtils.getFileContent(null, "./resources/js/custom/custom_yslow.js");
 		
 		int contextCount = PA.configAsInt("pa_analysis_threads");
 		

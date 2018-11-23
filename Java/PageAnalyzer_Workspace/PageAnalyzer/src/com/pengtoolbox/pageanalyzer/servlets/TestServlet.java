@@ -12,6 +12,7 @@ import com.pengtoolbox.pageanalyzer._main.PA;
 import com.pengtoolbox.pageanalyzer.handlers.RequestHandler;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
 import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
+import com.pengtoolbox.pageanalyzer.utils.FileUtils;
 
 public class TestServlet extends HttpServlet
 {
@@ -53,7 +54,7 @@ public class TestServlet extends HttpServlet
 		//------------------------------
 		// Test cannot read file
 		//------------------------------
-		String cannotReadFile = PA.getFileContent(request, "./resources/this_file_does_not_exists.txt");
+		String cannotReadFile = FileUtils.getFileContent(request, "./resources/this_file_does_not_exists.txt");
 		
 		//------------------------------
 		// Test Localization

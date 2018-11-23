@@ -29,6 +29,7 @@ import com.pengtoolbox.pageanalyzer.servlets.HARUploadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.LoginServlet;
 import com.pengtoolbox.pageanalyzer.servlets.LogoutServlet;
 import com.pengtoolbox.pageanalyzer.servlets.RestAPIServlet;
+import com.pengtoolbox.pageanalyzer.utils.H2Utils;
 import com.pengtoolbox.pageanalyzer.utils.HandlerChainBuilder;
 
 import javafx.application.Application;
@@ -43,14 +44,9 @@ public class Main extends Application {
         // Initialize
         //###################################################################
     	
+
     	//---------------------------------------
-    	// General 
-	    PA.initialize();
-	    
-        Server server = new Server(Integer.parseInt(PA.config("pa_server_port")));
-        
-    	//---------------------------------------
-    	// Login
+    	// Logging
     	
     	File logFolder = new File("./log");
     	if(!logFolder.isDirectory()) {
@@ -65,6 +61,15 @@ public class Main extends Application {
     	if(!datastoreFolder.isDirectory()) {
     		datastoreFolder.mkdir();
     	}
+    	
+    	H2Utils.initialize();
+    	
+    	//---------------------------------------
+    	// General 
+	    PA.initialize();
+	    
+        Server server = new Server(Integer.parseInt(PA.config("pa_server_port")));
+        
     	
 
         //###################################################################

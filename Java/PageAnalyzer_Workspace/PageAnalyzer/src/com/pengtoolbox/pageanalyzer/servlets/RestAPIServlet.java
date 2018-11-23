@@ -15,6 +15,7 @@ import com.pengtoolbox.pageanalyzer.logging.PALogger;
 import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
 import com.pengtoolbox.pageanalyzer.response.TemplatePlain;
 import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
+import com.pengtoolbox.pageanalyzer.utils.FileUtils;
 import com.pengtoolbox.pageanalyzer.utils.HTTPUtils;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
@@ -39,7 +40,7 @@ public class RestAPIServlet extends HttpServlet {
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Rest API");
 		StringBuffer content = html.getContent();
-		content.append(PA.getFileContent(request, "./resources/html/api.html"));
+		content.append(FileUtils.getFileContent(request, "./resources/html/api.html"));
 		
 		response.setContentType("text/html");
 		response.setStatus(HttpServletResponse.SC_OK);

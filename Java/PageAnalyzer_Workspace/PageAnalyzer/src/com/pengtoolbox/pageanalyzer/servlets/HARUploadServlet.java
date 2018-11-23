@@ -13,6 +13,8 @@ import com.pengtoolbox.pageanalyzer._main.PA;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
 import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
 import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
+import com.pengtoolbox.pageanalyzer.utils.FileUtils;
+import com.pengtoolbox.pageanalyzer.utils.H2Utils;
 import com.pengtoolbox.pageanalyzer.utils.HTTPUtils;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
@@ -37,7 +39,7 @@ public class HARUploadServlet extends HttpServlet
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
 		StringBuffer content = html.getContent();
-		content.append(PA.getFileContent(request, "./resources/html/harupload.html"));
+		content.append(FileUtils.getFileContent(request, "./resources/html/harupload.html"));
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -55,7 +57,7 @@ public class HARUploadServlet extends HttpServlet
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
 		StringBuffer content = html.getContent();
-		content.append(PA.getFileContent(request, "./resources/html/harupload.html"));
+		content.append(FileUtils.getFileContent(request, "./resources/html/harupload.html"));
 		
 		content.append("<h1>Results</h1>");
 		content.append("<p>Use the links in the menu to change the view. </p>");
@@ -65,12 +67,13 @@ public class HARUploadServlet extends HttpServlet
 			html.addAlert(PA.ALERT_ERROR, "HAR File could not be loaded.");
 		}else {
 
-			log.start().method("doPost()-StreamAndCacheHarFile");
+			log.start().method("doPost()-StreamHarFile");
 				String harContents = PA.readContentsFromInputStream(harFile.getInputStream());
 			log.end();
 						
 			String results = YSlow.instance().analyzeHarString(harContents);
 			
+			H2Utils.saveResults("anonymous", results);
 			content.append("<div id=\"yslow-results\"></div>");
 			
 			StringBuffer javascript = html.getJavascript();

@@ -14,6 +14,7 @@ import com.pengtoolbox.pageanalyzer._main.PA;
 import com.pengtoolbox.pageanalyzer._main.SessionData;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
 import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
+import com.pengtoolbox.pageanalyzer.utils.FileUtils;
 
 public class LoginServlet extends HttpServlet
 {
@@ -39,7 +40,7 @@ public class LoginServlet extends HttpServlet
 		
 		//------------------------------
 		// Load File
-		String credentials = PA.getFileContent(null, CREDENTIAL_FILE_PATH);
+		String credentials = FileUtils.getFileContent(null, CREDENTIAL_FILE_PATH);
 		
 		if(credentials == null) {
 			log.severe("Credential file could not be loaded: "+CREDENTIAL_FILE_PATH);
@@ -72,7 +73,7 @@ public class LoginServlet extends HttpServlet
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 		StringBuffer content = html.getContent();
-		content.append(PA.getFileContent(request, "./resources/html/login.html"));
+		content.append(FileUtils.getFileContent(request, "./resources/html/login.html"));
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -96,7 +97,7 @@ public class LoginServlet extends HttpServlet
 		if(username == null || password == null){
 			TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 			StringBuffer content = html.getContent();
-			content.append(PA.getFileContent(request, "./resources/html/login.html"));
+			content.append(FileUtils.getFileContent(request, "./resources/html/login.html"));
 			
 			html.addAlert(PA.ALERT_ERROR, "Please specify a username and password.");
 		}else {
@@ -115,7 +116,7 @@ public class LoginServlet extends HttpServlet
 				//Login Failure
 				TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 				StringBuffer content = html.getContent();
-				content.append(PA.getFileContent(request, "./resources/html/login.html"));
+				content.append(FileUtils.getFileContent(request, "./resources/html/login.html"));
 				
 				html.addAlert(PA.ALERT_ERROR, "Username or password invalid.");
 			}

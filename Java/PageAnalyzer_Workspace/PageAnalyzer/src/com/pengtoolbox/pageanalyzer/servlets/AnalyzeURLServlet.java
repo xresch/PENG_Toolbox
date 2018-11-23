@@ -14,6 +14,7 @@ import com.pengtoolbox.pageanalyzer.logging.PALogger;
 import com.pengtoolbox.pageanalyzer.phantomjs.PhantomJSInterface;
 import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
 import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
+import com.pengtoolbox.pageanalyzer.utils.FileUtils;
 import com.pengtoolbox.pageanalyzer.utils.HTTPUtils;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
@@ -35,7 +36,7 @@ public class AnalyzeURLServlet extends HttpServlet
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 		StringBuffer content = html.getContent();
-		content.append(PA.getFileContent(request, "./resources/html/analyzeurl.html"));
+		content.append(FileUtils.getFileContent(request, "./resources/html/analyzeurl.html"));
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -55,7 +56,7 @@ public class AnalyzeURLServlet extends HttpServlet
 		// Create Content
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 		StringBuffer content = html.getContent();
-		content.append(PA.getFileContent(request, "./resources/html/analyzeurl.html"));
+		content.append(FileUtils.getFileContent(request, "./resources/html/analyzeurl.html"));
 		
 		content.append("<h1>Results</h1>");
 		content.append("<p>Use the links in the menu to change the view. </p>");
@@ -77,8 +78,6 @@ public class AnalyzeURLServlet extends HttpServlet
 				log.warn("PhantomJS returned Information: "+ infoString);
 				harContents = harContents.substring(jsonIndex);
 			}
-			
-			PA.writeFileContent(request, "./debug/PhantomJS_HARResult"+PA.currentTimestamp().replaceAll(":", "")+".txt", harContents);
 			
 			//--------------------------
 			// Analyze HAR

@@ -10,5 +10,6 @@
 			<attribute name="javadoc_location" value="jar:file:/C:/Program%20Files/Java/jdk1.8.0_60/javafx-src.zip!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/h2-1.4.197.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
