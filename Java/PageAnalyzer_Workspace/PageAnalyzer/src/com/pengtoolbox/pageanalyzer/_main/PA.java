@@ -37,6 +37,7 @@ public class PA {
 	
 	public static final String TIME_FORMAT = "YYYY-MM-dd'T'HH:mm:ss.SSS";
 	public static final Properties CONFIG = new Properties();
+	public static boolean CONFIG_AUTHENTICATION_ENABLED = false;
 	
 	public static final String REQUEST_ATTR_ID = "requestID";
 	public static final String REQUEST_ATTR_TEMPLATE = "pageTemplate";
@@ -113,6 +114,7 @@ public class PA {
 			System.out.println("don't cache files");
 		}
 		
+		CONFIG_AUTHENTICATION_ENABLED = PA.configAsBoolean("pa_enable_authentication");
 		BASE_URL = "/"+PA.config("pa_application_name");
 		
 		log.end();

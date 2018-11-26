@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import com.pengtoolbox.pageanalyzer._main.PA;
+import com.pengtoolbox.pageanalyzer._main.SessionData;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
 import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
 import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
@@ -73,7 +74,12 @@ public class HARUploadServlet extends HttpServlet
 						
 			String results = YSlow.instance().analyzeHarString(harContents);
 			
-			H2Utils.saveResults("anonymous", results);
+			//--------------------------------------
+			// Save Results to DB
+			H2Utils.saveResults(request, results);
+			
+			//--------------------------------------
+			// Prepare Response
 			content.append("<div id=\"yslow-results\"></div>");
 			
 			StringBuffer javascript = html.getJavascript();

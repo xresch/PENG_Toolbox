@@ -3,14 +3,19 @@ package com.pengtoolbox.pageanalyzer.utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.Server;
 
+import com.pengtoolbox.pageanalyzer._main.PA;
+import com.pengtoolbox.pageanalyzer._main.SessionData;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
 
 public class H2Utils {
@@ -26,18 +31,17 @@ public class H2Utils {
 	 ********************************************************************************************/
 	public static void initialize() {
 		
-
-		
+	
 		try {
 			
 			server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "8889").start();
 			
 			dataSource = new JdbcDataSource();
-			dataSource.setURL("jdbc:h2:./datastore/h2database");
+			dataSource.setURL("jdbc:h2:tcp://localhost:8889/./datastore/h2database");
 			dataSource.setUser("sa");
 			dataSource.setPassword("sa");
 			
-			H2Utils.cleanupDatabase();
+			//H2Utils.cleanupDatabase();
 			
 			Connection connection = dataSource.getConnection();
 			
@@ -64,9 +68,22 @@ public class H2Utils {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	public static void saveResults(String userID, String jsonResults) {
+	public static void saveResults(HttpServletRequest request, String jsonResults) {
 		
+		//-------------------------------
+		// Get UserID
+		String userID = "";
+		if(PA.CONFIG_AUTHENTICATION_ENABLED) {
+			SessionData data = (SessionData) request.getSession().getAttribute(PA.SESSION_DATA); 
+			if(data.isLoggedIn()) {
+				userID = data.getUsername();
+			}
+		}else {
+			userID = "anonymous";
+		}
 		
+		//-------------------------------
+		// Extract URL
 		Pattern pattern = Pattern.compile(".*?\"u\":\"([^\"]+)\".*");
 		Matcher matcher = pattern.matcher(jsonResults);
 
@@ -80,7 +97,9 @@ public class H2Utils {
 			
 		}
 
-
+		//-------------------------------
+		// Insert into DB
+		
 		try {
 
 			Connection connection = dataSource.getConnection();
@@ -103,28 +122,121 @@ public class H2Utils {
 	}
 	
 	/********************************************************************************************
-	 *
+	 * Returns a result as a json array.
+	 * If the result is null, the method returns an empty array.
+	 * 
 	 ********************************************************************************************/
-	public static ResultSet getResultsForUser(String userID) {
+	public static String getResultListForUser(String userID) {
 		
 		ResultSet resultSet = null;
+		String jsonString = null;
 		
 		Connection connection = null;
 		try {
 
 			connection = dataSource.getConnection();
 			
-			String selectResults = "SELECT * FROM results WHERE user_id = '?'";
+			String selectResults = "SELECT result_id, page_url, time FROM results WHERE user_id = ? ORDER BY time DESC";
 			
 			PreparedStatement prepared = connection.prepareStatement(selectResults);
 			prepared.setString(1, userID);
 			
 			resultSet = prepared.executeQuery();
 			
+			jsonString = H2Utils.resultSetToJSON(resultSet);
 			
 		} catch (SQLException e) {
 			new PALogger(logger)
-				.method("saveResults")
+				.method("getResultListForUser")
+				.severe("Issue fetching results from H2 Database.", e);
+		}finally {
+			if(connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return jsonString;
+		
+	}
+	
+	/********************************************************************************************
+	 * Returns a result as a json array.
+	 * If the result is null, the method returns an empty array.
+	 * 
+	 ********************************************************************************************/
+	public static String getResultListForComparison(String resultIDArray) {
+		
+		ResultSet resultSet = null;
+		String jsonString = null;
+		Connection connection = null;	
+		
+		if(!resultIDArray.matches("(\\d,?)+")) {
+			return null;
+		}
+		
+		try {
+
+			connection = dataSource.getConnection();
+			
+			String selectResults = "SELECT result_id, page_url, time, json_result FROM results WHERE result_id in ("+resultIDArray+") ORDER BY time";
+			
+			PreparedStatement prepared = connection.prepareStatement(selectResults);
+			
+			resultSet = prepared.executeQuery();
+			
+			jsonString = H2Utils.resultSetToJSON(resultSet);
+			
+		} catch (SQLException e) {
+			new PALogger(logger)
+				.method("getResultListForComparison")
+				.severe("Issue fetching results from H2 Database.", e);
+		}finally {
+			if(connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return jsonString;
+		
+	}
+	
+	/********************************************************************************************
+	 *
+	 ********************************************************************************************/
+	public static String getResultByID(int id) {
+		
+		ResultSet resultSet = null;
+		String jsonResult = null;
+		
+		Connection connection = null;
+		try {
+
+			connection = dataSource.getConnection();
+			
+			String selectResults = "SELECT json_result FROM results WHERE result_id = ?";
+			
+			PreparedStatement prepared = connection.prepareStatement(selectResults);
+			prepared.setInt(1, id);
+			
+			resultSet = prepared.executeQuery();
+			
+			if(resultSet.next()) {
+				jsonResult = resultSet.getString(1);
+			}
+			
+		} catch (SQLException e) {
+			new PALogger(logger)
+				.method("getResultByID")
 				.severe("Issue saving results to H2 Database.", e);
 		}finally {
 			if(connection != null) {
@@ -137,10 +249,93 @@ public class H2Utils {
 			}
 		}
 		
-		return resultSet;
+		return jsonResult;
 		
 	}
 	
+	/********************************************************************************************
+	 *
+	 ********************************************************************************************/
+	public static boolean deleteResults(String resultIDArray) {
+		
+		boolean result = false;
+		
+		Connection connection = null;	
+		
+		if(!resultIDArray.matches("(\\d,?)+")) {
+			return false;
+		}
+		
+		try {
+
+			connection = dataSource.getConnection();
+			
+			String selectResults = "DELETE FROM results WHERE result_id in ("+resultIDArray+");";
+			
+			PreparedStatement prepared = connection.prepareStatement(selectResults);
+			
+			result = prepared.execute();
+			
+		} catch (SQLException e) {
+			new PALogger(logger)
+				.method("deleteResults")
+				.severe("Issue fetching results from H2 Database.", e);
+		}finally {
+			if(connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		
+		return result;
+		
+	}
+	
+	/********************************************************************************************
+	 *
+	 ********************************************************************************************/
+	public static String resultSetToJSON(ResultSet resultSet) {
+		
+		StringBuffer json = new StringBuffer();
+		json.append("[");
+		
+		try {
+			ResultSetMetaData metadata = resultSet.getMetaData();
+	
+			int columnCount = metadata.getColumnCount();
+	
+			while(resultSet.next()) {
+				json.append("{");
+				for(int i = 1 ; i <= columnCount; i++) {
+					String column = metadata.getColumnName(i);
+					json.append("\"").append(column).append("\": ");
+					
+					String value = resultSet.getString(i);
+					if(column.equals("JSON_RESULT")) {
+						json.append(value).append(",");
+					}else {
+						json.append("\"").append(value).append("\",");
+					}
+				}
+				json.deleteCharAt(json.length()-1); //remove last comma
+				json.append("},");
+			}
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		json.deleteCharAt(json.length()-1); //remove last comma
+		json.append("]");
+		
+		return json.toString();
+	}
+		
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
@@ -150,9 +345,11 @@ public class H2Utils {
 
 			Connection connection = dataSource.getConnection();
 			
-			String deleteTable = "DROP TABLE results;";
+			String deleteTable = "DROP TABLE results; ";
 			
 			PreparedStatement prepared = connection.prepareStatement(deleteTable);
+			
+			prepared.execute();
 			
 		} catch (SQLException e) {
 			new PALogger(logger)

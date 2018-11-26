@@ -22,13 +22,17 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import com.pengtoolbox.pageanalyzer.handlers.AuthenticationHandler;
 import com.pengtoolbox.pageanalyzer.handlers.RequestHandler;
 import com.pengtoolbox.pageanalyzer.servlets.AnalyzeURLServlet;
+import com.pengtoolbox.pageanalyzer.servlets.CompareServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CustomContentServlet;
+import com.pengtoolbox.pageanalyzer.servlets.DeleteResultServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DocuServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARDownloadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARUploadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.LoginServlet;
 import com.pengtoolbox.pageanalyzer.servlets.LogoutServlet;
 import com.pengtoolbox.pageanalyzer.servlets.RestAPIServlet;
+import com.pengtoolbox.pageanalyzer.servlets.ResultListServlet;
+import com.pengtoolbox.pageanalyzer.servlets.ResultViewServlet;
 import com.pengtoolbox.pageanalyzer.utils.H2Utils;
 import com.pengtoolbox.pageanalyzer.utils.HandlerChainBuilder;
 
@@ -93,11 +97,16 @@ public class Main extends Application {
 
         servletContextHandler.addServlet(HARDownloadServlet.class, "/hardownload");
         servletContextHandler.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
+        servletContextHandler.addServlet(ResultViewServlet.class, "/resultview");
+        servletContextHandler.addServlet(CompareServlet.class, "/compare");
+        servletContextHandler.addServlet(DeleteResultServlet.class, "/delete");
+        servletContextHandler.addServlet(ResultListServlet.class, "/resultlist");
+        
         servletContextHandler.addServlet(DocuServlet.class, "/docu");
 
         servletContextHandler.addServlet(CustomContentServlet.class, "/custom");
         
-        if(PA.configAsBoolean("pa_enable_authentication")) {
+        if(PA.CONFIG_AUTHENTICATION_ENABLED) {
             servletContextHandler.addServlet(LoginServlet.class, "/login");
             servletContextHandler.addServlet(LogoutServlet.class, "/logout");
         }

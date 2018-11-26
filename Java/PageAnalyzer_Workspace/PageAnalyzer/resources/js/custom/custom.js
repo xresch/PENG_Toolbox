@@ -32,22 +32,29 @@ var GRADE_CLASS = {
  ******************************************************************/
 function initialize(){
 	
-	
-	if(YSLOW_DATA.error != null){
-		console.error(YSLOW_DATA.error);
-		var errorDiv = $('<div>');
-		errorDiv.attr("class", "bg-danger");
-		errorDiv.append('<p>Sorry some error occured, be patient while nobody is looking into it.</p>');
-		errorDiv.append('<p>'+YSLOW_DATA.error+'</p>');
-		$("#yslow-results").append(errorDiv);
-		return;
+	if( typeof YSLOW_DATA !== 'undefined'){
+		if(YSLOW_DATA.error != null){
+			console.error(YSLOW_DATA.error);
+			var errorDiv = $('<div>');
+			errorDiv.attr("class", "bg-danger");
+			errorDiv.append('<p>Sorry some error occured, be patient while nobody is looking into it.</p>');
+			errorDiv.append('<p>'+YSLOW_DATA.error+'</p>');
+			$("#yslow-results").append(errorDiv);
+			return;
+		}
+		loadData(YSLOW_DATA);
+		RULES = sortArrayByValueOfObject(RULES, "score");
+		
+		$(".result-view-tabs").css("visibility", "visible");
+		
+		draw({info: 'overview', view: ''});
 	}
-	loadData(YSLOW_DATA);
-	RULES = sortArrayByValueOfObject(RULES, "score");
-	
-	$(".result-view-tabs").css("visibility", "visible");
-	
-	draw({info: 'overview', view: ''});
+	else if(typeof RESULT_LIST_DATA !== 'undefined'){
+		printResultList($("#resultlist"), RESULT_LIST_DATA);
+	}
+	else if(typeof DATA_TO_COMPARE  !== 'undefined'){
+		printComparison($("#comparison"), DATA_TO_COMPARE);
+	}
 }
 
 /**************************************************************************************
@@ -173,6 +180,20 @@ function loadData(data){
 }
 
 /**************************************************************************************
+ * Tries to decode a URI and handles errors when they are thrown.
+ * If URI cannot be decoded the input string is returned unchanged.
+ *************************************************************************************/
+function secureDecodeURI(uri){
+	try{
+		decoded = decodeURIComponent(uri);
+	}catch(err){
+		decoded = uri;
+	}
+	
+	return decoded;
+}
+
+/**************************************************************************************
  * 
  *************************************************************************************/
 function sortArrayByValueOfObject(array, key){
@@ -229,6 +250,220 @@ function selectElementContent(el) {
     }
 }
 
+/******************************************************************
+ * Format the yslow results as html.
+ * 
+ * @param 
+ * @returns 
+ ******************************************************************/
+function printComparison(parent, data){
+	
+	
+	compareTableData = [];
+	
+	//-----------------------------------------
+	// Get distinct List of Rules
+	//-----------------------------------------
+	uniqueRuleList = {};
+	for(key in data){
+		
+		for(ruleName in data[key].JSON_RESULT.g){
+			console.log("RuleName"+ruleName);
+			uniqueRuleList[ruleName] = {"Metric": ruleName};
+		}
+	}
+	
+	//-----------------------------------------
+	// Create Rows
+	//-----------------------------------------
+	
+	var urlRow = {"Metric": "URL"}; compareTableData.push(urlRow);
+	var scoreRow = {"Metric": "Score"}; compareTableData.push(scoreRow);
+	var gradeRow = {"Metric": "Grade"}; compareTableData.push(gradeRow);
+	var loadtimeRow = {"Metric": "Load Time"}; compareTableData.push(loadtimeRow);
+	var sizeRow = {"Metric": "Page Size"}; compareTableData.push(sizeRow);
+	var sizeCachedRow = {"Metric": "Page Size Cached"}; compareTableData.push(sizeCachedRow);
+	var requestCountRow = {"Metric": "Total Requests"}; compareTableData.push(requestCountRow);
+	var requestsCachedRow = {"Metric": "Cached Requests"}; compareTableData.push(requestsCachedRow);
+	
+	//-------------------------------
+	// Push rules to table
+	for(ruleName in uniqueRuleList){
+		compareTableData.push(uniqueRuleList[ruleName]);
+	}
+	for(key in data){
+		
+		var time = data[key].TIME;
+		var result = data[key].JSON_RESULT;
+		
+		//----------------------------
+		// URL Row
+		url = secureDecodeURI(result.u);
+		urlRow[time]	= '<a target="_blank" href="'+url+'">'+url+'</a>';
+		
+		//----------------------------
+		// Score Row
+		var score = result.o; 
+		scoreRow[time]	 = score + "%";
+		
+		//----------------------------
+		// Grade Row
+		var grade = getGrade(score);
+		gradeRow[time]	 = '<span class="badge btn-'+GRADE_CLASS[grade]+'">'+grade+'</span>';
+		
+		//----------------------------
+		// Other Rows
+		sizeRow[time]	 			= result.w + " Bytes";
+		sizeCachedRow[time]	 		= result.w_c + " Bytes";
+		loadtimeRow[time]	 		= result.resp + "ms";
+		requestCountRow[time]	 	= result.r;
+		requestsCachedRow[time]	 	= result.r_c;
+		
+		//----------------------------
+		// Rule Rows
+		for(ruleName in uniqueRuleList){
+				if(typeof result.g !== 'undefined' && typeof result.g[ruleName] !== 'undefined'){
+				var ruleScore = result.g[ruleName].score;
+				var ruleGrade = getGrade(ruleScore);
+				uniqueRuleList[ruleName][time] = '<span class="badge btn-'+GRADE_CLASS[ruleGrade]+'">'+ruleGrade+'&nbsp;&sol;&nbsp;' + ruleScore + "%</span>";
+			}else{
+				uniqueRuleList[ruleName][time] = "N/A";
+			}
+		}
+	}
+	
+	
+	printTable($("#comparison"),compareTableData, "Comparison");
+	
+}
+
+/******************************************************************
+ * Print a list of results.
+ * 
+ * @param 
+ * @returns 
+ ******************************************************************/
+function printResultList(parent, data){
+	
+	//----------------------------------
+	// Add title and description.
+	parent.append("<h2>Result History</h2>");
+	parent.append("<p>Click on the eye symbol to open a result. Select multiple results and hit compare to get a comparison.</p>");
+	
+	//----------------------------------
+	// Create Table Filter
+	var filter = $('<input type="text" class="form-control" onkeyup="filterTable(this)" placeholder="Filter Table...">');
+	parent.append(filter);
+	parent.append('<span style="font-size: xx-small;"><strong>Hint:</strong> The filter searches through the innerHTML of the table rows. Use &quot;&gt;&quot; and &quot;&lt;&quot; to search for the beginning and end of a cell content(e.g. &quot;&gt;Test&lt;&quot; )</span>');
+	
+	//----------------------------------
+	// Create Table Header
+	headerRowString = '<thead><tr>';
+		headerRowString += '<th>&nbsp;</th>';
+		headerRowString += '<th>ID</th>';
+		headerRowString += '<th>Timestamp</th>';
+		headerRowString += '<th>URL</th>';
+		headerRowString += '<th>&nbsp;</th>';
+		headerRowString += '<th>&nbsp;</th>';
+	headerRowString += '</tr></thead>';
+	
+	//----------------------------------
+	// Create Table
+	var table = $('<table class="table table-striped table-responsive">');
+
+	table.append(headerRowString);
+	
+	parent.append(table);
+	filter.data("table", table);
+	
+	//----------------------------------
+	// Create Rows
+	var resultCount = data.length;
+	for(var i = 0; i < resultCount; i++ ){
+		var currentData = data[i];
+		var rowString = '<tr>';
+		
+		rowString += '<td><input class="resultSelectionCheckbox" type="checkbox" onchange="resultSelectionChanged();" value="'+currentData.RESULT_ID+'" /></td>';
+		rowString += '<td>'+currentData.RESULT_ID+'</td>';
+		rowString += '<td>'+currentData.TIME+'</td>';
+		
+		url = secureDecodeURI(currentData.PAGE_URL);
+		
+		rowString += '<td>'+url+'</td>';
+		
+		rowString += '<td><a target="_blank"  alt="Open Result" href="./resultview?resultid='+currentData.RESULT_ID+'"><i class="fa fa-eye"></i></a></td>';
+		
+		rowString += '<td><a target="_blank" alt="Open URL" href="'+url+'"><i class="fa fa-link"></i></a></td>';
+		
+		rowString += '<td><a target="_blank" alt="Delete Result" href="./delete?resultids='+currentData.RESULT_ID+'"><i class="fa fa-trash text-danger"></i></a></td>';
+		rowString += "</tr>";
+		
+		table.append(rowString);
+	}
+	parent.append(table);
+	
+	
+	//----------------------------------
+	// Create Button
+	var compareButton = $('<a id="resultCompareButton" class="btn btn-primary" onclick="compareResults();" disabled="true">Compare</a>');
+	var deleteButton = $('<a id="resultDeleteButton" class="btn btn-danger" onclick="deleteResults();" disabled="true">Delete</a>');
+	
+	parent.append(compareButton);
+	parent.append(deleteButton);
+}
+
+/**************************************************************************************
+ * 
+ *************************************************************************************/
+function resultSelectionChanged(){
+	
+	console.log("changed");
+	
+	if($(".resultSelectionCheckbox:checked").size() > 1){
+		$("#resultCompareButton").attr("disabled", false);
+	}else{
+		$("#resultCompareButton").attr("disabled", true);
+	}
+	
+	if($(".resultSelectionCheckbox:checked").size() > 0){
+		$("#resultDeleteButton").attr("disabled", false);
+	}else{
+		$("#resultDeleteButton").attr("disabled", true);
+	}
+	
+	
+	
+}
+
+/**************************************************************************************
+ * 
+ *************************************************************************************/
+function compareResults(){
+		
+	var resultIDs = "";
+	$.each($(".resultSelectionCheckbox:checked"), function(){
+		resultIDs += $(this).val()+",";
+	});
+	resultIDs = resultIDs.slice(0,-1);
+	
+	self.location = "./compare?resultids="+resultIDs;
+	
+}
+
+/**************************************************************************************
+ * 
+ *************************************************************************************/
+function deleteResults(){
+		
+	var resultIDs = "";
+	$.each($(".resultSelectionCheckbox:checked"), function(){
+		resultIDs += $(this).val()+",";
+	});
+	resultIDs = resultIDs.slice(0,-1);
+	
+	self.location = "./delete?resultids="+resultIDs;
+	
+}
 
 /**************************************************************************************
  * 

@@ -15,6 +15,7 @@ import com.pengtoolbox.pageanalyzer.phantomjs.PhantomJSInterface;
 import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
 import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
 import com.pengtoolbox.pageanalyzer.utils.FileUtils;
+import com.pengtoolbox.pageanalyzer.utils.H2Utils;
 import com.pengtoolbox.pageanalyzer.utils.HTTPUtils;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
@@ -73,7 +74,7 @@ public class AnalyzeURLServlet extends HttpServlet
 			String harContents = PhantomJSInterface.instance().getHARStringForWebsite(request, analyzeURL);
 			
 			int jsonIndex = harContents.indexOf("{");
-			if(jsonIndex != 0) {
+			if(jsonIndex > 0) {
 				String infoString = harContents.substring(0,jsonIndex-1);
 				log.warn("PhantomJS returned Information: "+ infoString);
 				harContents = harContents.substring(jsonIndex);
@@ -83,7 +84,12 @@ public class AnalyzeURLServlet extends HttpServlet
 			// Analyze HAR
 			String results = YSlow.instance().analyzeHarString(harContents);
 			
+			//--------------------------------------
+			// Save Results to DB
+			H2Utils.saveResults(request, results);
 			
+			//--------------------------------------
+			// Prepare Response
 			content.append("<div id=\"yslow-results\"></div>");
 			
 			StringBuffer javascript = html.getJavascript();
