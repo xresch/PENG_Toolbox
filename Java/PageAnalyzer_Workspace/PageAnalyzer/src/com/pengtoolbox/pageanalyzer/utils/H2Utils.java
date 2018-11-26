@@ -31,15 +31,20 @@ public class H2Utils {
 	 ********************************************************************************************/
 	public static void initialize() {
 		
-	
+		String storePath 	= PA.config("pa_h2_store_path");
+		String port 		= PA.config("pa_h2_store_port");
+		String username		= PA.config("pa_h2_username");
+		String password		= PA.config("pa_h2_password");
+		
+		String h2_url 		= "jdbc:h2:tcp://localhost:"+port+"/"+storePath;
 		try {
 			
 			server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "8889").start();
 			
 			dataSource = new JdbcDataSource();
-			dataSource.setURL("jdbc:h2:tcp://localhost:8889/./datastore/h2database");
-			dataSource.setUser("sa");
-			dataSource.setPassword("sa");
+			dataSource.setURL(h2_url);
+			dataSource.setUser(username);
+			dataSource.setPassword(password);
 			
 			//H2Utils.cleanupDatabase();
 			

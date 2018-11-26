@@ -7,6 +7,7 @@
 - added Result History
 - added Result View
 - added Comparison View
+- added H2 configuration to pageanalyzer.properties
 
 ########################################
 # Page Analyzer v 0.9

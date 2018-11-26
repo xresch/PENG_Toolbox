@@ -48,7 +48,6 @@ public class Main extends Application {
         // Initialize
         //###################################################################
     	
-
     	//---------------------------------------
     	// Logging
     	
@@ -60,6 +59,12 @@ public class Main extends Application {
     	System.setProperty("java.util.logging.config.file", "./config/logging.properties");
     	
     	//---------------------------------------
+    	// General 
+	    PA.initialize();
+	    
+        Server server = new Server(Integer.parseInt(PA.config("pa_server_port")));
+        
+    	//---------------------------------------
     	// Datastore 
     	File datastoreFolder = new File(PA.GLOBAL_DATASTORE_PATH);
     	if(!datastoreFolder.isDirectory()) {
@@ -68,11 +73,7 @@ public class Main extends Application {
     	
     	H2Utils.initialize();
     	
-    	//---------------------------------------
-    	// General 
-	    PA.initialize();
-	    
-        Server server = new Server(Integer.parseInt(PA.config("pa_server_port")));
+
         
     	
 
