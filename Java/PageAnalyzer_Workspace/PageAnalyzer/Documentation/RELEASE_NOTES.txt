@@ -1,6 +1,10 @@
 ########################################
 # Page Analyzer in progress
 ########################################
+
+########################################
+# Page Analyzer v 1.0
+########################################
 - added Login / Logout functionality
 - added rule paetags
 - added H2 Database
