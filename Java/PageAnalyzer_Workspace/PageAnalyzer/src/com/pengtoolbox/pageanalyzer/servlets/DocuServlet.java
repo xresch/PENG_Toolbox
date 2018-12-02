@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.pageanalyzer._main.PA;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
 import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
+import com.pengtoolbox.pageanalyzer.utils.FileUtils;
 
 /*************************************************************************
  * 
@@ -40,7 +41,7 @@ public class DocuServlet extends HttpServlet {
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
 		StringBuffer content = html.getContent();
-		content.append(PA.getFileContent(request, "./resources/html/docu.html"));
+		content.append(FileUtils.getFileContent(request, "./resources/html/docu.html"));
 		
 		String supportDetails = PA.config("pa_support_details");
 		if(supportDetails != null) {

@@ -1,6 +1,13 @@
 # L-P-Toolbox
 A collection of tools useful for load and performance testing
 
+# License Note
+The repositories MIT license applies only to the tools and components in the 
+PENG_Toolbox, which do not have a license specified.
+
+For all tools which specify their own license, please stick to the license 
+terms of the tool.
+
 # Overview 
 An overview of the tools and a short description what they do and how to start.
 * Bash Scripts
@@ -11,6 +18,7 @@ An overview of the tools and a short description what they do and how to start.
   * **SilkPerformer_ResultAnalysis.xlsx:** Sheet for result analysis, check the Docu-Sheet for instructions.
   * **Timetracking.xlsx:** Sheet for tracking all your performance engineering activities. ;-)
 * Java
+  * **Java Agents:** Some examples of Java agents and how to write them.
   * **Page Analyzer:** A small jetty self-contained web application which analyzes .har-Files and shows the results.
     * **Quickstart:** 
 	  * Get the distribution under \Java\PageAnalyzer_Workspace\PageAnalyzer\dist

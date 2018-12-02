@@ -13,6 +13,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 
 import com.pengtoolbox.pageanalyzer._main.PA;
+import com.pengtoolbox.pageanalyzer.utils.FileUtils;
 import com.sun.javafx.webkit.WebConsoleListener;
 
 import javafx.application.Application;
@@ -24,35 +25,65 @@ import netscape.javascript.JSObject;
 
 public class YSlowExecutor extends Application {
 	
-	private WebView view;
 	private WebEngine engine;
+	private static YSlowExecutor INSTANCE;
 	
 	private static Logger logger = Logger.getLogger(YSlowExecutor.class.getName());
     
+	/***********************************************************************
+	 * 
+	 ***********************************************************************/
+	public static YSlowExecutor instance() {
+		if(INSTANCE == null) {
+			INSTANCE = new YSlowExecutor();
+			YSlowExecutorThread thread = new YSlowExecutorThread();
+			thread.start();
+		}
+		
+		return INSTANCE;
+	}
 	
-	
+	/***********************************************************************
+	 * 
+	 ***********************************************************************/
 	@Override
 	public void init() throws Exception {
-		YSlow.setExecutor(this);
 		super.init();
 	}
 	
+	/***********************************************************************
+	 * 
+	 ***********************************************************************/
 	public void start(Stage stage){
 		
-		String yslowJS = PA.getFileContent(null, "./resources/js/custom/custom_yslow.js");
-
-		view = new WebView();
-		stage.setScene(new Scene(view, 900, 600));
+		String yslowJS = FileUtils.getFileContent(null, "./resources/js/custom/custom_yslow.js");
 		
-		engine = view.getEngine();
+		int contextCount = PA.configAsInt("pa_analysis_threads");
 		
-		WebConsoleListener.setDefaultListener((webView, message, lineNumber, sourceId) -> {
-		    String log = "[JS at line "+ lineNumber + "]"+ message;
-			PA.javafxLogWorkaround(Level.INFO, log, "YSlowJavascriptConsoleOutput");
-		});
-
-		engine.setJavaScriptEnabled(true);
-		engine.loadContent("<html><head></head><body><script language=\"javascript\">"+yslowJS+"</script>Hello World</body></html>");
+		PA.javafxLogWorkaround(Level.INFO, "Create "+contextCount+" execution context for analysis", "YSlowExecutor.start()");
+		for(int i = 0; i < PA.configAsInt("pa_analysis_threads"); i++) {
+			
+			//--------------------------
+			// Create Web View
+			WebView view = new WebView();
+			stage.setScene(new Scene(view, 900, 600));
+			
+			engine = view.getEngine();
+			
+			WebConsoleListener.setDefaultListener((webView, message, lineNumber, sourceId) -> {
+			    String log = "[JS at line "+ lineNumber + "]"+ message;
+				PA.javafxLogWorkaround(Level.INFO, log, "YSlowJavascriptConsoleOutput");
+			});
+	
+			engine.setJavaScriptEnabled(true);
+			engine.loadContent("<html><head></head><body><script language=\"javascript\">"+yslowJS+"</script>Hello World</body></html>");
+			
+			//--------------------------
+			// Create Context
+			ExecutionContext context = new ExecutionContext();
+			context.setView(view);
+			ExecutionContextPool.addExecutor(context);
+		}
 		
 //		engine.getLoadWorker().stateProperty().addListener((observable, oldState, newState) -> {
 //		    if (newState == State.SUCCEEDED) {
@@ -67,18 +98,24 @@ public class YSlowExecutor extends Application {
 				
 	}
 	
-	public void analyzeHARString(String harString){
+	/***********************************************************************
+	 * 
+	 ***********************************************************************/
+	public static void analyzeHARString(ExecutionContext context, String harString){
 		try{
-			JSObject window = (JSObject)engine.executeScript("window");
+			JSObject window = (JSObject)context.getView().getEngine().executeScript("window");
 			String result = (String) window.call("analyzeHARString", harString);
-			YSlow.instance().setResult(result);
+			context.setResult(result);
 		}catch(Exception e){
 			PA.javafxLogWorkaround(Level.INFO, e.getMessage(), e, "YSlowExecutor.analyzeHARString()");
-			YSlow.instance().setResult("{\"error\": \""+e.getMessage()+" - Check if your HAR file is a valid JSON file. \"}");
+			context.setResult("{\"error\": \""+e.getMessage().replace("\"", "'")+" - Check if your HAR file is a valid JSON file. \"}");
 		}
 				
 	}
 
+	/***********************************************************************
+	 * 
+	 ***********************************************************************/
 	private String debugGetStringFromDocument(Document doc)
 	{
 	    try

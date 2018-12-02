@@ -2,21 +2,15 @@ package com.pengtoolbox.pageanalyzer._main;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -29,6 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
 import com.pengtoolbox.pageanalyzer.response.AbstractTemplate;
+import com.pengtoolbox.pageanalyzer.utils.FileUtils;
+import com.pengtoolbox.pageanalyzer.yslow.YSlow;
+import com.pengtoolbox.pageanalyzer.yslow.YSlowExecutor;
 
 public class PA {
 	
@@ -40,11 +37,18 @@ public class PA {
 	
 	public static final String TIME_FORMAT = "YYYY-MM-dd'T'HH:mm:ss.SSS";
 	public static final Properties CONFIG = new Properties();
+	public static boolean CONFIG_AUTHENTICATION_ENABLED = false;
 	
 	public static final String REQUEST_ATTR_ID = "requestID";
 	public static final String REQUEST_ATTR_TEMPLATE = "pageTemplate";
 	public static final String REQUEST_ATTR_STARTNANOS = "starttime";
 	public static final String REQUEST_ATTR_ENDNANOS = "endtime";
+	
+	public static final String SESSION_DATA = "sessionData";
+	
+	public static final String GLOBAL_DATASTORE_PATH = "./datastore";
+	
+	public static String BASE_URL = "/";
  
 	
 	//##############################################################################
@@ -76,12 +80,6 @@ public class PA {
 	
 	private static URLClassLoader urlClassLoader;
 	
-	//##############################################################################
-	// CACHES
-	//##############################################################################
-	
-	private static boolean CACHING_FILE_ENABLED = true;
-	private static final HashMap<String,String> fileContentCache = new HashMap<String,String>();
 
 	//##############################################################################
 	// METHODS
@@ -91,20 +89,33 @@ public class PA {
 		
 		PALogger log = new PALogger(logger).method("initialize").start();
 		
+		//------------------------------------
+		// Initialize YSlow Singleton
+		// prevents error on first analysis request.
+		YSlow.instance();
+		YSlowExecutor.instance();
+		
+		//------------------------------------
+		// Classloader
 		URL[] urls = {folder.toURI().toURL()};
 		urlClassLoader = new URLClassLoader(urls);
 		
+		//------------------------------------
+		// Load Configuration
 		CONFIG.load(new FileReader(new File("./config/pageanalyzer.properties")));
 		
 		String om_caching_file_enabled = CONFIG.getProperty("pa_caching_file_enabled");
 		if(om_caching_file_enabled != null 
 		&& om_caching_file_enabled.toLowerCase().equals("true")){
-			CACHING_FILE_ENABLED = true;
+			FileUtils.CACHING_FILE_ENABLED = true;
 			System.out.println("cache files");
 		}else{
-			CACHING_FILE_ENABLED = false;
+			FileUtils.CACHING_FILE_ENABLED = false;
 			System.out.println("don't cache files");
 		}
+		
+		CONFIG_AUTHENTICATION_ENABLED = PA.configAsBoolean("pa_enable_authentication");
+		BASE_URL = "/"+PA.config("pa_application_name");
 		
 		log.end();
 	}
@@ -112,6 +123,11 @@ public class PA {
 	public static String config(String key){
 		
 		return (String)CONFIG.get(key);
+	}
+	
+	public static boolean configAsBoolean(String key){
+		
+		return CONFIG.get(key).toString().toLowerCase().equals("true") ? true : false;
 	}
 	
 	public static int configAsInt(String key){
@@ -136,57 +152,7 @@ public class PA {
 
 	}
 	
-	/***********************************************************************
-	 * Returns the file content of the given file path as a string.
-	 * If it fails to read the file it will handle the exception and
-	 * will add an alert to the given request.
-	 * A file once loaded will 
-	 * 
-	 * @param request the request that is currently handled
-	 * @param path the path 
-	 * 
-	 * @return String content of the file or null if an exception occurred.
-	 * 
-	 ***********************************************************************/
-	public static String getFileContent(HttpServletRequest request, String path){
-		PALogger omlogger = new PALogger(logger, request).method("getFileContent");
-		
-		if( CACHING_FILE_ENABLED && fileContentCache.containsKey(path)){
-			omlogger.finest("Read file content from cache");
-			return fileContentCache.get(path);
-		}else{
-			omlogger.finest("Read from disk into cache");
-			
-			try{
-				List<String> fileContent = Files.readAllLines(Paths.get(path), Charset.forName("UTF-8"));
-				
-				StringBuffer contentBuffer = new StringBuffer();
-				
-				for(String line : fileContent){
-					contentBuffer.append(line);
-					contentBuffer.append("\n");
-				}
-				String content = contentBuffer.toString();
-				fileContentCache.put(path, content);
-				
-				// remove UTF-8 byte order mark if present
-				content = content.replace("\uFEFF", "");
-				
-				return content;
-				
-			} catch (IOException e) {
-				//TODO: Localize message
-				new PALogger(logger, request)
-					.method("getFileContent")
-					.severe("Could not read file: "+path, e);
-				
-				return null;
-			}
-			
-		}
-	}
-	
-	public static String curentTimestamp(){
+	public static String currentTimestamp(){
 		
 		return PA.formatDate(new Date());
 	}

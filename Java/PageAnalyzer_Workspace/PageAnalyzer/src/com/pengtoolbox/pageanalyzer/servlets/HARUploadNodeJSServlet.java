@@ -13,6 +13,7 @@ import com.pengtoolbox.pageanalyzer._main.PA;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
 import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
 import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
+import com.pengtoolbox.pageanalyzer.utils.FileUtils;
 import com.pengtoolbox.pageanalyzer.utils.HTTPUtils;
 
 //@MultipartConfig(maxFileSize=1024*1024*100, maxRequestSize=1024*1024*100)
@@ -36,7 +37,7 @@ public class HARUploadNodeJSServlet extends HttpServlet
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
 		StringBuffer content = html.getContent();
-		content.append(PA.getFileContent(request, "./resources/html/harupload.html"));
+		content.append(FileUtils.getFileContent(request, "./resources/html/harupload.html"));
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -54,7 +55,7 @@ public class HARUploadNodeJSServlet extends HttpServlet
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
 		StringBuffer content = html.getContent();
-		content.append(PA.getFileContent(request, "./resources/html/harupload.html"));
+		content.append(FileUtils.getFileContent(request, "./resources/html/harupload.html"));
 		
 		content.append("<h1>Results</h1>");
 		content.append("<p>Use the links in the menu to change the view. </p>");

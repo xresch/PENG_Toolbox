@@ -25,7 +25,7 @@ public abstract class AbstractTemplateHTML extends AbstractTemplate {
 		this.addJavascriptData(PA.REQUEST_ATTR_ID, requestID );
 		this.addJavascriptData(PA.REQUEST_ATTR_STARTNANOS, String.valueOf(startNanos) );
 		
-		this.addSupportInfo("Timestamp:", PA.curentTimestamp());
+		this.addSupportInfo("Timestamp:", PA.currentTimestamp());
 		this.addSupportInfo("RequestID:", requestID);
 		this.addSupportInfo("SessionID:", (String)this.request.getSession().getId());
 		
@@ -102,7 +102,7 @@ public abstract class AbstractTemplateHTML extends AbstractTemplate {
 			case PA.ALERT_INFO: 	clazz = "alert-info"; break;
 			case PA.ALERT_WARN: 	clazz = "alert-warning"; break;
 			case PA.ALERT_ERROR: 	clazz = "alert-danger"; break;
-			default:	 				clazz = "alert-info"; break;
+			default:	 			clazz = "alert-info"; break;
 			
 		}
 		

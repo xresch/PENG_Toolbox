@@ -5,7 +5,9 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.pageanalyzer._main.PA;
+import com.pengtoolbox.pageanalyzer._main.SessionData;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
+import com.pengtoolbox.pageanalyzer.utils.FileUtils;
 
 public class TemplateHTMLDefault extends AbstractTemplateHTML {
 	
@@ -20,16 +22,21 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 		
 		this.pageTitle = pageTitle;
 		
-		this.addCSSFile("/css/bootstrap.min.css");
-		this.addCSSFile("/css/bootstrap-theme.css");
-		this.addCSSFile("/css/font-awesome.css");
-		this.addCSSFile("/css/custom.css");
+		this.addCSSFile("/resources/css/bootstrap.min.css");
+		this.addCSSFile("/resources/css/bootstrap-theme.css");
+		this.addCSSFile("/resources/css/font-awesome.css");
+		this.addCSSFile("/resources/css/custom.css");
 		
-		this.addJSFileBottom("/js/jquery-2.2.3.js");
+		this.addJSFileBottom("/resources/js/jquery-2.2.3.js");
 		//this.addJSFileBottom("/js/jquery-ui.js");
-		this.addJSFileBottom("/js/custom/custom.js");
-		this.addJSFileBottom("/js/bootstrap.js");
+		this.addJSFileBottom("/resources/js/custom/custom.js");
+		this.addJSFileBottom("/resources/js/bootstrap.js");
 		
+		SessionData data = (SessionData)request.getSession().getAttribute(PA.SESSION_DATA);
+		if(data.isLoggedIn()) {
+			this.setMenu(new StringBuffer("<li class=\"nav-item\"><a class=\"nav-link\" href=\"./logout\">Logout</a></li>"));
+		}
+      
 	}
 		
 	@Override
@@ -53,7 +60,7 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 				buildedPage.append("");
 				buildedPage.append(this.menu);
 				
-				String menuTemplate = PA.getFileContent(request,PA.PATH_TEMPLATE_MENU);
+				String menuTemplate = FileUtils.getFileContent(request,PA.PATH_TEMPLATE_MENU);
 				if(menuTemplate != null){
 					String customMenuInserted = menuTemplate.replace("{!customMenu!}", this.menu);	
 					buildedPage.append(customMenuInserted);
@@ -79,7 +86,7 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 				// Footer
 				this.appendSectionTitle(buildedPage, "Footer");
 
-				String footerTemplate = PA.getFileContent(request,PA.PATH_TEMPLATE_FOOTER);
+				String footerTemplate = FileUtils.getFileContent(request,PA.PATH_TEMPLATE_FOOTER);
 				if(footerTemplate != null){
 					String customFooterInserted = footerTemplate.replace("{!customFooter!}", this.footer);	
 					buildedPage.append(customFooterInserted);
@@ -105,7 +112,7 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 				// Support Info
 				this.appendSectionTitle(buildedPage, "Support Info");
 				
-				String supportInfoTemplate = PA.getFileContent(request,PA.PATH_TEMPLATE_SUPPORTINFO);
+				String supportInfoTemplate = FileUtils.getFileContent(request,PA.PATH_TEMPLATE_SUPPORTINFO);
 				
 				if(supportInfoTemplate != null){
 					String supportInfoInserted = supportInfoTemplate.replace("{!supportInfo!}", this.supportInfo);	

@@ -1,7 +1,32 @@
 ########################################
 # Page Analyzer in progress
 ########################################
+
+########################################
+# Page Analyzer v 1.0
+########################################
+- added Login / Logout functionality
+- added rule paetags
+- added H2 Database
+- added Result History
+- added Result View
+- added Comparison View
+- added H2 configuration to pageanalyzer.properties
+
+########################################
+# Page Analyzer v 0.9
+########################################
+- added rule paurllength
 - custom.js: fixed decodeURIComponent errors
+- code cleanups
+- fixed log format
+- Analyze URL: fixed return previous result
+- Analyze URL: Increased stability
+- fixed first analysis returns nothing.
+- support multi-threading 
+- Add thread count configuration
+- add redirect to base path
+- fixed handling quotes in javascript errors.
 
 ########################################
 # Page Analyzer v 0.8
@@ -15,7 +40,6 @@
 ########################################
 - Added custom content possibilities
 - YSlow: decode URLs reverted as causing issues
-
 
 ########################################
 # Page Analyzer v 0.6
