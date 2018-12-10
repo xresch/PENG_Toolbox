@@ -39,7 +39,7 @@ public class H2Utils {
 		String h2_url 		= "jdbc:h2:tcp://localhost:"+port+"/"+storePath;
 		try {
 			
-			server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "8889").start();
+			server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", port).start();
 			
 			dataSource = new JdbcDataSource();
 			dataSource.setURL(h2_url);
@@ -56,9 +56,12 @@ public class H2Utils {
 								  + "json_result CLOB,"
 								  + "time TIMESTAMP);";
 			
-			// ALTER TABLE IF EXISTS results ADD COLUMN IF NOT EXISTS (page_url VARCHAR(4096))
 			PreparedStatement prepared = connection.prepareStatement(createTableSQL);
-			 prepared.execute();
+			prepared.execute();
+			 
+			String addColumnHARFile = "ALTER TABLE results ADD COLUMN IF NOT EXISTS har_file CLOB";
+			prepared = connection.prepareStatement(addColumnHARFile);
+			prepared.execute();
 			
 			isInitialized = true;
 		} catch (SQLException e) {
@@ -73,7 +76,7 @@ public class H2Utils {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	public static void saveResults(HttpServletRequest request, String jsonResults) {
+	public static void saveResults(HttpServletRequest request, String jsonResults, String harString) {
 		
 		//-------------------------------
 		// Get UserID
@@ -109,12 +112,13 @@ public class H2Utils {
 
 			Connection connection = dataSource.getConnection();
 			
-			String saveResult = "INSERT INTO results(user_id, page_url, json_result, time) values(?, ?, ?, CURRENT_TIMESTAMP() );";
+			String saveResult = "INSERT INTO results(user_id, page_url, json_result,har_file, time) values(?, ?, ?, ?, CURRENT_TIMESTAMP() );";
 			
 			PreparedStatement prepared = connection.prepareStatement(saveResult);
 			prepared.setString(1, userID);
 			prepared.setString(2, page_url);
 			prepared.setString(3, jsonResults);
+			prepared.setString(4, harString);
 			
 			prepared.execute();
 			
