@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import com.pengtoolbox.pageanalyzer._main.PA;
-import com.pengtoolbox.pageanalyzer._main.SessionData;
 import com.pengtoolbox.pageanalyzer.logging.PALogger;
+import com.pengtoolbox.pageanalyzer.phantomjs.PhantomJSInterface;
 import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
 import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
 import com.pengtoolbox.pageanalyzer.utils.FileUtils;
@@ -19,15 +19,12 @@ import com.pengtoolbox.pageanalyzer.utils.H2Utils;
 import com.pengtoolbox.pageanalyzer.utils.HTTPUtils;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
-//@MultipartConfig(maxFileSize=1024*1024*100, maxRequestSize=1024*1024*100)
-public class HARUploadServlet extends HttpServlet
+public class AnalyzeURLServlet extends HttpServlet
 {
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = PALogger.getLogger(HARUploadServlet.class.getName());
+	private static Logger logger = PALogger.getLogger(AnalyzeURLServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -38,9 +35,9 @@ public class HARUploadServlet extends HttpServlet
 		PALogger log = new PALogger(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
+		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 		StringBuffer content = html.getContent();
-		content.append(FileUtils.getFileContent(request, "./resources/html/harupload.html"));
+		content.append(FileUtils.getFileContent(request, "./resources/html/analyzeurl.html"));
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -55,41 +52,47 @@ public class HARUploadServlet extends HttpServlet
 		
 		PALogger log = new PALogger(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
-			
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
+		
+		//--------------------------
+		// Create Content
+		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 		StringBuffer content = html.getContent();
-		content.append(FileUtils.getFileContent(request, "./resources/html/harupload.html"));
+		content.append(FileUtils.getFileContent(request, "./resources/html/analyzeurl.html"));
 		
 		content.append("<h1>Results</h1>");
 		content.append("<p>Use the links in the menu to change the view. </p>");
 		
-		
 		//--------------------------------------
 		// Get Save Results Checkbox
-		Part saveResults = request.getPart("saveResults");
-		String saveResultsString = "off";
+		String saveResults = request.getParameter("saveResults");
 		
-		if(saveResults != null) {
-			saveResultsString =	PA.readContentsFromInputStream(saveResults.getInputStream());
-		}
-
 		//--------------------------------------
-		// Get HAR File
-		Part harFile = request.getPart("harFile");
-
-		if (harFile == null) {
-			html.addAlert(PA.ALERT_ERROR, "HAR File could not be loaded.");
+		// Get URL
+		String analyzeURL = request.getParameter("analyzeurl");
+		
+		if(analyzeURL == null){
+			html.addAlert(PA.ALERT_ERROR, "Please specify a URL.");
 		}else {
 
-			log.start().method("doPost()-StreamHarFile");
-				String harContents = PA.readContentsFromInputStream(harFile.getInputStream());
-			log.end();
-						
+			//--------------------------
+			// Create HAR for URL and
+			// cut out additional strings
+			String harContents = PhantomJSInterface.instance().getHARStringForWebsite(request, analyzeURL);
+			
+			int jsonIndex = harContents.indexOf("{");
+			if(jsonIndex > 0) {
+				String infoString = harContents.substring(0,jsonIndex-1);
+				log.warn("PhantomJS returned Information: "+ infoString);
+				harContents = harContents.substring(jsonIndex);
+			}
+			
+			//--------------------------
+			// Analyze HAR
 			String results = YSlow.instance().analyzeHarString(harContents);
 			
 			//--------------------------------------
 			// Save Results to DB
-			if(saveResultsString.trim().toLowerCase().equals("on")) {
+			if(saveResults != null && saveResults.trim().toLowerCase().equals("on")) {
 				H2Utils.saveResults(request, results, harContents);
 			}
 			
@@ -99,10 +102,14 @@ public class HARUploadServlet extends HttpServlet
 			
 			StringBuffer javascript = html.getJavascript();
 			javascript.append("<script>");
-			javascript.append("		var YSLOW_DATA = "+results+";");
+			javascript.append("		var YSLOW_DATA = "+results+";\n");
+			//javascript.append("		var HAR_FILE = "+harContents+";");
 			javascript.append("</script>");
 			javascript.append("<script defer>initialize();</script>");
 				
 		}
+		
+        response.setContentType("text/html");
+        response.setStatus(HttpServletResponse.SC_OK);
 	}
 }
