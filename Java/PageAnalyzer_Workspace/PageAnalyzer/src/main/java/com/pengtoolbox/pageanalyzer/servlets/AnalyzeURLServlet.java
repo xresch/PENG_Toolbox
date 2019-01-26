@@ -62,6 +62,12 @@ public class AnalyzeURLServlet extends HttpServlet
 		content.append("<h1>Results</h1>");
 		content.append("<p>Use the links in the menu to change the view. </p>");
 		
+		//--------------------------------------
+		// Get Save Results Checkbox
+		String saveResults = request.getParameter("saveResults");
+		
+		//--------------------------------------
+		// Get URL
 		String analyzeURL = request.getParameter("analyzeurl");
 		
 		if(analyzeURL == null){
@@ -86,7 +92,9 @@ public class AnalyzeURLServlet extends HttpServlet
 			
 			//--------------------------------------
 			// Save Results to DB
-			H2Utils.saveResults(request, results);
+			if(saveResults != null && saveResults.trim().toLowerCase().equals("on")) {
+				H2Utils.saveResults(request, results, harContents);
+			}
 			
 			//--------------------------------------
 			// Prepare Response
@@ -94,7 +102,8 @@ public class AnalyzeURLServlet extends HttpServlet
 			
 			StringBuffer javascript = html.getJavascript();
 			javascript.append("<script>");
-			javascript.append("		var YSLOW_DATA = "+results+";");
+			javascript.append("		var YSLOW_DATA = "+results+";\n");
+			//javascript.append("		var HAR_FILE = "+harContents+";");
 			javascript.append("</script>");
 			javascript.append("<script defer>initialize();</script>");
 				

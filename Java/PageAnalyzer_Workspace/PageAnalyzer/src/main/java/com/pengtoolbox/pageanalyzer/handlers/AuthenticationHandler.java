@@ -26,7 +26,7 @@ public class AuthenticationHandler extends HandlerWrapper
                                                       ServletException
     {
     	
-    	if(PA.configAsBoolean("pa_enable_authentication")) {
+    	if(PA.CONFIG_AUTHENTICATION_ENABLED) {
     		
     		//##################################
         	// Get Session

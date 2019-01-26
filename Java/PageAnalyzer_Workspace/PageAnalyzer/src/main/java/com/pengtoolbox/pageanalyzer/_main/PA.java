@@ -114,7 +114,7 @@ public class PA {
 			System.out.println("don't cache files");
 		}
 		
-		CONFIG_AUTHENTICATION_ENABLED = PA.configAsBoolean("pa_enable_authentication");
+		CONFIG_AUTHENTICATION_ENABLED = PA.configAsBoolean("pa_authentication_enabled");
 		BASE_URL = "/"+PA.config("pa_application_name");
 		
 		log.end();

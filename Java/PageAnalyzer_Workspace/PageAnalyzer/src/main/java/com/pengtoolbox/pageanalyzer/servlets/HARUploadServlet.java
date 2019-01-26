@@ -63,7 +63,20 @@ public class HARUploadServlet extends HttpServlet
 		content.append("<h1>Results</h1>");
 		content.append("<p>Use the links in the menu to change the view. </p>");
 		
+		
+		//--------------------------------------
+		// Get Save Results Checkbox
+		Part saveResults = request.getPart("saveResults");
+		String saveResultsString = "off";
+		
+		if(saveResults != null) {
+			saveResultsString =	PA.readContentsFromInputStream(saveResults.getInputStream());
+		}
+
+		//--------------------------------------
+		// Get HAR File
 		Part harFile = request.getPart("harFile");
+
 		if (harFile == null) {
 			html.addAlert(PA.ALERT_ERROR, "HAR File could not be loaded.");
 		}else {
@@ -76,7 +89,9 @@ public class HARUploadServlet extends HttpServlet
 			
 			//--------------------------------------
 			// Save Results to DB
-			H2Utils.saveResults(request, results);
+			if(saveResultsString.trim().toLowerCase().equals("on")) {
+				H2Utils.saveResults(request, results, harContents);
+			}
 			
 			//--------------------------------------
 			// Prepare Response
@@ -84,7 +99,8 @@ public class HARUploadServlet extends HttpServlet
 			
 			StringBuffer javascript = html.getJavascript();
 			javascript.append("<script>");
-			javascript.append("		var YSLOW_DATA = "+results+";");
+			javascript.append("		var YSLOW_DATA = "+results+";\n");
+			//javascript.append("		var HAR_FILE = "+harContents.replace("\n", " ")+";");
 			javascript.append("</script>");
 			javascript.append("<script defer>initialize();</script>");
 				

@@ -1,2 +1,4 @@
-- Create Handler Chain Builder
-- Fix session creation
+
+- Check if url exists and prompt for compare
+- Add modal panel for comparing rules.
+- save HAR File to DB
