@@ -8,19 +8,20 @@ import org.eclipse.jetty.rewrite.handler.RedirectRegexRule;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.server.session.HashSessionIdManager;
-import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import com.pengtoolbox.pageanalyzer.handlers.AuthenticationHandler;
-import com.pengtoolbox.pageanalyzer.handlers.RequestHandler;
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWSetup;
+import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
+import com.pengtoolbox.cfw.handlers.RequestHandler;
+import com.pengtoolbox.cfw.utils.H2Utils;
+import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 import com.pengtoolbox.pageanalyzer.servlets.AnalyzeURLServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CompareServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CustomContentServlet;
@@ -28,13 +29,11 @@ import com.pengtoolbox.pageanalyzer.servlets.DeleteResultServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DocuServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARDownloadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARUploadServlet;
-import com.pengtoolbox.pageanalyzer.servlets.LoginServlet;
-import com.pengtoolbox.pageanalyzer.servlets.LogoutServlet;
 import com.pengtoolbox.pageanalyzer.servlets.RestAPIServlet;
 import com.pengtoolbox.pageanalyzer.servlets.ResultListServlet;
 import com.pengtoolbox.pageanalyzer.servlets.ResultViewServlet;
-import com.pengtoolbox.pageanalyzer.utils.H2Utils;
-import com.pengtoolbox.pageanalyzer.utils.HandlerChainBuilder;
+import com.pengtoolbox.pageanalyzer.yslow.YSlow;
+import com.pengtoolbox.pageanalyzer.yslow.YSlowExecutor;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -49,40 +48,32 @@ public class Main extends Application {
         //###################################################################
     	
     	//---------------------------------------
-    	// Logging
-    	
-    	File logFolder = new File("./log");
-    	if(!logFolder.isDirectory()) {
-    		logFolder.mkdir();
-    	}
-    	
-    	System.setProperty("java.util.logging.config.file", "./config/logging.properties");
-    	
-    	//---------------------------------------
     	// General 
-	    PA.initialize();
+	    CFWSetup.initialize("./config/pageanalyzer.properties");
 	    
-        Server server = new Server(Integer.parseInt(PA.config("pa_server_port")));
+        Server server = new Server(CFWConfig.SERVER_PORT);
         
+		//------------------------------------
+		// Initialize YSlow Singleton
+		// prevents error on first analysis request.
+		YSlow.instance();
+		YSlowExecutor.instance();
+		
     	//---------------------------------------
     	// Datastore 
-    	File datastoreFolder = new File(PA.GLOBAL_DATASTORE_PATH);
+    	File datastoreFolder = new File(CFW.GLOBAL_DATASTORE_PATH);
     	if(!datastoreFolder.isDirectory()) {
     		datastoreFolder.mkdir();
     	}
     	
     	H2Utils.initialize();
-    	
-
-        
-    	
 
         //###################################################################
         // Create ServletContext
         //###################################################################
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
                 
-        servletContextHandler.setContextPath(PA.BASE_URL);
+        servletContextHandler.setContextPath(CFWConfig.BASE_URL);
         
         // 100MB
         int maxSize = 1024*1024*100;
@@ -104,31 +95,14 @@ public class Main extends Application {
         servletContextHandler.addServlet(ResultListServlet.class, "/resultlist");
         
         servletContextHandler.addServlet(DocuServlet.class, "/docu");
-
         servletContextHandler.addServlet(CustomContentServlet.class, "/custom");
         
-        if(PA.CONFIG_AUTHENTICATION_ENABLED) {
-            servletContextHandler.addServlet(LoginServlet.class, "/login");
-            servletContextHandler.addServlet(LogoutServlet.class, "/logout");
-        }
-        
-        //-------------------------------
-        // Create Session Manager
-        //-------------------------------
-        HashSessionIdManager idmanager = new HashSessionIdManager();
-        server.setSessionIdManager(idmanager);
-        HashSessionManager manager = new HashSessionManager();
-        
-        manager.setHttpOnly(false);
-        manager.setUsingCookies(true);
+        CFWSetup.addAuthenticationServlets(servletContextHandler, "/login", "/logout");
 
-        SessionHandler sessionHandler = new SessionHandler(manager);
-        
-        
-        // workaround maxInactiveInterval=-1 issue
-        // set inactive interval in RequestHandler
-        manager.setMaxInactiveInterval(3600);
-        
+        //-------------------------------
+        // Create Session Handler
+        //-------------------------------
+        SessionHandler sessionHandler = CFWSetup.createSessionHandler(server);
         
         //-------------------------------
         // Create Rewrite Handler
@@ -139,8 +113,8 @@ public class Main extends Application {
         rewriteHandler.setOriginalPathAttribute("requestedPath");
 
         RedirectRegexRule mainRedirect = new RedirectRegexRule();
-        mainRedirect.setRegex("^/$|"+PA.BASE_URL+"|"+PA.BASE_URL+"/");
-        mainRedirect.setReplacement(PA.BASE_URL+"/harupload");
+        mainRedirect.setRegex("^/$|"+CFWConfig.BASE_URL+"|"+CFWConfig.BASE_URL+"/");
+        mainRedirect.setReplacement(CFWConfig.BASE_URL+"/harupload");
         rewriteHandler.addRule(mainRedirect);	
         
         //-------------------------------
@@ -158,31 +132,10 @@ public class Main extends Application {
             .chain(servletContextHandler);
         
         //###################################################################
-        // Create ResourceHandler
-        //###################################################################
-        
-        ResourceHandler resourceHandler = new ResourceHandler();
-        // Configure the ResourceHandler. Setting the resource base indicates where the files should be served out of.
-        // In this example it is the current directory but it can be configured to anything that the jvm has access to.
-        resourceHandler.setDirectoriesListed(false);
-        //resource_handler.setWelcomeFiles(new String[]{ "/"+PA.config("pa_application_name")+"/harupload" });
-        resourceHandler.setResourceBase("./resources");
- 
-        // Add the ResourceHandler to the server.
-        ContextHandler resourceContextHandler = new ContextHandler();
-        resourceContextHandler.setContextPath("/resources");
-        
-        GzipHandler resourceGzipHandler = new GzipHandler();
-        
-        resourceContextHandler.setHandler(resourceGzipHandler);
-        resourceGzipHandler.setHandler(resourceHandler);
-        
-        
-        //###################################################################
         // Create Handler Collection
         //###################################################################
         HandlerCollection handlerCollection = new HandlerCollection();
-        handlerCollection.setHandlers(new Handler[] {rewriteHandler, resourceContextHandler, new DefaultHandler() });
+        handlerCollection.setHandlers(new Handler[] {rewriteHandler, CFWSetup.createResourceHandler(), new DefaultHandler() });
         server.setHandler(handlerCollection);
         
         //###################################################################
@@ -192,7 +145,6 @@ public class Main extends Application {
         server.join();
        
     }
-    
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {

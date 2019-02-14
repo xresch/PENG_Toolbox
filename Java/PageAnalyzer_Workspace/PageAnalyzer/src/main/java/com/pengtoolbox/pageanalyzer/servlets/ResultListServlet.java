@@ -8,11 +8,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.pageanalyzer._main.PA;
-import com.pengtoolbox.pageanalyzer._main.SessionData;
-import com.pengtoolbox.pageanalyzer.logging.PALogger;
-import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
-import com.pengtoolbox.pageanalyzer.utils.H2Utils;
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.SessionData;
+import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.utils.H2Utils;
 
 public class ResultListServlet extends HttpServlet
 {
@@ -21,7 +22,7 @@ public class ResultListServlet extends HttpServlet
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = PALogger.getLogger(ResultListServlet.class.getName());
+	private static Logger logger = CFWLogger.getLogger(ResultListServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -29,7 +30,7 @@ public class ResultListServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		PALogger log = new PALogger(logger, request).method("doPost");
+		CFWLogger log = new CFWLogger(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "View Result");
@@ -37,8 +38,8 @@ public class ResultListServlet extends HttpServlet
 
 		String userID = "";
 		
-		if(PA.CONFIG_AUTHENTICATION_ENABLED) {
-			SessionData data = (SessionData) request.getSession().getAttribute(PA.SESSION_DATA); 
+		if(CFWConfig.AUTHENTICATION_ENABLED) {
+			SessionData data = (SessionData) request.getSession().getAttribute(CFW.SESSION_DATA); 
 			if(data.isLoggedIn()) {
 				userID = data.getUsername();
 			}
@@ -50,7 +51,7 @@ public class ResultListServlet extends HttpServlet
 		//TODO: Check User
 		
 		if (jsonResults == null) {
-			html.addAlert(PA.ALERT_ERROR, "Results could not be loaded.");
+			html.addAlert(CFW.ALERT_ERROR, "Results could not be loaded.");
 		}else {
 									
 			content.append("<div id=\"resultlist\"></div>");

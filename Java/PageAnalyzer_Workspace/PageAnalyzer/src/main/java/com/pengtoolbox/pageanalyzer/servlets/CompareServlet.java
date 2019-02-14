@@ -8,10 +8,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.pageanalyzer._main.PA;
-import com.pengtoolbox.pageanalyzer.logging.PALogger;
-import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
-import com.pengtoolbox.pageanalyzer.utils.H2Utils;
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.utils.H2Utils;
 
 public class CompareServlet extends HttpServlet
 {
@@ -20,7 +20,7 @@ public class CompareServlet extends HttpServlet
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = PALogger.getLogger(CompareServlet.class.getName());
+	private static Logger logger = CFWLogger.getLogger(CompareServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -28,7 +28,7 @@ public class CompareServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		PALogger log = new PALogger(logger, request).method("doPost");
+		CFWLogger log = new CFWLogger(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Compare Results");
@@ -46,7 +46,7 @@ public class CompareServlet extends HttpServlet
 		if(resultIDs.matches("(\\d,?)+")) {
 			arrayString = H2Utils.getResultListForComparison(resultIDs);
 		}else {
-			html.addAlert(PA.ALERT_ERROR, "Result IDs '"+resultIDs+"' is not a string of comma separated numbers.");
+			html.addAlert(CFW.ALERT_ERROR, "Result IDs '"+resultIDs+"' is not a string of comma separated numbers.");
 		}
 
 		StringBuffer javascript = html.getJavascript();

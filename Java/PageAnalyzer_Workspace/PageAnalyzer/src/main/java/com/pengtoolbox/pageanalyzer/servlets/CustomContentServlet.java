@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 
 public class CustomContentServlet extends HttpServlet
 {

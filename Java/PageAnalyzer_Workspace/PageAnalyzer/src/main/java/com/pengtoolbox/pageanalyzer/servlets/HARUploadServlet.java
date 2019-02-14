@@ -9,14 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import com.pengtoolbox.pageanalyzer._main.PA;
-import com.pengtoolbox.pageanalyzer._main.SessionData;
-import com.pengtoolbox.pageanalyzer.logging.PALogger;
-import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
-import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
-import com.pengtoolbox.pageanalyzer.utils.FileUtils;
-import com.pengtoolbox.pageanalyzer.utils.H2Utils;
-import com.pengtoolbox.pageanalyzer.utils.HTTPUtils;
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.H2Utils;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
 //@MultipartConfig(maxFileSize=1024*1024*100, maxRequestSize=1024*1024*100)
@@ -27,7 +24,7 @@ public class HARUploadServlet extends HttpServlet
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = PALogger.getLogger(HARUploadServlet.class.getName());
+	private static Logger logger = CFWLogger.getLogger(HARUploadServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -35,7 +32,7 @@ public class HARUploadServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		PALogger log = new PALogger(logger, request).method("doGet");
+		CFWLogger log = new CFWLogger(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
@@ -53,7 +50,7 @@ public class HARUploadServlet extends HttpServlet
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		PALogger log = new PALogger(logger, request).method("doPost");
+		CFWLogger log = new CFWLogger(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
@@ -70,7 +67,7 @@ public class HARUploadServlet extends HttpServlet
 		String saveResultsString = "off";
 		
 		if(saveResults != null) {
-			saveResultsString =	PA.readContentsFromInputStream(saveResults.getInputStream());
+			saveResultsString =	FileUtils.readContentsFromInputStream(saveResults.getInputStream());
 		}
 
 		//--------------------------------------
@@ -78,11 +75,11 @@ public class HARUploadServlet extends HttpServlet
 		Part harFile = request.getPart("harFile");
 
 		if (harFile == null) {
-			html.addAlert(PA.ALERT_ERROR, "HAR File could not be loaded.");
+			html.addAlert(CFW.ALERT_ERROR, "HAR File could not be loaded.");
 		}else {
 
 			log.start().method("doPost()-StreamHarFile");
-				String harContents = PA.readContentsFromInputStream(harFile.getInputStream());
+				String harContents = FileUtils.readContentsFromInputStream(harFile.getInputStream());
 			log.end();
 						
 			String results = YSlow.instance().analyzeHarString(harContents);

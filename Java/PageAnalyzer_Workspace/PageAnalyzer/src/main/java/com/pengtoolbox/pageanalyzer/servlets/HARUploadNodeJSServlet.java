@@ -9,12 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import com.pengtoolbox.pageanalyzer._main.PA;
-import com.pengtoolbox.pageanalyzer.logging.PALogger;
-import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
-import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
-import com.pengtoolbox.pageanalyzer.utils.FileUtils;
-import com.pengtoolbox.pageanalyzer.utils.HTTPUtils;
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.HTTPUtils;
 
 //@MultipartConfig(maxFileSize=1024*1024*100, maxRequestSize=1024*1024*100)
 public class HARUploadNodeJSServlet extends HttpServlet
@@ -24,7 +24,7 @@ public class HARUploadNodeJSServlet extends HttpServlet
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = PALogger.getLogger(HARUploadNodeJSServlet.class.getName());
+	private static Logger logger = CFWLogger.getLogger(HARUploadNodeJSServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -32,7 +32,7 @@ public class HARUploadNodeJSServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		PALogger log = new PALogger(logger, request).method("doGet");
+		CFWLogger log = new CFWLogger(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
@@ -50,7 +50,7 @@ public class HARUploadNodeJSServlet extends HttpServlet
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		PALogger log = new PALogger(logger, request).method("doPost");
+		CFWLogger log = new CFWLogger(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
@@ -62,19 +62,19 @@ public class HARUploadNodeJSServlet extends HttpServlet
 		
 		Part harFile = request.getPart("harFile");
 		if (harFile == null) {
-			html.addAlert(PA.ALERT_ERROR, "HAR File could not be loaded.");
+			html.addAlert(CFW.ALERT_ERROR, "HAR File could not be loaded.");
 		}else {
 
 			log.start().method("doPost()-StreamAndCacheHarFile");
-				String harContents = PA.readContentsFromInputStream(harFile.getInputStream());
-				int index = CacheUtils.cacheHARFile(harContents);
+				String harContents = FileUtils.readContentsFromInputStream(harFile.getInputStream());
+				int index = FileUtils.cacheFile(harContents);
 			log.end();
 			
-			String nodJSHost = PA.config("pa_nodejs_hostname");
-			String nodJSPort = PA.config("pa_nodejs_port");
-			String appName = PA.config("pa_application_name");
-			String serverName = PA.config("pa_server_hostname");
-			String serverPort = PA.config("pa_server_port");
+			String nodJSHost = CFWConfig.config("pa_nodejs_hostname", "");
+			String nodJSPort = CFWConfig.config("pa_nodejs_port", "");
+			String appName = CFWConfig.config("pa_application_name", "");
+			String serverName = CFWConfig.config("pa_server_hostname", "");
+			String serverPort = CFWConfig.config("pa_server_port", "");
 			
 			String harLink = "http://"+serverName+":"+serverPort+"/"+appName+"/hardownload?harindex="+index;
 			

@@ -12,8 +12,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
-import com.pengtoolbox.pageanalyzer._main.PA;
-import com.pengtoolbox.pageanalyzer.utils.FileUtils;
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw.utils.FileUtils;
 import com.sun.javafx.webkit.WebConsoleListener;
 
 import javafx.application.Application;
@@ -58,10 +59,10 @@ public class YSlowExecutor extends Application {
 		
 		String yslowJS = FileUtils.getFileContent(null, "./resources/js/custom/custom_yslow.js");
 		
-		int contextCount = PA.configAsInt("pa_analysis_threads");
+		int contextCount = CFWConfig.configAsInt("pa_analysis_threads", 10);
 		
-		PA.javafxLogWorkaround(Level.INFO, "Create "+contextCount+" execution context for analysis", "YSlowExecutor.start()");
-		for(int i = 0; i < PA.configAsInt("pa_analysis_threads"); i++) {
+		CFW.javafxLogWorkaround(Level.INFO, "Create "+contextCount+" execution context for analysis", "YSlowExecutor.start()");
+		for(int i = 0; i < contextCount; i++) {
 			
 			//--------------------------
 			// Create Web View
@@ -72,7 +73,7 @@ public class YSlowExecutor extends Application {
 			
 			WebConsoleListener.setDefaultListener((webView, message, lineNumber, sourceId) -> {
 			    String log = "[JS at line "+ lineNumber + "]"+ message;
-				PA.javafxLogWorkaround(Level.INFO, log, "YSlowJavascriptConsoleOutput");
+				CFW.javafxLogWorkaround(Level.INFO, log, "YSlowJavascriptConsoleOutput");
 			});
 	
 			engine.setJavaScriptEnabled(true);
@@ -107,7 +108,7 @@ public class YSlowExecutor extends Application {
 			String result = (String) window.call("analyzeHARString", harString);
 			context.setResult(result);
 		}catch(Exception e){
-			PA.javafxLogWorkaround(Level.INFO, e.getMessage(), e, "YSlowExecutor.analyzeHARString()");
+			CFW.javafxLogWorkaround(Level.INFO, e.getMessage(), e, "YSlowExecutor.analyzeHARString()");
 			context.setResult("{\"error\": \""+e.getMessage().replace("\"", "'")+" - Check if your HAR file is a valid JSON file. \"}");
 		}
 				

@@ -12,10 +12,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.pageanalyzer._main.PA;
-import com.pengtoolbox.pageanalyzer.logging.PALogger;
-import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
-import com.pengtoolbox.pageanalyzer.utils.FileUtils;
+import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.utils.FileUtils;
 
 /*************************************************************************
  * 
@@ -36,14 +36,14 @@ public class DocuServlet extends HttpServlet {
 	@Override
    protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
    {
-		PALogger log = new PALogger(logger, request).method("doGet");
+		CFWLogger log = new CFWLogger(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
 		StringBuffer content = html.getContent();
 		content.append(FileUtils.getFileContent(request, "./resources/html/docu.html"));
 		
-		String supportDetails = PA.config("pa_support_details");
+		String supportDetails = CFWConfig.config("pa_support_details", "");
 		if(supportDetails != null) {
 			content.append("<h2>Support Contact</h2>");
 	

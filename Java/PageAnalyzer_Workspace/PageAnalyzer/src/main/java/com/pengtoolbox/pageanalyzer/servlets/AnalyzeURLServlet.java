@@ -7,16 +7,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 
-import com.pengtoolbox.pageanalyzer._main.PA;
-import com.pengtoolbox.pageanalyzer.logging.PALogger;
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.H2Utils;
 import com.pengtoolbox.pageanalyzer.phantomjs.PhantomJSInterface;
-import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
-import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
-import com.pengtoolbox.pageanalyzer.utils.FileUtils;
-import com.pengtoolbox.pageanalyzer.utils.H2Utils;
-import com.pengtoolbox.pageanalyzer.utils.HTTPUtils;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
 public class AnalyzeURLServlet extends HttpServlet
@@ -24,7 +21,7 @@ public class AnalyzeURLServlet extends HttpServlet
 
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = PALogger.getLogger(AnalyzeURLServlet.class.getName());
+	private static Logger logger = CFWLogger.getLogger(AnalyzeURLServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -32,7 +29,7 @@ public class AnalyzeURLServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		PALogger log = new PALogger(logger, request).method("doGet");
+		CFWLogger log = new CFWLogger(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
@@ -50,7 +47,7 @@ public class AnalyzeURLServlet extends HttpServlet
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		PALogger log = new PALogger(logger, request).method("doPost");
+		CFWLogger log = new CFWLogger(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
 		
 		//--------------------------
@@ -71,7 +68,7 @@ public class AnalyzeURLServlet extends HttpServlet
 		String analyzeURL = request.getParameter("analyzeurl");
 		
 		if(analyzeURL == null){
-			html.addAlert(PA.ALERT_ERROR, "Please specify a URL.");
+			html.addAlert(CFW.ALERT_ERROR, "Please specify a URL.");
 		}else {
 
 			//--------------------------
