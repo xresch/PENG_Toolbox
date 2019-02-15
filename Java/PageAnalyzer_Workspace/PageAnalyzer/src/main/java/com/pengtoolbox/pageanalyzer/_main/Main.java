@@ -27,6 +27,7 @@ import com.pengtoolbox.pageanalyzer.servlets.CompareServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CustomContentServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DeleteResultServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DocuServlet;
+import com.pengtoolbox.pageanalyzer.servlets.GanttChartServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARDownloadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARUploadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.RestAPIServlet;
@@ -93,6 +94,7 @@ public class Main extends Application {
         servletContextHandler.addServlet(CompareServlet.class, "/compare");
         servletContextHandler.addServlet(DeleteResultServlet.class, "/delete");
         servletContextHandler.addServlet(ResultListServlet.class, "/resultlist");
+        servletContextHandler.addServlet(GanttChartServlet.class, "/ganttchart");
         
         servletContextHandler.addServlet(DocuServlet.class, "/docu");
         servletContextHandler.addServlet(CustomContentServlet.class, "/custom");

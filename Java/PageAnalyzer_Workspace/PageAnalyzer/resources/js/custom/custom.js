@@ -42,7 +42,7 @@ function initialize(){
 			$("#yslow-results").append(errorDiv);
 			return;
 		}
-		loadData(YSLOW_DATA);
+		loadYSlowData(YSLOW_DATA);
 		RULES = sortArrayByValueOfObject(RULES, "score");
 		
 		$(".result-view-tabs").css("visibility", "visible");
@@ -54,6 +54,11 @@ function initialize(){
 	}
 	else if(typeof DATA_TO_COMPARE  !== 'undefined'){
 		printComparison($("#comparison"), DATA_TO_COMPARE);
+	}
+	else if(typeof HAR_CONTENT  !== 'undefined'){
+		console.log(HAR_CONTENT);
+		prepareGanttData(HAR_CONTENT);
+		printGanttChart($("#ganttchart"), HAR_CONTENT);
 	}
 }
 
@@ -77,7 +82,7 @@ function getGrade(score){
  * @param 
  * @returns 
  ******************************************************************/
-function loadData(data){
+function loadYSlowData(data){
 	
 
 //	"w": "size",
@@ -177,6 +182,76 @@ function loadData(data){
 		
 		COMPONENTS.push(comp);
 	}
+}
+
+/******************************************************************
+ * 
+ * @param 
+ * @returns 
+ ******************************************************************/
+function prepareGanttData(data){
+	
+
+	//----------------------------------
+	// Variables
+	var entries = data.log.entries; 
+	var entriesCount = entries.length;
+	
+	var firstDate;
+	var lastDate;
+	var totalTimeMillis;
+	if(entries.length > 1){
+		firstDate = new Date(entries[0].startedDateTime);
+		console.log("FirstDate:"+firstDate.toString());
+		
+		last = entries.length -1;
+		lastDate = new Date(entries[last].startedDateTime);
+		lastDate = new Date(lastDate.valueOf() + Math.ceil(entries[last].time));
+		console.log("LastDate:"+lastDate.toString());
+		
+		totalTimeMillis = lastDate.valueOf() - firstDate.valueOf();
+		console.log("totalTimeMillis:"+totalTimeMillis);
+	}
+	
+	//----------------------------------
+	// Loop Data
+
+//   "timings": {
+//       "blocked": 0,
+//        "dns": -1,
+//        "connect": -1,
+//        "send": 0,
+//        "wait": 265,
+//        "receive": 5,
+//        "ssl": -1
+//    },
+
+	for(var i = 0; i < entriesCount; i++ ){
+		var entry = entries[i];
+		var startDate = new Date(entry.startedDateTime);
+		var deltaMillis = startDate.valueOf() - firstDate.valueOf();
+		var duration = entry.time;
+		var timings = entry.timings;
+		
+		entry.ganttdata = {
+			"time": duration,	
+			"delta": deltaMillis,
+			"percentDelta": deltaMillis / totalTimeMillis * 100,
+			"percentBlocked": (entry.timings.blocked > 0) 	? entry.timings.blocked / duration * 100 : 0,
+			"percentDNS": (entry.timings.dns > 0) 			? entry.timings.dns / duration * 100 : 0,
+			"percentConnect": (entry.timings.connect > 0) 	? entry.timings.connect / duration * 100 : 0,
+			"percentSend": (entry.timings.send > 0) 		? entry.timings.send / duration * 100 : 0,
+			"percentWait": (entry.timings.wait > 0) 		? entry.timings.wait / duration * 100 : 0,
+			"percentReceive": (entry.timings.recieve > 0) 	? entry.timings.recieve / duration * 100 : 0,
+			"percentSSL": (entry.timings.ssl > 0) 			? entry.timings.ssl / duration * 100 : 0,
+			"percentTime": duration / totalTimeMillis * 100
+		}
+		
+		console.log(entry.ganttdata);
+
+		
+	}
+
 }
 
 /**************************************************************************************
@@ -338,6 +413,95 @@ function printComparison(parent, data){
 }
 
 /******************************************************************
+ * Print the gantt chart for the entries.
+ * 
+ * @param parent JQuery object 
+ * @param data HAR file data
+ * @returns 
+ ******************************************************************/
+function printGanttChart(parent, data){
+	
+	//----------------------------------
+	// Add title and description.
+	parent.append("<h2>Gantt Chart</h2>");
+
+	//----------------------------------
+	// Create Table Filter
+	var filter = $('<input type="text" class="form-control" onkeyup="filterTable(this)" placeholder="Filter Table...">');
+	parent.append(filter);
+	parent.append('<span style="font-size: xx-small;"><strong>Hint:</strong> The filter searches through the innerHTML of the table rows. Use &quot;&gt;&quot; and &quot;&lt;&quot; to search for the beginning and end of a cell content(e.g. &quot;&gt;Test&lt;&quot; )</span>');
+	
+	//----------------------------------
+	// Create Table Header
+	headerRowString = '<thead><tr>';
+		headerRowString += '<th>&nbsp;</th>';
+		headerRowString += '<th>Gantt Chart</th>';
+		headerRowString += '<th>Time(ms)</th>';
+		headerRowString += '<th>URL</th>';
+	headerRowString += '</tr></thead>';
+	
+	//----------------------------------
+	// Create Table
+	var table = $('<table class="table table-striped table-responsive">');
+
+	table.append(headerRowString);
+	
+	parent.append(table);
+	filter.data("table", table);
+	
+	//----------------------------------
+	// Create Rows
+	console.log(data);
+	var entries = data.log.entries; 
+	var entriesCount = entries.length;
+	for(var i = 0; i < entriesCount; i++ ){
+		var currentData = entries[i];
+		var rowString = '<tr>';
+		
+		//--------------------------
+		// Details Link
+		rowString += '<td><a alt="Show Details"><i class="fa fa-search"></i></a></td>';
+		
+		//--------------------------
+		// Gantt Chart
+		
+		var gd = currentData.ganttdata;
+		rowString += '<td> <div class="ganttWrapper" style="width: 500px;">';
+			rowString += '<div class="ganttBlock percentDelta" style="width: '+gd.percentDelta+'%">&nbsp;</div>';
+			rowString += '<div class="ganttBlock ganttTimings" style="width: '+gd.percentTime+'%">';
+				if(gd.percentBlocked > 0){ 	rowString += '<div class="ganttBlock percentBlocked" style="width: '+gd.percentBlocked+'%">&nbsp;</div>';}
+				if(gd.percentConnect > 0){ 	rowString += '<div class="ganttBlock percentConnect" style="width: '+gd.percentConnect+'%">&nbsp;</div>';}
+				if(gd.percentDNS > 0){ 		rowString += '<div class="ganttBlock percentDNS" style="width: '+gd.percentDNS+'%">&nbsp;</div>';}
+				if(gd.percentReceive > 0){ 	rowString += '<div class="ganttBlock percentReceive" style="width: '+gd.percentReceive+'%">&nbsp;</div>';}
+				// SSL time is included in Connect Time, see >> https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/HAR/Overview.html#sec-object-types-entries
+				//if(gd.percentSSL > 0){ 		rowString += '<div class="ganttBlock percentSSL" style="width: '+gd.percentSSL+'%">&nbsp;</div>';}
+				if(gd.percentSend > 0){ 	rowString += '<div class="ganttBlock percentSend" style="width: '+gd.percentSend+'%">&nbsp;</div>';}
+				if(gd.percentWait > 0){ 	rowString += '<div class="ganttBlock percentWait" style="width: '+gd.percentWait+'%">&nbsp;</div>';}
+			rowString += '</div>';
+		rowString += 	'</div></td>';
+		// --------------------------
+		// Other
+
+		rowString += '<td>'+Math.round(currentData.time)+'</td>';
+		rowString += '<td>'+secureDecodeURI(currentData.request.url)+'</td>';
+		
+		rowString += "</tr>";
+		
+		table.append(rowString);
+	}
+	parent.append(table);
+	
+	
+	//----------------------------------
+	// Create Button
+	var compareButton = $('<a id="resultCompareButton" class="btn btn-primary" onclick="compareResults();" disabled="true">Compare</a>');
+	var deleteButton = $('<a id="resultDeleteButton" class="btn btn-danger" onclick="deleteResults();" disabled="true">Delete</a>');
+	
+	parent.append(compareButton);
+	parent.append(deleteButton);
+}
+
+/******************************************************************
  * Print a list of results.
  * 
  * @param 
@@ -363,6 +527,7 @@ function printResultList(parent, data){
 		headerRowString += '<th>ID</th>';
 		headerRowString += '<th>Timestamp</th>';
 		headerRowString += '<th>URL</th>';
+		headerRowString += '<th>&nbsp;</th>';
 		headerRowString += '<th>&nbsp;</th>';
 		headerRowString += '<th>&nbsp;</th>';
 	headerRowString += '</tr></thead>';
@@ -392,6 +557,7 @@ function printResultList(parent, data){
 		rowString += '<td>'+url+'</td>';
 		
 		rowString += '<td><a target="_blank"  alt="Open Result" href="./resultview?resultid='+currentData.RESULT_ID+'"><i class="fa fa-eye"></i></a></td>';
+		rowString += '<td><a target="_blank"  alt="Gantt Chart" href="./ganttchart?resultid='+currentData.RESULT_ID+'"><i class="fas fa-sliders-h"></i></a></td>';
 		
 		rowString += '<td><a target="_blank" alt="Open URL" href="'+url+'"><i class="fa fa-link"></i></a></td>';
 		

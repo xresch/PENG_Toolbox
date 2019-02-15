@@ -34,7 +34,7 @@ public class CFWSetup {
 		}
 		
 		System.setProperty("java.util.logging.config.file", "./config/logging.properties");
-		
+
 		CFWLogger log = new CFWLogger(CFW.logger).method("initialize").start();
 				
 		//------------------------------------
@@ -64,7 +64,7 @@ public class CFWSetup {
 	/***********************************************************************
 	 * Setup and returns a ResourceHandler
 	 ***********************************************************************/
-	public static ResourceHandler createResourceHandler() {
+	public static ContextHandler createResourceHandler() {
     
 	    ResourceHandler resourceHandler = new ResourceHandler();
 	    // Configure the ResourceHandler. Setting the resource base indicates where the files should be served out of.
@@ -82,7 +82,7 @@ public class CFWSetup {
 	    resourceContextHandler.setHandler(resourceGzipHandler);
 	    resourceGzipHandler.setHandler(resourceHandler);
 	    
-	    return resourceHandler;
+	    return resourceContextHandler;
 	}
 	
 	/***********************************************************************

@@ -35,7 +35,7 @@ public class HARDownloadServlet extends HttpServlet
 		TemplatePlain plain = new TemplatePlain(request);
 		StringBuffer content = plain.getContent();
 		
-		String harindex = request.getParameter("harindex");
+		String harindex = request.getParameter("resultid");
 		
 		content.append(FileUtils.getCachedFile(Integer.parseInt(harindex)) );
 		

@@ -40,3 +40,36 @@ h4 {
 	padding: 5px;
 	color: #ccc;
 }
+
+/*************************************************************************
+ * 
+ * @author Reto Scheiwiller, 2018
+ * 
+ * Distributed under the MIT license
+ *************************************************************************/
+.ganttBlock{
+	
+	float: left;
+	padding: 0px;
+	margin: 0px;
+}
+
+.percentDelta{ background-color: #eaeaea; }
+.percentBlocked{ background-color: red; }
+.percentConnect{ background-color: #c85f37; }
+.percentDNS{ background-color: green; }
+.percentReceive{ background-color: orange; }
+.percentSSL{ background-color: #9e0e97; }
+.percentSend{ background-color: blue; }
+.percentWait{ background-color: gold; }
+
+/*		percentConnect: 0
+		percentDNS: 0
+		percentDelta: 0
+		percentReceive: 0
+		percentSSL: 0
+		percentSend: 0
+		percentTotal: 13.412816691505217
+		percentWait: 98.14814814814815
+*/
+//		time: 270

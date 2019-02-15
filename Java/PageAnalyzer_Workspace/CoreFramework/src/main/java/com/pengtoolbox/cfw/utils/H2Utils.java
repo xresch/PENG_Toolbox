@@ -248,7 +248,50 @@ public class H2Utils {
 		} catch (SQLException e) {
 			new CFWLogger(logger)
 				.method("getResultByID")
-				.severe("Issue saving results to H2 Database.", e);
+				.severe("Issue retrieving results to H2 Database.", e);
+		}finally {
+			if(connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return jsonResult;
+		
+	}
+	
+	/********************************************************************************************
+	 *
+	 ********************************************************************************************/
+	public static String getHARFileByID(int resultid) {
+		
+		ResultSet resultSet = null;
+		String jsonResult = null;
+		
+		Connection connection = null;
+		try {
+
+			connection = dataSource.getConnection();
+			
+			String selectResults = "SELECT har_file FROM results WHERE result_id = ?";
+			
+			PreparedStatement prepared = connection.prepareStatement(selectResults);
+			prepared.setInt(1, resultid);
+			
+			resultSet = prepared.executeQuery();
+			
+			if(resultSet.next()) {
+				jsonResult = resultSet.getString(1);
+			}
+			
+		} catch (SQLException e) {
+			new CFWLogger(logger)
+				.method("getHARFileByID")
+				.severe("Issue retrieving results to H2 Database.", e);
 		}finally {
 			if(connection != null) {
 				try {

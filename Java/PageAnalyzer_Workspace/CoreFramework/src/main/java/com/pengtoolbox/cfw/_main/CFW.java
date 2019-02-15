@@ -139,8 +139,8 @@ public class CFW {
 				if(leftIndex != -1){
 					rightIndex = sb.indexOf(LOCALE_RB, leftIndex);
 					
-					if(rightIndex != -1){
-						
+					if(rightIndex != -1 && (leftIndex+LOCALE_LB_SIZE) < rightIndex){
+
 						String propertyName = sb.substring(leftIndex+LOCALE_LB_SIZE, rightIndex);
 						if(bundle.containsKey(propertyName)){
 							sb.replace(leftIndex, rightIndex+LOCALE_RB_SIZE, bundle.getString(propertyName));
