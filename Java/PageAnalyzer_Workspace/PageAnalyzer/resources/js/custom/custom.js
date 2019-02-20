@@ -13,6 +13,14 @@ var SUMMARY;
 var RULES;
 var STATS_BY_TYPE;
 var STATS_PRIMED_CACHE;
+var URL_PARAMETERS;
+
+//-----------------------------------------
+// Data Objects
+var YSLOW_RESULT = null;
+var RESULT_LIST = null;
+var HAR_DATA = null;
+COMPARE_YSLOW = null;
 
 var GRADE_CLASS = {
 	A: "success",
@@ -32,33 +40,115 @@ var GRADE_CLASS = {
  ******************************************************************/
 function initialize(){
 	
-	if( typeof YSLOW_DATA !== 'undefined'){
-		if(YSLOW_DATA.error != null){
-			console.error(YSLOW_DATA.error);
-			var errorDiv = $('<div>');
-			errorDiv.attr("class", "bg-danger");
-			errorDiv.append('<p>Sorry some error occured, be patient while nobody is looking into it.</p>');
-			errorDiv.append('<p>'+YSLOW_DATA.error+'</p>');
-			$("#yslow-results").append(errorDiv);
-			return;
-		}
-		loadYSlowData(YSLOW_DATA);
-		RULES = sortArrayByValueOfObject(RULES, "score");
-		
-		$(".result-view-tabs").css("visibility", "visible");
-		
-		draw({info: 'overview', view: ''});
+	URL_PARAMETERS = getURLParameters();
+	
+}
+
+/******************************************************************
+ * 
+ * 
+ * @param 
+ * @returns 
+ ******************************************************************/
+function getURLParameters()
+{
+    var vars = {};
+    var hash;
+    
+    var keyValuePairs = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < keyValuePairs.length; i++)
+    {
+        splitted = keyValuePairs[i].split('=');
+        vars[splitted[0]] = splitted[1];
+    }
+    
+    console.log(vars);
+    return vars;
+}
+
+/******************************************************************
+ * 
+ *
+ ******************************************************************/
+function fetchData(args){
+	
+	//---------------------------------------
+	// Check loading status and create URL
+	//---------------------------------------
+	var url = "./data";
+	switch (args.data){
+		case "yslowresult": 	if(YSLOW_RESULT != null) return;
+								url += "?type="+args.data+"&resultid="+URL_PARAMETERS.resultid;
+								break;
+								
+		case "resultlist":		if(RESULT_LIST != null) return;
+								url += "?type="+args.data;
+								break;
+								
+		case "har":				if(HAR_DATA != null) return;
+								url += "?type="+args.data+"&resultid="+URL_PARAMETERS.resultid;
+								break;
+								
+		case "compareyslow":	if(COMPARE_YSLOW != null) return;
+								url += "?type="+args.data+"&resultids="+URL_PARAMETERS.resultids;
+								break;						
+								
 	}
-	else if(typeof RESULT_LIST_DATA !== 'undefined'){
-		printResultList($("#resultlist"), RESULT_LIST_DATA);
-	}
-	else if(typeof DATA_TO_COMPARE  !== 'undefined'){
-		printComparison($("#comparison"), DATA_TO_COMPARE);
-	}
-	else if(typeof HAR_CONTENT  !== 'undefined'){
-		console.log(HAR_CONTENT);
-		prepareGanttData(HAR_CONTENT);
-		printGanttChart($("#ganttchart"), HAR_CONTENT);
+	
+	//---------------------------------------
+	// Fetch and Return Data
+	//---------------------------------------
+	$.get(url).done(function(data) {
+		    		    
+		    if(data.error != null){
+				console.error(data.error);
+				var errorDiv = $('<div>');
+				errorDiv.attr("class", "bg-danger");
+				errorDiv.append('<p>Sorry some error occured loading the data, be patient while nobody is looking into it.</p>');
+				errorDiv.append('<p>'+data.error+'</p>');
+				$("#results").append(errorDiv);
+				return;
+			}
+		    
+			switch (args.data){
+				case "yslowresult": 	YSLOW_RESULT = data;
+										prepareYSlowResults(YSLOW_RESULT);
+										RULES = sortArrayByValueOfObject(RULES, "score");
+										$(".result-view-tabs").css("visibility", "visible");
+										draw(args);
+										break;
+										
+				case "resultlist":		RESULT_LIST = data;
+										draw(args);
+										break;
+										
+				case "har":				HAR_DATA = data;
+										prepareGanttData(HAR_DATA);
+										draw(args);
+										break;
+				case "compareyslow":	COMPARE_YSLOW = data;
+										draw(args);
+										break;						
+										
+			}
+		})
+		  .fail(function() {
+				var errorDiv = $('<div>');
+				errorDiv.attr("class", "bg-danger");
+				errorDiv.append('<p>Sorry some error occured loading the data, be patient while nobody is looking into it.</p>');
+				$("#results").append(errorDiv);
+		  });
+}
+
+/*******************************************************************************
+ * Show Loading Animation
+ ******************************************************************************/
+function showLoader(isVisible){
+	
+	if(isVisible){
+		$("#loading").css("visibility", "visible");
+	}else{
+		$("#loading").css("visibility", "hidden");
 	}
 }
 
@@ -67,7 +157,7 @@ function initialize(){
  *************************************************************************************/
 function getGrade(score){
 	
-	if		(score >= 90){ return "A" }
+	if		(score >= 90){return "A" }
 	else if (score >= 80){return "B" }
 	else if (score >= 70){return "C" }
 	else if (score >= 60){return "D" }
@@ -82,7 +172,7 @@ function getGrade(score){
  * @param 
  * @returns 
  ******************************************************************/
-function loadYSlowData(data){
+function prepareYSlowResults(data){
 	
 
 //	"w": "size",
@@ -236,15 +326,15 @@ function prepareGanttData(data){
 		entry.ganttdata = {
 			"time": duration,	
 			"delta": deltaMillis,
-			"percentDelta": deltaMillis / totalTimeMillis * 100,
-			"percentBlocked": (entry.timings.blocked > 0) 	? entry.timings.blocked / duration * 100 : 0,
-			"percentDNS": (entry.timings.dns > 0) 			? entry.timings.dns / duration * 100 : 0,
-			"percentConnect": (entry.timings.connect > 0) 	? entry.timings.connect / duration * 100 : 0,
-			"percentSend": (entry.timings.send > 0) 		? entry.timings.send / duration * 100 : 0,
-			"percentWait": (entry.timings.wait > 0) 		? entry.timings.wait / duration * 100 : 0,
-			"percentReceive": (entry.timings.recieve > 0) 	? entry.timings.recieve / duration * 100 : 0,
-			"percentSSL": (entry.timings.ssl > 0) 			? entry.timings.ssl / duration * 100 : 0,
-			"percentTime": duration / totalTimeMillis * 100
+			"percentdelta": deltaMillis / totalTimeMillis * 100,
+			"percentblocked": (entry.timings.blocked > 0) 	? entry.timings.blocked / duration * 100 : 0,
+			"percentdns": (entry.timings.dns > 0) 			? entry.timings.dns / duration * 100 : 0,
+			"percentconnect": (entry.timings.connect > 0) 	? entry.timings.connect / duration * 100 : 0,
+			"percentsend": (entry.timings.send > 0) 		? entry.timings.send / duration * 100 : 0,
+			"percentwait": (entry.timings.wait > 0) 		? entry.timings.wait / duration * 100 : 0,
+			"percentreceive": (entry.timings.recieve > 0) 	? entry.timings.recieve / duration * 100 : 0,
+			"percentssl": (entry.timings.ssl > 0) 			? entry.timings.ssl / duration * 100 : 0,
+			"percenttime": duration / totalTimeMillis * 100
 		}
 		
 		console.log(entry.ganttdata);
@@ -333,9 +423,7 @@ function selectElementContent(el) {
  ******************************************************************/
 function printComparison(parent, data){
 	
-	
 	compareTableData = [];
-	
 	//-----------------------------------------
 	// Get distinct List of Rules
 	//-----------------------------------------
@@ -407,8 +495,7 @@ function printComparison(parent, data){
 		}
 	}
 	
-	
-	printTable($("#comparison"),compareTableData, "Comparison");
+	printTable(parent,compareTableData, "Comparison");
 	
 }
 
@@ -455,9 +542,9 @@ function printGanttChart(parent, data){
 	var entries = data.log.entries; 
 	var entriesCount = entries.length;
 	for(var i = 0; i < entriesCount; i++ ){
-		var currentData = entries[i];
+		var currentEntry = entries[i];
 		var rowString = '<tr>';
-		
+
 		//--------------------------
 		// Details Link
 		rowString += '<td><a alt="Show Details"><i class="fa fa-search"></i></a></td>';
@@ -465,25 +552,24 @@ function printGanttChart(parent, data){
 		//--------------------------
 		// Gantt Chart
 		
-		var gd = currentData.ganttdata;
+		var gd = currentEntry.ganttdata;
 		rowString += '<td> <div class="ganttWrapper" style="width: 500px;">';
-			rowString += '<div class="ganttBlock percentDelta" style="width: '+gd.percentDelta+'%">&nbsp;</div>';
-			rowString += '<div class="ganttBlock ganttTimings" style="width: '+gd.percentTime+'%">';
-				if(gd.percentBlocked > 0){ 	rowString += '<div class="ganttBlock percentBlocked" style="width: '+gd.percentBlocked+'%">&nbsp;</div>';}
-				if(gd.percentConnect > 0){ 	rowString += '<div class="ganttBlock percentConnect" style="width: '+gd.percentConnect+'%">&nbsp;</div>';}
-				if(gd.percentDNS > 0){ 		rowString += '<div class="ganttBlock percentDNS" style="width: '+gd.percentDNS+'%">&nbsp;</div>';}
-				if(gd.percentReceive > 0){ 	rowString += '<div class="ganttBlock percentReceive" style="width: '+gd.percentReceive+'%">&nbsp;</div>';}
-				// SSL time is included in Connect Time, see >> https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/HAR/Overview.html#sec-object-types-entries
-				//if(gd.percentSSL > 0){ 		rowString += '<div class="ganttBlock percentSSL" style="width: '+gd.percentSSL+'%">&nbsp;</div>';}
-				if(gd.percentSend > 0){ 	rowString += '<div class="ganttBlock percentSend" style="width: '+gd.percentSend+'%">&nbsp;</div>';}
-				if(gd.percentWait > 0){ 	rowString += '<div class="ganttBlock percentWait" style="width: '+gd.percentWait+'%">&nbsp;</div>';}
+			rowString += '<div class="ganttBlock percentdelta" style="width: '+gd.percentdelta+'%">&nbsp;</div>';
+			rowString += '<div class="ganttBlock ganttTimings" style="width: '+gd.percenttime+'%">';
+				rowString += createGanttBar(currentEntry, "blocked");
+				rowString += createGanttBar(currentEntry, "dns");
+				rowString += createGanttBar(currentEntry, "connect");
+				//rowString += createGanttBar(currentEntry, "ssl");
+				rowString += createGanttBar(currentEntry, "send");
+				rowString += createGanttBar(currentEntry, "wait");
+				rowString += createGanttBar(currentEntry, "receive");
 			rowString += '</div>';
 		rowString += 	'</div></td>';
 		// --------------------------
 		// Other
 
-		rowString += '<td>'+Math.round(currentData.time)+'</td>';
-		rowString += '<td>'+secureDecodeURI(currentData.request.url)+'</td>';
+		rowString += '<td>'+Math.round(currentEntry.time)+'</td>';
+		rowString += '<td>'+secureDecodeURI(currentEntry.request.url)+'</td>';
 		
 		rowString += "</tr>";
 		
@@ -491,14 +577,24 @@ function printGanttChart(parent, data){
 	}
 	parent.append(table);
 	
+}
+
+/******************************************************************
+ * Print the gantt chart for the entries.
+ * 
+ * @param parent JQuery object 
+ * @param data HAR file data
+ * @returns the HTML for the bar in the gantt chart
+ ******************************************************************/
+function createGanttBar(entry, metric){
 	
-	//----------------------------------
-	// Create Button
-	var compareButton = $('<a id="resultCompareButton" class="btn btn-primary" onclick="compareResults();" disabled="true">Compare</a>');
-	var deleteButton = $('<a id="resultDeleteButton" class="btn btn-danger" onclick="deleteResults();" disabled="true">Delete</a>');
+	var percentString = "percent"+metric;
 	
-	parent.append(compareButton);
-	parent.append(deleteButton);
+	if(entry.ganttdata[percentString] > 0){ 
+		return '<div class="ganttBlock '+percentString+'" alt="test" style="width: '+entry.ganttdata[percentString]+'%">&nbsp;</div>'
+	}else{
+		return "";
+	}
 }
 
 /******************************************************************
@@ -556,8 +652,8 @@ function printResultList(parent, data){
 		
 		rowString += '<td>'+url+'</td>';
 		
-		rowString += '<td><a target="_blank"  alt="Open Result" href="./resultview?resultid='+currentData.RESULT_ID+'"><i class="fa fa-eye"></i></a></td>';
-		rowString += '<td><a target="_blank"  alt="Gantt Chart" href="./ganttchart?resultid='+currentData.RESULT_ID+'"><i class="fas fa-sliders-h"></i></a></td>';
+		rowString += '<td><a  alt="View Result" href="./resultview?resultid='+currentData.RESULT_ID+'"><i class="fa fa-eye"></i></a></td>';
+		rowString += '<td><a  alt="View Gantt Chart" href="./ganttchart?resultid='+currentData.RESULT_ID+'"><i class="fas fa-sliders-h"></i></a></td>';
 		
 		rowString += '<td><a target="_blank" alt="Open URL" href="'+url+'"><i class="fa fa-link"></i></a></td>';
 		
@@ -900,9 +996,9 @@ function printTable(parent, data, title){
 				for(var key in currentData.components){
 					var compText = "";
 					try{
-						compText = decodeURIComponent(rule.components[key]);
+						compText = decodeURIComponent(currentData.components[key]);
 					}catch(err){
-						compText = rule.components[key];
+						compText = currentData.components[key];
 					}
 					list.append('<li>'+compText+'</li>');
 				}
@@ -968,59 +1064,92 @@ function printSummary(parent){
  ******************************************************************/
 function reset(){
 	GLOBAL_COUNTER=0;
-	$("#yslow-results").html("");
+	$("#results").html("");
 }
 
 /******************************************************************
  * main method for formatting.
  * 
- * @param string
+ * @param argument Array
  * @returns 
  ******************************************************************/
 function draw(options){
 	
 	reset();
 	
-	RESULTS_DIV = $("#yslow-results");
+	showLoader(true);
 	
-	switch(options.info + options.view){
-		case "overview": 		printSummary(RESULTS_DIV);
-								printTable(RESULTS_DIV, STATS_BY_TYPE, "Statistics by Component Type(Empty Cache)");
-								printTable(RESULTS_DIV, STATS_PRIMED_CACHE, "Statistics by Component Type(Primed Cache)");
-								printPanels(RESULTS_DIV);
-								break;
+	window.setTimeout( 
+	function(){
+	
+		RESULTS_DIV = $("#results");
+		
+		//----------------------------------
+		// Fetch Data if not already done
+		//----------------------------------
+		switch (options.data){
+			case "yslowresult": 	if(YSLOW_RESULT == null) { fetchData(options);  return;} break;
+			case "resultlist":		if(RESULT_LIST == null) { fetchData(options); return;} break;
+			case "har":				if(HAR_DATA == null) { fetchData(options); return;} break;
+			case "compareyslow":	if(COMPARE_YSLOW == null) { fetchData(options); return;} break;
+			
+		}
+		
+		//----------------------------------
+		// Fetch Data if not already done
+		//----------------------------------
+		switch(options.info + options.view){
+		
+			case "resultlist":		printResultList($(RESULTS_DIV), RESULT_LIST);
+									break;
+									
+			case "ganttchart":		printGanttChart($(RESULTS_DIV), HAR_DATA);
+									break;	
+			
+			case "compareyslow":	printComparison($(RESULTS_DIV), COMPARE_YSLOW);
+									break;	
+									
+			case "overview": 		printSummary(RESULTS_DIV);
+									printTable(RESULTS_DIV, STATS_BY_TYPE, "Statistics by Component Type(Empty Cache)");
+									printTable(RESULTS_DIV, STATS_PRIMED_CACHE, "Statistics by Component Type(Primed Cache)");
+									printPanels(RESULTS_DIV);
+									break;
+									
+			case "gradepanels": 	printPanels(RESULTS_DIV);
+						  			break;
+						  			
+			case "gradetable": 		printTable(RESULTS_DIV, RULES, "Table: Grade by Rules");
+	  								break;
+	  								
+			case "gradeplaintext":	printPlainText(RESULTS_DIV);
+									break;
+									
+			case "gradejira":		printJIRAText(RESULTS_DIV);
+									break;
+									
+			case "gradecsv":		printCSV(RESULTS_DIV, RULES);
+									break;
+									
+			case "gradejson":		printJSON(RESULTS_DIV, RULES);
+									break;						
+									
+			case "statstable":		
+				switch(options.stats){
+					case "type": 			printTable(RESULTS_DIV, STATS_BY_TYPE, "Statistics by Component Type(Empty Cache)");
+											break;
+									
+					case "type_cached": 	printTable(RESULTS_DIV, STATS_PRIMED_CACHE, "Statistics by Component Type(Primed Cache)");
+											break;
+											
+					case "components": 		printTable(RESULTS_DIV, COMPONENTS, "Components");
+											break;
+				}
+				break;
 								
-		case "gradepanels": 	printPanels(RESULTS_DIV);
-					  			break;
-					  			
-		case "gradetable": 		printTable(RESULTS_DIV, RULES, "Table: Grade by Rules");
-  								break;
-  								
-		case "gradeplaintext":	printPlainText(RESULTS_DIV);
-								break;
-								
-		case "gradejira":		printJIRAText(RESULTS_DIV);
-								break;
-								
-		case "gradecsv":		printCSV(RESULTS_DIV, RULES);
-								break;
-								
-		case "gradejson":		printJSON(RESULTS_DIV, RULES);
-								break;						
-								
-		case "statstable":		
-			switch(options.stats){
-				case "type": 			printTable(RESULTS_DIV, STATS_BY_TYPE, "Statistics by Component Type(Empty Cache)");
-										break;
-								
-				case "type_cached": 	printTable(RESULTS_DIV, STATS_PRIMED_CACHE, "Statistics by Component Type(Primed Cache)");
-										break;
-										
-				case "components": 		printTable(RESULTS_DIV, COMPONENTS, "Components");
-										break;
-			}
-			break;
-							
-		default:				RESULTS_DIV.text("Sorry some error occured, be patient while nobody is looking into it.");
-	}
+			default:				RESULTS_DIV.text("Sorry some error occured, be patient while nobody is looking into it.");
+		}
+		showLoader(false);
+	}, 100);
+	
+	
 }

@@ -25,6 +25,7 @@ import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 import com.pengtoolbox.pageanalyzer.servlets.AnalyzeURLServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CompareServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CustomContentServlet;
+import com.pengtoolbox.pageanalyzer.servlets.DataServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DeleteResultServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DocuServlet;
 import com.pengtoolbox.pageanalyzer.servlets.GanttChartServlet;
@@ -88,6 +89,8 @@ public class Main extends Application {
         apiHolder.getRegistration().setMultipartConfig(multipartConfig);
         servletContextHandler.addServlet(apiHolder, "/api");
 
+        servletContextHandler.addServlet(DataServlet.class, "/data");
+        
         servletContextHandler.addServlet(HARDownloadServlet.class, "/hardownload");
         servletContextHandler.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
         servletContextHandler.addServlet(ResultViewServlet.class, "/resultview");

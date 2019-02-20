@@ -34,7 +34,7 @@ public class CompareServlet extends HttpServlet
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Compare Results");
 		StringBuffer content = html.getContent();
 
-		content.append("<div id=\"comparison\"></div>");
+		content.append("<div id=\"results\"></div>");
 		
 		//Comma separated IDs
 		String resultIDs = request.getParameter("resultids");
@@ -50,10 +50,11 @@ public class CompareServlet extends HttpServlet
 		}
 
 		StringBuffer javascript = html.getJavascript();
-		javascript.append("<script>");
-		javascript.append("		var DATA_TO_COMPARE = "+arrayString+";");
+		
+		javascript.append("<script defer>");
+			javascript.append("initialize();");
+			javascript.append("draw({data: 'compareyslow', info: 'compare', view: 'yslow'})");
 		javascript.append("</script>");
-		javascript.append("<script defer>initialize();</script>");
 
     }
 	

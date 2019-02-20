@@ -51,13 +51,14 @@ public class GanttChartServlet extends HttpServlet
 			html.addAlert(CFW.ALERT_ERROR, "Results could not be loaded.");
 		}else {
 									
-			content.append("<div id=\"ganttchart\"></div>");
+			content.append("<div id=\"results\"></div>");
 			
 			StringBuffer javascript = html.getJavascript();
-			javascript.append("<script>");
-			javascript.append("		var HAR_CONTENT = "+jsonResults.replaceAll("</script>", "&lt;/script>")+";");
+			
+			javascript.append("<script defer>");
+				javascript.append("initialize();");
+				javascript.append("draw({data: 'har', info: 'ganttchart', view: ''})");
 			javascript.append("</script>");
-			javascript.append("<script defer>initialize();</script>");
 							
 		}
         

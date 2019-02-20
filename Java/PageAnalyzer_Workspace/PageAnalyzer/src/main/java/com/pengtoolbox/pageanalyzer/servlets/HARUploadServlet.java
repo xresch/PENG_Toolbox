@@ -60,7 +60,6 @@ public class HARUploadServlet extends HttpServlet
 		content.append("<h1>Results</h1>");
 		content.append("<p>Use the links in the menu to change the view. </p>");
 		
-		
 		//--------------------------------------
 		// Get Save Results Checkbox
 		Part saveResults = request.getPart("saveResults");
@@ -69,6 +68,7 @@ public class HARUploadServlet extends HttpServlet
 		if(saveResults != null) {
 			saveResultsString =	FileUtils.readContentsFromInputStream(saveResults.getInputStream());
 		}
+
 
 		//--------------------------------------
 		// Get HAR File
@@ -92,14 +92,19 @@ public class HARUploadServlet extends HttpServlet
 			
 			//--------------------------------------
 			// Prepare Response
-			content.append("<div id=\"yslow-results\"></div>");
+			content.append("<div id=\"results\"></div>");
 			
 			StringBuffer javascript = html.getJavascript();
-			javascript.append("<script>");
-			javascript.append("		var YSLOW_DATA = "+results+";\n");
-			//javascript.append("		var HAR_FILE = "+harContents.replace("\n", " ")+";");
+			javascript.append("<script defer>");
+			javascript.append("		YSLOW_RESULT = "+results+";\n");
+			javascript.append("		HAR_DATA = "+harContents.replaceAll("</script>", "&lt;/script>")+";\n");
+			javascript.append("		initialize();");
+			javascript.append("		prepareYSlowResults(YSLOW_RESULT);");
+			javascript.append("		prepareGanttData(HAR_DATA);");
+			javascript.append("		RULES = sortArrayByValueOfObject(RULES, \"score\");");
+			javascript.append("		$(\".result-view-tabs\").css(\"visibility\", \"visible\");");
+			javascript.append("		draw({data: 'yslowresult', info: 'overview', view: ''})");
 			javascript.append("</script>");
-			javascript.append("<script defer>initialize();</script>");
 				
 		}
 	}

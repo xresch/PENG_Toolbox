@@ -51,13 +51,14 @@ public class ResultViewServlet extends HttpServlet
 			html.addAlert(CFW.ALERT_ERROR, "Results could not be loaded.");
 		}else {
 									
-			content.append("<div id=\"yslow-results\"></div>");
+			content.append("<div id=\"results\"></div>");
 			
 			StringBuffer javascript = html.getJavascript();
-			javascript.append("<script>");
-			javascript.append("		var YSLOW_DATA = "+jsonResults+";");
+			javascript.append("<script defer>");
+				javascript.append("initialize();");
+				javascript.append("draw({data: 'yslowresult', info: 'overview', view: ''})");
 			javascript.append("</script>");
-			javascript.append("<script defer>initialize();</script>");
+			
 				
 		}
         

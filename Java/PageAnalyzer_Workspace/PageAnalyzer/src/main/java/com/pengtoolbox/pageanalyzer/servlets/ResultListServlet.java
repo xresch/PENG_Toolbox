@@ -54,13 +54,13 @@ public class ResultListServlet extends HttpServlet
 			html.addAlert(CFW.ALERT_ERROR, "Results could not be loaded.");
 		}else {
 									
-			content.append("<div id=\"resultlist\"></div>");
+			content.append("<div id=\"results\"></div>");
 			
 			StringBuffer javascript = html.getJavascript();
-			javascript.append("<script>");
-			javascript.append("		var RESULT_LIST_DATA = "+jsonResults+";");
+			javascript.append("<script defer>");
+				javascript.append("initialize();");
+				javascript.append("draw({data: 'resultlist', info: 'resultlist', view: ''})");
 			javascript.append("</script>");
-			javascript.append("<script defer>initialize();</script>");
 				
 		}
         

@@ -1,0 +1,93 @@
+package com.pengtoolbox.pageanalyzer.servlets;
+
+import java.io.IOException;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.SessionData;
+import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.TemplatePlain;
+import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.H2Utils;
+import com.pengtoolbox.pageanalyzer.yslow.YSlow;
+
+/*************************************************************************
+ * 
+ * @author Reto Scheiwiller, 2018
+ * 
+ * Distributed under the MIT license
+ *************************************************************************/
+public class DataServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private static Logger logger = LogManager.getLogManager().getLogger(DataServlet.class.getName());
+       
+	/*****************************************************************
+	 *
+	 ******************************************************************/
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		//-------------------------------------------
+		// Initialize
+		//-------------------------------------------
+		CFWLogger log = new CFWLogger(logger, request).method("doGet");
+		log.info(request.getRequestURL().toString());
+		
+		String type = request.getParameter("type");
+		String resultID = request.getParameter("resultid");
+
+		//-------------------------------------------
+		// Resolve User ID
+		//-------------------------------------------
+		String userID = "";
+		
+		if(CFWConfig.AUTHENTICATION_ENABLED) {
+			SessionData data = (SessionData) request.getSession().getAttribute(CFW.SESSION_DATA); 
+			if(data.isLoggedIn()) {
+				userID = data.getUsername();
+			}
+		}else {
+			userID = "anonymous";
+		}
+		
+		//-------------------------------------------
+		// Fetch Data
+		//-------------------------------------------
+		TemplatePlain plain = new TemplatePlain(request);
+		StringBuffer content = plain.getContent();
+
+		if (type == null) {
+			content.append("{\"error\": \"Type was not specified.\"}");
+		}else {
+
+			switch(type.toLowerCase()) {
+				case "yslowresult": 	content.append(H2Utils.getResultByID(Integer.parseInt(resultID)));
+										break;
+										
+				case "resultlist": 		content.append(H2Utils.getResultListForUser(userID));
+										break;
+										
+				case "har": 			content.append(H2Utils.getHARFileByID(Integer.parseInt(resultID)));
+										break;
+				
+				case "compareyslow": 	String resultIDs = request.getParameter("resultids");
+										content.append(H2Utils.getResultListForComparison(resultIDs));
+										break;
+										
+			}
+						
+		}
+		
+		response.setContentType("application/json");
+	}
+}

@@ -95,14 +95,19 @@ public class AnalyzeURLServlet extends HttpServlet
 			
 			//--------------------------------------
 			// Prepare Response
-			content.append("<div id=\"yslow-results\"></div>");
+			content.append("<div id=\"results\"></div>");
 			
 			StringBuffer javascript = html.getJavascript();
-			javascript.append("<script>");
-			javascript.append("		var YSLOW_DATA = "+results+";\n");
-			//javascript.append("		var HAR_FILE = "+harContents+";");
+			javascript.append("<script defer>");
+			javascript.append("		YSLOW_RESULT = "+results+";\n");
+			javascript.append("		HAR_DATA = "+harContents.replaceAll("</script>", "&lt;/script>")+";\n");
+			javascript.append("		initialize();");
+			javascript.append("		prepareYSlowResults(YSLOW_RESULT);");
+			javascript.append("		prepareGanttData(HAR_DATA);");
+			javascript.append("		RULES = sortArrayByValueOfObject(RULES, \"score\");");
+			javascript.append("		$(\".result-view-tabs\").css(\"visibility\", \"visible\");");
+			javascript.append("		draw({data: 'yslowresult', info: 'overview', view: ''})");
 			javascript.append("</script>");
-			javascript.append("<script defer>initialize();</script>");
 				
 		}
 		
