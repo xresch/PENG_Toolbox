@@ -15,12 +15,15 @@ var STATS_BY_TYPE;
 var STATS_PRIMED_CACHE;
 var URL_PARAMETERS;
 
+//used to store the current entry used for showing the details modal for the gantt chart
+var CURRENT_DETAILS_ENTRY;
+
 //-----------------------------------------
 // Data Objects
 var YSLOW_RESULT = null;
 var RESULT_LIST = null;
 var HAR_DATA = null;
-COMPARE_YSLOW = null;
+var COMPARE_YSLOW = null;
 
 var GRADE_CLASS = {
 	A: "success",
@@ -332,7 +335,7 @@ function prepareGanttData(data){
 			"percentconnect": (entry.timings.connect > 0) 	? entry.timings.connect / duration * 100 : 0,
 			"percentsend": (entry.timings.send > 0) 		? entry.timings.send / duration * 100 : 0,
 			"percentwait": (entry.timings.wait > 0) 		? entry.timings.wait / duration * 100 : 0,
-			"percentreceive": (entry.timings.recieve > 0) 	? entry.timings.recieve / duration * 100 : 0,
+			"percentreceive": (entry.timings.receive > 0) 	? entry.timings.receive / duration * 100 : 0,
 			"percentssl": (entry.timings.ssl > 0) 			? entry.timings.ssl / duration * 100 : 0,
 			"percenttime": duration / totalTimeMillis * 100
 		}
@@ -512,6 +515,7 @@ function printGanttChart(parent, data){
 	// Add title and description.
 	parent.append("<h2>Gantt Chart</h2>");
 
+
 	//----------------------------------
 	// Create Table Filter
 	var filter = $('<input type="text" class="form-control" onkeyup="filterTable(this)" placeholder="Filter Table...">');
@@ -533,6 +537,7 @@ function printGanttChart(parent, data){
 
 	table.append(headerRowString);
 	
+	parent.append(createGanttChartLegend());
 	parent.append(table);
 	filter.data("table", table);
 	
@@ -543,15 +548,22 @@ function printGanttChart(parent, data){
 	var entriesCount = entries.length;
 	for(var i = 0; i < entriesCount; i++ ){
 		var currentEntry = entries[i];
-		var rowString = '<tr>';
-
+		
+		var row = $('<tr>');
+		
 		//--------------------------
 		// Details Link
-		rowString += '<td><a alt="Show Details"><i class="fa fa-search"></i></a></td>';
+		var detailsLinkTD = $('<td>');
+		var detailsLink = $('<a alt="Show Details" onclick="showGanttDetails(this)"><i class="fa fa-search"></i></a>');
+		detailsLink.data("entry", currentEntry);
+		detailsLinkTD.append(detailsLink);
+		
+		
+		row.append(detailsLinkTD);
 		
 		//--------------------------
 		// Gantt Chart
-		
+		var  rowString = '';
 		var gd = currentEntry.ganttdata;
 		rowString += '<td> <div class="ganttWrapper" style="width: 500px;">';
 			rowString += '<div class="ganttBlock percentdelta" style="width: '+gd.percentdelta+'%">&nbsp;</div>';
@@ -571,9 +583,9 @@ function printGanttChart(parent, data){
 		rowString += '<td>'+Math.round(currentEntry.time)+'</td>';
 		rowString += '<td>'+secureDecodeURI(currentEntry.request.url)+'</td>';
 		
-		rowString += "</tr>";
+		row.append(rowString);
 		
-		table.append(rowString);
+		table.append(row);
 	}
 	parent.append(table);
 	
@@ -597,6 +609,186 @@ function createGanttBar(entry, metric){
 	}
 }
 
+/******************************************************************
+ * Print the gantt chart for the entries.
+ * 
+ * @param element the DOM element which was the source of the onclick
+ * event. Has an attached har-entry with JQuery $().data()
+ * @returns 
+ ******************************************************************/
+function showGanttDetails(element){
+	
+	//-----------------------------------------
+	// Initialize
+	//-----------------------------------------
+	var entry = $(element).data('entry');
+	var parent = $('#defaultModalBody');
+	
+	parent.html('');
+	  
+	console.log(entry);
+	CURRENT_DETAILS_ENTRY = entry;
+	
+	//-----------------------------------------
+	// Print Tabs
+	//-----------------------------------------
+	tabsString  = '<ul id="tabs" class="nav nav-tabs">';
+	tabsString += '    <li class="active"><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'request\')">Request</a></li>';
+	tabsString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'response\')">Response</a></li>';
+	tabsString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'cookies\')">Cookies</a></li>';
+	tabsString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'headers\')">Headers</a></li>';
+	tabsString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'timings\')">Timings</a></li>';
+	tabsString += '</ul>';
+	
+	parent.append(tabsString);
+	
+	//-----------------------------------------
+	// Gantt Details
+	//-----------------------------------------
+	parent.append('<div id="ganttDetails"></div>');
+	
+	updateGanttDetails('request');
+	
+	$('#defaultModal').modal('show');
+	
+}
+
+/******************************************************************
+ * Print the gantt chart for the entries.
+ * 
+ * @param tab specify what tab should be printed
+ * @param data HAR file data
+ * @returns the HTML for the bar in the gantt chart
+ ******************************************************************/
+function updateGanttDetails(tab){
+	
+	var target = $('#ganttDetails');
+	target.html('');
+	
+	entry = CURRENT_DETAILS_ENTRY;
+	
+	var details = '';
+	if(tab === 'request'){
+		var request = entry.request;
+		details += '<table class="table table-striped">';
+		details += '	<tr><td><b>Timestamp:</b></td><td>'+entry.startedDateTime+'</td></tr>';
+		details += '	<tr><td><b>Duration:</b></td><td>'+Math.ceil(entry.time)+'ms</td></tr>';
+		details += '	<tr><td><b>Version:</b></td><td>'+request.httpVersion+'</td></tr>';
+		details += '	<tr><td><b>Method:</b></td><td>'+request.method+'</td></tr>';
+		details += '	<tr><td><b>URL:</b></td><td>'+request.url+'</td></tr>';
+		
+		details += convertNameValueArrayToRow("QueryParameters", request.queryString);
+		details += convertNameValueArrayToRow("Headers", request.headers);
+		details += convertNameValueArrayToRow("Cookies", request.cookies);
+		
+		details += '</table>';
+		
+	}else 	if(tab === 'response'){
+		var response = entry.response;
+		details += '<table class="table table-striped">';
+		details += '	<tr><td><b>Version:</b></td><td>'+response.httpVersion+'</td></tr>';
+		details += '	<tr><td><b>Status:</b></td><td>'+response.status+' '+response.statusText+'</td></tr>';
+		details += '	<tr><td><b>RedirectURL:</b></td><td>'+response.redirectURL+'</td></tr>';
+		details += '	<tr><td><b>ContentType:</b></td><td>'+response.content.mimeType+'</td></tr>';
+		details += '	<tr><td><b>ContentSize:</b></td><td>'+response.content.size+' Bytes</td></tr>';
+		details += '	<tr><td><b>TransferSize:</b></td><td>'+response._transferSize+' Bytes</td></tr>';
+		details += convertNameValueArrayToRow("Headers", response.headers);
+		details += convertNameValueArrayToRow("Cookies", response.cookies);
+		
+		if( typeof response.content.text != "undefined" ){
+			details += '	<tr><td><b>Content:</b></td><td><pre><code>'+response.content.text+'</code></pre></td></tr>';
+		}
+		details += '</table>';
+	
+	}
+	else if(tab === 'headers'){
+		details += '<table class="table table-striped">';
+		details += convertNameValueArrayToRow("Request Headers", entry.request.headers);
+		details += convertNameValueArrayToRow("Response Headers", entry.response.headers);
+		details += '</table>';
+	}else if(tab === 'cookies'){
+		details += '<table class="table table-striped">';
+		details += convertNameValueArrayToRow("Request Cookies", entry.request.cookies);
+		details += convertNameValueArrayToRow("Response Cookies", entry.response.cookies);
+		details += '</table>';
+		
+	}else if(tab === 'timings'){
+		
+		details += createGanttChartLegend();
+		
+		details += '<div class="ganttBlock ganttTimings" style="width: 100%">';
+		details += createGanttBar(entry, "blocked");
+		details += createGanttBar(entry, "dns");
+		details += createGanttBar(entry, "connect");
+		//details += createGanttBar(currentEntry, "ssl");
+		details += createGanttBar(entry, "send");
+		details += createGanttBar(entry, "wait");
+		details += createGanttBar(entry, "receive");
+		details += '</div>';
+		
+		details += '<table class="table table-striped">';
+		details += '<thead><th>Metric</th><th>Time</th><th>Percent</th></thead>'
+		var metrics = ['blocked','dns','connect','ssl','send','wait','receive'];
+		for(i = 0; i < metrics.length; i++){
+			var metric = metrics[i];
+			details += '<tr>';
+			details += '	<td><b>'+metric+':</b></td>';
+			details += '	<td>'+Math.round(entry.timings[metric] * 100) / 100+' ms</td>';
+			details += '	<td>'+Math.round(entry.ganttdata["percent"+metric] * 100) / 100+'%</td>'
+			details += '</tr>'; 
+		}
+		details += '</table>';
+		details += '<p><b>TOTAL TIME: '+Math.round(entry.time * 100) / 100+' ms</b></p>';
+		
+	}
+	
+	target.append(details);
+	
+}
+
+/******************************************************************
+ * Create the Legend for the gantt chart colors.
+ * 
+ * @param 
+ * @returns html string
+ ******************************************************************/
+function createGanttChartLegend(){
+	
+	var metrics = ['blocked','dns','connect','ssl','send','wait','receive'];
+	
+	var legend = '<div class="gantt-legend">';
+	
+	for(i = 0; i < metrics.length; i++){
+		legend += '<div class="gantt-legend-group">';
+		legend += '		<div class="gantt-legend-square percent'+metrics[i]+'">&nbsp;</div>';
+		legend += '		<span>'+metrics[i]+'</span>';
+		legend += '</div>';
+	}
+	
+	legend += '</div>';
+	
+	return legend;
+	
+}
+/******************************************************************
+ * Converts a array with name/value pairs to a table row.
+ * 
+ * @param 
+ * @returns 
+ ******************************************************************/
+function convertNameValueArrayToRow(title, array){
+	result = "";
+	if(array != null && array.length > 0){
+		result += '	<tr><td><b>'+title+':</b></td>';
+		result += '<td><table class="table table-striped">';
+		for(i = 0; i < array.length; i++){
+			result += '	<tr><td><b>'+array[i].name+'</b></td><td>'+array[i].value+'</td></tr>';
+		}
+		result += '</table></td></tr>';
+	}
+	
+	return result;
+}
 /******************************************************************
  * Print a list of results.
  * 
