@@ -24,16 +24,24 @@ public class PALogFormatterJSON extends Formatter {
 			buf.append("\"");
 			
 			//-------------------------
+			// Level
+			buf.append(", \"level\":\"");
+			buf.append(rec.getLevel());
+			buf.append("\"");
+			
+			//-------------------------
+			// user
+			buf.append(", \"user\":\"");
+			buf.append(log.userID);
+			buf.append("\"");
+			
+			//-------------------------
 			// URL
 			buf.append(", \"deltaStartMillis\":\"");
 			buf.append(log.deltaStartMillis);
 			buf.append("\"");
 			
-			//-------------------------
-			// Level
-			buf.append(", \"level\":\"");
-			buf.append(rec.getLevel());
-			buf.append("\"");
+
 			
 			//-------------------------
 			// URL

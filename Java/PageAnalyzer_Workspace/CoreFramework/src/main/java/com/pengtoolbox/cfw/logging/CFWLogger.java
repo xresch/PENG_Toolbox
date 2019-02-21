@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.response.AbstractTemplate;
 import com.pengtoolbox.cfw.response.AbstractTemplateHTML;
 
@@ -21,11 +23,13 @@ public class CFWLogger {
 	protected long endtimeNanos = -1;
 	protected long durationMillis = -1;
 	protected long deltaStartMillis = -1;
+
 	
 	protected HttpServletRequest request; 
 	protected String webURL;
 	protected String queryString;
 	protected String requestID;
+	protected String userID = "unknown";
 	protected int estimatedResponseSizeChars;
 	
 	protected String sessionID;
@@ -188,6 +192,17 @@ public class CFWLogger {
 				this.queryString = request.getQueryString();
 				this.sessionID = request.getSession().getId();
 				
+				if(CFWConfig.AUTHENTICATION_ENABLED) {
+					SessionData data = (SessionData) request.getSession().getAttribute(CFW.SESSION_DATA); 
+					if(data.isLoggedIn()) {
+						this.userID = data.getUsername();
+					}
+				}else {
+					this.userID = "anonymous";
+				}
+					
+				//--------------------------------
+				// Delta Start
 				if(starttimeNanos != -1){
 					this.deltaStartMillis = (starttimeNanos - (long)request.getAttribute(CFW.REQUEST_ATTR_STARTNANOS) ) / 1000000;
 				}else{
