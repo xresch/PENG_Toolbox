@@ -71,17 +71,17 @@ public class DataServlet extends HttpServlet {
 		}else {
 
 			switch(type.toLowerCase()) {
-				case "yslowresult": 	content.append(H2Utils.getResultByID(Integer.parseInt(resultID)));
+				case "yslowresult": 	content.append(H2Utils.getResultByID(request, Integer.parseInt(resultID)));
 										break;
 										
 				case "resultlist": 		content.append(H2Utils.getResultListForUser(userID));
 										break;
 										
-				case "har": 			content.append(H2Utils.getHARFileByID(Integer.parseInt(resultID)));
+				case "har": 			content.append(H2Utils.getHARFileByID(request, Integer.parseInt(resultID)));
 										break;
 				
 				case "compareyslow": 	String resultIDs = request.getParameter("resultids");
-										content.append(H2Utils.getResultListForComparison(resultIDs));
+										content.append(H2Utils.getResultListForComparison(request, resultIDs));
 										break;
 										
 			}

@@ -37,7 +37,7 @@ public class DeleteResultServlet extends HttpServlet
 		String resultIDs = request.getParameter("resultids");
 		
 		if(resultIDs.matches("(\\d,?)+")) {
-			boolean result = H2Utils.deleteResults(resultIDs);
+			boolean result = H2Utils.deleteResults(request, resultIDs);
 			content.append("{\"result\": "+result+"}");
 		}else {
 			content.append("{\"result\": false, \"error\": \"The result could not be deleted: ResultID is not a number.\"}");

@@ -39,29 +39,18 @@ public class ResultViewServlet extends HttpServlet
 		
 		String resultID = request.getParameter("resultid");
 		
-		String jsonResults = null;
-		if(resultID.matches("\\d+")) {
-			jsonResults = H2Utils.getResultByID(Integer.parseInt(resultID));
-		}else {
+		if(!resultID.matches("\\d+")) {
 			html.addAlert(CFW.ALERT_ERROR, "Result ID '"+resultID+"' is not a number.");
 		}
-	
+			
+		content.append("<div id=\"results\"></div>");
 		
-		if (jsonResults == null) {
-			html.addAlert(CFW.ALERT_ERROR, "Results could not be loaded.");
-		}else {
-									
-			content.append("<div id=\"results\"></div>");
-			
-			StringBuffer javascript = html.getJavascript();
-			javascript.append("<script defer>");
-				javascript.append("initialize();");
-				javascript.append("draw({data: 'yslowresult', info: 'overview', view: ''})");
-			javascript.append("</script>");
-			
-				
-		}
-        
+		StringBuffer javascript = html.getJavascript();
+		javascript.append("<script defer>");
+			javascript.append("initialize();");
+			javascript.append("draw({data: 'yslowresult', info: 'overview', view: ''})");
+		javascript.append("</script>");
+
     }
 	
 

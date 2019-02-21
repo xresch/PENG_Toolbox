@@ -78,8 +78,7 @@ public class H2Utils {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	public static void saveResults(HttpServletRequest request, String jsonResults, String harString) {
-		
+	private static String getUserIDForDBAccess(HttpServletRequest request) {
 		//-------------------------------
 		// Get UserID
 		String userID = "";
@@ -91,6 +90,18 @@ public class H2Utils {
 		}else {
 			userID = "anonymous";
 		}
+		
+		return userID;
+	}
+	
+	/********************************************************************************************
+	 *
+	 ********************************************************************************************/
+	public static void saveResults(HttpServletRequest request, String jsonResults, String harString) {
+		
+		//-------------------------------
+		// Get UserID
+		String userID = getUserIDForDBAccess(request);
 		
 		//-------------------------------
 		// Extract URL
@@ -180,11 +191,12 @@ public class H2Utils {
 	 * If the result is null, the method returns an empty array.
 	 * 
 	 ********************************************************************************************/
-	public static String getResultListForComparison(String resultIDArray) {
+	public static String getResultListForComparison(HttpServletRequest request, String resultIDArray) {
 		
 		ResultSet resultSet = null;
 		String jsonString = null;
 		Connection connection = null;	
+		String userID = getUserIDForDBAccess(request);
 		
 		if(!resultIDArray.matches("(\\d,?)+")) {
 			return null;
@@ -194,9 +206,10 @@ public class H2Utils {
 
 			connection = dataSource.getConnection();
 			
-			String selectResults = "SELECT result_id, page_url, time, json_result FROM results WHERE result_id in ("+resultIDArray+") ORDER BY time";
+			String selectResults = "SELECT result_id, page_url, time, json_result FROM results WHERE result_id in ("+resultIDArray+") AND user_id = ? ORDER BY time";
 			
 			PreparedStatement prepared = connection.prepareStatement(selectResults);
+			prepared.setString(1, userID);
 			
 			resultSet = prepared.executeQuery();
 			
@@ -224,20 +237,22 @@ public class H2Utils {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	public static String getResultByID(int id) {
+	public static String getResultByID(HttpServletRequest request, int id) {
 		
 		ResultSet resultSet = null;
 		String jsonResult = null;
+		String userID = getUserIDForDBAccess(request);
 		
 		Connection connection = null;
 		try {
 
 			connection = dataSource.getConnection();
 			
-			String selectResults = "SELECT json_result FROM results WHERE result_id = ?";
+			String selectResults = "SELECT json_result FROM results WHERE result_id = ?  AND user_id = ?";
 			
 			PreparedStatement prepared = connection.prepareStatement(selectResults);
 			prepared.setInt(1, id);
+			prepared.setString(2, userID);
 			
 			resultSet = prepared.executeQuery();
 			
@@ -267,20 +282,22 @@ public class H2Utils {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	public static String getHARFileByID(int resultid) {
+	public static String getHARFileByID(HttpServletRequest request, int resultid) {
 		
 		ResultSet resultSet = null;
 		String jsonResult = null;
+		String userID = getUserIDForDBAccess(request);
 		
 		Connection connection = null;
 		try {
 
 			connection = dataSource.getConnection();
 			
-			String selectResults = "SELECT har_file FROM results WHERE result_id = ?";
+			String selectResults = "SELECT har_file FROM results WHERE result_id = ? AND user_id = ?";
 			
 			PreparedStatement prepared = connection.prepareStatement(selectResults);
 			prepared.setInt(1, resultid);
+			prepared.setString(2, userID);
 			
 			resultSet = prepared.executeQuery();
 			
@@ -310,9 +327,10 @@ public class H2Utils {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	public static boolean deleteResults(String resultIDArray) {
+	public static boolean deleteResults(HttpServletRequest request, String resultIDArray) {
 		
 		boolean result = false;
+		String userID = getUserIDForDBAccess(request);
 		
 		Connection connection = null;	
 		

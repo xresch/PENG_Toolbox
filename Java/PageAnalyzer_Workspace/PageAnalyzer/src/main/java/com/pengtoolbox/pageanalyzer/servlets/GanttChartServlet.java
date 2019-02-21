@@ -34,14 +34,14 @@ public class GanttChartServlet extends HttpServlet
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "View Result");
 		StringBuffer content = html.getContent();
 
-		content.append("<h1>Gantt Chart</h1>");
+		//content.append("<h1>Gantt Chart</h1>");
 		//content.append("<p>Use the links in the menu to change the view. </p>");
 		
 		String resultID = request.getParameter("resultid");
 		
 		String jsonResults = null;
 		if(resultID.matches("\\d+")) {
-			jsonResults = H2Utils.getHARFileByID(Integer.parseInt(resultID));
+			jsonResults = H2Utils.getHARFileByID(request, Integer.parseInt(resultID));
 		}else {
 			html.addAlert(CFW.ALERT_ERROR, "Result ID '"+resultID+"' is not a number.");
 		}

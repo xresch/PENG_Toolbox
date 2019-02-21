@@ -527,7 +527,8 @@ function printGanttChart(parent, data){
 	headerRowString = '<thead><tr>';
 		headerRowString += '<th>&nbsp;</th>';
 		headerRowString += '<th>Gantt Chart</th>';
-		headerRowString += '<th>Time(ms)</th>';
+		headerRowString += '<th>Status</th>';
+		headerRowString += '<th>Duration</th>';
 		headerRowString += '<th>URL</th>';
 	headerRowString += '</tr></thead>';
 	
@@ -562,7 +563,7 @@ function printGanttChart(parent, data){
 		row.append(detailsLinkTD);
 		
 		//--------------------------
-		// Gantt Chart
+		// Gantt Chart Column
 		var  rowString = '';
 		var gd = currentEntry.ganttdata;
 		rowString += '<td> <div class="ganttWrapper" style="width: 500px;">';
@@ -577,10 +578,11 @@ function printGanttChart(parent, data){
 				rowString += createGanttBar(currentEntry, "receive");
 			rowString += '</div>';
 		rowString += 	'</div></td>';
+		
 		// --------------------------
-		// Other
-
-		rowString += '<td>'+Math.round(currentEntry.time)+'</td>';
+		// Other Columns
+		rowString += '<td>'+createHTTPStatusBadge(currentEntry.response.status)+'</td>';
+		rowString += '<td>'+Math.round(currentEntry.time)+' ms</td>';
 		rowString += '<td>'+secureDecodeURI(currentEntry.request.url)+'</td>';
 		
 		row.append(rowString);
@@ -681,13 +683,17 @@ function updateGanttDetails(tab){
 		details += convertNameValueArrayToRow("Headers", request.headers);
 		details += convertNameValueArrayToRow("Cookies", request.cookies);
 		
+		if( typeof request.postData != "undefined" ){
+			details += '	<tr><td><b>MimeType:</b></td><td>'+request.postData.mimeType+'</td></tr>';
+			details += '	<tr><td><b>Content:</b></td><td><pre><code>'+request.postData.text.replace(/</g, "&lt;")+'</code></pre></td></tr>';
+		}
 		details += '</table>';
 		
 	}else 	if(tab === 'response'){
 		var response = entry.response;
 		details += '<table class="table table-striped">';
 		details += '	<tr><td><b>Version:</b></td><td>'+response.httpVersion+'</td></tr>';
-		details += '	<tr><td><b>Status:</b></td><td>'+response.status+' '+response.statusText+'</td></tr>';
+		details += '	<tr><td><b>Status:</b></td><td>'+createHTTPStatusBadge(response.status)+' '+response.statusText+'</td></tr>';
 		details += '	<tr><td><b>RedirectURL:</b></td><td>'+response.redirectURL+'</td></tr>';
 		details += '	<tr><td><b>ContentType:</b></td><td>'+response.content.mimeType+'</td></tr>';
 		details += '	<tr><td><b>ContentSize:</b></td><td>'+response.content.size+' Bytes</td></tr>';
@@ -696,7 +702,7 @@ function updateGanttDetails(tab){
 		details += convertNameValueArrayToRow("Cookies", response.cookies);
 		
 		if( typeof response.content.text != "undefined" ){
-			details += '	<tr><td><b>Content:</b></td><td><pre><code>'+response.content.text+'</code></pre></td></tr>';
+			details += '	<tr><td><b>Content:</b></td><td><pre><code>'+response.content.text.replace(/</g, "&lt;")+'</code></pre></td></tr>';
 		}
 		details += '</table>';
 	
@@ -754,7 +760,7 @@ function updateGanttDetails(tab){
  ******************************************************************/
 function createGanttChartLegend(){
 	
-	var metrics = ['blocked','dns','connect','ssl','send','wait','receive'];
+	var metrics = ['blocked','dns','connect',/*'ssl,*/'send','wait','receive'];
 	
 	var legend = '<div class="gantt-legend">';
 	
@@ -788,6 +794,23 @@ function convertNameValueArrayToRow(title, array){
 	}
 	
 	return result;
+}
+
+/******************************************************************
+ * Returns a colored badge for the given HTTP status.
+ * 
+ * @param status the http status as integer 
+ * @returns badge as html
+ ******************************************************************/
+function createHTTPStatusBadge(status){
+	
+	var style = "";
+	if		(status < 200)	{style = "info"; }
+	else if (status < 300)	{style = "success"; }
+	else if (status < 400)	{style = "warning"; }
+	else 					{style = "danger"; }
+	
+	return '<span class="badge btn-'+style+'">'+status+"</span>";
 }
 /******************************************************************
  * Print a list of results.

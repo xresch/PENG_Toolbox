@@ -43,9 +43,7 @@ public class CompareServlet extends HttpServlet
 		// Create array with json results
 		String arrayString = "[]";
 		
-		if(resultIDs.matches("(\\d,?)+")) {
-			arrayString = H2Utils.getResultListForComparison(resultIDs);
-		}else {
+		if(!resultIDs.matches("(\\d,?)+")) {
 			html.addAlert(CFW.ALERT_ERROR, "Result IDs '"+resultIDs+"' is not a string of comma separated numbers.");
 		}
 
