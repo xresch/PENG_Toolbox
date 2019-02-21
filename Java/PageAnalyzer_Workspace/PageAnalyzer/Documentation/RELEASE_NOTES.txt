@@ -1,8 +1,18 @@
 ########################################
 # Page Analyzer in progress
 ########################################
+
+########################################
+# Page Analyzer v 1.1
+########################################
 - added save results checkbox
 - added LDAP authentication
+- split core functionality into separate project
+- added gantt chart view
+- load data through request instead of writing it into html
+- added details modal to gantt chart
+- access validation on DB level
+- added userid to logfiles
 
 ########################################
 # Page Analyzer v 1.0
