@@ -13,9 +13,11 @@ var SUMMARY;
 var RULES;
 var STATS_BY_TYPE;
 var STATS_PRIMED_CACHE;
+
+//object containing the url parameters as name/value pairs {"name": "value", "name2": "value2" ...}
 var URL_PARAMETERS;
 
-//used to store the current entry used for showing the details modal for the gantt chart
+//used to store the current entry(of the HAR file) used for showing the details modal for the gantt chart
 var CURRENT_DETAILS_ENTRY;
 
 //-----------------------------------------
@@ -36,10 +38,10 @@ var GRADE_CLASS = {
 };
 
 /******************************************************************
- * 
+ * Initialization function executed once when starting the page.
  * 
  * @param 
- * @returns 
+ * @return 
  ******************************************************************/
 function initialize(){
 	
@@ -48,15 +50,14 @@ function initialize(){
 }
 
 /******************************************************************
- * 
- * 
+ * Reads the parameters from the URL and returns an object containing
+ * name/value pairs like {"name": "value", "name2": "value2" ...}.
  * @param 
- * @returns 
+ * @return object
  ******************************************************************/
 function getURLParameters()
 {
     var vars = {};
-    var hash;
     
     var keyValuePairs = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
     for(var i = 0; i < keyValuePairs.length; i++)
@@ -70,7 +71,14 @@ function getURLParameters()
 }
 
 /******************************************************************
+ * Method to fetch data from the server. The result is stored in
+ * global variables.
+ * If the data was already loaded, no additional request is made.
+ * After the data is returned, the draw method is executed with 
+ * the args-object passed to this function.
  * 
+ * @param args the object containing the arguments
+ * @return 
  *
  ******************************************************************/
 function fetchData(args){
@@ -144,7 +152,8 @@ function fetchData(args){
 }
 
 /*******************************************************************************
- * Show Loading Animation
+ * Set if the Loading animation is visible or not.
+ * @param isVisible true or false
  ******************************************************************************/
 function showLoader(isVisible){
 	
@@ -156,7 +165,10 @@ function showLoader(isVisible){
 }
 
 /**************************************************************************************
+ * Get the Grade as A/B/C/D/E/F/None depending on the given YSlow score.
  * 
+ * @param score the yslow score as number
+ * @return the grade as A/B/C/D/E/F/None
  *************************************************************************************/
 function getGrade(score){
 	
@@ -171,13 +183,15 @@ function getGrade(score){
 
 
 /******************************************************************
+ * Prepare the fetched yslow results so they can be easily displayed.
+ * This method doesn't return a value, everything is stored in 
+ * global variables.
  * 
- * @param 
- * @returns 
+ * @param data the object containing the YSlow results. 
+ * @return nothing
  ******************************************************************/
 function prepareYSlowResults(data){
 	
-
 //	"w": "size",
 //	"o": "overall score",
 //	"u": "url",
@@ -278,9 +292,11 @@ function prepareYSlowResults(data){
 }
 
 /******************************************************************
+ * Adds additional information to the entries needed to build the 
+ * gantt chart.
  * 
- * @param 
- * @returns 
+ * @param data the object in HAR format
+ * @return nothing
  ******************************************************************/
 function prepareGanttData(data){
 	
@@ -350,6 +366,9 @@ function prepareGanttData(data){
 /**************************************************************************************
  * Tries to decode a URI and handles errors when they are thrown.
  * If URI cannot be decoded the input string is returned unchanged.
+ * 
+ * @param uri to decode
+ * @return decoded URI or the same URI in case of errors.
  *************************************************************************************/
 function secureDecodeURI(uri){
 	try{
@@ -362,7 +381,10 @@ function secureDecodeURI(uri){
 }
 
 /**************************************************************************************
- * 
+ * Sort an object array by the values for the given key.
+ * @param array the object array to be sorted
+ * @param key the name of the field that should be used for sorting
+ * @return sorted array
  *************************************************************************************/
 function sortArrayByValueOfObject(array, key){
 	array.sort(function(a, b) {
@@ -380,7 +402,14 @@ function sortArrayByValueOfObject(array, key){
 }
 
 /**************************************************************************************
- * filterTable
+ * Filter the rows of a table by the value of the search field.
+ * This method is best used by triggering it on the onchange-event on the search field
+ * itself.
+ * The search field has to have an attached JQuery data object($().data(name, value)), ¨
+ * pointing to the table that should be filtered.
+ * 
+ * @param searchField 
+ * @return nothing
  *************************************************************************************/
 function filterTable(searchField){
 	
@@ -402,7 +431,9 @@ function filterTable(searchField){
 }
 
 /**************************************************************************************
- * Select Element Content
+ * Select all the content of the given element.
+ * For example to select everything inside a given DIV element.
+ * @param el the element 
  *************************************************************************************/
 function selectElementContent(el) {
     if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
@@ -419,10 +450,12 @@ function selectElementContent(el) {
 }
 
 /******************************************************************
- * Format the yslow results as html.
+ * Print a comparison table containing all the yslow results in
+ * the given data.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object to append the comparison. 
+ * @param data array containing multiple yslow results.
+ *
  ******************************************************************/
 function printComparison(parent, data){
 	
@@ -507,7 +540,7 @@ function printComparison(parent, data){
  * 
  * @param parent JQuery object 
  * @param data HAR file data
- * @returns 
+ * 
  ******************************************************************/
 function printGanttChart(parent, data){
 	
@@ -534,7 +567,7 @@ function printGanttChart(parent, data){
 	
 	//----------------------------------
 	// Create Table
-	var table = $('<table class="table table-striped table-responsive">');
+	var table = $('<table class="table table-striped table-responsive table-condensed" style="font-size: smaller;">');
 
 	table.append(headerRowString);
 	
@@ -594,11 +627,11 @@ function printGanttChart(parent, data){
 }
 
 /******************************************************************
- * Print the gantt chart for the entries.
+ * Create the gantt chart part for the given metric.
  * 
- * @param parent JQuery object 
- * @param data HAR file data
- * @returns the HTML for the bar in the gantt chart
+ * @param entry the HAR entry
+ * @param metric 
+ * @return the HTML for the bar in the gantt chart
  ******************************************************************/
 function createGanttBar(entry, metric){
 	
@@ -612,11 +645,11 @@ function createGanttBar(entry, metric){
 }
 
 /******************************************************************
- * Print the gantt chart for the entries.
+ * Open a modal with details for one item in the gantt chart list.
  * 
  * @param element the DOM element which was the source of the onclick
  * event. Has an attached har-entry with JQuery $().data()
- * @returns 
+ * 
  ******************************************************************/
 function showGanttDetails(element){
 	
@@ -656,11 +689,10 @@ function showGanttDetails(element){
 }
 
 /******************************************************************
- * Print the gantt chart for the entries.
+ * Update the gantt details modal when clicking on a tab.
  * 
- * @param tab specify what tab should be printed
- * @param data HAR file data
- * @returns the HTML for the bar in the gantt chart
+ * @param tab specify what tab should be printed.
+ * 
  ******************************************************************/
 function updateGanttDetails(tab){
 	
@@ -755,8 +787,7 @@ function updateGanttDetails(tab){
 /******************************************************************
  * Create the Legend for the gantt chart colors.
  * 
- * @param 
- * @returns html string
+ * @return html string
  ******************************************************************/
 function createGanttChartLegend(){
 	
@@ -777,10 +808,12 @@ function createGanttChartLegend(){
 	
 }
 /******************************************************************
- * Converts a array with name/value pairs to a table row.
+ * Converts a array with name/value pairs to a two column table row.
  * 
- * @param 
- * @returns 
+ * @param title the title that will be printed in the first column.
+ * @param array containing objects with name/value pairs like
+ * [{name: value}, {name: value} ...] 
+ * @return html string
  ******************************************************************/
 function convertNameValueArrayToRow(title, array){
 	result = "";
@@ -800,7 +833,7 @@ function convertNameValueArrayToRow(title, array){
  * Returns a colored badge for the given HTTP status.
  * 
  * @param status the http status as integer 
- * @returns badge as html
+ * @return badge as html
  ******************************************************************/
 function createHTTPStatusBadge(status){
 	
@@ -813,10 +846,11 @@ function createHTTPStatusBadge(status){
 	return '<span class="badge btn-'+style+'">'+status+"</span>";
 }
 /******************************************************************
- * Print a list of results.
+ * Print the list of results found in the database.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object
+ * @param data object containing the list of results.
+ * 
  ******************************************************************/
 function printResultList(parent, data){
 	
@@ -890,6 +924,8 @@ function printResultList(parent, data){
 }
 
 /**************************************************************************************
+ * Enables/Disables buttons on the result list depending on how many checkboxes are
+ * selected.
  * 
  *************************************************************************************/
 function resultSelectionChanged(){
@@ -913,7 +949,7 @@ function resultSelectionChanged(){
 }
 
 /**************************************************************************************
- * 
+ * Load the comparison page for the selected results.
  *************************************************************************************/
 function compareResults(){
 		
@@ -928,6 +964,7 @@ function compareResults(){
 }
 
 /**************************************************************************************
+ * Delete the selected results.
  * 
  *************************************************************************************/
 function deleteResults(){
@@ -943,7 +980,10 @@ function deleteResults(){
 }
 
 /**************************************************************************************
+ * Print the details for the rule.
  * 
+ * @param parent JQuery object
+ * @param rule the rule from the yslow results to print the details for.
  *************************************************************************************/
 function printRuleDetails(parent, rule){
 	
@@ -976,6 +1016,9 @@ function printRuleDetails(parent, rule){
 	if(rule.url != null){ parent.append('<p><strong>Read More:&nbsp;</strong><a target="_blank" href="'+rule.url+'">'+rule.url+'</a></p>');}
 }
 /**************************************************************************************
+ * Create the panel for the given rule.
+ * 
+ * @param rule the rule from the yslow results to print the details for.
  * 
  *************************************************************************************/
 function createRulePanel(rule){
@@ -1034,8 +1077,8 @@ function createRulePanel(rule){
 /******************************************************************
  * Format the yslow results as plain text.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object
+ * 
  ******************************************************************/
 function printPlainText(parent){
 	parent.append("<h3>Plain Text</h3>");
@@ -1056,8 +1099,8 @@ function printPlainText(parent){
 /******************************************************************
  * Format the yslow results for a JIRA ticket.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object
+ * 
  ******************************************************************/
 function printJIRAText(parent){
 	parent.append("<h3>JIRA Ticket Text</h3>");
@@ -1100,10 +1143,10 @@ function printJIRAText(parent){
 }
 
 /******************************************************************
- * Format the yslow results.
+ * Format the yslow results as a CSV file.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object
+ * @param data the data to be printed.
  ******************************************************************/
 function printCSV(parent, data){
 	
@@ -1143,9 +1186,12 @@ function printCSV(parent, data){
 	
 }
 
-/**************************************************************************************
+/******************************************************************
+ * Format the yslow results as a JSON file.
  * 
- *************************************************************************************/
+ * @param parent JQuery object
+ * @param data the data to be printed.
+ ******************************************************************/
 function printJSON(parent, data){
 	
 	parent.append("<h2>JSON</h2>");
@@ -1170,10 +1216,11 @@ function printJSON(parent, data){
 }
 
 /******************************************************************
- * Format the yslow results as html.
+ * Format the yslow results as a html table.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object
+ * @param data the data to be printed.
+ * 
  ******************************************************************/
 function printTable(parent, data, title){
 	
@@ -1228,10 +1275,10 @@ function printTable(parent, data, title){
 }
 
 /******************************************************************
- * Format the yslow results as html.
+ * Format the yslow results as panels.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object
+ * 
  ******************************************************************/
 function printPanels(parent){
 	
@@ -1251,6 +1298,9 @@ function printPanels(parent){
 }
 
 /**************************************************************************************
+ * Print the summary for the yslow results.
+ * 
+ * @param parent JQuery object
  * 
  *************************************************************************************/
 function printSummary(parent){
@@ -1283,10 +1333,16 @@ function reset(){
 }
 
 /******************************************************************
- * main method for formatting.
+ * Main method for building the different views.
  * 
- * @param argument Array
- * @returns 
+ * @param options Array with arguments:
+ * 	{
+ * 		data: 'yslowresult|resultlist|har|comparyslow', 
+ * 		info: 'overview|grade|stats|resultlist|ganttchart|compareyslow|', 
+ * 		view: 'table|panels|plaintext|jira|csv|json', 
+ * 		stats: 'type|type_cached|components'
+ *  }
+ * @return 
  ******************************************************************/
 function draw(options){
 	

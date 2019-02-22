@@ -45,6 +45,7 @@ public class LDAPLoginProvider implements LoginProvider {
 		    user = result.getNameInNamespace();
 		}catch (Exception e) {
 	        e.printStackTrace();
+	        return false;
 	    }
 	    
 		
@@ -56,10 +57,11 @@ public class LDAPLoginProvider implements LoginProvider {
 	        props.put(Context.SECURITY_CREDENTIALS, password);
 
 	        context = new InitialDirContext(props);
+	        
+	        return true;
 	    } catch (Exception e) {
 	        return false;
 	    }
-	    return true;
 	}
 	
 
