@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLogger;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.utils.H2Utils;
+import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class CompareServlet extends HttpServlet
 {

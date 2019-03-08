@@ -12,7 +12,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLogger;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.cfw.utils.FileUtils;
-import com.pengtoolbox.cfw.utils.H2Utils;
+import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.phantomjs.PhantomJSInterface;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
@@ -90,7 +90,7 @@ public class AnalyzeURLServlet extends HttpServlet
 			//--------------------------------------
 			// Save Results to DB
 			if(saveResults != null && saveResults.trim().toLowerCase().equals("on")) {
-				H2Utils.saveResults(request, results, harContents);
+				PageAnalyzerDB.saveResults(request, results, harContents);
 			}
 			
 			//--------------------------------------

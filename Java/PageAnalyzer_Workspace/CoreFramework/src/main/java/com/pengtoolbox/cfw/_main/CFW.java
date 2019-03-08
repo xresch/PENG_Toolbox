@@ -31,9 +31,7 @@ public class CFW {
 	public static final String REQUEST_ATTR_ENDNANOS = "endtime";
 	
 	public static final String SESSION_DATA = "sessionData";
-	
-	public static final String GLOBAL_DATASTORE_PATH = "./datastore";
-	
+		
 	//##############################################################################
 	// ALERT TYPES
 	//##############################################################################

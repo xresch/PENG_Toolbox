@@ -130,6 +130,18 @@ public class CFWLogger {
 				
 	}
 	
+	/***********************************************************************
+	 * Ends a measurement and logs a duration log with level INFO.
+	 * 
+	 ***********************************************************************/
+	public void end(String message){
+		
+		//
+		starttimeNanos = tempStartNanos;
+		this.log(Level.INFO, message, null);
+				
+	}
+	
 	public void all(String message){this.log(Level.ALL, message, null);}
 	public void config(String message){this.log(Level.CONFIG, message, null);}
 	public void finest(String message){this.log(Level.FINEST, message, null);}

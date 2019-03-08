@@ -18,10 +18,11 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.CFWSetup;
+import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
-import com.pengtoolbox.cfw.utils.H2Utils;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
+import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.servlets.AnalyzeURLServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CompareServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CustomContentServlet;
@@ -62,14 +63,10 @@ public class Main extends Application {
 		YSlowExecutor.instance();
 		
     	//---------------------------------------
-    	// Datastore 
-    	File datastoreFolder = new File(CFW.GLOBAL_DATASTORE_PATH);
-    	if(!datastoreFolder.isDirectory()) {
-    		datastoreFolder.mkdir();
-    	}
+    	// Database    	
+    	CFWDB.initialize();
+    	PageAnalyzerDB.initialize();
     	
-    	H2Utils.initialize();
-
         //###################################################################
         // Create ServletContext
         //###################################################################

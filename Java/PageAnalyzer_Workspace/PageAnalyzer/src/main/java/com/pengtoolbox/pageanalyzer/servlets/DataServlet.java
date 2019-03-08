@@ -17,7 +17,7 @@ import com.pengtoolbox.cfw.logging.CFWLogger;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.cfw.response.TemplatePlain;
 import com.pengtoolbox.cfw.utils.FileUtils;
-import com.pengtoolbox.cfw.utils.H2Utils;
+import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
 /*************************************************************************
@@ -71,17 +71,17 @@ public class DataServlet extends HttpServlet {
 		}else {
 
 			switch(type.toLowerCase()) {
-				case "yslowresult": 	content.append(H2Utils.getResultByID(request, Integer.parseInt(resultID)));
+				case "yslowresult": 	content.append(PageAnalyzerDB.getResultByID(request, Integer.parseInt(resultID)));
 										break;
 										
-				case "resultlist": 		content.append(H2Utils.getResultListForUser(userID));
+				case "resultlist": 		content.append(PageAnalyzerDB.getResultListForUser(request, userID));
 										break;
 										
-				case "har": 			content.append(H2Utils.getHARFileByID(request, Integer.parseInt(resultID)));
+				case "har": 			content.append(PageAnalyzerDB.getHARFileByID(request, Integer.parseInt(resultID)));
 										break;
 				
 				case "compareyslow": 	String resultIDs = request.getParameter("resultids");
-										content.append(H2Utils.getResultListForComparison(request, resultIDs));
+										content.append(PageAnalyzerDB.getResultListForComparison(request, resultIDs));
 										break;
 										
 			}

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLogger;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.utils.H2Utils;
+import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class GanttChartServlet extends HttpServlet
 {
@@ -41,7 +41,7 @@ public class GanttChartServlet extends HttpServlet
 		
 		String jsonResults = null;
 		if(resultID.matches("\\d+")) {
-			jsonResults = H2Utils.getHARFileByID(request, Integer.parseInt(resultID));
+			jsonResults = PageAnalyzerDB.getHARFileByID(request, Integer.parseInt(resultID));
 		}else {
 			html.addAlert(CFW.ALERT_ERROR, "Result ID '"+resultID+"' is not a number.");
 		}

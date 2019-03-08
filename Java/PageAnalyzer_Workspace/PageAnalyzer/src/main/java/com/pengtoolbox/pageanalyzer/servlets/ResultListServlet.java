@@ -13,7 +13,7 @@ import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLogger;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.utils.H2Utils;
+import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class ResultListServlet extends HttpServlet
 {
@@ -46,7 +46,7 @@ public class ResultListServlet extends HttpServlet
 		}else {
 			userID = "anonymous";
 		}
-		String jsonResults = H2Utils.getResultListForUser(userID);
+		String jsonResults = PageAnalyzerDB.getResultListForUser(request, userID);
 		
 		//TODO: Check User
 		

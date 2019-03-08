@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.logging.CFWLogger;
 import com.pengtoolbox.cfw.response.TemplateJSONDefault;
-import com.pengtoolbox.cfw.utils.H2Utils;
+import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class DeleteResultServlet extends HttpServlet
 {
@@ -37,7 +37,7 @@ public class DeleteResultServlet extends HttpServlet
 		String resultIDs = request.getParameter("resultids");
 		
 		if(resultIDs.matches("(\\d,?)+")) {
-			boolean result = H2Utils.deleteResults(request, resultIDs);
+			boolean result = PageAnalyzerDB.deleteResults(request, resultIDs);
 			content.append("{\"result\": "+result+"}");
 		}else {
 			content.append("{\"result\": false, \"error\": \"The result could not be deleted: ResultID is not a number.\"}");
