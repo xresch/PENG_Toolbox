@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.SessionData;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginFacade;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.cfw.utils.FileUtils;
@@ -23,7 +23,7 @@ public class LoginServlet extends HttpServlet
 
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = CFWLogger.getLogger(LoginServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(LoginServlet.class.getName());
 	
 	public LoginServlet() {
 		
@@ -39,7 +39,7 @@ public class LoginServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		CFWLogger log = new CFWLogger(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
@@ -57,7 +57,7 @@ public class LoginServlet extends HttpServlet
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		CFWLogger log = new CFWLogger(logger, request).method("doPost");
+		CFWLog log = new CFWLog(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
 		
 		//--------------------------

@@ -9,12 +9,12 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 
 import com.pengtoolbox.cfw._main.CFWConfig;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 
 public class LDAPLoginProvider implements LoginProvider {
 	
-	private static Logger logger = CFWLogger.getLogger(LoginServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(LoginServlet.class.getName());
 		
 	public LDAPLoginProvider() {
 		

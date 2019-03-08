@@ -6,12 +6,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.SessionData;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.caching.FileAssembly;
+import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.utils.FileUtils;
 
 public class TemplateHTMLDefault extends AbstractTemplateHTML {
 	
-	public static Logger logger = CFWLogger.getLogger(TemplateHTMLDefault.class.getName());
+	public static Logger logger = CFWLog.getLogger(TemplateHTMLDefault.class.getName());
 	
 	/*******************************************************************************
 	 * 
@@ -22,15 +24,14 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 		
 		this.pageTitle = pageTitle;
 		
-		this.addCSSFile("/resources/css/bootstrap.min.css");
-		this.addCSSFile("/resources/css/bootstrap-theme.css");
-		this.addCSSFile("/resources/css/font-awesome.css");
-		this.addCSSFile("/resources/css/custom.css");
+		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/css/bootstrap.min.css");
+		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/css/bootstrap-theme.css");
+		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/css/font-awesome.css");
+		this.addCSSFile(HandlingType.FILE, "./resources/css/custom.css");
 		
-		this.addJSFileBottom("/resources/js/jquery-2.2.3.js");
-		//this.addJSFileBottom("/js/jquery-ui.js");
-		this.addJSFileBottom("/resources/js/custom/custom.js");
-		this.addJSFileBottom("/resources/js/bootstrap.js");
+		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/js/jquery-2.2.3.js");
+		this.addJSFileBottom(HandlingType.FILE, "./resources/js/custom/custom.js");
+		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/js/bootstrap.js");
 		
 		SessionData data = (SessionData)request.getSession().getAttribute(CFW.SESSION_DATA);
 		if(data.isLoggedIn()) {
@@ -49,6 +50,8 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 			buildedPage.append("<head>\n");
 				buildedPage.append("<title>").append(this.pageTitle).append("</title>");
 				buildedPage.append(head);
+				buildedPage.append("<link rel=\"stylesheet\" href=\""+assemblyCSS.assemble().cache().getAssemblyServletPath()+"\" />");
+				buildedPage.append("<script src=\""+headjs.assemble().cache().getAssemblyServletPath()+"\"></script>");
 			buildedPage.append("</head>\n");
 			
 			buildedPage.append("<body ng-app=\"omApp\">\n");
@@ -98,6 +101,7 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 				// Javascript
 				this.appendSectionTitle(buildedPage, "Javascript");
 				buildedPage.append("<div id=\"javascripts\">");
+				buildedPage.append("<script src=\""+bottomjs.assemble().cache().getAssemblyServletPath()+"\"></script>");
 				buildedPage.append(this.javascript);
 				buildedPage.append("</div>");
 				

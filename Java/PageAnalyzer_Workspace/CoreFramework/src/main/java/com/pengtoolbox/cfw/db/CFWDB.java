@@ -1,11 +1,15 @@
 package com.pengtoolbox.cfw.db;
 
 import java.io.File;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,15 +19,15 @@ import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.Server;
 
 import com.pengtoolbox.cfw._main.CFWConfig;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDB {
 
 	private static JdbcDataSource dataSource;
 	private static JdbcConnectionPool connectionPool;
-	public static Server server;
-	public static boolean isInitialized = false;
-	public static Logger logger = CFWLogger.getLogger(CFWDB.class.getName());
+	private static Server server;
+	private static boolean isInitialized = false;
+	private static Logger logger = CFWLog.getLogger(CFWDB.class.getName());
 		
 	/********************************************************************************************
 	 *
@@ -60,7 +64,7 @@ public class CFWDB {
 			CFWDB.isInitialized = true;
 		} catch (SQLException e) {
 			CFWDB.isInitialized = false;
-			new CFWLogger(CFWDB.logger)
+			new CFWLog(CFWDB.logger)
 				.method("initialize")
 				.severe("Issue initializing H2 Database.", e);
 			e.printStackTrace();
@@ -73,7 +77,11 @@ public class CFWDB {
 	 * @throws SQLException 
 	 ********************************************************************************************/
 	public static Connection getConnection() throws SQLException {	
-         return connectionPool.getConnection();
+		if(isInitialized) {
+			return connectionPool.getConnection();
+		}else {
+			throw new SQLException("DB not initialized, call CFWDB.initialize() first.");
+		}
 	}
 	
 	/********************************************************************************************
@@ -85,7 +93,7 @@ public class CFWDB {
 	 ********************************************************************************************/
 	public static boolean preparedExecute(HttpServletRequest request, String sql, Object... values){	
         
-		CFWLogger log = new CFWLogger(logger).method("preparedExecute").start();
+		CFWLog log = new CFWLog(logger).method("preparedExecute").start();
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		boolean result = false;
@@ -97,14 +105,7 @@ public class CFWDB {
 			
 			//-----------------------------------------
 			// Prepare Statement
-			if(values != null) {
-				for(int i = 0; i < values.length ; i++) {
-					Object currentValue = values[i];
-					if		(currentValue instanceof String) 	{ prepared.setString(i+1, (String)currentValue); }
-					else if (currentValue instanceof Integer) 	{ prepared.setInt(i+1, (Integer)currentValue); }
-					else if (currentValue instanceof Boolean) 	{ prepared.setBoolean(i+1, (Boolean)currentValue); }
-				}
-			}
+			CFWDB.prepareStatement(prepared, values);
 			
 			//-----------------------------------------
 			// Execute
@@ -135,7 +136,7 @@ public class CFWDB {
 	 ********************************************************************************************/
 	public static ResultSet preparedExecuteQuery(HttpServletRequest request, String sql, Object... values){	
         
-		CFWLogger log = new CFWLogger(logger, request)
+		CFWLog log = new CFWLog(logger, request)
 				.method("preparedExecuteQuery")
 				.start();
 		
@@ -150,14 +151,7 @@ public class CFWDB {
 			
 			//-----------------------------------------
 			// Prepare Statement
-			if(values != null) {
-				for(int i = 0; i < values.length ; i++) {
-					Object currentValue = values[i];
-					if		(currentValue instanceof String) 	{ prepared.setString(i+1, (String)currentValue); }
-					else if (currentValue instanceof Integer) 	{ prepared.setInt(i+1, (Integer)currentValue); }
-					else if (currentValue instanceof Boolean) 	{ prepared.setBoolean(i+1, (Boolean)currentValue); }
-				}
-			}
+			CFWDB.prepareStatement(prepared, values);
 			
 			//-----------------------------------------
 			// Execute
@@ -175,15 +169,38 @@ public class CFWDB {
 	 * 
 	 * @param request HttpServletRequest containing session data used for logging information(null allowed).
 	 * @param sql string with placeholders
-	 * @param values the values to be placed in the prepared statement
+	 * @param values the values to be placed in the prepared statement. Supports String, Integer,
+	 *               Boolean, Float, Date, Timestamp, Blob, Clob, Byte
 	 * @throws SQLException 
+	 ********************************************************************************************/
+	public static void prepareStatement(PreparedStatement prepared, Object... values) throws SQLException{
+		if(values != null) {
+			for(int i = 0; i < values.length ; i++) {
+				Object currentValue = values[i];
+				if		(currentValue instanceof String) 	{ prepared.setString(i+1, (String)currentValue); }
+				else if (currentValue instanceof Integer) 	{ prepared.setInt(i+1, (Integer)currentValue); }
+				else if (currentValue instanceof Boolean) 	{ prepared.setBoolean(i+1, (Boolean)currentValue); }
+				else if (currentValue instanceof Float) 	{ prepared.setFloat(i+1, (Float)currentValue); }
+				else if (currentValue instanceof Date) 		{ prepared.setDate(i+1, (Date)currentValue); }
+				else if (currentValue instanceof Timestamp) { prepared.setTimestamp(i+1, (Timestamp)currentValue); }
+				else if (currentValue instanceof Blob) 		{ prepared.setBlob(i+1, (Blob)currentValue); }
+				else if (currentValue instanceof Clob) 		{ prepared.setClob(i+1, (Clob)currentValue); }
+				else if (currentValue instanceof Byte) 		{ prepared.setByte(i+1, (Byte)currentValue); }
+			}
+		}
+	}
+	
+	/********************************************************************************************
+	 * 
+	 * @param request HttpServletRequest containing session data used for logging information(null allowed).
+	 * @param resultSet which should be closed.
 	 ********************************************************************************************/
 	public static void close(HttpServletRequest request, ResultSet resultSet){
 		
 		try {
 			resultSet.close();
 		} catch (SQLException e) {
-			new CFWLogger(logger, request)
+			new CFWLog(logger, request)
 				.method("close")
 				.severe("Exception occured while closing ResultSet. ", e);
 		}

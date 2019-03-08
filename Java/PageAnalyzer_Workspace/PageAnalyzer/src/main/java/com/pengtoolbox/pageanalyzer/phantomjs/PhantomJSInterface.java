@@ -4,11 +4,11 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class PhantomJSInterface
 {
-	private static Logger logger = CFWLogger.getLogger(PhantomJSInterface.class.getName());
+	private static Logger logger = CFWLog.getLogger(PhantomJSInterface.class.getName());
 	private static PhantomJSInterface INSTANCE = null;
 	
 	private PhantomJSInterface() {
@@ -24,7 +24,7 @@ public class PhantomJSInterface
 	
     public String getHARStringForWebsite(HttpServletRequest request, String url)
     {
-    	CFWLogger log = new CFWLogger(logger, request).method("getHARStringForWebsite");
+    	CFWLog log = new CFWLog(logger, request).method("getHARStringForWebsite");
     	
     	log.start();
     	String returnValue = "";

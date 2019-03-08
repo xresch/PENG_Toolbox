@@ -7,14 +7,14 @@ import java.util.logging.LogRecord;
 
 import com.pengtoolbox.cfw._main.CFW;
 
-public class PALogFormatterJSON extends Formatter {
+public class CFWLogFormatterJSON extends Formatter {
 	
 	private static SimpleDateFormat dateFormatter = new SimpleDateFormat(CFW.TIME_FORMAT);
 	@Override
 	public String format(LogRecord rec) {
 		
 		StringBuffer buf = new StringBuffer(1000);
-		CFWLogger log = (CFWLogger)rec.getParameters()[0];
+		CFWLog log = (CFWLog)rec.getParameters()[0];
 		buf.append("{");
 		
 			//-------------------------

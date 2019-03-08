@@ -19,6 +19,8 @@ public class CFWConfig {
 	/** Enables or disables the Authentication. (Property=cfw_caching_file_enabled, Default="true") */
 	public static boolean CACHING_FILE_ENABLED = true;
 	
+	/** Time in seconds to cache resources. (Property=cfw_browser_resource_maxage, Default="36000") */
+	public static int BROWSER_RESOURCE_MAXAGE = 36000;
 	
 	/** Enables or disables the Authentication. (Property=cfw_authentication_enabled, Default="false") */
 	public static boolean AUTHENTICATION_ENABLED = false;
@@ -75,6 +77,7 @@ public class CFWConfig {
 		SERVER_PORT					= CFWConfig.configAsInt("cfw_server_port", SERVER_PORT);
 		
 		CACHING_FILE_ENABLED 	  	= CFWConfig.configAsBoolean("cfw_caching_file_enabled", CACHING_FILE_ENABLED);
+		BROWSER_RESOURCE_MAXAGE 	= CFWConfig.configAsInt("cfw_browser_resource_maxage", BROWSER_RESOURCE_MAXAGE);
 		
 		AUTHENTICATION_METHOD 		= CFWConfig.config("authentication_method", AUTHENTICATION_METHOD);
 		AUTHENTICATION_ENABLED 		= CFWConfig.configAsBoolean("cfw_authentication_enabled", AUTHENTICATION_ENABLED);

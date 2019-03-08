@@ -14,11 +14,11 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class PageAnalyzerDB {
 
-	public static Logger logger = CFWLogger.getLogger(PageAnalyzerDB.class.getName());
+	public static Logger logger = CFWLog.getLogger(PageAnalyzerDB.class.getName());
 	
 	/********************************************************************************************
 	 *
@@ -165,7 +165,7 @@ public class PageAnalyzerDB {
 				jsonResult = resultSet.getString(1);
 			}
 		} catch (SQLException e) {
-			new CFWLogger(logger, request).method("getResultByID")
+			new CFWLog(logger, request).method("getResultByID")
 			.severe("Exception occured while reading results.", e);
 		}
 		
@@ -204,7 +204,7 @@ public class PageAnalyzerDB {
 				jsonResult = resultSet.getString(1);
 			}
 		} catch (SQLException e) {
-			new CFWLogger(logger, request).method("getResultByID")
+			new CFWLog(logger, request).method("getResultByID")
 			.severe("Exception occured while reading results.", e);
 		}
 		

@@ -11,7 +11,7 @@ import javax.servlet.http.Part;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.cfw.utils.FileUtils;
 import com.pengtoolbox.cfw.utils.HTTPUtils;
@@ -24,7 +24,7 @@ public class HARUploadNodeJSServlet extends HttpServlet
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = CFWLogger.getLogger(HARUploadNodeJSServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(HARUploadNodeJSServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -32,7 +32,7 @@ public class HARUploadNodeJSServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		CFWLogger log = new CFWLogger(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
@@ -50,7 +50,7 @@ public class HARUploadNodeJSServlet extends HttpServlet
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		CFWLogger log = new CFWLogger(logger, request).method("doPost");
+		CFWLog log = new CFWLog(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
@@ -67,7 +67,7 @@ public class HARUploadNodeJSServlet extends HttpServlet
 
 			log.start().method("doPost()-StreamAndCacheHarFile");
 				String harContents = FileUtils.readContentsFromInputStream(harFile.getInputStream());
-				int index = FileUtils.cacheFile(harContents);
+				int index = FileUtils.temporarlyCacheFile(harContents);
 			log.end();
 			
 			String nodJSHost = CFWConfig.config("pa_nodejs_hostname", "");

@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 
 /*************************************************************************
  * 
@@ -22,7 +22,7 @@ import com.pengtoolbox.cfw.logging.CFWLogger;
  *************************************************************************/
 public class HTTPUtils {
 
-	private static Logger logger = CFWLogger.getLogger(HTTPUtils.class.getName());
+	private static Logger logger = CFWLog.getLogger(HTTPUtils.class.getName());
 
 	public static String sendGETRequest(String url) {
 

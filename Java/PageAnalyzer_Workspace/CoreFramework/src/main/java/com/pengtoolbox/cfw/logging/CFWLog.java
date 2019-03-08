@@ -1,5 +1,6 @@
 package com.pengtoolbox.cfw.logging;
 
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,13 +12,14 @@ import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.response.AbstractTemplate;
 import com.pengtoolbox.cfw.response.AbstractTemplateHTML;
 
-public class CFWLogger {
+public class CFWLog {
 	
 	protected Logger logger;
 	
 	protected boolean saveLogging = false;
 	
-
+	private static boolean isLoggingInitialized = false;
+	
 	private long tempStartNanos = -1;
 	protected long starttimeNanos = -1;
 	protected long endtimeNanos = -1;
@@ -39,29 +41,44 @@ public class CFWLogger {
 	
 	protected String exception;
 
-	public CFWLogger(Logger logger){
+	public CFWLog(Logger logger){
 		this.logger = logger;
 	}
 	
-	public CFWLogger(Logger logger, HttpServletRequest request){
+	public CFWLog(Logger logger, HttpServletRequest request){
 		this.logger = logger;
 		this.request = request;
 	}
 	
-	public CFWLogger request(HttpServletRequest request){
+	public CFWLog request(HttpServletRequest request){
 		
 		this.request = request;
 		
 		return this;
 	}
 	
-	public CFWLogger method(String method){
+	public CFWLog method(String method){
 		
 		this.sourceMethod = method;
 		
 		return this;
 	}
 
+	/***********************************************************************
+	 * Initializes the logging.
+	 ***********************************************************************/
+	public static void initializeLogging() {
+		File logFolder = new File("./log");
+		if(!logFolder.isDirectory()) {
+			logFolder.mkdir();
+		}
+		
+		System.setProperty("java.util.logging.config.file", "./config/logging.properties");
+		
+		isLoggingInitialized = true;
+		
+	}
+	
 	/***********************************************************************
 	 * Returns a Logger.
 	 *  
@@ -70,6 +87,10 @@ public class CFWLogger {
 	 ***********************************************************************/
 	public static Logger getLogger(String name){
 		
+		if(!isLoggingInitialized) {
+			initializeLogging();
+		}
+		
 		return Logger.getLogger(name);
 	}
 	
@@ -77,7 +98,7 @@ public class CFWLogger {
 	 * Toogle save logging to prevent endless loops. 
 	 *   
 	 ***********************************************************************/
-	public CFWLogger toogleSaveLogging(boolean isSave){
+	public CFWLog toogleSaveLogging(boolean isSave){
 		
 		this.saveLogging = isSave;
 		
@@ -93,7 +114,7 @@ public class CFWLogger {
 	 * @return OMLogger this instance
 	 *   
 	 ***********************************************************************/
-	public CFWLogger start(){
+	public CFWLog start(){
 		
 		//save to temp variable to not mess up calls to other log methods 
 		//than end()
@@ -110,7 +131,7 @@ public class CFWLogger {
 	 * @return OMLogger this instance
 	 *   
 	 ***********************************************************************/
-	public CFWLogger start(long startNanos){
+	public CFWLog start(long startNanos){
 		
 		//save to temp variable to not mess up calls to other log methods 
 		//than end()

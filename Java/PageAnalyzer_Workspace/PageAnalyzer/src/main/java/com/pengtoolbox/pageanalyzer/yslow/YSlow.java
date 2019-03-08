@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Stack;
 import java.util.logging.Logger;
 
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 
 import javafx.application.Platform;
 
@@ -39,7 +39,7 @@ public class YSlow {
 	 ***********************************************************************/
 	public String analyzeHarString(String harString){
 		
-		CFWLogger log = new CFWLogger(logger);
+		CFWLog log = new CFWLog(logger);
 		
 		log.start().method("analyzeHarString");
 		ExecutionContext context = ExecutionContextPool.lockContext();

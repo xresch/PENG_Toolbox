@@ -3,7 +3,7 @@ package com.pengtoolbox.cfw.response;
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 
 public abstract class AbstractTemplate {
 

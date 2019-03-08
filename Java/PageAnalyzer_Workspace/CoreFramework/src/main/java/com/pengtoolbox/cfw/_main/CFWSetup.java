@@ -1,9 +1,9 @@
 package com.pengtoolbox.cfw._main;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.logging.Logger;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
@@ -14,7 +14,9 @@ import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.servlets.AssemblyServlet;
+import com.pengtoolbox.cfw.servlets.JARFontServlet;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
 
@@ -22,43 +24,48 @@ import com.pengtoolbox.cfw.servlets.LogoutServlet;
  * Setup class for the Core Framework
  ***********************************************************************/
 public class CFWSetup {
+	public static Logger logger = CFWLog.getLogger(CFW.class.getName());
 	
 	public static void initialize(String configFilePath) throws IOException{
 		
 		//---------------------------------------
 		// Logging
 		
-		File logFolder = new File("./log");
-		if(!logFolder.isDirectory()) {
-			logFolder.mkdir();
-		}
-		
-		System.setProperty("java.util.logging.config.file", "./config/logging.properties");
-
-		CFWLogger log = new CFWLogger(CFW.logger).method("initialize").start();
+		CFWLog log = new CFWLog(logger).method("initialize").start();
 				
 		//------------------------------------
 		// Classloader
-		URL[] urls = {CFW.folder.toURI().toURL()};
+		URL[] urls = {CFW.LANGUAGE_FOLDER.toURI().toURL()};
 		CFW.urlClassLoader = new URLClassLoader(urls);
 		
 		//------------------------------------
 		// Load Configuration
 		CFWConfig.loadConfiguration(configFilePath);
-		log.end();
+		//log.end();
+				
 	}
 	
 	/***********************************************************************
-	 * Add AuthenticationServlets
+	 * Add the servlets provided by CFW to the given context.
+	 *  LoginServlet on /login
+	 *  LogoutServlet on /logout
+	 *  AssemblyServlet on /assembly
+	 *  JARFontServlet on /jarfont
 	 ***********************************************************************/
-	public static void addAuthenticationServlets(ServletContextHandler servletContextHandler, 
-												 String loginServletPath,
-												 String logoutServletPath) {
+	public static void addCFWServlets(ServletContextHandler servletContextHandler) {
 		
-        if(CFWConfig.AUTHENTICATION_ENABLED) {
-            servletContextHandler.addServlet(LoginServlet.class, loginServletPath);
-            servletContextHandler.addServlet(LogoutServlet.class,  logoutServletPath);
-        }
+		//-----------------------------------------
+		// Authentication Servlets
+	    if(CFWConfig.AUTHENTICATION_ENABLED) {
+	        servletContextHandler.addServlet(LoginServlet.class, "/login");
+	        servletContextHandler.addServlet(LogoutServlet.class,  "/logout");
+	    }
+        
+		//-----------------------------------------
+		// Resource Servlets
+		servletContextHandler.addServlet(AssemblyServlet.class, "/assembly"); 
+		servletContextHandler.addServlet(JARFontServlet.class, "/jarfont");
+        
 	}
 	
 	/***********************************************************************

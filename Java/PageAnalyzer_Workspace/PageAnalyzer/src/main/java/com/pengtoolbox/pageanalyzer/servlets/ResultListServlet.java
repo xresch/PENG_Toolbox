@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.SessionData;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
@@ -22,7 +22,7 @@ public class ResultListServlet extends HttpServlet
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = CFWLogger.getLogger(ResultListServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(ResultListServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -30,7 +30,7 @@ public class ResultListServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		CFWLogger log = new CFWLogger(logger, request).method("doPost");
+		CFWLog log = new CFWLog(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "View Result");

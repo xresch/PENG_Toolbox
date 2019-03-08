@@ -12,11 +12,11 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
  
 public class ResourceRequestHandler extends HandlerWrapper
 {
-	private static Logger logger = CFWLogger.getLogger(ResourceRequestHandler.class.getName());
+	private static Logger logger = CFWLog.getLogger(ResourceRequestHandler.class.getName());
 			
     public void handle( String target,
                         Request baseRequest,
@@ -29,7 +29,7 @@ public class ResourceRequestHandler extends HandlerWrapper
     	// Before
     	//##################################
     	
-    	CFWLogger log = new CFWLogger(logger)
+    	CFWLog log = new CFWLog(logger)
     			.request(request)
     			.method("handle");
     	// Used to calculate deltaStart by OMLogger.log()

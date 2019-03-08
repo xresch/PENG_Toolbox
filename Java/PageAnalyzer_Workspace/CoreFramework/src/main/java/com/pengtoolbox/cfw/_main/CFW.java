@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.AbstractTemplate;
 
 public class CFW {
@@ -21,8 +21,8 @@ public class CFW {
 	//##############################################################################
 	// GLOBAL
 	//##############################################################################
-	public static Logger logger = CFWLogger.getLogger(CFW.class.getName());
-	protected static CFWLogger log = new CFWLogger(logger);
+	public static Logger logger = CFWLog.getLogger(CFW.class.getName());
+	protected static CFWLog log = new CFWLog(logger);
 	
 	public static final String TIME_FORMAT = "YYYY-MM-dd'T'HH:mm:ss.SSS";
 	public static final String REQUEST_ATTR_ID = "requestID";
@@ -57,7 +57,7 @@ public class CFW {
 	public static final int LOCALE_LB_SIZE  = LOCALE_LB.length();
 	public static final int LOCALE_RB_SIZE = LOCALE_RB.length(); 
 	
-	static final File folder = new File("./resources/lang/");
+	static final File LANGUAGE_FOLDER = new File("./resources/lang/");
 	
 	static URLClassLoader urlClassLoader;
 	
@@ -148,7 +148,7 @@ public class CFW {
 						
 					}else{
 						//TODO: Localize message
-						new CFWLogger(logger, request)
+						new CFWLog(logger, request)
 						.method("writeLocalized")
 						.warn("Localization Parameter was missing the right bound");
 					

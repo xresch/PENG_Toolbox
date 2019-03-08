@@ -3,10 +3,16 @@ package com.pengtoolbox.cfw.response;
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.caching.FileAssembly;
+import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
 
 public abstract class AbstractTemplateHTML extends AbstractTemplate {
 
 	protected String pageTitle;
+	
+	protected FileAssembly headjs = new FileAssembly("assembly_head", "js");
+	protected FileAssembly bottomjs = new FileAssembly("assembly_bottom", "js");
+	protected FileAssembly assemblyCSS = new FileAssembly("assembly_css", "css");
 	
 	protected StringBuffer head = new StringBuffer();
 	protected StringBuffer menu = new StringBuffer();
@@ -35,20 +41,12 @@ public abstract class AbstractTemplateHTML extends AbstractTemplate {
 	// Class Methods
 	//##############################################################################
 	
-	public void addJSFileHead(String path){
-		
-		this.head.append("<script src=\"");
-		this.head.append(path);
-		this.head.append("\"></script>\n");
-
+	public void addJSFileHead(HandlingType type, String path){
+		headjs.addFile(type, path);
 	}
 	
-	public void addJSFileBottom(String path){
-		
-		this.javascript.append("<script src=\"");
-		this.javascript.append(path);
-		this.javascript.append("\"></script>\n");
-
+	public void addJSFileBottom(HandlingType type, String path){
+		bottomjs.addFile(type, path);
 	}
 	
 	public void addJavascriptData(String key, String value){
@@ -61,12 +59,8 @@ public abstract class AbstractTemplateHTML extends AbstractTemplate {
 
 	}
 	
-	public void addCSSFile(String path){
-		
-		//"<link href="/css/custom.css" rel="stylesheet" />"
-		this.head.append("<link href=\"");
-		this.head.append(path);
-		this.head.append("\" rel=\"stylesheet\" />\n");
+	public void addCSSFile(HandlingType type, String path){
+		assemblyCSS.addFile(type, path);
 	}
 	
 	public void addSupportInfo(String key, String value){

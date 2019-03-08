@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFWConfig;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.utils.FileUtils;
 
 public class CSVLoginProvider implements LoginProvider {
 	
-	private static Logger logger = CFWLogger.getLogger(LoginServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(LoginServlet.class.getName());
 	private static HashMap<String, String> userCredentials = null;
 	
 	public CSVLoginProvider() {
@@ -27,7 +27,7 @@ public class CSVLoginProvider implements LoginProvider {
 	}
 	
 	private void loadCredentials() {
-		CFWLogger log = new CFWLogger(logger, null).method("loadCredentials");
+		CFWLog log = new CFWLog(logger, null).method("loadCredentials");
 		
 		//------------------------------
 		// Load File

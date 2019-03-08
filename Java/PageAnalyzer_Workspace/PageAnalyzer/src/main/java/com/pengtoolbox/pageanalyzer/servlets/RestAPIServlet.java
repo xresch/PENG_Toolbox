@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.cfw.response.TemplatePlain;
 import com.pengtoolbox.cfw.utils.FileUtils;
@@ -32,7 +32,7 @@ public class RestAPIServlet extends HttpServlet {
 	 ******************************************************************/
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		CFWLogger log = new CFWLogger(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Rest API");
@@ -49,7 +49,7 @@ public class RestAPIServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		CFWLogger log = new CFWLogger(logger, request).method("doPost");
+		CFWLog log = new CFWLog(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
 		TemplatePlain plain = new TemplatePlain(request);

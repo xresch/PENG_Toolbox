@@ -13,7 +13,7 @@ import javax.servlet.http.Part;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.SessionData;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.cfw.response.TemplatePlain;
 import com.pengtoolbox.cfw.utils.FileUtils;
@@ -40,7 +40,7 @@ public class DataServlet extends HttpServlet {
 		//-------------------------------------------
 		// Initialize
 		//-------------------------------------------
-		CFWLogger log = new CFWLogger(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 		
 		String type = request.getParameter("type");

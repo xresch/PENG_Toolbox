@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.cfw.utils.FileUtils;
 
@@ -21,7 +21,7 @@ public class TestServlet extends HttpServlet
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = CFWLogger.getLogger(TestServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(TestServlet.class.getName());
 
 	@Override
     protected void doGet( HttpServletRequest request,
@@ -29,7 +29,7 @@ public class TestServlet extends HttpServlet
                                                         IOException
     {
 		
-		CFWLogger log = new CFWLogger(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger, request).method("doGet");
 		
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Test Page");
 		StringBuffer content = html.getContent();

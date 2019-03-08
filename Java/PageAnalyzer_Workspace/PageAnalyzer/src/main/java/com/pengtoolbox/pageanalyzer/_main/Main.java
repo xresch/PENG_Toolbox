@@ -1,7 +1,5 @@
 package com.pengtoolbox.pageanalyzer._main;
 
-import java.io.File;
-
 import javax.servlet.MultipartConfigElement;
 
 import org.eclipse.jetty.rewrite.handler.RedirectRegexRule;
@@ -15,7 +13,6 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.CFWSetup;
 import com.pengtoolbox.cfw.db.CFWDB;
@@ -52,7 +49,7 @@ public class Main extends Application {
     	
     	//---------------------------------------
     	// General 
-	    CFWSetup.initialize("./config/pageanalyzer.properties");
+	    CFWSetup.initialize("./config/cfw.properties");
 	    
         Server server = new Server(CFWConfig.SERVER_PORT);
         
@@ -99,7 +96,7 @@ public class Main extends Application {
         servletContextHandler.addServlet(DocuServlet.class, "/docu");
         servletContextHandler.addServlet(CustomContentServlet.class, "/custom");
         
-        CFWSetup.addAuthenticationServlets(servletContextHandler, "/login", "/logout");
+        CFWSetup.addCFWServlets(servletContextHandler);
 
         //-------------------------------
         // Create Session Handler

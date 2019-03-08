@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFWConfig;
-import com.pengtoolbox.cfw.logging.CFWLogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 
 //@MultipartConfig(maxFileSize=1024*1024*100, maxRequestSize=1024*1024*100)
 public class RedirectServlet extends HttpServlet
@@ -19,7 +19,7 @@ public class RedirectServlet extends HttpServlet
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = CFWLogger.getLogger(RedirectServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(RedirectServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -27,7 +27,7 @@ public class RedirectServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		CFWLogger log = new CFWLogger(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 		
 		switch(request.getRequestURI()) {
