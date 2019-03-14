@@ -27,11 +27,9 @@ public class CFWDB {
 	private static JdbcConnectionPool connectionPool;
 	private static Server server;
 	private static boolean isInitialized = false;
-<<<<<<< HEAD
+
 	private static Logger logger = CFWLog.getLogger(CFWDB.class.getName());
-=======
-	private static Logger logger = CFWLogger.getLogger(CFWDB.class.getName());
->>>>>>> a70455e898df6d28d9fe5e6dafd5c00306bd3133
+
 		
 	/********************************************************************************************
 	 *
