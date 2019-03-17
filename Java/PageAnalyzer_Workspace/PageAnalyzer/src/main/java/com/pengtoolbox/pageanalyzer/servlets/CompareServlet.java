@@ -8,10 +8,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.pageanalyzer._main.PA;
-import com.pengtoolbox.pageanalyzer.logging.PALogger;
-import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
-import com.pengtoolbox.pageanalyzer.utils.H2Utils;
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class CompareServlet extends HttpServlet
 {
@@ -20,7 +20,7 @@ public class CompareServlet extends HttpServlet
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = PALogger.getLogger(CompareServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(CompareServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -28,13 +28,13 @@ public class CompareServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		PALogger log = new PALogger(logger, request).method("doPost");
+		CFWLog log = new CFWLog(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Compare Results");
 		StringBuffer content = html.getContent();
 
-		content.append("<div id=\"comparison\"></div>");
+		content.append("<div id=\"results\"></div>");
 		
 		//Comma separated IDs
 		String resultIDs = request.getParameter("resultids");
@@ -43,17 +43,16 @@ public class CompareServlet extends HttpServlet
 		// Create array with json results
 		String arrayString = "[]";
 		
-		if(resultIDs.matches("(\\d,?)+")) {
-			arrayString = H2Utils.getResultListForComparison(resultIDs);
-		}else {
-			html.addAlert(PA.ALERT_ERROR, "Result IDs '"+resultIDs+"' is not a string of comma separated numbers.");
+		if(!resultIDs.matches("(\\d,?)+")) {
+			html.addAlert(CFW.ALERT_ERROR, "Result IDs '"+resultIDs+"' is not a string of comma separated numbers.");
 		}
 
 		StringBuffer javascript = html.getJavascript();
-		javascript.append("<script>");
-		javascript.append("		var DATA_TO_COMPARE = "+arrayString+";");
+		
+		javascript.append("<script defer>");
+			javascript.append("initialize();");
+			javascript.append("draw({data: 'compareyslow', info: 'compare', view: 'yslow'})");
 		javascript.append("</script>");
-		javascript.append("<script defer>initialize();</script>");
 
     }
 	

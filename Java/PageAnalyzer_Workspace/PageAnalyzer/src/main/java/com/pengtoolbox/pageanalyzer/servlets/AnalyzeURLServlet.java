@@ -7,16 +7,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 
-import com.pengtoolbox.pageanalyzer._main.PA;
-import com.pengtoolbox.pageanalyzer.logging.PALogger;
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.phantomjs.PhantomJSInterface;
-import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
-import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
-import com.pengtoolbox.pageanalyzer.utils.FileUtils;
-import com.pengtoolbox.pageanalyzer.utils.H2Utils;
-import com.pengtoolbox.pageanalyzer.utils.HTTPUtils;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
 public class AnalyzeURLServlet extends HttpServlet
@@ -24,7 +21,7 @@ public class AnalyzeURLServlet extends HttpServlet
 
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = PALogger.getLogger(AnalyzeURLServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(AnalyzeURLServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -32,7 +29,7 @@ public class AnalyzeURLServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		PALogger log = new PALogger(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
@@ -50,7 +47,7 @@ public class AnalyzeURLServlet extends HttpServlet
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		PALogger log = new PALogger(logger, request).method("doPost");
+		CFWLog log = new CFWLog(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
 		
 		//--------------------------
@@ -71,7 +68,7 @@ public class AnalyzeURLServlet extends HttpServlet
 		String analyzeURL = request.getParameter("analyzeurl");
 		
 		if(analyzeURL == null){
-			html.addAlert(PA.ALERT_ERROR, "Please specify a URL.");
+			html.addAlert(CFW.ALERT_ERROR, "Please specify a URL.");
 		}else {
 
 			//--------------------------
@@ -93,19 +90,24 @@ public class AnalyzeURLServlet extends HttpServlet
 			//--------------------------------------
 			// Save Results to DB
 			if(saveResults != null && saveResults.trim().toLowerCase().equals("on")) {
-				H2Utils.saveResults(request, results, harContents);
+				PageAnalyzerDB.saveResults(request, results, harContents);
 			}
 			
 			//--------------------------------------
 			// Prepare Response
-			content.append("<div id=\"yslow-results\"></div>");
+			content.append("<div id=\"results\"></div>");
 			
 			StringBuffer javascript = html.getJavascript();
-			javascript.append("<script>");
-			javascript.append("		var YSLOW_DATA = "+results+";\n");
-			//javascript.append("		var HAR_FILE = "+harContents+";");
+			javascript.append("<script defer>");
+			javascript.append("		YSLOW_RESULT = "+results+";\n");
+			javascript.append("		HAR_DATA = "+harContents.replaceAll("</script>", "&lt;/script>")+";\n");
+			javascript.append("		initialize();");
+			javascript.append("		prepareYSlowResults(YSLOW_RESULT);");
+			javascript.append("		prepareGanttData(HAR_DATA);");
+			javascript.append("		RULES = sortArrayByValueOfObject(RULES, \"score\");");
+			javascript.append("		$(\".result-view-tabs\").css(\"visibility\", \"visible\");");
+			javascript.append("		draw({data: 'yslowresult', info: 'overview', view: ''})");
 			javascript.append("</script>");
-			javascript.append("<script defer>initialize();</script>");
 				
 		}
 		

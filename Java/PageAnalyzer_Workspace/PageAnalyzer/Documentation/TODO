@@ -2,3 +2,5 @@
 - Check if url exists and prompt for compare
 - Add modal panel for comparing rules.
 - save HAR File to DB
+- Har File Browser
+- SPNEGO/Kerberos Authentication

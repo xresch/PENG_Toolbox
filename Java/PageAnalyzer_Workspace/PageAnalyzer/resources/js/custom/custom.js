@@ -14,6 +14,19 @@ var RULES;
 var STATS_BY_TYPE;
 var STATS_PRIMED_CACHE;
 
+//object containing the url parameters as name/value pairs {"name": "value", "name2": "value2" ...}
+var URL_PARAMETERS;
+
+//used to store the current entry(of the HAR file) used for showing the details modal for the gantt chart
+var CURRENT_DETAILS_ENTRY;
+
+//-----------------------------------------
+// Data Objects
+var YSLOW_RESULT = null;
+var RESULT_LIST = null;
+var HAR_DATA = null;
+var COMPARE_YSLOW = null;
+
 var GRADE_CLASS = {
 	A: "success",
 	B: "success",
@@ -25,44 +38,141 @@ var GRADE_CLASS = {
 };
 
 /******************************************************************
- * 
+ * Initialization function executed once when starting the page.
  * 
  * @param 
- * @returns 
+ * @return 
  ******************************************************************/
 function initialize(){
 	
-	if( typeof YSLOW_DATA !== 'undefined'){
-		if(YSLOW_DATA.error != null){
-			console.error(YSLOW_DATA.error);
-			var errorDiv = $('<div>');
-			errorDiv.attr("class", "bg-danger");
-			errorDiv.append('<p>Sorry some error occured, be patient while nobody is looking into it.</p>');
-			errorDiv.append('<p>'+YSLOW_DATA.error+'</p>');
-			$("#yslow-results").append(errorDiv);
-			return;
-		}
-		loadData(YSLOW_DATA);
-		RULES = sortArrayByValueOfObject(RULES, "score");
-		
-		$(".result-view-tabs").css("visibility", "visible");
-		
-		draw({info: 'overview', view: ''});
+	URL_PARAMETERS = getURLParameters();
+	
+}
+
+/******************************************************************
+ * Reads the parameters from the URL and returns an object containing
+ * name/value pairs like {"name": "value", "name2": "value2" ...}.
+ * @param 
+ * @return object
+ ******************************************************************/
+function getURLParameters()
+{
+    var vars = {};
+    
+    var keyValuePairs = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < keyValuePairs.length; i++)
+    {
+        splitted = keyValuePairs[i].split('=');
+        vars[splitted[0]] = splitted[1];
+    }
+    
+    console.log(vars);
+    return vars;
+}
+
+/******************************************************************
+ * Method to fetch data from the server. The result is stored in
+ * global variables.
+ * If the data was already loaded, no additional request is made.
+ * After the data is returned, the draw method is executed with 
+ * the args-object passed to this function.
+ * 
+ * @param args the object containing the arguments
+ * @return 
+ *
+ ******************************************************************/
+function fetchData(args){
+	
+	//---------------------------------------
+	// Check loading status and create URL
+	//---------------------------------------
+	var url = "./data";
+	switch (args.data){
+		case "yslowresult": 	if(YSLOW_RESULT != null) return;
+								url += "?type="+args.data+"&resultid="+URL_PARAMETERS.resultid;
+								break;
+								
+		case "resultlist":		if(RESULT_LIST != null) return;
+								url += "?type="+args.data;
+								break;
+								
+		case "har":				if(HAR_DATA != null) return;
+								url += "?type="+args.data+"&resultid="+URL_PARAMETERS.resultid;
+								break;
+								
+		case "compareyslow":	if(COMPARE_YSLOW != null) return;
+								url += "?type="+args.data+"&resultids="+URL_PARAMETERS.resultids;
+								break;						
+								
 	}
-	else if(typeof RESULT_LIST_DATA !== 'undefined'){
-		printResultList($("#resultlist"), RESULT_LIST_DATA);
-	}
-	else if(typeof DATA_TO_COMPARE  !== 'undefined'){
-		printComparison($("#comparison"), DATA_TO_COMPARE);
+	
+	//---------------------------------------
+	// Fetch and Return Data
+	//---------------------------------------
+	$.get(url).done(function(data) {
+		    		    
+		    if(data.error != null){
+				console.error(data.error);
+				var errorDiv = $('<div>');
+				errorDiv.attr("class", "bg-danger");
+				errorDiv.append('<p>Sorry some error occured loading the data, be patient while nobody is looking into it.</p>');
+				errorDiv.append('<p>'+data.error+'</p>');
+				$("#results").append(errorDiv);
+				return;
+			}
+		    
+			switch (args.data){
+				case "yslowresult": 	YSLOW_RESULT = data;
+										prepareYSlowResults(YSLOW_RESULT);
+										RULES = sortArrayByValueOfObject(RULES, "score");
+										$(".result-view-tabs").css("visibility", "visible");
+										draw(args);
+										break;
+										
+				case "resultlist":		RESULT_LIST = data;
+										draw(args);
+										break;
+										
+				case "har":				HAR_DATA = data;
+										prepareGanttData(HAR_DATA);
+										draw(args);
+										break;
+				case "compareyslow":	COMPARE_YSLOW = data;
+										draw(args);
+										break;						
+										
+			}
+		})
+		  .fail(function() {
+				var errorDiv = $('<div>');
+				errorDiv.attr("class", "bg-danger");
+				errorDiv.append('<p>Sorry some error occured loading the data, be patient while nobody is looking into it.</p>');
+				$("#results").append(errorDiv);
+		  });
+}
+
+/*******************************************************************************
+ * Set if the Loading animation is visible or not.
+ * @param isVisible true or false
+ ******************************************************************************/
+function showLoader(isVisible){
+	
+	if(isVisible){
+		$("#loading").css("visibility", "visible");
+	}else{
+		$("#loading").css("visibility", "hidden");
 	}
 }
 
 /**************************************************************************************
+ * Get the Grade as A/B/C/D/E/F/None depending on the given YSlow score.
  * 
+ * @param score the yslow score as number
+ * @return the grade as A/B/C/D/E/F/None
  *************************************************************************************/
 function getGrade(score){
 	
-	if		(score >= 90){ return "A" }
+	if		(score >= 90){return "A" }
 	else if (score >= 80){return "B" }
 	else if (score >= 70){return "C" }
 	else if (score >= 60){return "D" }
@@ -73,13 +183,15 @@ function getGrade(score){
 
 
 /******************************************************************
+ * Prepare the fetched yslow results so they can be easily displayed.
+ * This method doesn't return a value, everything is stored in 
+ * global variables.
  * 
- * @param 
- * @returns 
+ * @param data the object containing the YSlow results. 
+ * @return nothing
  ******************************************************************/
-function loadData(data){
+function prepareYSlowResults(data){
 	
-
 //	"w": "size",
 //	"o": "overall score",
 //	"u": "url",
@@ -179,9 +291,84 @@ function loadData(data){
 	}
 }
 
+/******************************************************************
+ * Adds additional information to the entries needed to build the 
+ * gantt chart.
+ * 
+ * @param data the object in HAR format
+ * @return nothing
+ ******************************************************************/
+function prepareGanttData(data){
+	
+
+	//----------------------------------
+	// Variables
+	var entries = data.log.entries; 
+	var entriesCount = entries.length;
+	
+	var firstDate;
+	var lastDate;
+	var totalTimeMillis;
+	if(entries.length > 1){
+		firstDate = new Date(entries[0].startedDateTime);
+		console.log("FirstDate:"+firstDate.toString());
+		
+		last = entries.length -1;
+		lastDate = new Date(entries[last].startedDateTime);
+		lastDate = new Date(lastDate.valueOf() + Math.ceil(entries[last].time));
+		console.log("LastDate:"+lastDate.toString());
+		
+		totalTimeMillis = lastDate.valueOf() - firstDate.valueOf();
+		console.log("totalTimeMillis:"+totalTimeMillis);
+	}
+	
+	//----------------------------------
+	// Loop Data
+
+//   "timings": {
+//       "blocked": 0,
+//        "dns": -1,
+//        "connect": -1,
+//        "send": 0,
+//        "wait": 265,
+//        "receive": 5,
+//        "ssl": -1
+//    },
+
+	for(var i = 0; i < entriesCount; i++ ){
+		var entry = entries[i];
+		var startDate = new Date(entry.startedDateTime);
+		var deltaMillis = startDate.valueOf() - firstDate.valueOf();
+		var duration = entry.time;
+		var timings = entry.timings;
+		
+		entry.ganttdata = {
+			"time": duration,	
+			"delta": deltaMillis,
+			"percentdelta": deltaMillis / totalTimeMillis * 100,
+			"percentblocked": (entry.timings.blocked > 0) 	? entry.timings.blocked / duration * 100 : 0,
+			"percentdns": (entry.timings.dns > 0) 			? entry.timings.dns / duration * 100 : 0,
+			"percentconnect": (entry.timings.connect > 0) 	? entry.timings.connect / duration * 100 : 0,
+			"percentsend": (entry.timings.send > 0) 		? entry.timings.send / duration * 100 : 0,
+			"percentwait": (entry.timings.wait > 0) 		? entry.timings.wait / duration * 100 : 0,
+			"percentreceive": (entry.timings.receive > 0) 	? entry.timings.receive / duration * 100 : 0,
+			"percentssl": (entry.timings.ssl > 0) 			? entry.timings.ssl / duration * 100 : 0,
+			"percenttime": duration / totalTimeMillis * 100
+		}
+		
+		console.log(entry.ganttdata);
+
+		
+	}
+
+}
+
 /**************************************************************************************
  * Tries to decode a URI and handles errors when they are thrown.
  * If URI cannot be decoded the input string is returned unchanged.
+ * 
+ * @param uri to decode
+ * @return decoded URI or the same URI in case of errors.
  *************************************************************************************/
 function secureDecodeURI(uri){
 	try{
@@ -194,7 +381,10 @@ function secureDecodeURI(uri){
 }
 
 /**************************************************************************************
- * 
+ * Sort an object array by the values for the given key.
+ * @param array the object array to be sorted
+ * @param key the name of the field that should be used for sorting
+ * @return sorted array
  *************************************************************************************/
 function sortArrayByValueOfObject(array, key){
 	array.sort(function(a, b) {
@@ -212,7 +402,14 @@ function sortArrayByValueOfObject(array, key){
 }
 
 /**************************************************************************************
- * filterTable
+ * Filter the rows of a table by the value of the search field.
+ * This method is best used by triggering it on the onchange-event on the search field
+ * itself.
+ * The search field has to have an attached JQuery data object($().data(name, value)), ¨
+ * pointing to the table that should be filtered.
+ * 
+ * @param searchField 
+ * @return nothing
  *************************************************************************************/
 function filterTable(searchField){
 	
@@ -234,7 +431,9 @@ function filterTable(searchField){
 }
 
 /**************************************************************************************
- * Select Element Content
+ * Select all the content of the given element.
+ * For example to select everything inside a given DIV element.
+ * @param el the element 
  *************************************************************************************/
 function selectElementContent(el) {
     if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
@@ -251,16 +450,16 @@ function selectElementContent(el) {
 }
 
 /******************************************************************
- * Format the yslow results as html.
+ * Print a comparison table containing all the yslow results in
+ * the given data.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object to append the comparison. 
+ * @param data array containing multiple yslow results.
+ *
  ******************************************************************/
 function printComparison(parent, data){
 	
-	
 	compareTableData = [];
-	
 	//-----------------------------------------
 	// Get distinct List of Rules
 	//-----------------------------------------
@@ -332,16 +531,326 @@ function printComparison(parent, data){
 		}
 	}
 	
-	
-	printTable($("#comparison"),compareTableData, "Comparison");
+	printTable(parent,compareTableData, "Comparison");
 	
 }
 
 /******************************************************************
- * Print a list of results.
+ * Print the gantt chart for the entries.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object 
+ * @param data HAR file data
+ * 
+ ******************************************************************/
+function printGanttChart(parent, data){
+	
+	//----------------------------------
+	// Add title and description.
+	parent.append("<h2>Gantt Chart</h2>");
+
+
+	//----------------------------------
+	// Create Table Filter
+	var filter = $('<input type="text" class="form-control" onkeyup="filterTable(this)" placeholder="Filter Table...">');
+	parent.append(filter);
+	parent.append('<span style="font-size: xx-small;"><strong>Hint:</strong> The filter searches through the innerHTML of the table rows. Use &quot;&gt;&quot; and &quot;&lt;&quot; to search for the beginning and end of a cell content(e.g. &quot;&gt;Test&lt;&quot; )</span>');
+	
+	//----------------------------------
+	// Create Table Header
+	headerRowString = '<thead><tr>';
+		headerRowString += '<th>&nbsp;</th>';
+		headerRowString += '<th>Gantt Chart</th>';
+		headerRowString += '<th>Status</th>';
+		headerRowString += '<th>Duration</th>';
+		headerRowString += '<th>URL</th>';
+	headerRowString += '</tr></thead>';
+	
+	//----------------------------------
+	// Create Table
+	var table = $('<table class="table table-striped table-responsive table-condensed" style="font-size: smaller;">');
+
+	table.append(headerRowString);
+	
+	parent.append(createGanttChartLegend());
+	parent.append(table);
+	filter.data("table", table);
+	
+	//----------------------------------
+	// Create Rows
+	console.log(data);
+	var entries = data.log.entries; 
+	var entriesCount = entries.length;
+	for(var i = 0; i < entriesCount; i++ ){
+		var currentEntry = entries[i];
+		
+		var row = $('<tr>');
+		
+		//--------------------------
+		// Details Link
+		var detailsLinkTD = $('<td>');
+		var detailsLink = $('<a alt="Show Details" onclick="showGanttDetails(this)"><i class="fa fa-search"></i></a>');
+		detailsLink.data("entry", currentEntry);
+		detailsLinkTD.append(detailsLink);
+		
+		
+		row.append(detailsLinkTD);
+		
+		//--------------------------
+		// Gantt Chart Column
+		var  rowString = '';
+		var gd = currentEntry.ganttdata;
+		rowString += '<td> <div class="ganttWrapper" style="width: 500px;">';
+			rowString += '<div class="ganttBlock percentdelta" style="width: '+gd.percentdelta+'%">&nbsp;</div>';
+			rowString += '<div class="ganttBlock ganttTimings" style="width: '+gd.percenttime+'%">';
+				rowString += createGanttBar(currentEntry, "blocked");
+				rowString += createGanttBar(currentEntry, "dns");
+				rowString += createGanttBar(currentEntry, "connect");
+				//rowString += createGanttBar(currentEntry, "ssl");
+				rowString += createGanttBar(currentEntry, "send");
+				rowString += createGanttBar(currentEntry, "wait");
+				rowString += createGanttBar(currentEntry, "receive");
+			rowString += '</div>';
+		rowString += 	'</div></td>';
+		
+		// --------------------------
+		// Other Columns
+		rowString += '<td>'+createHTTPStatusBadge(currentEntry.response.status)+'</td>';
+		rowString += '<td>'+Math.round(currentEntry.time)+' ms</td>';
+		rowString += '<td>'+secureDecodeURI(currentEntry.request.url)+'</td>';
+		
+		row.append(rowString);
+		
+		table.append(row);
+	}
+	parent.append(table);
+	
+}
+
+/******************************************************************
+ * Create the gantt chart part for the given metric.
+ * 
+ * @param entry the HAR entry
+ * @param metric 
+ * @return the HTML for the bar in the gantt chart
+ ******************************************************************/
+function createGanttBar(entry, metric){
+	
+	var percentString = "percent"+metric;
+	
+	if(entry.ganttdata[percentString] > 0){ 
+		return '<div class="ganttBlock '+percentString+'" alt="test" style="width: '+entry.ganttdata[percentString]+'%">&nbsp;</div>'
+	}else{
+		return "";
+	}
+}
+
+/******************************************************************
+ * Open a modal with details for one item in the gantt chart list.
+ * 
+ * @param element the DOM element which was the source of the onclick
+ * event. Has an attached har-entry with JQuery $().data()
+ * 
+ ******************************************************************/
+function showGanttDetails(element){
+	
+	//-----------------------------------------
+	// Initialize
+	//-----------------------------------------
+	var entry = $(element).data('entry');
+	var parent = $('#defaultModalBody');
+	
+	parent.html('');
+	  
+	console.log(entry);
+	CURRENT_DETAILS_ENTRY = entry;
+	
+	//-----------------------------------------
+	// Print Tabs
+	//-----------------------------------------
+	tabsString  = '<ul id="tabs" class="nav nav-tabs">';
+	tabsString += '    <li class="active"><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'request\')">Request</a></li>';
+	tabsString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'response\')">Response</a></li>';
+	tabsString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'cookies\')">Cookies</a></li>';
+	tabsString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'headers\')">Headers</a></li>';
+	tabsString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'timings\')">Timings</a></li>';
+	tabsString += '</ul>';
+	
+	parent.append(tabsString);
+	
+	//-----------------------------------------
+	// Gantt Details
+	//-----------------------------------------
+	parent.append('<div id="ganttDetails"></div>');
+	
+	updateGanttDetails('request');
+	
+	$('#defaultModal').modal('show');
+	
+}
+
+/******************************************************************
+ * Update the gantt details modal when clicking on a tab.
+ * 
+ * @param tab specify what tab should be printed.
+ * 
+ ******************************************************************/
+function updateGanttDetails(tab){
+	
+	var target = $('#ganttDetails');
+	target.html('');
+	
+	entry = CURRENT_DETAILS_ENTRY;
+	
+	var details = '';
+	if(tab === 'request'){
+		var request = entry.request;
+		details += '<table class="table table-striped">';
+		details += '	<tr><td><b>Timestamp:</b></td><td>'+entry.startedDateTime+'</td></tr>';
+		details += '	<tr><td><b>Duration:</b></td><td>'+Math.ceil(entry.time)+'ms</td></tr>';
+		details += '	<tr><td><b>Version:</b></td><td>'+request.httpVersion+'</td></tr>';
+		details += '	<tr><td><b>Method:</b></td><td>'+request.method+'</td></tr>';
+		details += '	<tr><td><b>URL:</b></td><td>'+request.url+'</td></tr>';
+		
+		details += convertNameValueArrayToRow("QueryParameters", request.queryString);
+		details += convertNameValueArrayToRow("Headers", request.headers);
+		details += convertNameValueArrayToRow("Cookies", request.cookies);
+		
+		if( typeof request.postData != "undefined" ){
+			details += '	<tr><td><b>MimeType:</b></td><td>'+request.postData.mimeType+'</td></tr>';
+			details += '	<tr><td><b>Content:</b></td><td><pre><code>'+request.postData.text.replace(/</g, "&lt;")+'</code></pre></td></tr>';
+		}
+		details += '</table>';
+		
+	}else 	if(tab === 'response'){
+		var response = entry.response;
+		details += '<table class="table table-striped">';
+		details += '	<tr><td><b>Version:</b></td><td>'+response.httpVersion+'</td></tr>';
+		details += '	<tr><td><b>Status:</b></td><td>'+createHTTPStatusBadge(response.status)+' '+response.statusText+'</td></tr>';
+		details += '	<tr><td><b>RedirectURL:</b></td><td>'+response.redirectURL+'</td></tr>';
+		details += '	<tr><td><b>ContentType:</b></td><td>'+response.content.mimeType+'</td></tr>';
+		details += '	<tr><td><b>ContentSize:</b></td><td>'+response.content.size+' Bytes</td></tr>';
+		details += '	<tr><td><b>TransferSize:</b></td><td>'+response._transferSize+' Bytes</td></tr>';
+		details += convertNameValueArrayToRow("Headers", response.headers);
+		details += convertNameValueArrayToRow("Cookies", response.cookies);
+		
+		if( typeof response.content.text != "undefined" ){
+			details += '	<tr><td><b>Content:</b></td><td><pre><code>'+response.content.text.replace(/</g, "&lt;")+'</code></pre></td></tr>';
+		}
+		details += '</table>';
+	
+	}
+	else if(tab === 'headers'){
+		details += '<table class="table table-striped">';
+		details += convertNameValueArrayToRow("Request Headers", entry.request.headers);
+		details += convertNameValueArrayToRow("Response Headers", entry.response.headers);
+		details += '</table>';
+	}else if(tab === 'cookies'){
+		details += '<table class="table table-striped">';
+		details += convertNameValueArrayToRow("Request Cookies", entry.request.cookies);
+		details += convertNameValueArrayToRow("Response Cookies", entry.response.cookies);
+		details += '</table>';
+		
+	}else if(tab === 'timings'){
+		
+		details += createGanttChartLegend();
+		
+		details += '<div class="ganttBlock ganttTimings" style="width: 100%">';
+		details += createGanttBar(entry, "blocked");
+		details += createGanttBar(entry, "dns");
+		details += createGanttBar(entry, "connect");
+		//details += createGanttBar(currentEntry, "ssl");
+		details += createGanttBar(entry, "send");
+		details += createGanttBar(entry, "wait");
+		details += createGanttBar(entry, "receive");
+		details += '</div>';
+		
+		details += '<table class="table table-striped">';
+		details += '<thead><th>Metric</th><th>Time</th><th>Percent</th></thead>'
+		var metrics = ['blocked','dns','connect','ssl','send','wait','receive'];
+		for(i = 0; i < metrics.length; i++){
+			var metric = metrics[i];
+			details += '<tr>';
+			details += '	<td><b>'+metric+':</b></td>';
+			details += '	<td>'+Math.round(entry.timings[metric] * 100) / 100+' ms</td>';
+			details += '	<td>'+Math.round(entry.ganttdata["percent"+metric] * 100) / 100+'%</td>'
+			details += '</tr>'; 
+		}
+		details += '</table>';
+		details += '<p><b>TOTAL TIME: '+Math.round(entry.time * 100) / 100+' ms</b></p>';
+		
+	}
+	
+	target.append(details);
+	
+}
+
+/******************************************************************
+ * Create the Legend for the gantt chart colors.
+ * 
+ * @return html string
+ ******************************************************************/
+function createGanttChartLegend(){
+	
+	var metrics = ['blocked','dns','connect',/*'ssl,*/'send','wait','receive'];
+	
+	var legend = '<div class="gantt-legend">';
+	
+	for(i = 0; i < metrics.length; i++){
+		legend += '<div class="gantt-legend-group">';
+		legend += '		<div class="gantt-legend-square percent'+metrics[i]+'">&nbsp;</div>';
+		legend += '		<span>'+metrics[i]+'</span>';
+		legend += '</div>';
+	}
+	
+	legend += '</div>';
+	
+	return legend;
+	
+}
+/******************************************************************
+ * Converts a array with name/value pairs to a two column table row.
+ * 
+ * @param title the title that will be printed in the first column.
+ * @param array containing objects with name/value pairs like
+ * [{name: value}, {name: value} ...] 
+ * @return html string
+ ******************************************************************/
+function convertNameValueArrayToRow(title, array){
+	result = "";
+	if(array != null && array.length > 0){
+		result += '	<tr><td><b>'+title+':</b></td>';
+		result += '<td><table class="table table-striped">';
+		for(i = 0; i < array.length; i++){
+			result += '	<tr><td><b>'+array[i].name+'</b></td><td>'+array[i].value+'</td></tr>';
+		}
+		result += '</table></td></tr>';
+	}
+	
+	return result;
+}
+
+/******************************************************************
+ * Returns a colored badge for the given HTTP status.
+ * 
+ * @param status the http status as integer 
+ * @return badge as html
+ ******************************************************************/
+function createHTTPStatusBadge(status){
+	
+	var style = "";
+	if		(status < 200)	{style = "info"; }
+	else if (status < 300)	{style = "success"; }
+	else if (status < 400)	{style = "warning"; }
+	else 					{style = "danger"; }
+	
+	return '<span class="badge btn-'+style+'">'+status+"</span>";
+}
+/******************************************************************
+ * Print the list of results found in the database.
+ * 
+ * @param parent JQuery object
+ * @param data object containing the list of results.
+ * 
  ******************************************************************/
 function printResultList(parent, data){
 	
@@ -363,6 +872,7 @@ function printResultList(parent, data){
 		headerRowString += '<th>ID</th>';
 		headerRowString += '<th>Timestamp</th>';
 		headerRowString += '<th>URL</th>';
+		headerRowString += '<th>&nbsp;</th>';
 		headerRowString += '<th>&nbsp;</th>';
 		headerRowString += '<th>&nbsp;</th>';
 	headerRowString += '</tr></thead>';
@@ -391,7 +901,8 @@ function printResultList(parent, data){
 		
 		rowString += '<td>'+url+'</td>';
 		
-		rowString += '<td><a target="_blank"  alt="Open Result" href="./resultview?resultid='+currentData.RESULT_ID+'"><i class="fa fa-eye"></i></a></td>';
+		rowString += '<td><a  alt="View Result" href="./resultview?resultid='+currentData.RESULT_ID+'"><i class="fa fa-eye"></i></a></td>';
+		rowString += '<td><a  alt="View Gantt Chart" href="./ganttchart?resultid='+currentData.RESULT_ID+'"><i class="fas fa-sliders-h"></i></a></td>';
 		
 		rowString += '<td><a target="_blank" alt="Open URL" href="'+url+'"><i class="fa fa-link"></i></a></td>';
 		
@@ -413,6 +924,8 @@ function printResultList(parent, data){
 }
 
 /**************************************************************************************
+ * Enables/Disables buttons on the result list depending on how many checkboxes are
+ * selected.
  * 
  *************************************************************************************/
 function resultSelectionChanged(){
@@ -436,7 +949,7 @@ function resultSelectionChanged(){
 }
 
 /**************************************************************************************
- * 
+ * Load the comparison page for the selected results.
  *************************************************************************************/
 function compareResults(){
 		
@@ -451,6 +964,7 @@ function compareResults(){
 }
 
 /**************************************************************************************
+ * Delete the selected results.
  * 
  *************************************************************************************/
 function deleteResults(){
@@ -466,7 +980,10 @@ function deleteResults(){
 }
 
 /**************************************************************************************
+ * Print the details for the rule.
  * 
+ * @param parent JQuery object
+ * @param rule the rule from the yslow results to print the details for.
  *************************************************************************************/
 function printRuleDetails(parent, rule){
 	
@@ -499,6 +1016,9 @@ function printRuleDetails(parent, rule){
 	if(rule.url != null){ parent.append('<p><strong>Read More:&nbsp;</strong><a target="_blank" href="'+rule.url+'">'+rule.url+'</a></p>');}
 }
 /**************************************************************************************
+ * Create the panel for the given rule.
+ * 
+ * @param rule the rule from the yslow results to print the details for.
  * 
  *************************************************************************************/
 function createRulePanel(rule){
@@ -557,8 +1077,8 @@ function createRulePanel(rule){
 /******************************************************************
  * Format the yslow results as plain text.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object
+ * 
  ******************************************************************/
 function printPlainText(parent){
 	parent.append("<h3>Plain Text</h3>");
@@ -579,8 +1099,8 @@ function printPlainText(parent){
 /******************************************************************
  * Format the yslow results for a JIRA ticket.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object
+ * 
  ******************************************************************/
 function printJIRAText(parent){
 	parent.append("<h3>JIRA Ticket Text</h3>");
@@ -623,10 +1143,10 @@ function printJIRAText(parent){
 }
 
 /******************************************************************
- * Format the yslow results.
+ * Format the yslow results as a CSV file.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object
+ * @param data the data to be printed.
  ******************************************************************/
 function printCSV(parent, data){
 	
@@ -666,9 +1186,12 @@ function printCSV(parent, data){
 	
 }
 
-/**************************************************************************************
+/******************************************************************
+ * Format the yslow results as a JSON file.
  * 
- *************************************************************************************/
+ * @param parent JQuery object
+ * @param data the data to be printed.
+ ******************************************************************/
 function printJSON(parent, data){
 	
 	parent.append("<h2>JSON</h2>");
@@ -693,10 +1216,11 @@ function printJSON(parent, data){
 }
 
 /******************************************************************
- * Format the yslow results as html.
+ * Format the yslow results as a html table.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object
+ * @param data the data to be printed.
+ * 
  ******************************************************************/
 function printTable(parent, data, title){
 	
@@ -734,9 +1258,9 @@ function printTable(parent, data, title){
 				for(var key in currentData.components){
 					var compText = "";
 					try{
-						compText = decodeURIComponent(rule.components[key]);
+						compText = decodeURIComponent(currentData.components[key]);
 					}catch(err){
-						compText = rule.components[key];
+						compText = currentData.components[key];
 					}
 					list.append('<li>'+compText+'</li>');
 				}
@@ -751,10 +1275,10 @@ function printTable(parent, data, title){
 }
 
 /******************************************************************
- * Format the yslow results as html.
+ * Format the yslow results as panels.
  * 
- * @param 
- * @returns 
+ * @param parent JQuery object
+ * 
  ******************************************************************/
 function printPanels(parent){
 	
@@ -774,6 +1298,9 @@ function printPanels(parent){
 }
 
 /**************************************************************************************
+ * Print the summary for the yslow results.
+ * 
+ * @param parent JQuery object
  * 
  *************************************************************************************/
 function printSummary(parent){
@@ -802,59 +1329,98 @@ function printSummary(parent){
  ******************************************************************/
 function reset(){
 	GLOBAL_COUNTER=0;
-	$("#yslow-results").html("");
+	$("#results").html("");
 }
 
 /******************************************************************
- * main method for formatting.
+ * Main method for building the different views.
  * 
- * @param string
- * @returns 
+ * @param options Array with arguments:
+ * 	{
+ * 		data: 'yslowresult|resultlist|har|comparyslow', 
+ * 		info: 'overview|grade|stats|resultlist|ganttchart|compareyslow|', 
+ * 		view: 'table|panels|plaintext|jira|csv|json', 
+ * 		stats: 'type|type_cached|components'
+ *  }
+ * @return 
  ******************************************************************/
 function draw(options){
 	
 	reset();
 	
-	RESULTS_DIV = $("#yslow-results");
+	showLoader(true);
 	
-	switch(options.info + options.view){
-		case "overview": 		printSummary(RESULTS_DIV);
-								printTable(RESULTS_DIV, STATS_BY_TYPE, "Statistics by Component Type(Empty Cache)");
-								printTable(RESULTS_DIV, STATS_PRIMED_CACHE, "Statistics by Component Type(Primed Cache)");
-								printPanels(RESULTS_DIV);
-								break;
+	window.setTimeout( 
+	function(){
+	
+		RESULTS_DIV = $("#results");
+		
+		//----------------------------------
+		// Fetch Data if not already done
+		//----------------------------------
+		switch (options.data){
+			case "yslowresult": 	if(YSLOW_RESULT == null) { fetchData(options);  return;} break;
+			case "resultlist":		if(RESULT_LIST == null) { fetchData(options); return;} break;
+			case "har":				if(HAR_DATA == null) { fetchData(options); return;} break;
+			case "compareyslow":	if(COMPARE_YSLOW == null) { fetchData(options); return;} break;
+			
+		}
+		
+		//----------------------------------
+		// Fetch Data if not already done
+		//----------------------------------
+		switch(options.info + options.view){
+		
+			case "resultlist":		printResultList($(RESULTS_DIV), RESULT_LIST);
+									break;
+									
+			case "ganttchart":		printGanttChart($(RESULTS_DIV), HAR_DATA);
+									break;	
+			
+			case "compareyslow":	printComparison($(RESULTS_DIV), COMPARE_YSLOW);
+									break;	
+									
+			case "overview": 		printSummary(RESULTS_DIV);
+									printTable(RESULTS_DIV, STATS_BY_TYPE, "Statistics by Component Type(Empty Cache)");
+									printTable(RESULTS_DIV, STATS_PRIMED_CACHE, "Statistics by Component Type(Primed Cache)");
+									printPanels(RESULTS_DIV);
+									break;
+									
+			case "gradepanels": 	printPanels(RESULTS_DIV);
+						  			break;
+						  			
+			case "gradetable": 		printTable(RESULTS_DIV, RULES, "Table: Grade by Rules");
+	  								break;
+	  								
+			case "gradeplaintext":	printPlainText(RESULTS_DIV);
+									break;
+									
+			case "gradejira":		printJIRAText(RESULTS_DIV);
+									break;
+									
+			case "gradecsv":		printCSV(RESULTS_DIV, RULES);
+									break;
+									
+			case "gradejson":		printJSON(RESULTS_DIV, RULES);
+									break;						
+									
+			case "statstable":		
+				switch(options.stats){
+					case "type": 			printTable(RESULTS_DIV, STATS_BY_TYPE, "Statistics by Component Type(Empty Cache)");
+											break;
+									
+					case "type_cached": 	printTable(RESULTS_DIV, STATS_PRIMED_CACHE, "Statistics by Component Type(Primed Cache)");
+											break;
+											
+					case "components": 		printTable(RESULTS_DIV, COMPONENTS, "Components");
+											break;
+				}
+				break;
 								
-		case "gradepanels": 	printPanels(RESULTS_DIV);
-					  			break;
-					  			
-		case "gradetable": 		printTable(RESULTS_DIV, RULES, "Table: Grade by Rules");
-  								break;
-  								
-		case "gradeplaintext":	printPlainText(RESULTS_DIV);
-								break;
-								
-		case "gradejira":		printJIRAText(RESULTS_DIV);
-								break;
-								
-		case "gradecsv":		printCSV(RESULTS_DIV, RULES);
-								break;
-								
-		case "gradejson":		printJSON(RESULTS_DIV, RULES);
-								break;						
-								
-		case "statstable":		
-			switch(options.stats){
-				case "type": 			printTable(RESULTS_DIV, STATS_BY_TYPE, "Statistics by Component Type(Empty Cache)");
-										break;
-								
-				case "type_cached": 	printTable(RESULTS_DIV, STATS_PRIMED_CACHE, "Statistics by Component Type(Primed Cache)");
-										break;
-										
-				case "components": 		printTable(RESULTS_DIV, COMPONENTS, "Components");
-										break;
-			}
-			break;
-							
-		default:				RESULTS_DIV.text("Sorry some error occured, be patient while nobody is looking into it.");
-	}
+			default:				RESULTS_DIV.text("Sorry some error occured, be patient while nobody is looking into it.");
+		}
+		showLoader(false);
+	}, 100);
+	
+	
 }

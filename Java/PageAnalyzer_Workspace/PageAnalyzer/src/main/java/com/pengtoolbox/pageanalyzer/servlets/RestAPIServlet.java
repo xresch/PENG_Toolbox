@@ -10,13 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import com.pengtoolbox.pageanalyzer._main.PA;
-import com.pengtoolbox.pageanalyzer.logging.PALogger;
-import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
-import com.pengtoolbox.pageanalyzer.response.TemplatePlain;
-import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
-import com.pengtoolbox.pageanalyzer.utils.FileUtils;
-import com.pengtoolbox.pageanalyzer.utils.HTTPUtils;
+import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.TemplatePlain;
+import com.pengtoolbox.cfw.utils.FileUtils;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
 /*************************************************************************
@@ -35,7 +32,7 @@ public class RestAPIServlet extends HttpServlet {
 	 ******************************************************************/
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		PALogger log = new PALogger(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Rest API");
@@ -52,7 +49,7 @@ public class RestAPIServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		PALogger log = new PALogger(logger, request).method("doPost");
+		CFWLog log = new CFWLog(logger, request).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
 		TemplatePlain plain = new TemplatePlain(request);
@@ -63,7 +60,7 @@ public class RestAPIServlet extends HttpServlet {
 			content.append("{\"error\": \"HAR File could not be loaded.\"}");
 		}else {
 
-			String harContents = PA.readContentsFromInputStream(harFile.getInputStream());
+			String harContents = FileUtils.readContentsFromInputStream(harFile.getInputStream());
 			
 			String results = YSlow.instance().analyzeHarString(harContents);
 

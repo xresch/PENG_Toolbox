@@ -7,17 +7,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 
-import com.pengtoolbox.pageanalyzer._main.PA;
-import com.pengtoolbox.pageanalyzer.logging.PALogger;
-import com.pengtoolbox.pageanalyzer.response.TemplateHTMLDefault;
-import com.pengtoolbox.pageanalyzer.response.TemplateJSONDefault;
-import com.pengtoolbox.pageanalyzer.response.TemplatePlain;
-import com.pengtoolbox.pageanalyzer.utils.CacheUtils;
-import com.pengtoolbox.pageanalyzer.utils.FileUtils;
-import com.pengtoolbox.pageanalyzer.utils.H2Utils;
-import com.pengtoolbox.pageanalyzer.yslow.YSlow;
+import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.TemplateJSONDefault;
+import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class DeleteResultServlet extends HttpServlet
 {
@@ -26,7 +20,7 @@ public class DeleteResultServlet extends HttpServlet
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = PALogger.getLogger(DeleteResultServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(DeleteResultServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -34,7 +28,7 @@ public class DeleteResultServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		PALogger log = new PALogger(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger, request).method("doGet");
 		log.info(request.getRequestURL().toString());
 		
 		TemplateJSONDefault jsonResponse = new TemplateJSONDefault(request);
@@ -43,13 +37,13 @@ public class DeleteResultServlet extends HttpServlet
 		String resultIDs = request.getParameter("resultids");
 		
 		if(resultIDs.matches("(\\d,?)+")) {
-			boolean result = H2Utils.deleteResults(resultIDs);
+			boolean result = PageAnalyzerDB.deleteResults(request, resultIDs);
 			content.append("{\"result\": "+result+"}");
 		}else {
 			content.append("{\"result\": false, \"error\": \"The result could not be deleted: ResultID is not a number.\"}");
 		}
 		
-		response.sendRedirect(response.encodeRedirectURL(PA.BASE_URL+"/resultlist"));
+		response.sendRedirect(response.encodeRedirectURL(CFWConfig.BASE_URL+"/resultlist"));
         
     }
 	

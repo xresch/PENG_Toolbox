@@ -3,7 +3,7 @@ package com.pengtoolbox.pageanalyzer.yslow;
 import java.util.Stack;
 import java.util.logging.Logger;
 
-import com.pengtoolbox.pageanalyzer.logging.PALogger;
+import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class ExecutionContextPool {
 	
@@ -37,7 +37,7 @@ public class ExecutionContextPool {
 	 ***********************************************************************/
 	public static ExecutionContext lockContext() {
 		
-		new PALogger(logger).method("releaseExecutor")
+		new CFWLog(logger).method("releaseExecutor")
 		.info("Before Lock: lockedExecutorPool["+lockedContextPool.size()+"], freeExecutorPool["+freeContextPool.size()+"]");
 		
 		ExecutionContext context = null;
@@ -56,15 +56,15 @@ public class ExecutionContextPool {
 			if(context == null) {
 				try {
 					Thread.sleep(200);
-					new PALogger(logger).method("lockExecutor").fine("Thread waiting for free executor.");
+					new CFWLog(logger).method("lockExecutor").fine("Thread waiting for free executor.");
 				} catch (InterruptedException e) {
-					new PALogger(logger).method("lockExecutor").warn("Thread interrupted while taking a nap.", e);
+					new CFWLog(logger).method("lockExecutor").warn("Thread interrupted while taking a nap.", e);
 					e.printStackTrace();
 				}
 			}
 		}
 		
-		new PALogger(logger).method("releaseExecutor")
+		new CFWLog(logger).method("releaseExecutor")
 		.info("After Lock: lockedExecutorPool["+lockedContextPool.size()+"], freeExecutorPool["+freeContextPool.size()+"]");
 		
 		return context;
@@ -82,7 +82,7 @@ public class ExecutionContextPool {
 			freeContextPool.push(context);
 		}
 
-		new PALogger(logger).method("releaseExecutor")
+		new CFWLog(logger).method("releaseExecutor")
 		.info("After Release: lockedExecutorPool["+lockedContextPool.size()+"], freeExecutorPool["+freeContextPool.size()+"]");
 	}
 
