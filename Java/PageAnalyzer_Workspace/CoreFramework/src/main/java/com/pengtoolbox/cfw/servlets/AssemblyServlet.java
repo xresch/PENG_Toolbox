@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.response.TemplatePlain;
@@ -25,8 +26,8 @@ public class AssemblyServlet extends HttpServlet
                           HttpServletResponse response ) throws ServletException,
                                                         IOException
     {
+
 		String assemblyName = request.getParameter("name");
-		
 		TemplatePlain plain = new TemplatePlain(request);
 		
 		if(FileAssembly.hasAssembly(assemblyName)) {
@@ -42,5 +43,7 @@ public class AssemblyServlet extends HttpServlet
 	    }else {
 	    	response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 	    }
+		
+		CFW.writeLocalized(request, response);
     }
 }

@@ -217,35 +217,37 @@ public class CFWDB {
 		StringBuffer json = new StringBuffer();
 		json.append("[");
 		
-		try {
-			ResultSetMetaData metadata = resultSet.getMetaData();
-	
-			int columnCount = metadata.getColumnCount();
-	
-			while(resultSet.next()) {
-				json.append("{");
-				for(int i = 1 ; i <= columnCount; i++) {
-					String column = metadata.getColumnName(i);
-					json.append("\"").append(column).append("\": ");
-					
-					String value = resultSet.getString(i);
-					if(column.equals("JSON_RESULT")) {
-						json.append(value).append(",");
-					}else {
-						json.append("\"").append(value).append("\",");
+		if(resultSet != null) {
+			try {
+				ResultSetMetaData metadata = resultSet.getMetaData();
+		
+				int columnCount = metadata.getColumnCount();
+		
+				while(resultSet.next()) {
+					json.append("{");
+					for(int i = 1 ; i <= columnCount; i++) {
+						String column = metadata.getColumnName(i);
+						json.append("\"").append(column).append("\": ");
+						
+						String value = resultSet.getString(i);
+						if(column.equals("JSON_RESULT")) {
+							json.append(value).append(",");
+						}else {
+							json.append("\"").append(value).append("\",");
+						}
 					}
+					json.deleteCharAt(json.length()-1); //remove last comma
+					json.append("},");
 				}
-				json.deleteCharAt(json.length()-1); //remove last comma
-				json.append("},");
+			
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			json.deleteCharAt(json.length()-1); //remove last comma
 		}
-		json.deleteCharAt(json.length()-1); //remove last comma
-		json.append("]");
 		
+		json.append("]");
 		return json.toString();
 	}
 

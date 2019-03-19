@@ -23,6 +23,7 @@ public class FileAssembly {
 	private String contentType = "";
 	private String assemblyContent = "";
 	public static final String CFW_JAR_RESOURCES_PATH = "com/pengtoolbox/cfw/resources";
+	
 	public enum HandlingType {FILE, JAR_RESOURCE, STRING};
 	
 	/***********************************************************************
@@ -37,14 +38,23 @@ public class FileAssembly {
 	}
 	
 	/***********************************************************************
-	 * Constructor for the FileAssembler.
-	 * @param type the 
+	 * Add a file to the Assembly.
+	 * @param type the handling type of the file.
 	 * @param filetype the file type e.g. "js", "css"
 	 ***********************************************************************/
 	public FileAssembly addFile(HandlingType type, String fileDefinition) {
 		fileSet.put(fileDefinition, type);
 		return this;
 	}
+	/***********************************************************************
+	 * Check if the assembly has any files added.
+	 * @param type the 
+	 * @param filetype the file type e.g. "js", "css"
+	 ***********************************************************************/
+	public boolean hasFiles() {
+		return (fileSet.size() > 0);
+	}
+	
 	
 	/***********************************************************************
 	 * Assembles and stores the file in the permanent cache of 
@@ -59,7 +69,7 @@ public class FileAssembly {
 		Set<String> keySet = fileSet.keySet();
 		int hashCode = keySet.toString().hashCode();
 		assemblyName = inputName + "_" + hashCode + "." + filetype;
-		assemblyServletPath = CFWConfig.BASE_URL + "/assembly?name="+URLEncoder.encode(assemblyName);
+		assemblyServletPath = "/cfw/assembly?name="+URLEncoder.encode(assemblyName);
 		//--------------------------------
 		// Initialize
 		if(!FileAssembly.hasAssembly((assemblyName)) || !CFWConfig.CACHING_FILE_ENABLED ) {

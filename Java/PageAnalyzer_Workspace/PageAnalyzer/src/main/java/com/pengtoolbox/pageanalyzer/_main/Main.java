@@ -134,7 +134,7 @@ public class Main extends Application {
         // Create Handler Collection
         //###################################################################
         HandlerCollection handlerCollection = new HandlerCollection();
-        handlerCollection.setHandlers(new Handler[] {rewriteHandler, CFWSetup.createResourceHandler(), new DefaultHandler() });
+        handlerCollection.setHandlers(new Handler[] {rewriteHandler, CFWSetup.createResourceHandler(), CFWSetup.createCFWHandler(), new DefaultHandler() });
         server.setHandler(handlerCollection);
         
         //###################################################################

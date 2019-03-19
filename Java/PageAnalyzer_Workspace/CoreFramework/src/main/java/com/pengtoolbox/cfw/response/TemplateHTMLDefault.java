@@ -30,8 +30,9 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 		this.addCSSFile(HandlingType.FILE, "./resources/css/custom.css");
 		
 		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/js/jquery-2.2.3.js");
-		this.addJSFileBottom(HandlingType.FILE, "./resources/js/custom/custom.js");
 		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/js/bootstrap.js");
+		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/js/cfw.js");
+		this.addJSFileBottom(HandlingType.FILE, "./resources/js/custom/custom.js");
 		
 		SessionData data = (SessionData)request.getSession().getAttribute(CFW.SESSION_DATA);
 		if(data.isLoggedIn()) {
@@ -50,8 +51,12 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 			buildedPage.append("<head>\n");
 				buildedPage.append("<title>").append(this.pageTitle).append("</title>");
 				buildedPage.append(head);
-				buildedPage.append("<link rel=\"stylesheet\" href=\""+assemblyCSS.assemble().cache().getAssemblyServletPath()+"\" />");
-				buildedPage.append("<script src=\""+headjs.assemble().cache().getAssemblyServletPath()+"\"></script>");
+				if(assemblyCSS.hasFiles()) {
+					buildedPage.append("<link rel=\"stylesheet\" href=\""+assemblyCSS.assemble().cache().getAssemblyServletPath()+"\" />");
+				}
+				if(headjs.hasFiles()) {
+					buildedPage.append("<script src=\""+headjs.assemble().cache().getAssemblyServletPath()+"\"></script>");
+				}
 			buildedPage.append("</head>\n");
 			
 			buildedPage.append("<body ng-app=\"omApp\">\n");
@@ -101,7 +106,9 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 				// Javascript
 				this.appendSectionTitle(buildedPage, "Javascript");
 				buildedPage.append("<div id=\"javascripts\">");
-				buildedPage.append("<script src=\""+bottomjs.assemble().cache().getAssemblyServletPath()+"\"></script>");
+				if(assemblyCSS.hasFiles()) {
+					buildedPage.append("<script src=\""+bottomjs.assemble().cache().getAssemblyServletPath()+"\"></script>");
+				}
 				buildedPage.append(this.javascript);
 				buildedPage.append("</div>");
 				
@@ -112,6 +119,7 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 				buildedPage.append("<div id=\"javaScriptData\" style=\"display: none;\">");
 				buildedPage.append(this.javascriptData);
 				buildedPage.append("</div>");
+				
 				//--------------------------
 				// Support Info
 				this.appendSectionTitle(buildedPage, "Support Info");

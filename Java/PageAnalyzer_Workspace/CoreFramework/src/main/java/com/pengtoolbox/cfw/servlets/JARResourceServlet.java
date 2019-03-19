@@ -7,11 +7,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.utils.FileUtils;
 
-public class JARFontServlet extends HttpServlet
+public class JARResourceServlet extends HttpServlet
 {
 
 	private static final long serialVersionUID = 1L;
@@ -21,10 +22,13 @@ public class JARFontServlet extends HttpServlet
                           HttpServletResponse response ) throws ServletException,
                                                         IOException
     {
-		String fontName = request.getParameter("name");
-		//String fontType = fontName.substring(fontName.lastIndexOf(".")+1);
+		String pkg = request.getParameter("pkg");
+		pkg = pkg.replaceAll("\\.", "/");
 		
-		byte[] fontContent = FileUtils.readPackageResourceAsBytes(FileAssembly.CFW_JAR_RESOURCES_PATH + "/fonts/"+fontName);
+		String file = request.getParameter("file");
+		
+		
+		byte[] fontContent = FileUtils.readPackageResourceAsBytes(pkg + "/" + file);
 		if(fontContent != null) {
 			
 			response.addHeader("Cache-Control", "max-age="+CFWConfig.BROWSER_RESOURCE_MAXAGE);
@@ -39,5 +43,7 @@ public class JARFontServlet extends HttpServlet
 	    }else {
 	    	response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 	    }
+		
+		CFW.writeLocalized(request, response);
     }
 }

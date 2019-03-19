@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.server.session.HashSessionIdManager;
@@ -14,11 +16,13 @@ import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
+import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.servlets.AssemblyServlet;
-import com.pengtoolbox.cfw.servlets.JARFontServlet;
+import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
+import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
 /***********************************************************************
  * Setup class for the Core Framework
@@ -60,12 +64,35 @@ public class CFWSetup {
 	        servletContextHandler.addServlet(LoginServlet.class, "/login");
 	        servletContextHandler.addServlet(LogoutServlet.class,  "/logout");
 	    }
-        
+                
+	}
+	
+	/***********************************************************************
+	 * Add the servlets provided by CFW to the given context.
+	 *  AssemblyServlet on /assembly
+	 *  JARFontServlet on /jarfont
+	 ***********************************************************************/
+	public static HandlerWrapper createCFWHandler() {
+		
+		ContextHandler contextHandler = new ContextHandler("/cfw");
+		
+		ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+		
 		//-----------------------------------------
 		// Resource Servlets
+
 		servletContextHandler.addServlet(AssemblyServlet.class, "/assembly"); 
-		servletContextHandler.addServlet(JARFontServlet.class, "/jarfont");
-        
+		servletContextHandler.addServlet(JARResourceServlet.class, "/jarresource");
+		
+        GzipHandler servletGzipHandler = new GzipHandler();
+        RequestHandler requestHandler = new RequestHandler();
+
+         new HandlerChainBuilder(contextHandler)
+         	 .chain(servletGzipHandler)
+	         .chain(requestHandler)
+	         .chain(servletContextHandler);
+		
+		return contextHandler;
 	}
 	
 	/***********************************************************************

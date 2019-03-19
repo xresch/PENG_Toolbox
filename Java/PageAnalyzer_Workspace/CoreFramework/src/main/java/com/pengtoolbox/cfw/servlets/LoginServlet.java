@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.SessionData;
+import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginFacade;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
@@ -44,7 +45,7 @@ public class LoginServlet extends HttpServlet
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 		StringBuffer content = html.getContent();
-		content.append(FileUtils.getFileContent(request, "./resources/html/login.html"));
+		content.append(FileUtils.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + "/html/login.html"));
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -74,7 +75,6 @@ public class LoginServlet extends HttpServlet
 			
 			html.addAlert(CFW.ALERT_ERROR, "Please specify a username and password.");
 		}else {
-			
 			if(LoginFacade.getInstance().checkCredentials(username, password)) {
 				//Login success
 				HttpSession session = request.getSession();
