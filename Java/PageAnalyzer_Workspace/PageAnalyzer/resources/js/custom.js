@@ -45,30 +45,10 @@ var GRADE_CLASS = {
  ******************************************************************/
 function initialize(){
 	
-	URL_PARAMETERS = getURLParameters();
+	URL_PARAMETERS = CFW.general.getURLParams();
 	
 }
 
-/******************************************************************
- * Reads the parameters from the URL and returns an object containing
- * name/value pairs like {"name": "value", "name2": "value2" ...}.
- * @param 
- * @return object
- ******************************************************************/
-function getURLParameters()
-{
-    var vars = {};
-    
-    var keyValuePairs = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    for(var i = 0; i < keyValuePairs.length; i++)
-    {
-        splitted = keyValuePairs[i].split('=');
-        vars[splitted[0]] = splitted[1];
-    }
-    
-    console.log(vars);
-    return vars;
-}
 
 /******************************************************************
  * Method to fetch data from the server. The result is stored in
@@ -124,7 +104,7 @@ function fetchData(args){
 			switch (args.data){
 				case "yslowresult": 	YSLOW_RESULT = data;
 										prepareYSlowResults(YSLOW_RESULT);
-										RULES = sortArrayByValueOfObject(RULES, "score");
+										RULES = CFW.array.sortArrayByValueOfObject(RULES, "score");
 										$(".result-view-tabs").css("visibility", "visible");
 										draw(args);
 										break;
@@ -364,44 +344,6 @@ function prepareGanttData(data){
 }
 
 /**************************************************************************************
- * Tries to decode a URI and handles errors when they are thrown.
- * If URI cannot be decoded the input string is returned unchanged.
- * 
- * @param uri to decode
- * @return decoded URI or the same URI in case of errors.
- *************************************************************************************/
-function secureDecodeURI(uri){
-	try{
-		decoded = decodeURIComponent(uri);
-	}catch(err){
-		decoded = uri;
-	}
-	
-	return decoded;
-}
-
-/**************************************************************************************
- * Sort an object array by the values for the given key.
- * @param array the object array to be sorted
- * @param key the name of the field that should be used for sorting
- * @return sorted array
- *************************************************************************************/
-function sortArrayByValueOfObject(array, key){
-	array.sort(function(a, b) {
-		
-			var valueA = a[key];
-			var valueB = b[key];
-			
-			if(isNaN(valueA)) valueA = 9999999;
-			if(isNaN(valueB)) valueB = 9999999;
-			
-		return valueA - valueB;
-	});
-	
-	return array;
-}
-
-/**************************************************************************************
  * Filter the rows of a table by the value of the search field.
  * This method is best used by triggering it on the onchange-event on the search field
  * itself.
@@ -428,25 +370,6 @@ function filterTable(searchField){
 			}
 	});
 
-}
-
-/**************************************************************************************
- * Select all the content of the given element.
- * For example to select everything inside a given DIV element.
- * @param el the element 
- *************************************************************************************/
-function selectElementContent(el) {
-    if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
-        var range = document.createRange();
-        range.selectNodeContents(el);
-        var sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-    } else if (typeof document.selection != "undefined" && typeof document.body.createTextRange != "undefined") {
-        var textRange = document.body.createTextRange();
-        textRange.moveToElementText(el);
-        textRange.select();
-    }
 }
 
 /******************************************************************
@@ -497,7 +420,7 @@ function printComparison(parent, data){
 		
 		//----------------------------
 		// URL Row
-		url = secureDecodeURI(result.u);
+		url = CFW.general.secureDecodeURI(result.u);
 		urlRow[time]	= '<a target="_blank" href="'+url+'">'+url+'</a>';
 		
 		//----------------------------
@@ -616,7 +539,7 @@ function printGanttChart(parent, data){
 		// Other Columns
 		rowString += '<td>'+createHTTPStatusBadge(currentEntry.response.status)+'</td>';
 		rowString += '<td>'+Math.round(currentEntry.time)+' ms</td>';
-		rowString += '<td>'+secureDecodeURI(currentEntry.request.url)+'</td>';
+		rowString += '<td>'+CFW.general.secureDecodeURI(currentEntry.request.url)+'</td>';
 		
 		row.append(rowString);
 		
@@ -897,7 +820,7 @@ function printResultList(parent, data){
 		rowString += '<td>'+currentData.RESULT_ID+'</td>';
 		rowString += '<td>'+currentData.TIME+'</td>';
 		
-		url = secureDecodeURI(currentData.PAGE_URL);
+		url = CFW.general.secureDecodeURI(currentData.PAGE_URL);
 		
 		rowString += '<td>'+url+'</td>';
 		
@@ -1157,7 +1080,7 @@ function printCSV(parent, data){
 	parent.append(pre);
 	
 	var code = $('<code>');
-	code.attr("onclick", "selectElementContent(this)");
+	code.attr("onclick", "CFW.selection.selectElementContent(this)");
 	pre.append(code);
 	
 	var headerRow = "";
@@ -1201,7 +1124,7 @@ function printJSON(parent, data){
 	parent.append(pre);
 	
 	var code = $('<code>');
-	code.attr("onclick", "selectElementContent(this)");
+	code.attr("onclick", "CFW.selection.selectElementContent(this)");
 	pre.append(code);
 	
 	code.text(JSON.stringify(data, 

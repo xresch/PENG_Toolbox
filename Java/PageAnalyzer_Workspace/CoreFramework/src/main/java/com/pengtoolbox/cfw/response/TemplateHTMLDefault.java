@@ -32,7 +32,7 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/js/jquery-2.2.3.js");
 		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/js/bootstrap.js");
 		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/js/cfw.js");
-		this.addJSFileBottom(HandlingType.FILE, "./resources/js/custom/custom.js");
+		this.addJSFileBottom(HandlingType.FILE, "./resources/js/custom.js");
 		
 		SessionData data = (SessionData)request.getSession().getAttribute(CFW.SESSION_DATA);
 		if(data.isLoggedIn()) {

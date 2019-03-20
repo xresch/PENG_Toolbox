@@ -57,6 +57,7 @@ public class CFWDB {
 			CFWDB.server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "" +port).start();
 			
 			connectionPool = JdbcConnectionPool.create(h2_url, username, password);
+			connectionPool.setMaxConnections(50);
 			
 			CFWDB.dataSource = new JdbcDataSource();
 			CFWDB.dataSource.setURL(h2_url);
@@ -200,7 +201,10 @@ public class CFWDB {
 	public static void close(HttpServletRequest request, ResultSet resultSet){
 		
 		try {
-			resultSet.close();
+			if(resultSet != null) {
+				resultSet.getStatement().getConnection().close();
+				resultSet.close();
+			}
 		} catch (SQLException e) {
 			new CFWLog(logger, request)
 				.method("close")
