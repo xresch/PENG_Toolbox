@@ -7,12 +7,13 @@ import java.util.logging.Logger;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.server.session.HashSessionIdManager;
-import org.eclipse.jetty.server.session.HashSessionManager;
+import org.eclipse.jetty.server.session.DefaultSessionCache;
+import org.eclipse.jetty.server.session.DefaultSessionIdManager;
+import org.eclipse.jetty.server.session.NullSessionDataStore;
+import org.eclipse.jetty.server.session.SessionCache;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
@@ -123,18 +124,26 @@ public class CFWSetup {
 	 * Setup and returns a SessionHandler
 	 ***********************************************************************/
 	public static SessionHandler createSessionHandler(Server server) {
-	    HashSessionIdManager idmanager = new HashSessionIdManager();
+		DefaultSessionIdManager	 idmanager = new DefaultSessionIdManager(server);
 	    server.setSessionIdManager(idmanager);
-	    HashSessionManager manager = new HashSessionManager();
-	    
-	    manager.setHttpOnly(false);
-	    manager.setUsingCookies(true);
 	
-	    SessionHandler sessionHandler = new SessionHandler(manager);
-	    
+	    SessionHandler sessionHandler = new SessionHandler();
 	    // workaround maxInactiveInterval=-1 issue
 	    // set inactive interval in RequestHandler
-	    manager.setMaxInactiveInterval(3600);
+	    sessionHandler.setMaxInactiveInterval(3600);
+	    sessionHandler.setHttpOnly(false);
+	    sessionHandler.setUsingCookies(true);
+	    
+        // Explicitly set Session Cache and null Datastore.
+        // This is normally done by default,
+        // but is done explicitly here for demonstration.
+        // If more than one context is to be deployed, it is
+        // simpler to use SessionCacheFactory and/or
+        // SessionDataStoreFactory instances set as beans on 
+        // the server.
+        SessionCache cache = new DefaultSessionCache(sessionHandler);
+        cache.setSessionDataStore(new NullSessionDataStore());
+        sessionHandler.setSessionCache(cache);
 	    
 	    return sessionHandler;
 	}
