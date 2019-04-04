@@ -47,7 +47,7 @@ public class AuthenticationHandler extends HandlerWrapper
         		if(request.getRequestURI().toString().endsWith("/login")) {
         			this._handler.handle(target, baseRequest, request, response);
         		}else {
-        			response.sendRedirect(response.encodeRedirectURL(CFWConfig.BASE_URL+"/login"));
+        			response.sendRedirect(response.encodeRedirectURL("./login"));
         		}
         	}
 	

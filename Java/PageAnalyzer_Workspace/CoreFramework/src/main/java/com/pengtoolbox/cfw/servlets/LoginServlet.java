@@ -82,7 +82,7 @@ public class LoginServlet extends HttpServlet
 				data.setLoggedIn(true);
 				data.setUsername(username);
 				
-				response.sendRedirect(response.encodeRedirectURL(CFWConfig.BASE_URL+"/harupload"));
+				response.sendRedirect(response.encodeRedirectURL("./harupload"));
 			}else {
 				//Login Failure
 				TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");

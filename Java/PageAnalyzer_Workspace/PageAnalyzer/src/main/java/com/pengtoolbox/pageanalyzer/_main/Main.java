@@ -1,8 +1,5 @@
 package com.pengtoolbox.pageanalyzer._main;
 
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
 import javax.servlet.MultipartConfigElement;
 
 import org.eclipse.jetty.rewrite.handler.RedirectRegexRule;
@@ -10,13 +7,13 @@ import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.pengtoolbox.cfw._main.CFWConfig;
@@ -77,11 +74,24 @@ public class Main extends Application {
         //###################################################################
         // Create unsecuredServletContext
         //################################################################### 
+        
     	ServletContextHandler apiServletContext = new ServletContextHandler();
-    	
     	ServletHolder apiHolder = new ServletHolder(new RestAPIServlet());
         apiHolder.getRegistration().setMultipartConfig(multipartConfig);
-        apiServletContext.addServlet(apiHolder, "/analyzer");
+        apiServletContext.addServlet(apiHolder, "/analyzehar");
+        
+        //----------------------------------
+        // Build Handler Chain
+        SessionHandler apiSessionHandler = CFWSetup.createSessionHandler(server);
+        ContextHandler apiContext = new ContextHandler(CFWConfig.BASE_URL+"/api");
+        GzipHandler apiGzipHandler = new GzipHandler();
+        RequestHandler apiRequestHandler = new RequestHandler();
+        
+        new HandlerChainBuilder(apiContext)
+	        .chain(apiGzipHandler)
+	        .chain(apiSessionHandler)
+	    	.chain(apiRequestHandler)
+	        .chain(apiServletContext);
         
         //###################################################################
         // Create authenticatedServletContext
@@ -106,23 +116,11 @@ public class Main extends Application {
         securedServletContext.addServlet(CustomContentServlet.class, "/custom");
         
         CFWSetup.addCFWServlets(securedServletContext);
-
-        AuthenticationHandler authenticationHandler = new AuthenticationHandler();
-        new HandlerChainBuilder(authenticationHandler)
-    					.chain(securedServletContext);
         
         //###################################################################
         // Create pageAnalyzer Handler Collection
-        //################################################################### 
-        HandlerList pageanalyzerCollection = new HandlerList();
+        //###################################################################         
         
-        ContextHandler appContext = new ContextHandler("/app");
-        appContext.setHandler(securedServletContext);
-        pageanalyzerCollection.addHandler(appContext);
-        
-        ContextHandler apiContext = new ContextHandler("/api");
-        apiContext.setHandler(apiServletContext);
-        pageanalyzerCollection.addHandler(apiContext);
         //-------------------------------
         // Create Session Handler
         //-------------------------------
@@ -144,7 +142,9 @@ public class Main extends Application {
         //-------------------------------
         // Create HandlerChain
         //-------------------------------
-        ContextHandler pageanalyzerContext = new ContextHandler(CFWConfig.BASE_URL);
+        System.out.println("CFWConfig.BASE_URL: "+CFWConfig.BASE_URL);
+        ContextHandler pageanalyzerContext = new ContextHandler(CFWConfig.BASE_URL+"/app");
+        AuthenticationHandler authenticationHandler = new AuthenticationHandler();
         GzipHandler servletGzipHandler = new GzipHandler();
         RequestHandler requestHandler = new RequestHandler();
         
@@ -153,13 +153,14 @@ public class Main extends Application {
         	.chain(servletGzipHandler)
         	.chain(sessionHandler)
 	        .chain(requestHandler)
-	        .chainLast(pageanalyzerCollection);
+	        .chain(authenticationHandler)
+	        .chain(securedServletContext);
         
         //###################################################################
         // Create Handler Collection
         //###################################################################
-        HandlerCollection handlerCollection = new HandlerCollection();
-        handlerCollection.setHandlers(new Handler[] {pageanalyzerContext, CFWSetup.createResourceHandler(), CFWSetup.createCFWHandler(), new DefaultHandler() });
+        ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
+        handlerCollection.setHandlers(new Handler[] {apiContext, pageanalyzerContext, CFWSetup.createResourceHandler(), CFWSetup.createCFWHandler(), new DefaultHandler() });
         server.setHandler(handlerCollection);
         
         //###################################################################
