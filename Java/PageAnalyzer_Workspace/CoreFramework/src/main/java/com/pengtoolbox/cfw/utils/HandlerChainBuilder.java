@@ -1,5 +1,6 @@
 package com.pengtoolbox.cfw.utils;
 
+import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 
 public class HandlerChainBuilder {
@@ -19,6 +20,14 @@ public class HandlerChainBuilder {
 		current = handler;
 		
 		return this;
+	}
+	
+	public void chainLast(HandlerCollection collection) {
+		
+		if(current != null) {
+			current.setHandler(collection);
+		}
+		
 	}
 
 }

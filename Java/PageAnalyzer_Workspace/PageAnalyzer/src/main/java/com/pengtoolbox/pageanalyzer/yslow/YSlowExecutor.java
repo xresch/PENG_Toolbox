@@ -57,7 +57,7 @@ public class YSlowExecutor extends Application {
 	 ***********************************************************************/
 	public void start(Stage stage){
 		
-		String yslowJS = FileUtils.getFileContent(null, "./resources/js/custom/custom_yslow.js");
+		String yslowJS = FileUtils.getFileContent(null, "./resources/js/custom_yslow.js");
 		
 		int contextCount = CFWConfig.configAsInt("pa_analysis_threads", 10);
 		

@@ -101,7 +101,7 @@ public class HARUploadServlet extends HttpServlet
 			javascript.append("		initialize();");
 			javascript.append("		prepareYSlowResults(YSLOW_RESULT);");
 			javascript.append("		prepareGanttData(HAR_DATA);");
-			javascript.append("		RULES = sortArrayByValueOfObject(RULES, \"score\");");
+			javascript.append("		RULES = CFW.array.sortArrayByValueOfObject(RULES, \"score\");");
 			javascript.append("		$(\".result-view-tabs\").css(\"visibility\", \"visible\");");
 			javascript.append("		draw({data: 'yslowresult', info: 'overview', view: ''})");
 			javascript.append("</script>");

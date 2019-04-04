@@ -33,7 +33,7 @@ public class LogoutServlet extends HttpServlet
 		data.setLoggedIn(false);
 		data.setUsername("");
 		
-		response.sendRedirect(response.encodeRedirectURL(CFWConfig.BASE_URL+"/login"));
+		response.sendRedirect(response.encodeRedirectURL("./login"));
         
     }
 	

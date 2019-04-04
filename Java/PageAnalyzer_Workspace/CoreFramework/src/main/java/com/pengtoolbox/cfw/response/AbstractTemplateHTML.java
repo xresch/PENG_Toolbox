@@ -10,9 +10,9 @@ public abstract class AbstractTemplateHTML extends AbstractTemplate {
 
 	protected String pageTitle;
 	
-	protected FileAssembly headjs = new FileAssembly("assembly_head", "js");
-	protected FileAssembly bottomjs = new FileAssembly("assembly_bottom", "js");
-	protected FileAssembly assemblyCSS = new FileAssembly("assembly_css", "css");
+	protected FileAssembly headjs = new FileAssembly("js_assembly_jshead", "js");
+	protected FileAssembly bottomjs = new FileAssembly("js_assembly_bottom", "js");
+	protected FileAssembly assemblyCSS = new FileAssembly("css_assembly", "css");
 	
 	protected StringBuffer head = new StringBuffer();
 	protected StringBuffer menu = new StringBuffer();
