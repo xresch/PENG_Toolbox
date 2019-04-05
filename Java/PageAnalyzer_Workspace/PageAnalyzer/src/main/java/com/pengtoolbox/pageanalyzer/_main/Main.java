@@ -135,7 +135,9 @@ public class Main extends Application {
         rewriteHandler.setOriginalPathAttribute("requestedPath");
 
         RedirectRegexRule mainRedirect = new RedirectRegexRule();
-        mainRedirect.setRegex("^/$|"+CFWConfig.BASE_URL+"|"+CFWConfig.BASE_URL+"/");
+        mainRedirect.setRegex("^/$"+
+        					 "|"+CFWConfig.BASE_URL+"/?$"+
+        					 "|"+CFWConfig.BASE_URL+"/app/?$");
         mainRedirect.setReplacement(CFWConfig.BASE_URL+"/app/harupload");
         rewriteHandler.addRule(mainRedirect);	
         
@@ -149,7 +151,6 @@ public class Main extends Application {
         RequestHandler requestHandler = new RequestHandler();
         
         new HandlerChainBuilder(pageanalyzerContext)
-        	.chain(rewriteHandler)
         	.chain(servletGzipHandler)
         	.chain(sessionHandler)
 	        .chain(requestHandler)
@@ -159,8 +160,8 @@ public class Main extends Application {
         //###################################################################
         // Create Handler Collection
         //###################################################################
-        ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
-        handlerCollection.setHandlers(new Handler[] {apiContext, pageanalyzerContext, CFWSetup.createResourceHandler(), CFWSetup.createCFWHandler(), new DefaultHandler() });
+        HandlerCollection handlerCollection = new HandlerCollection();
+        handlerCollection.setHandlers(new Handler[] {apiContext, rewriteHandler, pageanalyzerContext, CFWSetup.createResourceHandler(), CFWSetup.createCFWHandler(), new DefaultHandler() });
         server.setHandler(handlerCollection);
         
         //###################################################################
