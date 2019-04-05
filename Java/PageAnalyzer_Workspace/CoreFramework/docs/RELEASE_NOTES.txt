@@ -3,9 +3,9 @@
 ##############################################
 - move defaultHTML to CFW project
 - Session Timeout Configurable
-- Fix package resource security issue (CFWSetup.addAllowedPackages())
 
 ##############################################
 # Current
 ##############################################
 - move HTML for login to CFW project
+- Fix package resource security issue (CFWSetup.addAllowedPackages())

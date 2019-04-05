@@ -1,9 +1,8 @@
 package com.pengtoolbox.cfw.caching;
 
-import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Set;
 
 import com.pengtoolbox.cfw._main.CFWConfig;
@@ -14,7 +13,7 @@ public class FileAssembly {
 	/** Static field to store the assembled results by their file names. */
 	private static final HashMap<String,FileAssembly> assemblyCache = new HashMap<String, FileAssembly>();
 	
-	private LinkedHashMap<String, HandlingType> fileSet = new LinkedHashMap<String, HandlingType>();
+	private ArrayList<FileDefinition> fileArray = new ArrayList<FileDefinition>();
 	
 	private String inputName = "";
 	private String assemblyName = "";
@@ -22,7 +21,7 @@ public class FileAssembly {
 	private String filetype = "";
 	private String contentType = "";
 	private String assemblyContent = "";
-	public static final String CFW_JAR_RESOURCES_PATH = "com/pengtoolbox/cfw/resources";
+	public static final String CFW_JAR_RESOURCES_PATH = "com.pengtoolbox.cfw.resources";
 	
 	public enum HandlingType {FILE, JAR_RESOURCE, STRING};
 	
@@ -42,8 +41,15 @@ public class FileAssembly {
 	 * @param type the handling type of the file.
 	 * @param filetype the file type e.g. "js", "css"
 	 ***********************************************************************/
-	public FileAssembly addFile(HandlingType type, String fileDefinition) {
-		fileSet.put(fileDefinition, type);
+	public FileAssembly addFile(HandlingType type, String path, String filename) {
+		FileDefinition fileDef = new FileDefinition(type, path, filename);
+		fileArray.add(fileDef);
+		return this;
+	}
+	
+	public FileAssembly addFileContent(String content) {
+		FileDefinition fileDef = new FileDefinition(content);
+		fileArray.add(fileDef);
 		return this;
 	}
 	/***********************************************************************
@@ -52,7 +58,7 @@ public class FileAssembly {
 	 * @param filetype the file type e.g. "js", "css"
 	 ***********************************************************************/
 	public boolean hasFiles() {
-		return (fileSet.size() > 0);
+		return (fileArray.size() > 0);
 	}
 	
 	
@@ -66,8 +72,11 @@ public class FileAssembly {
 		
 		//--------------------------------
 		// Initialize
-		Set<String> keySet = fileSet.keySet();
-		int hashCode = keySet.toString().hashCode();
+		int hashCode = 0;
+		for(FileDefinition fileDef : fileArray) {
+			hashCode += fileDef.hashCode();
+		}
+		
 		assemblyName = inputName + "_" + hashCode + "." + filetype;
 		assemblyServletPath = "/cfw/assembly?name="+URLEncoder.encode(assemblyName);
 		//--------------------------------
@@ -75,19 +84,19 @@ public class FileAssembly {
 		if(!FileAssembly.hasAssembly((assemblyName)) || !CFWConfig.CACHING_FILE_ENABLED ) {
 			
 			StringBuffer concatenatedFile = new StringBuffer();
-			for(String fileDefinition : fileSet.keySet()) {
+			for(FileDefinition fileDef : fileArray) {
 				
-				HandlingType type = fileSet.get(fileDefinition);
+				
 				String content = "";
 				
-				switch(type) {
-					case FILE:			content = FileUtils.getFileContent(null, fileDefinition);
+				switch(fileDef.getType()) {
+					case FILE:			content = FileUtils.getFileContent(null, fileDef.getPath(), fileDef.getFilename());
 										break;
 						
-					case JAR_RESOURCE: 	content = FileUtils.readPackageResource(fileDefinition);
+					case JAR_RESOURCE: 	content = FileUtils.readPackageResource(fileDef.getPath(), fileDef.getFilename());
 										break;
 						
-					case STRING: 		content = fileDefinition;
+					case STRING: 		content = fileDef.getContent();
 										break;
 						
 					default: 			content = "";

@@ -15,16 +15,20 @@ class FileUtilsTests {
 	public void testFileAssembly() {
 		
 		FileAssembly assembler = new FileAssembly("common", "js");
-			
-		String assemblyName = assembler.addFile(HandlingType.FILE, "./testdata/test.css")
-				.addFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH +"./junit_test.js")
-				.addFile(HandlingType.STRING, "/* just some comment */")
+		
+		FileUtils.addAllowedPackage(FileAssembly.CFW_JAR_RESOURCES_PATH);
+		
+		String assemblyName = assembler.addFile(HandlingType.FILE, "./testdata", "test.css")
+				.addFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH +".test", "junit_test.js")
+				.addFileContent("/* just some comment */")
 				.assemble()
 				.cache()
 				.getAssemblyName();
 		
 		FileAssembly cachedAssembly = FileAssembly.getAssemblyFromCache(assemblyName);
 		Assertions.assertNotNull(cachedAssembly, "Assembly is not null");
+		
+		System.out.println(cachedAssembly.getAssemblyContent());
 		
 		Assertions.assertTrue( cachedAssembly.getAssemblyContent().contains(".test{display: block;}"),
 				"Contains the CSS string, FILE successfully loaded.");
@@ -37,12 +41,4 @@ class FileUtilsTests {
 		
 	}
 	
-	@Test
-	public void testReadPackageResource() {
-		String content = FileUtils.readPackageResource(INTERNAL_RESOURCES_PATH +"/cfw.js");
-		
-		Assertions.assertNotNull(content);
-		Assertions.assertTrue(content.length() > 0);
-	}
-
 }

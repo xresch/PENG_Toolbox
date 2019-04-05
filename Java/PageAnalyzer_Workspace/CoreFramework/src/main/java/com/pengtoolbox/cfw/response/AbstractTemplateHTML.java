@@ -41,12 +41,12 @@ public abstract class AbstractTemplateHTML extends AbstractTemplate {
 	// Class Methods
 	//##############################################################################
 	
-	public void addJSFileHead(HandlingType type, String path){
-		headjs.addFile(type, path);
+	public void addJSFileHead(HandlingType type, String path, String filename){
+		headjs.addFile(type, path, filename);
 	}
 	
-	public void addJSFileBottom(HandlingType type, String path){
-		bottomjs.addFile(type, path);
+	public void addJSFileBottom(HandlingType type, String path, String filename){
+		bottomjs.addFile(type, path, filename);
 	}
 	
 	public void addJavascriptData(String key, String value){
@@ -59,8 +59,8 @@ public abstract class AbstractTemplateHTML extends AbstractTemplate {
 
 	}
 	
-	public void addCSSFile(HandlingType type, String path){
-		assemblyCSS.addFile(type, path);
+	public void addCSSFile(HandlingType type, String path, String filename){
+		assemblyCSS.addFile(type, path, filename);
 	}
 	
 	public void addSupportInfo(String key, String value){

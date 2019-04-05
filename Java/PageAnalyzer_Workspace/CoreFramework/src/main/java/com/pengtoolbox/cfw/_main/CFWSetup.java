@@ -23,6 +23,7 @@ import com.pengtoolbox.cfw.servlets.AssemblyServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
+import com.pengtoolbox.cfw.utils.FileUtils;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
 /***********************************************************************
@@ -42,6 +43,10 @@ public class CFWSetup {
 		// Classloader
 		URL[] urls = {CFW.LANGUAGE_FOLDER.toURI().toURL()};
 		CFW.urlClassLoader = new URLClassLoader(urls);
+		
+		//------------------------------------
+		// Classloader
+		FileUtils.addAllowedPackage("com.pengtoolbox.cfw.resources");
 		
 		//------------------------------------
 		// Load Configuration

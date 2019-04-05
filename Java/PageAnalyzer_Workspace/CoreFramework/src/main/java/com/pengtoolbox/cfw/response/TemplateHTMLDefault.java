@@ -24,15 +24,15 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 		
 		this.pageTitle = pageTitle;
 		
-		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/css/bootstrap.min.css");
-		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/css/bootstrap-theme.css");
-		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/css/font-awesome.css");
-		this.addCSSFile(HandlingType.FILE, "./resources/css/custom.css");
+		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap.min.css");
+		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap-theme.css");
+		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "font-awesome.css");
+		this.addCSSFile(HandlingType.FILE, "./resources/css", "custom.css");
 		
-		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/js/jquery-2.2.3.js");
-		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/js/bootstrap.js");
-		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + "/js/cfw.js");
-		this.addJSFileBottom(HandlingType.FILE, "./resources/js/custom.js");
+		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "jquery-2.2.3.js");
+		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap.js");
+		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "cfw.js");
+		this.addJSFileBottom(HandlingType.FILE, "./resources/js", "custom.js");
 		
 		SessionData data = (SessionData)request.getSession().getAttribute(CFW.SESSION_DATA);
 		if(data.isLoggedIn()) {
