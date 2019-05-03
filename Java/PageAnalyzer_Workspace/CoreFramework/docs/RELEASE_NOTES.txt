@@ -9,3 +9,4 @@
 ##############################################
 - move HTML for login to CFW project
 - Fix package resource security issue (CFWSetup.addAllowedPackages())
+- add HTTP/HTTPS handling 
