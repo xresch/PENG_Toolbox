@@ -54,7 +54,7 @@ public class Main extends Application {
     	// General 
 	    CFWSetup.initialize("./config/cfw.properties");
 	    
-        Server server = new Server(CFWConfig.SERVER_PORT);
+        Server server = CFWSetup.createServer();
         
 		//------------------------------------
 		// Initialize YSlow Singleton
