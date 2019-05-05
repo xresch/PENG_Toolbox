@@ -32,8 +32,6 @@ public class LoginServlet extends HttpServlet
 		
 	}
 	
-
-		
 	/*****************************************************************
 	 *
 	 ******************************************************************/
@@ -45,7 +43,7 @@ public class LoginServlet extends HttpServlet
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 		StringBuffer content = html.getContent();
-		content.append(FileUtils.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + "/html/login.html"));
+		content.append(FileUtils.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "login.html"));
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);

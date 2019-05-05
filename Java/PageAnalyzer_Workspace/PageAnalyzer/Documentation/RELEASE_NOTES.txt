@@ -3,6 +3,16 @@
 ########################################
 
 ########################################
+# Page Analyzer v 1.2
+########################################
+- javadoc for custom.js
+- refactoring DB access, better logging
+- refactoring: moved general methods to cfw.js
+- updated to jetty 9.4
+- moved API to unsecured context, can be used without login 
+- fixed security isssue with jar resource
+
+########################################
 # Page Analyzer v 1.1
 ########################################
 - added save results checkbox

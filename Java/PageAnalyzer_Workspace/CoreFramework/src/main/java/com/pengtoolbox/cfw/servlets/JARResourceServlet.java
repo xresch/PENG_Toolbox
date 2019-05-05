@@ -22,13 +22,11 @@ public class JARResourceServlet extends HttpServlet
                           HttpServletResponse response ) throws ServletException,
                                                         IOException
     {
-		String pkg = request.getParameter("pkg");
-		pkg = pkg.replaceAll("\\.", "/");
-		
+		String pkg = request.getParameter("pkg");		
 		String file = request.getParameter("file");
 		
 		
-		byte[] fontContent = FileUtils.readPackageResourceAsBytes(pkg + "/" + file);
+		byte[] fontContent = FileUtils.readPackageResourceAsBytes(pkg, file);
 		if(fontContent != null) {
 			
 			response.addHeader("Cache-Control", "max-age="+CFWConfig.BROWSER_RESOURCE_MAXAGE);

@@ -3,9 +3,16 @@ package com.pengtoolbox.cfw._main;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.handler.ResourceHandler;
@@ -16,6 +23,7 @@ import org.eclipse.jetty.server.session.NullSessionDataStore;
 import org.eclipse.jetty.server.session.SessionCache;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -23,6 +31,7 @@ import com.pengtoolbox.cfw.servlets.AssemblyServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
+import com.pengtoolbox.cfw.utils.FileUtils;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
 /***********************************************************************
@@ -44,12 +53,54 @@ public class CFWSetup {
 		CFW.urlClassLoader = new URLClassLoader(urls);
 		
 		//------------------------------------
+		// Classloader
+		FileUtils.addAllowedPackage("com.pengtoolbox.cfw.resources");
+		
+		//------------------------------------
 		// Load Configuration
 		CFWConfig.loadConfiguration(configFilePath);
 		//log.end();
 				
 	}
 	
+	/***********************************************************************
+	 * Create a Server with the defined HTTP and HTTPs settings in the 
+	 * cfw.properties.
+	 * @return Server instance
+	 ***********************************************************************/
+	public static Server createServer() {
+		Server server = new Server();
+		ArrayList<Connector> connectorArray = new ArrayList<Connector>();
+		
+		if(CFWConfig.HTTP_ENABLED) {
+			ServerConnector httpConnector = new ServerConnector(server);
+			httpConnector.setPort(CFWConfig.HTTP_PORT);
+			connectorArray.add(httpConnector);
+		}
+		
+		if(CFWConfig.HTTPS_ENABLED) {
+			HttpConfiguration https = new HttpConfiguration();
+			https.addCustomizer(new SecureRequestCustomizer());
+			
+			SslContextFactory sslContextFactory = new SslContextFactory();
+			sslContextFactory.setKeyStorePath(CFWConfig.HTTPS_KEYSTORE_PATH);
+			sslContextFactory.setKeyStorePassword(CFWConfig.HTTPS_KEYSTORE_PASSWORD);
+			sslContextFactory.setKeyManagerPassword(CFWConfig.HTTPS_KEYMANAGER_PASSWORD);
+			
+			ServerConnector httpsConnector = new ServerConnector(server,
+					new SslConnectionFactory(sslContextFactory, "http/1.1"),
+					new HttpConnectionFactory(https));
+				
+			httpsConnector.setPort(CFWConfig.HTTPS_PORT);
+			
+			connectorArray.add(httpsConnector);
+		}
+		
+		server.setConnectors(connectorArray.toArray(new Connector[] {}));
+		
+		return server;
+	}
+
 	/***********************************************************************
 	 * Add the servlets provided by CFW to the given context.
 	 *  LoginServlet on /login

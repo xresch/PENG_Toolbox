@@ -2,7 +2,6 @@ package com.pengtoolbox.cfw.utils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,11 +28,30 @@ public class FileUtils {
 	private static final HashMap<String,String> permanentStringFileCache = new HashMap<String,String>();
 	private static final HashMap<String,byte[]> permanentByteFileCache = new HashMap<String,byte[]>();
 	
+	/** Only packages in this list can be accessed with readPackageResource*().*/
+	private static final ArrayList<String> allowedPackages = new ArrayList<String>();
+	
 	public static Logger logger = CFWLog.getLogger(FileUtils.class.getName());
 	
 	static String[] cachedFiles = new String[15];
 	static int fileCounter = 0;
 	
+	/***********************************************************************
+	 * Returns the file content of the given file path as a string.
+	 * If it fails to read the file it will handle the exception and
+	 * will add an alert to the given request.
+	 * A file once loaded will 
+	 * 
+	 * @param request the request that is currently handled
+	 * @param path the path 
+	 * @param filename the name of the file 
+	 * 
+	 * @return String content of the file or null if an exception occurred.
+	 * 
+	 ***********************************************************************/
+	public static String getFileContent(HttpServletRequest request, String path, String filename){
+		return getFileContent(request, path + "/" + filename);
+	}
 	/***********************************************************************
 	 * Returns the file content of the given file path as a string.
 	 * If it fails to read the file it will handle the exception and
@@ -111,24 +130,67 @@ public class FileUtils {
 	}
 	
 	/*************************************************************
-	 * Read a resource from the package.
-	 * @param path
-	 * @return content as string or null if not found.
+	 * Add a package to the allowed packages that can be accessed
+	 * by the readPackageResource*() methods.
+	 * 
+	 * @param packageName the name of the package e.g. "com.example.resources"
 	 *************************************************************/
-	public static String readPackageResource(String resourcePath) {
+	public static void addAllowedPackage(String packageName) {
+		allowedPackages.add(packageName);
+	}
+	
+	/*************************************************************
+	 * Remove a package from the allowed packages that can be accessed
+	 * by the readPackageResource*() methods.
+	 * 
+	 * @param packageName the name of the package e.g. "com.example.resources"
+	 *************************************************************/
+	public static void removeAllowedPackage(String packageName) {
+		allowedPackages.remove(packageName);
+	}
+	
+	/*************************************************************
+	 * Check if the package resource is allowed to be accessed.
+	 * 
+	 * @param packagePath the name of the package e.g. "com.example.resources"
+	 *************************************************************/
+	public static boolean isAllowedRecource(String packagePath) {
 		
+		boolean isAllowed = false;
+		for(String allowed : allowedPackages) {
+			if (packagePath.startsWith(allowed)) {
+				isAllowed = true;
+				break;
+			}
+		}	
+		return isAllowed;
+	}
+	
+	/*************************************************************
+	 * Read a resource from the package.
+	 * @param packageName e.g. "com.pengtoolbox.cfw.resources.js.bootstrap.js"
+	 * @return content as string or null if not found or not accessible.
+	 *************************************************************/
+	public static String readPackageResource(String packageName, String filename) {
 		String fileContent = null;
 		
-		if( CFWConfig.CACHING_FILE_ENABLED && FileUtils.permanentStringFileCache.containsKey(resourcePath)){
-			new CFWLog(logger).finest("Read package resource content from cache");
-			return FileUtils.permanentStringFileCache.get(resourcePath);
-		}else{
+		if(isAllowedRecource(packageName)) {
 			
-			InputStream in = FileUtils.class.getClassLoader().getResourceAsStream(resourcePath);
-			fileContent = readContentsFromInputStream(in);
-			FileUtils.permanentStringFileCache.put(resourcePath, fileContent);
+			packageName = packageName.replaceAll("\\.", "/");
+			String resourcePath = packageName + "/" + filename;
+			
+			if( CFWConfig.CACHING_FILE_ENABLED && FileUtils.permanentStringFileCache.containsKey(resourcePath)){
+				new CFWLog(logger).finest("Read package resource content from cache");
+				return FileUtils.permanentStringFileCache.get(resourcePath);
+			}else{
+				
+				InputStream in = FileUtils.class.getClassLoader().getResourceAsStream(resourcePath);
+				fileContent = readContentsFromInputStream(in);
+				FileUtils.permanentStringFileCache.put(resourcePath, fileContent);
+			}
+		}else {
+			new CFWLog(logger).severe("Not allowed to read resource from package: "+packageName);
 		}
-		
 		return fileContent;
 
 	}
@@ -136,20 +198,28 @@ public class FileUtils {
 	/*************************************************************
 	 * Read a resource from the package.
 	 * @param path
-	 * @return content as string or null if not found.
+	 * @return content as string or null if not found or not accessible.
 	 *************************************************************/
-	public static byte[] readPackageResourceAsBytes(String resourcePath) {
+	public static byte[] readPackageResourceAsBytes(String packageName, String filename) {
 		
 		byte[] fileContent = null;
 		
-		if( CFWConfig.CACHING_FILE_ENABLED && FileUtils.permanentByteFileCache.containsKey(resourcePath)){
-			new CFWLog(logger).finest("Read package resource content from cache");
-			return FileUtils.permanentByteFileCache.get(resourcePath);
-		}else{
+		if(isAllowedRecource(packageName)) {
 			
-			InputStream in = FileUtils.class.getClassLoader().getResourceAsStream(resourcePath);
-			fileContent = readBytesFromInputStream(in);
-			FileUtils.permanentByteFileCache.put(resourcePath, fileContent);
+			packageName = packageName.replaceAll("\\.", "/");
+			String resourcePath = packageName + "/" + filename;
+			
+			if( CFWConfig.CACHING_FILE_ENABLED && FileUtils.permanentByteFileCache.containsKey(resourcePath)){
+				new CFWLog(logger).finest("Read package resource content from cache");
+				return FileUtils.permanentByteFileCache.get(resourcePath);
+			}else{
+				
+				InputStream in = FileUtils.class.getClassLoader().getResourceAsStream(resourcePath);
+				fileContent = readBytesFromInputStream(in);
+				FileUtils.permanentByteFileCache.put(resourcePath, fileContent);
+			}
+		}else {
+			new CFWLog(logger).severe("Not allowed to read resource from package: "+packageName);
 		}
 		
 		return fileContent;

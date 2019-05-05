@@ -10,8 +10,26 @@ public class CFWConfig {
 
 	public static final Properties configProperties = new Properties();
 	
-	/** Enables or disables the Authentication. (Property=cfw_server_port, Default=8080) */
-	public static int SERVER_PORT = 8080;
+	/** Enables or disables the HTTP connector. (Property=cfw_http_enabled, Default=true) */
+	public static boolean HTTP_ENABLED = true;
+	
+	/** The port for the HTTP connector. (Property=cfw_http_port, Default=80) */
+	public static int HTTP_PORT = 80;
+	
+	/** Enables or disables the HTTPS connector. (Property=cfw_https_enabled, Default=true) */
+	public static boolean HTTPS_ENABLED = true;
+	
+	/**  (Property=cfw_https_port, Default=443) */
+	public static int HTTPS_PORT = 443;
+	
+	/**  (Property=cfw_https_keystore_path, Default=./config/keystore.jks) */
+	public static String HTTPS_KEYSTORE_PATH = "./config/keystore.jks";
+	
+	/**  (Property=cfw_https_keystore_password, Default="") */
+	public static String HTTPS_KEYSTORE_PASSWORD  = "";
+	
+	/**  (Property=cfw_https_keymanager_password, Default="") */
+	public static String HTTPS_KEYMANAGER_PASSWORD = "";
 	
 	/** the base url of the application. */
 	public static String BASE_URL = "/";
@@ -73,21 +91,30 @@ public class CFWConfig {
 		CFWConfig.configProperties.load(new FileReader(new File(configFilePath)));
 		printConfiguration();
 		
-		BASE_URL 					= "/"+CFWConfig.config("cfw_application_name", BASE_URL);
-		SERVER_PORT					= CFWConfig.configAsInt("cfw_server_port", SERVER_PORT);
+		BASE_URL 						= "/"+CFWConfig.config("cfw_application_name", BASE_URL);
 		
-		CACHING_FILE_ENABLED 	  	= CFWConfig.configAsBoolean("cfw_caching_file_enabled", CACHING_FILE_ENABLED);
-		BROWSER_RESOURCE_MAXAGE 	= CFWConfig.configAsInt("cfw_browser_resource_maxage", BROWSER_RESOURCE_MAXAGE);
+		HTTP_ENABLED 					= CFWConfig.configAsBoolean("cfw_http_enabled", HTTP_ENABLED);
+		HTTP_PORT 						= CFWConfig.configAsInt("cfw_http_port", HTTP_PORT);
+
+		HTTPS_ENABLED 					= CFWConfig.configAsBoolean("cfw_https_enabled", HTTPS_ENABLED);
+		HTTPS_PORT 						= CFWConfig.configAsInt("cfw_https_port", HTTPS_PORT);
 		
-		AUTHENTICATION_METHOD 		= CFWConfig.config("authentication_method", AUTHENTICATION_METHOD);
-		AUTHENTICATION_ENABLED 		= CFWConfig.configAsBoolean("cfw_authentication_enabled", AUTHENTICATION_ENABLED);
-		AUTHENTICATION_CSV_FILE		= CFWConfig.config("authentication_csv_file", AUTHENTICATION_CSV_FILE);
+		HTTPS_KEYSTORE_PATH 			= CFWConfig.config("cfw_https_keystore_path", HTTPS_KEYSTORE_PATH);
+		HTTPS_KEYSTORE_PASSWORD			= CFWConfig.config("cfw_https_keystore_password", HTTPS_KEYSTORE_PASSWORD);
+		HTTPS_KEYMANAGER_PASSWORD		= CFWConfig.config("cfw_https_keymanager_password", HTTPS_KEYMANAGER_PASSWORD);
 		
-		LDAP_URL 					= CFWConfig.config("authentication_ldap_url", LDAP_URL);
-		LDAP_USER 					= CFWConfig.config("authentication_ldap_user", LDAP_USER);
-		LDAP_PASSWORD 				= CFWConfig.config("authentication_ldap_password", LDAP_PASSWORD);
-		LDAP_SEARCHBASE 			= CFWConfig.config("authentication_ldap_searchbase", LDAP_SEARCHBASE);
-		LDAP_USER_ATTRIBUTE 		= CFWConfig.config("authentication_ldap_user_attribute", LDAP_USER_ATTRIBUTE);
+		CACHING_FILE_ENABLED 	  		= CFWConfig.configAsBoolean("cfw_caching_file_enabled", CACHING_FILE_ENABLED);
+		BROWSER_RESOURCE_MAXAGE 		= CFWConfig.configAsInt("cfw_browser_resource_maxage", BROWSER_RESOURCE_MAXAGE);
+		
+		AUTHENTICATION_METHOD 			= CFWConfig.config("authentication_method", AUTHENTICATION_METHOD);
+		AUTHENTICATION_ENABLED 			= CFWConfig.configAsBoolean("cfw_authentication_enabled", AUTHENTICATION_ENABLED);
+		AUTHENTICATION_CSV_FILE			= CFWConfig.config("authentication_csv_file", AUTHENTICATION_CSV_FILE);
+		
+		LDAP_URL 						= CFWConfig.config("authentication_ldap_url", LDAP_URL);
+		LDAP_USER 						= CFWConfig.config("authentication_ldap_user", LDAP_USER);
+		LDAP_PASSWORD 					= CFWConfig.config("authentication_ldap_password", LDAP_PASSWORD);
+		LDAP_SEARCHBASE 				= CFWConfig.config("authentication_ldap_searchbase", LDAP_SEARCHBASE);
+		LDAP_USER_ATTRIBUTE 			= CFWConfig.config("authentication_ldap_user_attribute", LDAP_USER_ATTRIBUTE);
 
 		DB_STORE_PATH				= CFWConfig.config("cfw_h2_path", DB_STORE_PATH);
 		DB_NAME						= CFWConfig.config("cfw_h2_db_name", DB_NAME);
