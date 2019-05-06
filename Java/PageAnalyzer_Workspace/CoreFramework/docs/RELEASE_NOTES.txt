@@ -3,11 +3,11 @@
 ##############################################
 - move defaultHTML to CFW project
 - Session Timeout Configurable
-- Fix Asynch Log potential missing logs 
 
 ##############################################
 # Current
 ##############################################
+- Fix Asynch Log potential missing logs 
 - move HTML for login to CFW project
 - Fix package resource security issue (CFWSetup.addAllowedPackages())
 - add HTTP/HTTPS handling 

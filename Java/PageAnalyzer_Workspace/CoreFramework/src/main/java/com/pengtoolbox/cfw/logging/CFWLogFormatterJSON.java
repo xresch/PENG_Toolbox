@@ -14,7 +14,7 @@ public class CFWLogFormatterJSON extends Formatter {
 	public String format(LogRecord rec) {
 		
 		StringBuffer buf = new StringBuffer(1000);
-		CFWLog log = (CFWLog)rec.getParameters()[0];
+		LogMessage log = (LogMessage)rec.getParameters()[0];
 		buf.append("{");
 		
 			//-------------------------

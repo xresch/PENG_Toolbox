@@ -7,9 +7,9 @@ import java.util.logging.FileHandler;
 import java.util.logging.LogRecord;
 
 /*****************************************************************
-* 
+* Handler that provides async log handling, extends FileHandler.
 *
-* � 2018 Reto Scheiwiller, all rights reserved
+* (c) 2018 Reto Scheiwiller, all rights reserved
 ******************************************************************/
 public class AsyncLogHandler extends FileHandler implements Runnable{
 

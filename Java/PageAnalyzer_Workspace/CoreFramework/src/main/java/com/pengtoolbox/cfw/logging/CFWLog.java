@@ -16,17 +16,14 @@ public class CFWLog {
 	
 	protected Logger logger;
 	
-	protected boolean saveLogging = false;
-	
 	private static boolean isLoggingInitialized = false;
 	
-	private long tempStartNanos = -1;
+	protected long tempStartNanos = -1;
 	protected long starttimeNanos = -1;
 	protected long endtimeNanos = -1;
 	protected long durationMillis = -1;
 	protected long deltaStartMillis = -1;
 
-	
 	protected HttpServletRequest request; 
 	protected String webURL;
 	protected String queryString;
@@ -94,16 +91,6 @@ public class CFWLog {
 		return Logger.getLogger(name);
 	}
 	
-	/***********************************************************************
-	 * Toogle save logging to prevent endless loops. 
-	 *   
-	 ***********************************************************************/
-	public CFWLog toogleSaveLogging(boolean isSave){
-		
-		this.saveLogging = isSave;
-		
-		return this;
-	}
 	
 	/***********************************************************************
 	 * Starts a duration measurement, to end the measurement and write a 
@@ -266,7 +253,7 @@ public class CFWLog {
 			//-------------------------
 			// Log Message
 			//-------------------------
-			logger.logp(level, sourceClass, sourceMethod, message, this);
+			logger.logp(level, sourceClass, sourceMethod, message, new LogMessage(this));
 				
 		}
 		
