@@ -50,15 +50,19 @@ function cfw_sortArrayByValueOfObject(array, key){
 CFW.array.sortArrayByValueOfObject = cfw_sortArrayByValueOfObject;
 
 /**************************************************************************************
- * Sort an object array by the values for the given key.
- * @param targetSelector the selector for the resulting element
+ * Create a table of contents for the h-elements on the page.
+ * @param contentAreaSelector the jQuery selector for the element containing all 
+ * the headers to show in the table of contents
+ * @param targetSelector the jQuery selector for the resulting element
  * @return nothing
  *************************************************************************************/
-function cfw_table_toc(targetSelector){
+function cfw_table_toc(contentAreaSelector, resultSelector){
 	
-	var target = $(targetSelector);
-	var headers = $("h1:visible, h2:visible, h3:visible, h4:visible, h5:visible, h6:visible, h7:visible, h8:visible, h9:visible");
+	var target = $(resultSelector);
+	var headers = $(contentAreaSelector).find("h1:visible, h2:visible, h3:visible, h4:visible, h5:visible, h6:visible, h7:visible, h8:visible, h9:visible");
 	
+	//------------------------------
+	//Loop all visible headers
 	currentLevel = 1;
 	resultHTML = "<h1>Table of Contents</h1><ul>";
 	for(i = 0; i < headers.length ; i++){

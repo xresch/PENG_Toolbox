@@ -56,7 +56,7 @@ public class DocuServlet extends HttpServlet {
 			content.append("</ul>");
 		}
 		
-		html.getJavascript().append("<script>CFW.table.toc(\"#toc\");</script>");
+		html.getJavascript().append("<script>CFW.table.toc(\"#tocContent\", \"#toc\");</script>");
 		
        response.setContentType("text/html");
        response.setStatus(HttpServletResponse.SC_OK);
