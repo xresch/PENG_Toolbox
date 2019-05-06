@@ -13,3 +13,4 @@
 - added HTTP/HTTPS handling 
 - added HTTP to HTTPS Redirect 
 - created Default App
+- Javascript: Added table of contents method CFW.table.toc()

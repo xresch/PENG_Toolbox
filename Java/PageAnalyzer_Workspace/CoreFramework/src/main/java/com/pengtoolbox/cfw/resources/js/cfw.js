@@ -21,6 +21,9 @@ var CFW = {
 	},
 	selection: {
 		selectElementContent: null
+	},
+	table: {
+		toc : null
 	}
 }
 
@@ -46,6 +49,49 @@ function cfw_sortArrayByValueOfObject(array, key){
 }
 CFW.array.sortArrayByValueOfObject = cfw_sortArrayByValueOfObject;
 
+/**************************************************************************************
+ * Sort an object array by the values for the given key.
+ * @param targetSelector the selector for the resulting element
+ * @return nothing
+ *************************************************************************************/
+function cfw_table_toc(targetSelector){
+	
+	var target = $(targetSelector);
+	var headers = $("h1:visible, h2:visible, h3:visible, h4:visible, h5:visible, h6:visible, h7:visible, h8:visible, h9:visible");
+	
+	currentLevel = 1;
+	resultHTML = "<h1>Table of Contents</h1><ul>";
+	for(i = 0; i < headers.length ; i++){
+		head = headers[i];
+		headLevel = head.tagName[1];
+		
+		//------------------------------
+		//increase list depth
+		while(currentLevel < headLevel){
+			resultHTML += "<ul>";
+			currentLevel++;
+		}
+		//------------------------------
+		//decrease list depth
+		while(currentLevel > headLevel){
+			resultHTML += "</ul>";
+			currentLevel--;
+		}
+		resultHTML += '<li><a href="#toc_anchor_'+i+'">'+head.innerHTML+'</li>';
+		$(head).before('<a name="toc_anchor_'+i+'"></a>');
+	}
+	
+	//------------------------------
+	// Close remaining levels
+	while(currentLevel > 1){
+		resultHTML += "</ul>";
+		currentLevel--;
+	}
+	
+	target.html(resultHTML);
+	
+}
+CFW.table.toc = cfw_table_toc;
 /******************************************************************
  * Reads the parameters from the URL and returns an object containing
  * name/value pairs like {"name": "value", "name2": "value2" ...}.

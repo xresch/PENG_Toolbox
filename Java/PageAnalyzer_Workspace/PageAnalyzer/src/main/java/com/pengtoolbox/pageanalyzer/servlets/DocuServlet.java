@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.cfw.utils.FileUtils;
@@ -45,7 +46,7 @@ public class DocuServlet extends HttpServlet {
 		
 		String supportDetails = CFWConfig.config("pa_support_details", "");
 		if(supportDetails != null) {
-			content.append("<h2>Support Contact</h2>");
+			content.append("<h1>Support Contact</h1>");
 	
 			content.append("<ul>");
 			String[] supportDetailsArray = supportDetails.split(";");
@@ -54,6 +55,9 @@ public class DocuServlet extends HttpServlet {
 			}
 			content.append("</ul>");
 		}
+		
+		html.getJavascript().append("<script>CFW.table.toc(\"#toc\");</script>");
+		
        response.setContentType("text/html");
        response.setStatus(HttpServletResponse.SC_OK);
        
