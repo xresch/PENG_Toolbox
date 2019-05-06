@@ -5,7 +5,6 @@ import javax.servlet.MultipartConfigElement;
 import org.eclipse.jetty.rewrite.handler.RedirectRegexRule;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
@@ -15,6 +14,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWDefaultApp;
 import com.pengtoolbox.cfw._main.CFWSetup;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
@@ -44,16 +44,13 @@ public class Main extends Application {
 	
     public static void main( String[] args ) throws Exception
     {
-
-        //###################################################################
-        // Initialize
-        //###################################################################
     	
-    	//---------------------------------------
-    	// General 
-	    CFWSetup.initialize("./config/cfw.properties");
-	    
-        Server server = CFWSetup.createServer();
+        //###################################################################
+        // Initialization
+        //################################################################### 
+    	//------------------------------------
+    	// Create Default App
+    	CFWDefaultApp app = new CFWDefaultApp();
         
 		//------------------------------------
 		// Initialize YSlow Singleton
@@ -61,116 +58,54 @@ public class Main extends Application {
 		YSlow.instance();
 		YSlowExecutor.instance();
 		
-    	//---------------------------------------
-    	// Database    	
-    	CFWDB.initialize();
+		//------------------------------------
+		// Initialize Database
     	PageAnalyzerDB.initialize();
-    	//---------------------------------------
-    	// Multipart Config max 100MB
-        int maxSize = 1024*1024*100;
-        MultipartConfigElement multipartConfig = new MultipartConfigElement(null, maxSize, maxSize, maxSize);
-        
+    	
         //###################################################################
         // Create API ServletContext, no login needed
         //################################################################### 
-        
-    	ServletContextHandler apiServletContext = new ServletContextHandler();
+    	ServletContextHandler apiContext = app.createUnsecureContext("/api");
+    	
     	ServletHolder apiHolder = new ServletHolder(new RestAPIServlet());
-        apiHolder.getRegistration().setMultipartConfig(multipartConfig);
-        apiServletContext.addServlet(apiHolder, "/analyzehar");
+        apiHolder.getRegistration().setMultipartConfig(app.getGlobalMultipartConfig());
         
-        //----------------------------------
-        // Build Handler Chain
-        SessionHandler apiSessionHandler = CFWSetup.createSessionHandler(server);
-        ContextHandler apiContext = new ContextHandler(CFWConfig.BASE_URL+"/api");
-        GzipHandler apiGzipHandler = new GzipHandler();
-        RequestHandler apiRequestHandler = new RequestHandler();
+        apiContext.addServlet(apiHolder, "/analyzehar");
         
-        new HandlerChainBuilder(apiContext)
-	        .chain(apiGzipHandler)
-	        .chain(apiSessionHandler)
-	    	.chain(apiRequestHandler)
-	        .chain(apiServletContext);
         
         //###################################################################
         // Create authenticatedServletContext
         //###################################################################    	
-    	ServletContextHandler securedServletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    	ServletContextHandler appContext = app.createSecureContext("/app");
     	
         ServletHolder uploadHolder = new ServletHolder(new HARUploadServlet());
-        uploadHolder.getRegistration().setMultipartConfig(multipartConfig);
-        securedServletContext.addServlet(uploadHolder, "/harupload");
+        uploadHolder.getRegistration().setMultipartConfig(app.getGlobalMultipartConfig());
+        appContext.addServlet(uploadHolder, "/");
+        appContext.addServlet(uploadHolder, "/harupload");
+        appContext.addServlet(DataServlet.class, "/data");
         
-        securedServletContext.addServlet(DataServlet.class, "/data");
+        appContext.addServlet(HARDownloadServlet.class, "/hardownload");
+        appContext.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
+        appContext.addServlet(ResultViewServlet.class, "/resultview");
+        appContext.addServlet(CompareServlet.class, "/compare");
+        appContext.addServlet(DeleteResultServlet.class, "/delete");
+        appContext.addServlet(ResultListServlet.class, "/resultlist");
+        appContext.addServlet(GanttChartServlet.class, "/ganttchart");
         
-        securedServletContext.addServlet(HARDownloadServlet.class, "/hardownload");
-        securedServletContext.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
-        securedServletContext.addServlet(ResultViewServlet.class, "/resultview");
-        securedServletContext.addServlet(CompareServlet.class, "/compare");
-        securedServletContext.addServlet(DeleteResultServlet.class, "/delete");
-        securedServletContext.addServlet(ResultListServlet.class, "/resultlist");
-        securedServletContext.addServlet(GanttChartServlet.class, "/ganttchart");
+        appContext.addServlet(DocuServlet.class, "/docu");
+        appContext.addServlet(CustomContentServlet.class, "/custom");
         
-        securedServletContext.addServlet(DocuServlet.class, "/docu");
-        securedServletContext.addServlet(CustomContentServlet.class, "/custom");
-        
-        CFWSetup.addCFWServlets(securedServletContext);
-        
-        //###################################################################
-        // Create pageAnalyzer Handler Collection
-        //###################################################################         
-        
-        //-------------------------------
-        // Create Session Handler
-        //-------------------------------
-        SessionHandler sessionHandler = CFWSetup.createSessionHandler(server);
-        
-        //-------------------------------
-        // Create Rewrite Handler
-        //-------------------------------
-        RewriteHandler rewriteHandler = new RewriteHandler();
-        rewriteHandler.setRewriteRequestURI(true);
-        rewriteHandler.setRewritePathInfo(true);
-        rewriteHandler.setOriginalPathAttribute("requestedPath");
-
-        RedirectRegexRule mainRedirect = new RedirectRegexRule();
-        mainRedirect.setRegex("^/$"+
-        					 "|"+CFWConfig.BASE_URL+"/?$"+
-        					 "|"+CFWConfig.BASE_URL+"/app/?$");
-        mainRedirect.setReplacement(CFWConfig.BASE_URL+"/app/harupload");
-        rewriteHandler.addRule(mainRedirect);	
-        
-        //-------------------------------
-        // Create HandlerChain
-        //-------------------------------
-        System.out.println("CFWConfig.BASE_URL: "+CFWConfig.BASE_URL);
-        ContextHandler pageanalyzerContext = new ContextHandler(CFWConfig.BASE_URL+"/app");
-        AuthenticationHandler authenticationHandler = new AuthenticationHandler();
-        GzipHandler servletGzipHandler = new GzipHandler();
-        RequestHandler requestHandler = new RequestHandler();
-        
-        new HandlerChainBuilder(pageanalyzerContext)
-        	.chain(servletGzipHandler)
-        	.chain(sessionHandler)
-	        .chain(requestHandler)
-	        .chain(authenticationHandler)
-	        .chain(securedServletContext);
-        
-        //###################################################################
-        // Create Handler Collection
-        //###################################################################
-        HandlerCollection handlerCollection = new HandlerCollection();
-        handlerCollection.setHandlers(new Handler[] {new HTTPSRedirectHandler(), apiContext, rewriteHandler, pageanalyzerContext, CFWSetup.createResourceHandler(), CFWSetup.createCFWHandler(), new DefaultHandler() });
-        server.setHandler(handlerCollection);
+        CFWSetup.addCFWServlets(appContext);
         
         //###################################################################
         // Startup
         //###################################################################
-        server.start();
-        server.join();
-       
+        app.setDefaultURL("/app/harupload");
+        app.start();
+        
     }
 
+    //Method from JavaFX Application startup
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// TODO Auto-generated method stub
