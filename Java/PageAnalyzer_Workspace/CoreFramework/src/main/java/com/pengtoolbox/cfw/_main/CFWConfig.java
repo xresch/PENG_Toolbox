@@ -16,6 +16,9 @@ public class CFWConfig {
 	/** The port for the HTTP connector. (Property=cfw_http_port, Default=80) */
 	public static int HTTP_PORT = 80;
 	
+	/** The port for the HTTP connector. (Property=cfw_http_redirect_to_https, Default=true) */
+	public static boolean HTTP_REDIRECT_TO_HTTPS = true;
+	
 	/** Enables or disables the HTTPS connector. (Property=cfw_https_enabled, Default=true) */
 	public static boolean HTTPS_ENABLED = true;
 	
@@ -95,6 +98,7 @@ public class CFWConfig {
 		
 		HTTP_ENABLED 					= CFWConfig.configAsBoolean("cfw_http_enabled", HTTP_ENABLED);
 		HTTP_PORT 						= CFWConfig.configAsInt("cfw_http_port", HTTP_PORT);
+		HTTP_REDIRECT_TO_HTTPS			= CFWConfig.configAsBoolean("cfw_http_redirect_to_https", HTTP_REDIRECT_TO_HTTPS);
 
 		HTTPS_ENABLED 					= CFWConfig.configAsBoolean("cfw_https_enabled", HTTPS_ENABLED);
 		HTTPS_PORT 						= CFWConfig.configAsInt("cfw_https_port", HTTPS_PORT);

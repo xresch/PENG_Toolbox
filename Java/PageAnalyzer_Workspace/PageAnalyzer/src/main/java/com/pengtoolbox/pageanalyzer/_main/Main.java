@@ -7,10 +7,8 @@ import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -20,6 +18,7 @@ import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.CFWSetup;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
+import com.pengtoolbox.cfw.handlers.HTTPSRedirectHandler;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
@@ -72,7 +71,7 @@ public class Main extends Application {
         MultipartConfigElement multipartConfig = new MultipartConfigElement(null, maxSize, maxSize, maxSize);
         
         //###################################################################
-        // Create unsecuredServletContext
+        // Create API ServletContext, no login needed
         //################################################################### 
         
     	ServletContextHandler apiServletContext = new ServletContextHandler();
@@ -161,7 +160,7 @@ public class Main extends Application {
         // Create Handler Collection
         //###################################################################
         HandlerCollection handlerCollection = new HandlerCollection();
-        handlerCollection.setHandlers(new Handler[] {apiContext, rewriteHandler, pageanalyzerContext, CFWSetup.createResourceHandler(), CFWSetup.createCFWHandler(), new DefaultHandler() });
+        handlerCollection.setHandlers(new Handler[] {new HTTPSRedirectHandler(), apiContext, rewriteHandler, pageanalyzerContext, CFWSetup.createResourceHandler(), CFWSetup.createCFWHandler(), new DefaultHandler() });
         server.setHandler(handlerCollection);
         
         //###################################################################

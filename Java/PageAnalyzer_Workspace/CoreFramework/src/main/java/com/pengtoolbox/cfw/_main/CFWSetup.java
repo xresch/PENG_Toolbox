@@ -72,15 +72,19 @@ public class CFWSetup {
 		Server server = new Server();
 		ArrayList<Connector> connectorArray = new ArrayList<Connector>();
 		
+		HttpConfiguration httpConf = new HttpConfiguration();
+		httpConf.addCustomizer(new SecureRequestCustomizer());
+		httpConf.setSecurePort(CFWConfig.HTTPS_PORT);
+		httpConf.setSecureScheme("https");
+		
 		if(CFWConfig.HTTP_ENABLED) {
-			ServerConnector httpConnector = new ServerConnector(server);
+			ServerConnector httpConnector = new ServerConnector(server, new HttpConnectionFactory(httpConf));
+			httpConnector.setName("unsecured");
 			httpConnector.setPort(CFWConfig.HTTP_PORT);
 			connectorArray.add(httpConnector);
 		}
 		
 		if(CFWConfig.HTTPS_ENABLED) {
-			HttpConfiguration https = new HttpConfiguration();
-			https.addCustomizer(new SecureRequestCustomizer());
 			
 			SslContextFactory sslContextFactory = new SslContextFactory();
 			sslContextFactory.setKeyStorePath(CFWConfig.HTTPS_KEYSTORE_PATH);
@@ -89,8 +93,8 @@ public class CFWSetup {
 			
 			ServerConnector httpsConnector = new ServerConnector(server,
 					new SslConnectionFactory(sslContextFactory, "http/1.1"),
-					new HttpConnectionFactory(https));
-				
+					new HttpConnectionFactory(httpConf));
+			httpsConnector.setName("secured");
 			httpsConnector.setPort(CFWConfig.HTTPS_PORT);
 			
 			connectorArray.add(httpsConnector);
