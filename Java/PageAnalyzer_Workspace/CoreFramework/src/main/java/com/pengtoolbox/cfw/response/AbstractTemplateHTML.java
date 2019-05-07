@@ -92,7 +92,7 @@ public abstract class AbstractTemplateHTML extends AbstractTemplate {
 		String clazz = "";
 		switch(alertType){
 			
-			case CFW.ALERT_SUCCESS: 	clazz = "alert-success"; break;
+			case CFW.ALERT_SUCCESS: clazz = "alert-success"; break;
 			case CFW.ALERT_INFO: 	clazz = "alert-info"; break;
 			case CFW.ALERT_WARN: 	clazz = "alert-warning"; break;
 			case CFW.ALERT_ERROR: 	clazz = "alert-danger"; break;

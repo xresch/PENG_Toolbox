@@ -459,6 +459,138 @@ function printComparison(parent, data){
 }
 
 /******************************************************************
+ * Create the dropdown for analyzing cookies or headers.
+ * 
+ * @param parent jQuery object to append the created dropdown
+ * @param data HAR file data
+ * @param type either "Cookies" or "Headers"
+ ******************************************************************/
+function createAnalyzeDropdown(parent, data, type){
+		
+	//---------------------------------------------
+	// Loop entries and get distinct cookie names
+	var entries = data.log.entries; 
+	var entriesCount = entries.length;
+	
+	var distinctNames = {};
+	for(var i = 0; i < entriesCount; i++ ){
+		var currentEntry = entries[i];
+		
+		//------------------------------------
+		// Loop request Cookies
+		var requestArray = currentEntry.request[type.toLowerCase()];		
+		if(requestArray != null && requestArray.length > 0){
+			for(j = 0; j < requestArray.length; j++){
+				var name = requestArray[j].name;
+				distinctNames[name] = "";
+			}
+		}
+		
+		//------------------------------------
+		// Loop Response Cookies
+		var responseArray = currentEntry.response[type.toLowerCase()];		
+		if(responseArray != null && responseArray.length > 0){
+			for(j = 0; j < responseArray.length; j++){
+				var name = responseArray[j].name;
+				distinctNames[name] = "";
+			}
+		}
+		
+	}	
+	
+	//------------------------------------
+	// Create Dropdown
+	dropdownID = type+"Dropdown";
+	var dropdownHTML = '<div class="dropdown" style="display: inline; margin-right: 10px;" >' +
+		'<button class="btn btn-primary dropdown-toggle" type="button" id="'+dropdownID+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
+	    'Analyze '+type+' <span class="caret"></span>' +
+		'</button>' +
+		'<ul class="dropdown-menu" aria-labelledby="'+dropdownID+'">';
+			
+	if(distinctNames != null){
+		nameArray = Object.keys(distinctNames);
+		console.log(nameArray);
+		for(i = 0; i < nameArray.length; i++){
+			dropdownHTML += '<li class="dropdown-item"><a onclick="analyzeCookiesOrHeaders(\''+nameArray[i]+'\', \''+type+'\')">'+nameArray[i]+'</a></li>';
+		}
+	}
+
+	dropdownHTML += '</ul></div>';
+	
+	parent.append(dropdownHTML);
+	$('#'+dropdownID).dropdown();    
+
+}
+
+/******************************************************************
+ * Open a modal with details for one item in the gantt chart list.
+ * 
+ * @param key the key of the cookie or header to analies
+ * @param "Cookies" or "Headers"
+ ******************************************************************/
+function analyzeCookiesOrHeaders(key, type){
+	
+	//-----------------------------------------
+	// Initialize
+	//-----------------------------------------
+	var parent = $('#defaultModalBody');
+	
+	parent.html('');
+	
+	resultHTML = '<h1>Values for '+type+' "'+key+'"</h1>';
+	resultHTML += '<div style="max-height: 80%; width: 100%; overflow: scroll;">'
+		+'<table class="table table-striped">'
+		+ '<thead><tr><td>Request Cookie Value</td><td>Response Cookie Value</td><td>URL</td></tr></thead>'
+	//---------------------------------------------
+	// Loop Entries
+	data = HAR_DATA;
+	var entries = data.log.entries; 
+	var entriesCount = entries.length;
+	
+	for(var i = 0; i < entriesCount; i++ ){
+		var currentEntry = entries[i];
+		
+		//------------------------------------
+		// Loop Request Cookies and find Value
+		var requestArray = currentEntry.request[type.toLowerCase()];	
+		var requestValue = "";
+		if(requestArray != null && requestArray.length > 0){
+			for(j = 0; j < requestArray.length; j++){
+				if(requestArray[j].name == key){
+					requestValue = requestArray[j].value;
+					break;
+				}
+			}
+		}
+		
+		//--------------------------------------
+		// Loop Response Cookies  and find Value
+		var responseArray = currentEntry.response[type.toLowerCase()];	
+		var responseValue = "";
+		if(responseArray != null && responseArray.length > 0){
+			for(j = 0; j < responseArray.length; j++){
+				if(responseArray[j].name == key){
+					responseValue = responseArray[j].value;
+					break;
+				}
+			}
+		}
+		
+		//--------------------------------------
+		// Create Table Row
+		if(requestValue != "" || responseValue != ""){
+			resultHTML += '	<tr><td>'+requestValue+'</td><td>'+responseValue+'</td><td>'+CFW.general.secureDecodeURI(currentEntry.request.url)+'</td></tr>';
+		}
+	}	
+	
+	resultHTML += "</table></div>";
+	
+	parent.html(resultHTML);
+	
+	$('#defaultModal').modal('show');
+	
+}
+/******************************************************************
  * Print the gantt chart for the entries.
  * 
  * @param parent JQuery object 
@@ -471,7 +603,8 @@ function printGanttChart(parent, data){
 	// Add title and description.
 	parent.append("<h2>Gantt Chart</h2>");
 
-
+	createAnalyzeDropdown(parent, data, "Cookies");
+	createAnalyzeDropdown(parent, data, "Headers");
 	//----------------------------------
 	// Create Table Filter
 	var filter = $('<input type="text" class="form-control" onkeyup="filterTable(this)" placeholder="Filter Table...">');
@@ -491,16 +624,11 @@ function printGanttChart(parent, data){
 	//----------------------------------
 	// Create Table
 	var table = $('<table class="table table-striped table-responsive table-condensed" style="font-size: smaller;">');
-
-	table.append(headerRowString);
-	
-	parent.append(createGanttChartLegend());
-	parent.append(table);
 	filter.data("table", table);
-	
+	table.append(headerRowString);
+
 	//----------------------------------
 	// Create Rows
-	console.log(data);
 	var entries = data.log.entries; 
 	var entriesCount = entries.length;
 	for(var i = 0; i < entriesCount; i++ ){
@@ -545,7 +673,11 @@ function printGanttChart(parent, data){
 		
 		table.append(row);
 	}
+	
+	var legendHTML = createGanttChartLegend();
+	parent.append(legendHTML);
 	parent.append(table);
+	parent.append(legendHTML);
 	
 }
 
@@ -667,6 +799,7 @@ function updateGanttDetails(tab){
 		details += convertNameValueArrayToRow("Request Headers", entry.request.headers);
 		details += convertNameValueArrayToRow("Response Headers", entry.response.headers);
 		details += '</table>';
+		
 	}else if(tab === 'cookies'){
 		details += '<table class="table table-striped">';
 		details += convertNameValueArrayToRow("Request Cookies", entry.request.cookies);
