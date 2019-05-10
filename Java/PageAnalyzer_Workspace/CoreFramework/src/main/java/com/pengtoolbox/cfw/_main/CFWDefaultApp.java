@@ -147,8 +147,8 @@ public class CFWDefaultApp {
         
         //Connect all relevant Handlers
         ArrayList<Handler> handlerArray = new ArrayList<Handler>();
-        handlerArray.add(new HTTPSRedirectHandler());
         handlerArray.add(new ShutdownHandler(CFW.Config.APPLICATION_ID, true, true));
+        handlerArray.add(new HTTPSRedirectHandler());
         handlerArray.addAll(unsecureContextArray);
         handlerArray.add(rewriteHandler);
         handlerArray.addAll(secureContextArray);
@@ -177,7 +177,7 @@ public class CFWDefaultApp {
 		// Resolve Port to use
 		String protocol = "http";
 		int port = CFW.Config.HTTP_PORT;
-		if(CFW.Config.HTTP_REDIRECT_TO_HTTPS && CFW.Config.HTTPS_ENABLED) {
+		if(!CFW.Config.HTTP_ENABLED && CFW.Config.HTTPS_ENABLED) {
 			protocol = "https";
 			port = CFW.Config.HTTPS_PORT;
 		}
@@ -192,7 +192,7 @@ public class CFWDefaultApp {
              if(connection.getResponseCode() == 200) {
             	 System.out.println("Shutdown successful.");
              }else {
-            	 System.err.println("Stop Jetty returned response code HTTP "+connection.getResponseCode());
+            	 System.err.println("Jetty returned response code HTTP "+connection.getResponseCode());
              }
              
         } catch (IOException ex) {
