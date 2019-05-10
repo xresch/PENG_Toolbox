@@ -931,6 +931,7 @@ function printResultList(parent, data){
 		headerRowString += '<th>&nbsp;</th>';
 		headerRowString += '<th>&nbsp;</th>';
 		headerRowString += '<th>&nbsp;</th>';
+		headerRowString += '<th>&nbsp;</th>';
 	headerRowString += '</tr></thead>';
 	
 	//----------------------------------
@@ -953,15 +954,34 @@ function printResultList(parent, data){
 		rowString += '<td>'+currentData.RESULT_ID+'</td>';
 		rowString += '<td>'+currentData.TIME+'</td>';
 		
+		// URL Column
 		url = CFW.general.secureDecodeURI(currentData.PAGE_URL);
-		
 		rowString += '<td>'+url+'</td>';
 		
+		// View Result Icon
 		rowString += '<td><a  alt="View Result" href="./resultview?resultid='+currentData.RESULT_ID+'"><i class="fa fa-eye"></i></a></td>';
+		
+		// Gantt Chart Icon
 		rowString += '<td><a  alt="View Gantt Chart" href="./ganttchart?resultid='+currentData.RESULT_ID+'"><i class="fas fa-sliders-h"></i></a></td>';
 		
+		// Link Icon
 		rowString += '<td><a target="_blank" alt="Open URL" href="'+url+'"><i class="fa fa-link"></i></a></td>';
 		
+		// Save Result
+		var regex = /.*?http.?:\/\/([^\/]*)/g;
+		var matches = regex.exec(CFW.general.secureDecodeURI(currentData.PAGE_URL));
+		
+		var resultName = "result";
+		if(matches != null){
+			console.log("HIT");
+			resultName = matches[1];
+		}
+		console.log(resultName);
+		rowString += '<td><a target="_blank" alt="Dowload Result" href=./data?type=yslowresult&resultid='+currentData.RESULT_ID+' download="'+resultName+'_yslow_results.json"><i class="fa fa-save"></i></a></td>';
+		
+		//Save HAR
+		rowString += '<td><a target="_blank" alt="Dowload Result" href=./data?type=har&resultid='+currentData.RESULT_ID+' download="'+resultName+'.har"><i class="fa fa-download"> HAR</i></a></td>';
+
 		rowString += '<td><a target="_blank" alt="Delete Result" href="./delete?resultids='+currentData.RESULT_ID+'"><i class="fa fa-trash text-danger"></i></a></td>';
 		rowString += "</tr>";
 		
@@ -999,8 +1019,6 @@ function resultSelectionChanged(){
 	}else{
 		$("#resultDeleteButton").attr("disabled", true);
 	}
-	
-	
 	
 }
 

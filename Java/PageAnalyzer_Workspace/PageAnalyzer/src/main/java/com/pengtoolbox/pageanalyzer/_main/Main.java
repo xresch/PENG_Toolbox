@@ -14,7 +14,6 @@ import com.pengtoolbox.pageanalyzer.servlets.DataServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DeleteResultServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DocuServlet;
 import com.pengtoolbox.pageanalyzer.servlets.GanttChartServlet;
-import com.pengtoolbox.pageanalyzer.servlets.HARDownloadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARUploadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.RestAPIServlet;
 import com.pengtoolbox.pageanalyzer.servlets.ResultListServlet;
@@ -75,7 +74,6 @@ public class Main extends Application {
         appContext.addServlet(uploadHolder, "/harupload");
         appContext.addServlet(DataServlet.class, "/data");
         
-        appContext.addServlet(HARDownloadServlet.class, "/hardownload");
         appContext.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
         appContext.addServlet(ResultViewServlet.class, "/resultview");
         appContext.addServlet(CompareServlet.class, "/compare");

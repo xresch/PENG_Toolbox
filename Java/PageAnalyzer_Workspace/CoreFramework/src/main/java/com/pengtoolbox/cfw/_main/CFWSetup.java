@@ -6,8 +6,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import org.eclipse.jetty.rewrite.handler.RedirectRegexRule;
-import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
