@@ -13,11 +13,18 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.AbstractTemplate;
 
 public class CFW {
 	
+	//##############################################################################
+	// Hierarchical Binding
+	//##############################################################################
+	public class Setup extends CFWSetup {}
+	public class Config extends CFWConfig {}
+	public class DB extends CFWDB {}
 	//##############################################################################
 	// GLOBAL
 	//##############################################################################

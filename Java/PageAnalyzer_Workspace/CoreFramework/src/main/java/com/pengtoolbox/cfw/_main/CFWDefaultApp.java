@@ -1,7 +1,10 @@
 package com.pengtoolbox.cfw._main;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import javax.servlet.MultipartConfigElement;
 
@@ -10,15 +13,16 @@ import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.ShutdownHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
-import com.pengtoolbox.cfw.db.CFWDB;
+import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
 import com.pengtoolbox.cfw.handlers.HTTPSRedirectHandler;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
 public class CFWDefaultApp {
@@ -30,8 +34,10 @@ public class CFWDefaultApp {
 	private ArrayList<ContextHandler> secureContextArray = new ArrayList<ContextHandler>();
 	
 	private String defaultURL = "/";
+		
+	public static Logger logger = CFWLog.getLogger(CFW.class.getName());
 	
-	public CFWDefaultApp() throws IOException {
+	public CFWDefaultApp(String[] args) throws IOException, ShutdownException {
 		
         //###################################################################
         // Initialize
@@ -39,13 +45,23 @@ public class CFWDefaultApp {
     	
     	//---------------------------------------
     	// General 
-	    CFWSetup.initialize("./config/cfw.properties");
-	    
-        server = CFWSetup.createServer();
+	    CFW.Setup.initialize("./config/cfw.properties");
+    	
+	    if (args.length == 1) {
+	    	
+	    	switch(args[0]) {
+	    		case "-stop":  this.stop(); 
+	    					   throw new ShutdownException();
+	    	}
+            
+        }
+    	//---------------------------------------
+    	// Create Server 
+        server = CFW.Setup.createServer();
         
     	//---------------------------------------
     	// Database    	
-    	CFWDB.initialize();
+    	CFW.DB.initialize();
     	
     	//---------------------------------------
     	// Default Multipart Config max 100MB
@@ -132,12 +148,12 @@ public class CFWDefaultApp {
         //Connect all relevant Handlers
         ArrayList<Handler> handlerArray = new ArrayList<Handler>();
         handlerArray.add(new HTTPSRedirectHandler());
+        handlerArray.add(new ShutdownHandler(CFW.Config.APPLICATION_ID, true, true));
         handlerArray.addAll(unsecureContextArray);
         handlerArray.add(rewriteHandler);
         handlerArray.addAll(secureContextArray);
         handlerArray.add(CFWSetup.createResourceHandler());
         handlerArray.add(CFWSetup.createCFWHandler());
-        handlerArray.add(new DefaultHandler());
         
         HandlerCollection handlerCollection = new HandlerCollection();
         handlerCollection.setHandlers(handlerArray.toArray(new Handler[] {}));
@@ -148,6 +164,40 @@ public class CFWDefaultApp {
         //###################################################################
         server.start();
         server.join();
+	}
+	
+	/**************************************************************************************************
+	 * 
+	 **************************************************************************************************/
+	public void stop() {
+		
+		System.out.println("Try to stop running application instance.");
+		
+		//----------------------------------
+		// Resolve Port to use
+		String protocol = "http";
+		int port = CFW.Config.HTTP_PORT;
+		if(CFW.Config.HTTP_REDIRECT_TO_HTTPS && CFW.Config.HTTPS_ENABLED) {
+			protocol = "https";
+			port = CFW.Config.HTTPS_PORT;
+		}
+		
+		//----------------------------------
+		// Try Stop 
+        try {
+        	URL url = new URL(protocol, "localhost", port, "/shutdown?token="+CFW.Config.APPLICATION_ID);
+        	 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+             connection.setRequestMethod("POST");
+
+             if(connection.getResponseCode() == 200) {
+            	 System.out.println("Shutdown successful.");
+             }else {
+            	 System.err.println("Stop Jetty returned response code HTTP "+connection.getResponseCode());
+             }
+             
+        } catch (IOException ex) {
+            System.err.println("Stop Jetty failed: " + ex.getMessage());
+        }
 	}
 
 	public Server getServer() {

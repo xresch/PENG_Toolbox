@@ -1,26 +1,11 @@
 package com.pengtoolbox.pageanalyzer._main;
 
-import javax.servlet.MultipartConfigElement;
-
-import org.eclipse.jetty.rewrite.handler.RedirectRegexRule;
-import org.eclipse.jetty.rewrite.handler.RewriteHandler;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWDefaultApp;
-import com.pengtoolbox.cfw._main.CFWSetup;
-import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
-import com.pengtoolbox.cfw.handlers.HTTPSRedirectHandler;
-import com.pengtoolbox.cfw.handlers.RequestHandler;
-import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
+import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.servlets.AnalyzeURLServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CompareServlet;
@@ -50,7 +35,13 @@ public class Main extends Application {
         //################################################################### 
     	//------------------------------------
     	// Create Default App
-    	CFWDefaultApp app = new CFWDefaultApp();
+    	CFWDefaultApp app;
+    	try {
+    		app = new CFWDefaultApp(args);
+    	}catch(ShutdownException e) {
+    		//do not proceed if shutdown was registered
+    		return;
+    	}
         
 		//------------------------------------
 		// Initialize YSlow Singleton
@@ -95,7 +86,8 @@ public class Main extends Application {
         appContext.addServlet(DocuServlet.class, "/docu");
         appContext.addServlet(CustomContentServlet.class, "/custom");
         
-        CFWSetup.addCFWServlets(appContext);
+        //Login, Logout and Resource Servlets
+        CFW.Setup.addCFWServlets(appContext);
         
         //###################################################################
         // Startup

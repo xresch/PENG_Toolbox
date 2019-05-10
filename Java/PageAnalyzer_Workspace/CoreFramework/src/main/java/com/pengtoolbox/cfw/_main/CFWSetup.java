@@ -46,7 +46,6 @@ public class CFWSetup {
 		
 		//---------------------------------------
 		// Logging
-		
 		CFWLog log = new CFWLog(logger).method("initialize").start();
 				
 		//------------------------------------
@@ -62,7 +61,7 @@ public class CFWSetup {
 		// Load Configuration
 		CFWConfig.loadConfiguration(configFilePath);
 		//log.end();
-				
+		
 	}
 	
 	/***********************************************************************

@@ -70,11 +70,11 @@ public class HARUploadNodeJSServlet extends HttpServlet
 				int index = FileUtils.temporarlyCacheFile(harContents);
 			log.end();
 			
-			String nodJSHost = CFWConfig.config("pa_nodejs_hostname", "");
-			String nodJSPort = CFWConfig.config("pa_nodejs_port", "");
-			String appName = CFWConfig.config("pa_application_name", "");
-			String serverName = CFWConfig.config("pa_server_hostname", "");
-			String serverPort = CFWConfig.config("pa_server_port", "");
+			String nodJSHost = CFWConfig.configAsString("pa_nodejs_hostname", "");
+			String nodJSPort = CFWConfig.configAsString("pa_nodejs_port", "");
+			String appName = CFWConfig.configAsString("pa_application_name", "");
+			String serverName = CFWConfig.configAsString("pa_server_hostname", "");
+			String serverPort = CFWConfig.configAsString("pa_server_port", "");
 			
 			String harLink = "http://"+serverName+":"+serverPort+"/"+appName+"/hardownload?harindex="+index;
 			

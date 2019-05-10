@@ -10,6 +10,12 @@ public class CFWConfig {
 
 	public static final Properties configProperties = new Properties();
 	
+	/** Application name, will be used for creating the base url (Property=cfw_application_name, Default="myapp") */
+	public static String APPLICATION_NAME = "myapp";
+	
+	/** Application ID, used to make your application more secure. (Property=cfw_application_id, Default="change_me_now") */
+	public static String APPLICATION_ID = "change_me_now";
+	
 	/** Enables or disables the HTTP connector. (Property=cfw_http_enabled, Default=true) */
 	public static boolean HTTP_ENABLED = true;
 	
@@ -94,7 +100,12 @@ public class CFWConfig {
 		CFWConfig.configProperties.load(new FileReader(new File(configFilePath)));
 		printConfiguration();
 		
-		BASE_URL 						= "/"+CFWConfig.config("cfw_application_name", BASE_URL);
+		
+		
+		APPLICATION_ID					= CFWConfig.configAsString("cfw_application_id", APPLICATION_ID);
+		APPLICATION_NAME				= CFWConfig.configAsString("cfw_application_name", APPLICATION_NAME);
+		
+		BASE_URL 						= "/"+APPLICATION_NAME;
 		
 		HTTP_ENABLED 					= CFWConfig.configAsBoolean("cfw_http_enabled", HTTP_ENABLED);
 		HTTP_PORT 						= CFWConfig.configAsInt("cfw_http_port", HTTP_PORT);
@@ -103,28 +114,28 @@ public class CFWConfig {
 		HTTPS_ENABLED 					= CFWConfig.configAsBoolean("cfw_https_enabled", HTTPS_ENABLED);
 		HTTPS_PORT 						= CFWConfig.configAsInt("cfw_https_port", HTTPS_PORT);
 		
-		HTTPS_KEYSTORE_PATH 			= CFWConfig.config("cfw_https_keystore_path", HTTPS_KEYSTORE_PATH);
-		HTTPS_KEYSTORE_PASSWORD			= CFWConfig.config("cfw_https_keystore_password", HTTPS_KEYSTORE_PASSWORD);
-		HTTPS_KEYMANAGER_PASSWORD		= CFWConfig.config("cfw_https_keymanager_password", HTTPS_KEYMANAGER_PASSWORD);
+		HTTPS_KEYSTORE_PATH 			= CFWConfig.configAsString("cfw_https_keystore_path", HTTPS_KEYSTORE_PATH);
+		HTTPS_KEYSTORE_PASSWORD			= CFWConfig.configAsString("cfw_https_keystore_password", HTTPS_KEYSTORE_PASSWORD);
+		HTTPS_KEYMANAGER_PASSWORD		= CFWConfig.configAsString("cfw_https_keymanager_password", HTTPS_KEYMANAGER_PASSWORD);
 		
 		CACHING_FILE_ENABLED 	  		= CFWConfig.configAsBoolean("cfw_caching_file_enabled", CACHING_FILE_ENABLED);
 		BROWSER_RESOURCE_MAXAGE 		= CFWConfig.configAsInt("cfw_browser_resource_maxage", BROWSER_RESOURCE_MAXAGE);
 		
-		AUTHENTICATION_METHOD 			= CFWConfig.config("authentication_method", AUTHENTICATION_METHOD);
+		AUTHENTICATION_METHOD 			= CFWConfig.configAsString("authentication_method", AUTHENTICATION_METHOD);
 		AUTHENTICATION_ENABLED 			= CFWConfig.configAsBoolean("cfw_authentication_enabled", AUTHENTICATION_ENABLED);
-		AUTHENTICATION_CSV_FILE			= CFWConfig.config("authentication_csv_file", AUTHENTICATION_CSV_FILE);
+		AUTHENTICATION_CSV_FILE			= CFWConfig.configAsString("authentication_csv_file", AUTHENTICATION_CSV_FILE);
 		
-		LDAP_URL 						= CFWConfig.config("authentication_ldap_url", LDAP_URL);
-		LDAP_USER 						= CFWConfig.config("authentication_ldap_user", LDAP_USER);
-		LDAP_PASSWORD 					= CFWConfig.config("authentication_ldap_password", LDAP_PASSWORD);
-		LDAP_SEARCHBASE 				= CFWConfig.config("authentication_ldap_searchbase", LDAP_SEARCHBASE);
-		LDAP_USER_ATTRIBUTE 			= CFWConfig.config("authentication_ldap_user_attribute", LDAP_USER_ATTRIBUTE);
+		LDAP_URL 						= CFWConfig.configAsString("authentication_ldap_url", LDAP_URL);
+		LDAP_USER 						= CFWConfig.configAsString("authentication_ldap_user", LDAP_USER);
+		LDAP_PASSWORD 					= CFWConfig.configAsString("authentication_ldap_password", LDAP_PASSWORD);
+		LDAP_SEARCHBASE 				= CFWConfig.configAsString("authentication_ldap_searchbase", LDAP_SEARCHBASE);
+		LDAP_USER_ATTRIBUTE 			= CFWConfig.configAsString("authentication_ldap_user_attribute", LDAP_USER_ATTRIBUTE);
 
-		DB_STORE_PATH				= CFWConfig.config("cfw_h2_path", DB_STORE_PATH);
-		DB_NAME						= CFWConfig.config("cfw_h2_db_name", DB_NAME);
+		DB_STORE_PATH				= CFWConfig.configAsString("cfw_h2_path", DB_STORE_PATH);
+		DB_NAME						= CFWConfig.configAsString("cfw_h2_db_name", DB_NAME);
 		DB_PORT						= CFWConfig.configAsInt("cfw_h2_port", DB_PORT);
-		DB_USERNAME					= CFWConfig.config("cfw_h2_username", DB_USERNAME);
-		DB_PASSWORD					= CFWConfig.config("cfw_h2_password", DB_PASSWORD);
+		DB_USERNAME					= CFWConfig.configAsString("cfw_h2_username", DB_USERNAME);
+		DB_PASSWORD					= CFWConfig.configAsString("cfw_h2_password", DB_PASSWORD);
 	}
 	
 	
@@ -160,7 +171,7 @@ public class CFWConfig {
 		return (int)Integer.parseInt((String)configProperties.getOrDefault(key, ""+defaultValue));
 	}
 
-	public static String config(String key, String defaultValue){
+	public static String configAsString(String key, String defaultValue){
 		
 		return (String)configProperties.getOrDefault(key, defaultValue);
 	}

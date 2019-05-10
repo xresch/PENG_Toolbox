@@ -44,7 +44,7 @@ public class DocuServlet extends HttpServlet {
 		StringBuffer content = html.getContent();
 		content.append(FileUtils.getFileContent(request, "./resources/html/docu.html"));
 		
-		String supportDetails = CFWConfig.config("pa_support_details", "");
+		String supportDetails = CFWConfig.configAsString("pa_support_details", "");
 		if(supportDetails != null) {
 			content.append("<h1>Support Contact</h1>");
 	
