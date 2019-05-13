@@ -44,6 +44,7 @@ public class AssemblyServlet extends HttpServlet
 	    	response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 	    }
 		
-		CFW.writeLocalized(request, response);
+		//Done by RequestHandler
+		//CFW.writeLocalized(request, response);
     }
 }

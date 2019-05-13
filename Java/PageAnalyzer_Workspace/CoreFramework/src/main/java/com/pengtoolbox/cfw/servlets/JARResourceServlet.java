@@ -41,7 +41,7 @@ public class JARResourceServlet extends HttpServlet
 	    }else {
 	    	response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 	    }
-		
-		CFW.writeLocalized(request, response);
+		//done by RequestHandler
+		//CFW.writeLocalized(request, response);
     }
 }

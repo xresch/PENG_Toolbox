@@ -43,7 +43,7 @@ public class DeleteResultServlet extends HttpServlet
 			content.append("{\"result\": false, \"error\": \"The result could not be deleted: ResultID is not a number.\"}");
 		}
 		
-		response.sendRedirect(response.encodeRedirectURL(CFWConfig.BASE_URL+"/resultlist"));
+		response.sendRedirect(response.encodeRedirectURL("./resultlist"));
         
     }
 	

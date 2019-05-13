@@ -1,6 +1,8 @@
-
+- add confirmation dialog to delete button
+- create admin dashboard
+  - manage all results
+  - delete results of other users
+  - 
 - Check if url exists and prompt for compare
 - Add modal panel for comparing rules.
-- save HAR File to DB
-- Har File Browser
 - SPNEGO/Kerberos Authentication
