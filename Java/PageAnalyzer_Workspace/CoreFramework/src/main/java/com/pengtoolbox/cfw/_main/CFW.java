@@ -1,17 +1,13 @@
 package com.pengtoolbox.cfw._main;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -25,6 +21,9 @@ public class CFW {
 	public class Setup extends CFWSetup {}
 	public class Config extends CFWConfig {}
 	public class DB extends CFWDB {}
+	public class HTTP extends CFWHttp {}
+	public class Localization extends CFWLocalization {}
+	
 	//##############################################################################
 	// GLOBAL
 	//##############################################################################
@@ -116,61 +115,5 @@ public class CFW {
 	public static void javafxLogWorkaround(Level level, String message, Throwable e, String method){
 		
 		log.method(method).log(level, message, e);
-	}
-	
-	
-	public static void writeLocalized(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		
-		AbstractTemplate template = CFW.getTemplate(request);
-		
-		if(template != null){
-
-			//TODO: Make language handling dynamic
-			ResourceBundle bundle = ResourceBundle.getBundle("language",
-											new Locale("en", "US"), 
-											urlClassLoader);
-			
-			StringBuffer sb = template.buildResponse();
-			
-			int fromIndex = 0;
-			int leftIndex = 0;
-			int rightIndex = 0;
-			int length = sb.length();
-			
-			while(fromIndex < length && leftIndex < length){
-			
-				leftIndex = sb.indexOf(LOCALE_LB, fromIndex);
-				
-				if(leftIndex != -1){
-					rightIndex = sb.indexOf(LOCALE_RB, leftIndex);
-					
-					if(rightIndex != -1 && (leftIndex+LOCALE_LB_SIZE) < rightIndex){
-
-						String propertyName = sb.substring(leftIndex+LOCALE_LB_SIZE, rightIndex);
-						if(bundle.containsKey(propertyName)){
-							sb.replace(leftIndex, rightIndex+LOCALE_RB_SIZE, bundle.getString(propertyName));
-						}
-						//start again from leftIndex
-						fromIndex = leftIndex+1;
-						
-					}else{
-						//TODO: Localize message
-						new CFWLog(logger, request)
-						.method("writeLocalized")
-						.warn("Localization Parameter was missing the right bound");
-					
-						break;
-					}
-					
-				}else{
-					//no more stuff found to replace
-					break;
-				}
-			}
-			
-			response.getWriter().write(sb.toString());
-			
-		}
-	
 	}
 }

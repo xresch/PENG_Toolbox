@@ -76,10 +76,10 @@ public class RequestHandler extends HandlerWrapper
     	
     	if(session.getAttribute(CFW.SESSION_DATA) == null) {
     		session.setAttribute(CFW.SESSION_DATA, new SessionData());
+        	
     	};
-    	
     	//workaround maxInactiveInterval=-1 issue
-    	session.setMaxInactiveInterval(3600);
+    	session.setMaxInactiveInterval(CFW.Config.SESSION_TIMEOUT);
 
     	//##################################
     	// Call Wrapped Handler
@@ -92,7 +92,7 @@ public class RequestHandler extends HandlerWrapper
     	request.setAttribute(CFW.REQUEST_ATTR_ENDNANOS, System.nanoTime());
     	
     	//if(request.getAttribute(PA.REQUEST_ATTR_TEMPLATE) instanceof AbstractTemplateHTML){
-    	CFW.writeLocalized(request, response);
+    	CFW.Localization.writeLocalized(request, response);
     	
     	
     	log.end();

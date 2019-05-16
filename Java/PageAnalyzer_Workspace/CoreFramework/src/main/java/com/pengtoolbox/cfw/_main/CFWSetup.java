@@ -181,13 +181,15 @@ public class CFWSetup {
 	public static SessionHandler createSessionHandler(Server server) {
 		DefaultSessionIdManager	 idmanager = new DefaultSessionIdManager(server);
 	    server.setSessionIdManager(idmanager);
-	
+
 	    SessionHandler sessionHandler = new SessionHandler();
 	    // workaround maxInactiveInterval=-1 issue
 	    // set inactive interval in RequestHandler
-	    sessionHandler.setMaxInactiveInterval(3600);
+	    sessionHandler.setMaxInactiveInterval(CFW.Config.SESSION_TIMEOUT);
 	    sessionHandler.setHttpOnly(false);
 	    sessionHandler.setUsingCookies(true);
+	    //prevent URL rewrite
+	    //sessionHandler.setSessionIdPathParameterName("none");
 	    
         // Explicitly set Session Cache and null Datastore.
         // This is normally done by default,

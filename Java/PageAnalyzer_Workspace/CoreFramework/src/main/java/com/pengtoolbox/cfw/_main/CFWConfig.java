@@ -46,6 +46,9 @@ public class CFWConfig {
 	/** Enables or disables the Authentication. (Property=cfw_caching_file_enabled, Default="true") */
 	public static boolean CACHING_FILE_ENABLED = true;
 	
+	/** Session Time in Seconds. (Property=cfw_session_timout, Default=36000) */
+	public static int SESSION_TIMEOUT = 36000;
+	
 	/** Time in seconds to cache resources. (Property=cfw_browser_resource_maxage, Default="36000") */
 	public static int BROWSER_RESOURCE_MAXAGE = 36000;
 	
@@ -119,6 +122,7 @@ public class CFWConfig {
 		HTTPS_KEYMANAGER_PASSWORD		= CFWConfig.configAsString("cfw_https_keymanager_password", HTTPS_KEYMANAGER_PASSWORD);
 		
 		CACHING_FILE_ENABLED 	  		= CFWConfig.configAsBoolean("cfw_caching_file_enabled", CACHING_FILE_ENABLED);
+		SESSION_TIMEOUT					= CFWConfig.configAsInt("cfw_session_timout", SESSION_TIMEOUT);
 		BROWSER_RESOURCE_MAXAGE 		= CFWConfig.configAsInt("cfw_browser_resource_maxage", BROWSER_RESOURCE_MAXAGE);
 		
 		AUTHENTICATION_METHOD 			= CFWConfig.configAsString("authentication_method", AUTHENTICATION_METHOD);

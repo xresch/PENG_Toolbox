@@ -44,7 +44,8 @@ public class AuthenticationHandler extends HandlerWrapper
 	        	
         	}else {
         		
-        		if(request.getRequestURI().toString().endsWith("/login")) {
+        		if(request.getRequestURI().toString().endsWith("/login")
+        		   || request.getRequestURI().toString().contains("/login;jsessionid")) {
         			this._handler.handle(target, baseRequest, request, response);
         		}else {
         			response.sendRedirect(response.encodeRedirectURL("./login"));
