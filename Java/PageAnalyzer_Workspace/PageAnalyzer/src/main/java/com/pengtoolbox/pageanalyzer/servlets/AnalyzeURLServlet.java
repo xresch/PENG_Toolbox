@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.phantomjs.PhantomJSInterface;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
@@ -34,7 +34,7 @@ public class AnalyzeURLServlet extends HttpServlet
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 		StringBuffer content = html.getContent();
-		content.append(FileUtils.getFileContent(request, "./resources/html/analyzeurl.html"));
+		content.append(CFWFiles.getFileContent(request, "./resources/html/analyzeurl.html"));
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -54,7 +54,7 @@ public class AnalyzeURLServlet extends HttpServlet
 		// Create Content
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 		StringBuffer content = html.getContent();
-		content.append(FileUtils.getFileContent(request, "./resources/html/analyzeurl.html"));
+		content.append(CFWFiles.getFileContent(request, "./resources/html/analyzeurl.html"));
 		
 		content.append("<h1>Results</h1>");
 		content.append("<p>Use the links in the menu to change the view. </p>");

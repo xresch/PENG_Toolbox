@@ -39,7 +39,6 @@ public class AssemblyServlet extends HttpServlet
 	        response.setContentType(assembly.getContentType());
 	        response.setStatus(HttpServletResponse.SC_OK);
 	        
-	        
 	    }else {
 	    	response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 	    }

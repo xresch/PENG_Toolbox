@@ -12,7 +12,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 
 public class TestServlet extends HttpServlet
 {
@@ -54,7 +54,7 @@ public class TestServlet extends HttpServlet
 		//------------------------------
 		// Test cannot read file
 		//------------------------------
-		String cannotReadFile = FileUtils.getFileContent(request, "./resources/this_file_does_not_exists.txt");
+		String cannotReadFile = CFW.Files.getFileContent(request, "./resources/this_file_does_not_exists.txt");
 		
 		//------------------------------
 		// Test Localization

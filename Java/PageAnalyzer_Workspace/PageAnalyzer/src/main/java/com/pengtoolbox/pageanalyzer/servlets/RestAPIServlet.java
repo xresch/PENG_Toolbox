@@ -13,7 +13,7 @@ import javax.servlet.http.Part;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.cfw.response.TemplatePlain;
-import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
 /*************************************************************************
@@ -37,7 +37,7 @@ public class RestAPIServlet extends HttpServlet {
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Rest API");
 		StringBuffer content = html.getContent();
-		content.append(FileUtils.getFileContent(request, "./resources/html/api.html"));
+		content.append(CFWFiles.getFileContent(request, "./resources/html/api.html"));
 		
 		response.setContentType("text/html");
 		response.setStatus(HttpServletResponse.SC_OK);
@@ -60,7 +60,7 @@ public class RestAPIServlet extends HttpServlet {
 			content.append("{\"error\": \"HAR File could not be loaded.\"}");
 		}else {
 
-			String harContents = FileUtils.readContentsFromInputStream(harFile.getInputStream());
+			String harContents = CFWFiles.readContentsFromInputStream(harFile.getInputStream());
 			
 			String results = YSlow.instance().analyzeHarString(harContents);
 

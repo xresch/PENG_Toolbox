@@ -36,7 +36,7 @@ public class Main extends Application {
     	// Create Default App
     	CFWDefaultApp app;
     	try {
-    		app = new CFWDefaultApp(args);
+    		app = CFW.App.createApp(args);
     	}catch(ShutdownException e) {
     		//do not proceed if shutdown was registered
     		return;
@@ -85,7 +85,7 @@ public class Main extends Application {
         appContext.addServlet(CustomContentServlet.class, "/custom");
         
         //Login, Logout and Resource Servlets
-        CFW.Setup.addCFWServlets(appContext);
+        CFW.App.addCFWServlets(appContext);
         
         //###################################################################
         // Startup

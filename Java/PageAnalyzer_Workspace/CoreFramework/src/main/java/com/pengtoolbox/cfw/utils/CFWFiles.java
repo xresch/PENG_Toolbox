@@ -22,7 +22,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
-public class FileUtils {
+public class CFWFiles {
 
 
 	private static final HashMap<String,String> permanentStringFileCache = new HashMap<String,String>();
@@ -31,7 +31,7 @@ public class FileUtils {
 	/** Only packages in this list can be accessed with readPackageResource*().*/
 	private static final ArrayList<String> allowedPackages = new ArrayList<String>();
 	
-	public static Logger logger = CFWLog.getLogger(FileUtils.class.getName());
+	public static Logger logger = CFWLog.getLogger(CFWFiles.class.getName());
 	
 	static String[] cachedFiles = new String[15];
 	static int fileCounter = 0;
@@ -67,9 +67,9 @@ public class FileUtils {
 	public static String getFileContent(HttpServletRequest request, String path){
 		CFWLog omlogger = new CFWLog(logger, request).method("getFileContent");
 		
-		if( CFWConfig.CACHING_FILE_ENABLED && FileUtils.permanentStringFileCache.containsKey(path)){
+		if( CFWConfig.CACHING_FILE_ENABLED && CFWFiles.permanentStringFileCache.containsKey(path)){
 			omlogger.finest("Read file content from cache");
-			return FileUtils.permanentStringFileCache.get(path);
+			return CFWFiles.permanentStringFileCache.get(path);
 		}else{
 			omlogger.finest("Read from disk into cache");
 			
@@ -83,7 +83,7 @@ public class FileUtils {
 					contentBuffer.append("\n");
 				}
 				String content = contentBuffer.toString();
-				FileUtils.permanentStringFileCache.put(path, content);
+				CFWFiles.permanentStringFileCache.put(path, content);
 				
 				// remove UTF-8 byte order mark if present
 				content = content.replace("\uFEFF", "");
@@ -179,14 +179,14 @@ public class FileUtils {
 			packageName = packageName.replaceAll("\\.", "/");
 			String resourcePath = packageName + "/" + filename;
 			
-			if( CFWConfig.CACHING_FILE_ENABLED && FileUtils.permanentStringFileCache.containsKey(resourcePath)){
+			if( CFWConfig.CACHING_FILE_ENABLED && CFWFiles.permanentStringFileCache.containsKey(resourcePath)){
 				new CFWLog(logger).finest("Read package resource content from cache");
-				return FileUtils.permanentStringFileCache.get(resourcePath);
+				return CFWFiles.permanentStringFileCache.get(resourcePath);
 			}else{
 				
-				InputStream in = FileUtils.class.getClassLoader().getResourceAsStream(resourcePath);
+				InputStream in = CFWFiles.class.getClassLoader().getResourceAsStream(resourcePath);
 				fileContent = readContentsFromInputStream(in);
-				FileUtils.permanentStringFileCache.put(resourcePath, fileContent);
+				CFWFiles.permanentStringFileCache.put(resourcePath, fileContent);
 			}
 		}else {
 			new CFWLog(logger).severe("Not allowed to read resource from package: "+packageName);
@@ -209,14 +209,14 @@ public class FileUtils {
 			packageName = packageName.replaceAll("\\.", "/");
 			String resourcePath = packageName + "/" + filename;
 			
-			if( CFWConfig.CACHING_FILE_ENABLED && FileUtils.permanentByteFileCache.containsKey(resourcePath)){
+			if( CFWConfig.CACHING_FILE_ENABLED && CFWFiles.permanentByteFileCache.containsKey(resourcePath)){
 				new CFWLog(logger).finest("Read package resource content from cache");
-				return FileUtils.permanentByteFileCache.get(resourcePath);
+				return CFWFiles.permanentByteFileCache.get(resourcePath);
 			}else{
 				
-				InputStream in = FileUtils.class.getClassLoader().getResourceAsStream(resourcePath);
+				InputStream in = CFWFiles.class.getClassLoader().getResourceAsStream(resourcePath);
 				fileContent = readBytesFromInputStream(in);
-				FileUtils.permanentByteFileCache.put(resourcePath, fileContent);
+				CFWFiles.permanentByteFileCache.put(resourcePath, fileContent);
 			}
 		}else {
 			new CFWLog(logger).severe("Not allowed to read resource from package: "+packageName);
@@ -352,7 +352,7 @@ public class FileUtils {
 	 * @return nothing
 	 ***********************************************************************/
 	public static void permanentlyCacheFile(String filename, String fileContent) {
-		FileUtils.permanentStringFileCache.put(filename, fileContent);
+		CFWFiles.permanentStringFileCache.put(filename, fileContent);
 	}
 	
 	/***********************************************************************
@@ -361,7 +361,7 @@ public class FileUtils {
 	 * @return true or false
 	 ***********************************************************************/
 	public static boolean isFilePermanentlyCached(String filename) {
-		return FileUtils.permanentStringFileCache.containsKey(filename);
+		return CFWFiles.permanentStringFileCache.containsKey(filename);
 	}
 	
 	/***********************************************************************
@@ -369,7 +369,7 @@ public class FileUtils {
 	 * @param index the index of the file to be retrieved
 	 ***********************************************************************/
 	public static String getPermanentlyCachedFile(String filename) {
-		return FileUtils.permanentStringFileCache.get(filename);
+		return CFWFiles.permanentStringFileCache.get(filename);
 	}
 	
 }

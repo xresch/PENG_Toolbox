@@ -3,10 +3,10 @@ package com.pengtoolbox.cfw.caching;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
-import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 
 public class FileAssembly {
 	
@@ -64,7 +64,7 @@ public class FileAssembly {
 	
 	/***********************************************************************
 	 * Assembles and stores the file in the permanent cache of 
-	 * {@link com.pengtoolbox.cfw.utils.FileUtils FileUtils}.
+	 * {@link com.pengtoolbox.cfw.utils.CFWFiles FileUtils}.
 	 * 
 	 * @return the filename that can be used for retrieving the file content.
 	 ***********************************************************************/
@@ -81,7 +81,7 @@ public class FileAssembly {
 		assemblyServletPath = "/cfw/assembly?name="+URLEncoder.encode(assemblyName);
 		//--------------------------------
 		// Initialize
-		if(!FileAssembly.hasAssembly((assemblyName)) || !CFWConfig.CACHING_FILE_ENABLED ) {
+		if(!FileAssembly.hasAssembly((assemblyName)) || !CFW.Config.CACHING_FILE_ENABLED ) {
 			
 			StringBuffer concatenatedFile = new StringBuffer();
 			for(FileDefinition fileDef : fileArray) {
@@ -90,10 +90,10 @@ public class FileAssembly {
 				String content = "";
 				
 				switch(fileDef.getType()) {
-					case FILE:			content = FileUtils.getFileContent(null, fileDef.getPath(), fileDef.getFilename());
+					case FILE:			content = CFW.Files.getFileContent(null, fileDef.getPath(), fileDef.getFilename());
 										break;
 						
-					case JAR_RESOURCE: 	content = FileUtils.readPackageResource(fileDef.getPath(), fileDef.getFilename());
+					case JAR_RESOURCE: 	content = CFW.Files.readPackageResource(fileDef.getPath(), fileDef.getFilename());
 										break;
 						
 					case STRING: 		content = fileDef.getContent();
@@ -119,7 +119,7 @@ public class FileAssembly {
 	 * @return the name of the assembly
 	 ***********************************************************************/
 	public FileAssembly cache() {
-		if(!FileAssembly.hasAssembly((assemblyName)) || !CFWConfig.CACHING_FILE_ENABLED ) {
+		if(!FileAssembly.hasAssembly((assemblyName)) || !CFW.Config.CACHING_FILE_ENABLED ) {
 			assemblyCache.put(assemblyName, this);
 		}
 		return this;

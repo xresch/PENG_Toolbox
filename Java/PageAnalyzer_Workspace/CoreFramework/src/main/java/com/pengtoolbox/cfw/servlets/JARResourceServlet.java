@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.caching.FileAssembly;
-import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 
 public class JARResourceServlet extends HttpServlet
 {
@@ -26,7 +26,7 @@ public class JARResourceServlet extends HttpServlet
 		String file = request.getParameter("file");
 		
 		
-		byte[] fontContent = FileUtils.readPackageResourceAsBytes(pkg, file);
+		byte[] fontContent = CFW.Files.readPackageResourceAsBytes(pkg, file);
 		if(fontContent != null) {
 			
 			response.addHeader("Cache-Control", "max-age="+CFWConfig.BROWSER_RESOURCE_MAXAGE);

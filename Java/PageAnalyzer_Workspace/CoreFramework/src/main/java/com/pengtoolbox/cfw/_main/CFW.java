@@ -1,6 +1,8 @@
 package com.pengtoolbox.cfw._main;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,16 +14,18 @@ import javax.servlet.http.HttpServletRequest;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.AbstractTemplate;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 
 public class CFW {
 	
 	//##############################################################################
 	// Hierarchical Binding
 	//##############################################################################
-	public class Setup extends CFWSetup {}
+	public class App extends CFWApp {} 
 	public class Config extends CFWConfig {}
 	public class DB extends CFWDB {}
 	public class HTTP extends CFWHttp {}
+	public class Files extends CFWFiles {}
 	public class Localization extends CFWLocalization {}
 	
 	//##############################################################################
@@ -115,5 +119,27 @@ public class CFW {
 	public static void javafxLogWorkaround(Level level, String message, Throwable e, String method){
 		
 		log.method(method).log(level, message, e);
+	}
+
+	public static void initialize(String configFilePath) throws IOException{
+		
+		//---------------------------------------
+		// Logging
+		CFWLog log = new CFWLog(CFWApp.logger).method("initialize").start();
+				
+		//------------------------------------
+		// Classloader
+		URL[] urls = {LANGUAGE_FOLDER.toURI().toURL()};
+		urlClassLoader = new URLClassLoader(urls);
+		
+		//------------------------------------
+		// Classloader
+		CFW.Files.addAllowedPackage("com.pengtoolbox.cfw.resources");
+		
+		//------------------------------------
+		// Load Configuration
+		CFW.Config.loadConfiguration(configFilePath);
+		//log.end();
+		
 	}
 }

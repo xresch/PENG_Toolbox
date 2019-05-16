@@ -1,10 +1,11 @@
 package com.pengtoolbox.cfw._main;
 
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.logging.Logger;
+
+import javax.servlet.SessionTrackingMode;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -25,41 +26,32 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
+import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.servlets.AssemblyServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
-import com.pengtoolbox.cfw.utils.FileUtils;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
 /***********************************************************************
  * Setup class for the Core Framework
  ***********************************************************************/
-public class CFWSetup {
+public class CFWApp {
 	public static Logger logger = CFWLog.getLogger(CFW.class.getName());
 	
-	public static void initialize(String configFilePath) throws IOException{
-		
-		//---------------------------------------
-		// Logging
-		CFWLog log = new CFWLog(logger).method("initialize").start();
-				
-		//------------------------------------
-		// Classloader
-		URL[] urls = {CFW.LANGUAGE_FOLDER.toURI().toURL()};
-		CFW.urlClassLoader = new URLClassLoader(urls);
-		
-		//------------------------------------
-		// Classloader
-		FileUtils.addAllowedPackage("com.pengtoolbox.cfw.resources");
-		
-		//------------------------------------
-		// Load Configuration
-		CFWConfig.loadConfiguration(configFilePath);
-		//log.end();
-		
+	public static DefaultSessionIdManager idmanager;
+	
+	/***********************************************************************
+	 * Create an instance of the CFWDefaultApp.
+	 * @param args command line arguments
+	 * @return CFWDefaultApp instance
+	 * @throws ShutdownException 
+	 * @throws IOException 
+	 ***********************************************************************/
+	public static CFWDefaultApp createApp(String[] args) throws IOException, ShutdownException {
+		return new CFWDefaultApp(args);
 	}
 	
 	/***********************************************************************
@@ -71,12 +63,15 @@ public class CFWSetup {
 		Server server = new Server();
 		ArrayList<Connector> connectorArray = new ArrayList<Connector>();
 		
-		HttpConfiguration httpConf = new HttpConfiguration();
-		httpConf.addCustomizer(new SecureRequestCustomizer());
-		httpConf.setSecurePort(CFWConfig.HTTPS_PORT);
-		httpConf.setSecureScheme("https");
+		idmanager = new DefaultSessionIdManager(server);
+	    server.setSessionIdManager(idmanager);
+	    
 		
 		if(CFWConfig.HTTP_ENABLED) {
+			HttpConfiguration httpConf = new HttpConfiguration();
+			httpConf.setSecurePort(CFWConfig.HTTPS_PORT);
+			httpConf.setSecureScheme("https");
+			
 			ServerConnector httpConnector = new ServerConnector(server, new HttpConnectionFactory(httpConf));
 			httpConnector.setName("unsecured");
 			httpConnector.setPort(CFWConfig.HTTP_PORT);
@@ -84,6 +79,10 @@ public class CFWSetup {
 		}
 		
 		if(CFWConfig.HTTPS_ENABLED) {
+			HttpConfiguration httpsConf = new HttpConfiguration();
+			httpsConf.addCustomizer(new SecureRequestCustomizer());
+			httpsConf.setSecurePort(CFWConfig.HTTPS_PORT);
+			httpsConf.setSecureScheme("https");
 			
 			SslContextFactory sslContextFactory = new SslContextFactory();
 			sslContextFactory.setKeyStorePath(CFWConfig.HTTPS_KEYSTORE_PATH);
@@ -92,7 +91,7 @@ public class CFWSetup {
 			
 			ServerConnector httpsConnector = new ServerConnector(server,
 					new SslConnectionFactory(sslContextFactory, "http/1.1"),
-					new HttpConnectionFactory(httpConf));
+					new HttpConnectionFactory(httpsConf));
 			httpsConnector.setName("secured");
 			httpsConnector.setPort(CFWConfig.HTTPS_PORT);
 			
@@ -108,8 +107,6 @@ public class CFWSetup {
 	 * Add the servlets provided by CFW to the given context.
 	 *  LoginServlet on /login
 	 *  LogoutServlet on /logout
-	 *  AssemblyServlet on /assembly
-	 *  JARFontServlet on /jarfont
 	 ***********************************************************************/
 	public static void addCFWServlets(ServletContextHandler servletContextHandler) {
 		
@@ -130,7 +127,6 @@ public class CFWSetup {
 	public static HandlerWrapper createCFWHandler() {
 		
 		ContextHandler contextHandler = new ContextHandler("/cfw");
-		
 		ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 		
 		//-----------------------------------------
@@ -178,18 +174,23 @@ public class CFWSetup {
 	/***********************************************************************
 	 * Setup and returns a SessionHandler
 	 ***********************************************************************/
-	public static SessionHandler createSessionHandler(Server server) {
-		DefaultSessionIdManager	 idmanager = new DefaultSessionIdManager(server);
-	    server.setSessionIdManager(idmanager);
+	public static SessionHandler createSessionHandler() {
 
 	    SessionHandler sessionHandler = new SessionHandler();
+	    sessionHandler.setSessionIdManager(idmanager);
 	    // workaround maxInactiveInterval=-1 issue
 	    // set inactive interval in RequestHandler
 	    sessionHandler.setMaxInactiveInterval(CFW.Config.SESSION_TIMEOUT);
 	    sessionHandler.setHttpOnly(false);
 	    sessionHandler.setUsingCookies(true);
+	    sessionHandler.setSecureRequestOnly(false);
+	    
+	    HashSet<SessionTrackingMode> trackingModes = new HashSet<SessionTrackingMode>();
+	    trackingModes.add(SessionTrackingMode.COOKIE);
+	    sessionHandler.setSessionTrackingModes(trackingModes);
+	    
 	    //prevent URL rewrite
-	    //sessionHandler.setSessionIdPathParameterName("none");
+	    sessionHandler.setSessionIdPathParameterName("none");
 	    
         // Explicitly set Session Cache and null Datastore.
         // This is normally done by default,
@@ -201,7 +202,7 @@ public class CFWSetup {
         SessionCache cache = new DefaultSessionCache(sessionHandler);
         cache.setSessionDataStore(new NullSessionDataStore());
         sessionHandler.setSessionCache(cache);
-	    
+
 	    return sessionHandler;
 	}
 

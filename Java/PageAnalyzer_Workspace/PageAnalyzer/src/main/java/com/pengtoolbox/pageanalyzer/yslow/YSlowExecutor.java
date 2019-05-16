@@ -14,7 +14,7 @@ import org.w3c.dom.Document;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
-import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.sun.javafx.webkit.WebConsoleListener;
 
 import javafx.application.Application;
@@ -57,7 +57,7 @@ public class YSlowExecutor extends Application {
 	 ***********************************************************************/
 	public void start(Stage stage){
 		
-		String yslowJS = FileUtils.getFileContent(null, "./resources/js/custom_yslow.js");
+		String yslowJS = CFWFiles.getFileContent(null, "./resources/js/custom_yslow.js");
 		
 		int contextCount = CFWConfig.configAsInt("pa_analysis_threads", 10);
 		

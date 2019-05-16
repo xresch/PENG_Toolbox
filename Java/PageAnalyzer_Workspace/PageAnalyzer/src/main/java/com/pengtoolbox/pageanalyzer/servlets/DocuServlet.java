@@ -16,7 +16,7 @@ import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 
 /*************************************************************************
  * 
@@ -42,7 +42,7 @@ public class DocuServlet extends HttpServlet {
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
 		StringBuffer content = html.getContent();
-		content.append(FileUtils.getFileContent(request, "./resources/html/docu.html"));
+		content.append(CFWFiles.getFileContent(request, "./resources/html/docu.html"));
 		
 		String supportDetails = CFWConfig.configAsString("pa_support_details", "");
 		if(supportDetails != null) {

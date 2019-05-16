@@ -3,10 +3,10 @@ package com.pengtoolbox.cfw.login;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
-import com.pengtoolbox.cfw.utils.FileUtils;
 
 public class CSVLoginProvider implements LoginProvider {
 	
@@ -31,10 +31,10 @@ public class CSVLoginProvider implements LoginProvider {
 		
 		//------------------------------
 		// Load File
-		String credentials = FileUtils.getFileContent(null, CFWConfig.AUTHENTICATION_CSV_FILE);
+		String credentials = CFW.Files.getFileContent(null, CFW.Config.AUTHENTICATION_CSV_FILE);
 		
 		if(credentials == null) {
-			log.severe("Credential file could not be loaded: "+CFWConfig.AUTHENTICATION_CSV_FILE);
+			log.severe("Credential file could not be loaded: "+CFW.Config.AUTHENTICATION_CSV_FILE);
 			return;
 		}
 		

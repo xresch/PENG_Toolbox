@@ -17,7 +17,7 @@ import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginFacade;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 
 public class LoginServlet extends HttpServlet
 {
@@ -43,7 +43,7 @@ public class LoginServlet extends HttpServlet
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 		StringBuffer content = html.getContent();
-		content.append(FileUtils.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "login.html"));
+		content.append(CFW.Files.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "login.html"));
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -69,7 +69,7 @@ public class LoginServlet extends HttpServlet
 		if(username == null || password == null){
 			TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 			StringBuffer content = html.getContent();
-			content.append(FileUtils.getFileContent(request, "./resources/html/login.html"));
+			content.append(CFW.Files.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "login.html"));
 			
 			html.addAlert(CFW.ALERT_ERROR, "Please specify a username and password.");
 		}else {
@@ -85,7 +85,7 @@ public class LoginServlet extends HttpServlet
 				//Login Failure
 				TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
 				StringBuffer content = html.getContent();
-				content.append(FileUtils.getFileContent(request, "./resources/html/login.html"));
+				content.append(CFWFiles.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "login.html"));
 				
 				html.addAlert(CFW.ALERT_ERROR, "Username or password invalid.");
 			}

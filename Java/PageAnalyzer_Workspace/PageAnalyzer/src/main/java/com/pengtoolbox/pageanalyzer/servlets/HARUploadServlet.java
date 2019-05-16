@@ -12,7 +12,7 @@ import javax.servlet.http.Part;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
@@ -37,7 +37,7 @@ public class HARUploadServlet extends HttpServlet
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
 		StringBuffer content = html.getContent();
-		content.append(FileUtils.getFileContent(request, "./resources/html/harupload.html"));
+		content.append(CFWFiles.getFileContent(request, "./resources/html/harupload.html"));
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -55,7 +55,7 @@ public class HARUploadServlet extends HttpServlet
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
 		StringBuffer content = html.getContent();
-		content.append(FileUtils.getFileContent(request, "./resources/html/harupload.html"));
+		content.append(CFWFiles.getFileContent(request, "./resources/html/harupload.html"));
 		
 		content.append("<h1>Results</h1>");
 		content.append("<p>Use the links in the menu to change the view. </p>");
@@ -66,7 +66,7 @@ public class HARUploadServlet extends HttpServlet
 		String saveResultsString = "off";
 		
 		if(saveResults != null) {
-			saveResultsString =	FileUtils.readContentsFromInputStream(saveResults.getInputStream());
+			saveResultsString =	CFWFiles.readContentsFromInputStream(saveResults.getInputStream());
 		}
 
 
@@ -79,7 +79,7 @@ public class HARUploadServlet extends HttpServlet
 		}else {
 
 			log.start().method("doPost()-StreamHarFile");
-				String harContents = FileUtils.readContentsFromInputStream(harFile.getInputStream());
+				String harContents = CFWFiles.readContentsFromInputStream(harFile.getInputStream());
 			log.end();
 						
 			String results = YSlow.instance().analyzeHarString(harContents);

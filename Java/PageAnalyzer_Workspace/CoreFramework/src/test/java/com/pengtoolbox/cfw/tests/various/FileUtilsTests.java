@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
-import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 
 class FileUtilsTests {
 	
@@ -16,7 +16,7 @@ class FileUtilsTests {
 		
 		FileAssembly assembler = new FileAssembly("common", "js");
 		
-		FileUtils.addAllowedPackage(FileAssembly.CFW_JAR_RESOURCES_PATH);
+		CFWFiles.addAllowedPackage(FileAssembly.CFW_JAR_RESOURCES_PATH);
 		
 		String assemblyName = assembler.addFile(HandlingType.FILE, "./testdata", "test.css")
 				.addFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH +".test", "junit_test.js")

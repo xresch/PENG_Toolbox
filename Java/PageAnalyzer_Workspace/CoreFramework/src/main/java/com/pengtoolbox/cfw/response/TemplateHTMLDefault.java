@@ -9,7 +9,7 @@ import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.utils.FileUtils;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 
 public class TemplateHTMLDefault extends AbstractTemplateHTML {
 	
@@ -68,7 +68,7 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 				buildedPage.append("");
 				buildedPage.append(this.menu);
 				
-				String menuTemplate = FileUtils.getFileContent(request,CFW.PATH_TEMPLATE_MENU);
+				String menuTemplate = CFW.Files.getFileContent(request,CFW.PATH_TEMPLATE_MENU);
 				if(menuTemplate != null){
 					String customMenuInserted = menuTemplate.replace("{!customMenu!}", this.menu);	
 					buildedPage.append(customMenuInserted);
@@ -94,7 +94,7 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 				// Footer
 				this.appendSectionTitle(buildedPage, "Footer");
 
-				String footerTemplate = FileUtils.getFileContent(request,CFW.PATH_TEMPLATE_FOOTER);
+				String footerTemplate = CFWFiles.getFileContent(request,CFW.PATH_TEMPLATE_FOOTER);
 				if(footerTemplate != null){
 					String customFooterInserted = footerTemplate.replace("{!customFooter!}", this.footer);	
 					buildedPage.append(customFooterInserted);
@@ -124,7 +124,7 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 				// Support Info
 				this.appendSectionTitle(buildedPage, "Support Info");
 				
-				String supportInfoTemplate = FileUtils.getFileContent(request,CFW.PATH_TEMPLATE_SUPPORTINFO);
+				String supportInfoTemplate = CFWFiles.getFileContent(request,CFW.PATH_TEMPLATE_SUPPORTINFO);
 				
 				if(supportInfoTemplate != null){
 					String supportInfoInserted = supportInfoTemplate.replace("{!supportInfo!}", this.supportInfo);	

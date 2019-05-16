@@ -17,6 +17,7 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.ShutdownHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
@@ -37,6 +38,8 @@ public class CFWDefaultApp {
 		
 	public static Logger logger = CFWLog.getLogger(CFW.class.getName());
 	
+	public static WebAppContext applicationContext;
+	
 	public CFWDefaultApp(String[] args) throws IOException, ShutdownException {
 		
         //###################################################################
@@ -45,7 +48,7 @@ public class CFWDefaultApp {
     	
     	//---------------------------------------
     	// General 
-	    CFW.Setup.initialize("./config/cfw.properties");
+	    CFW.initialize("./config/cfw.properties");
     	
 	    if (args.length == 1) {
 	    	
@@ -55,10 +58,14 @@ public class CFWDefaultApp {
 	    	}
             
         }
+	    
     	//---------------------------------------
     	// Create Server 
-        server = CFW.Setup.createServer();
-        
+        server = CFW.App.createServer();
+        applicationContext = new WebAppContext();
+        applicationContext.setContextPath("/");
+        applicationContext.setServer(server);
+        applicationContext.setSessionHandler(CFW.App.createSessionHandler());
     	//---------------------------------------
     	// Database    	
     	CFW.DB.initialize();
@@ -80,12 +87,11 @@ public class CFWDefaultApp {
 
         //----------------------------------
         // Build Handler Chain
-        ContextHandler unsecureContextHandler = new ContextHandler(CFWConfig.BASE_URL+""+relativePath);		
-        ServletContextHandler servletContext = new ServletContextHandler();   
+        ContextHandler unsecureContextHandler = new ContextHandler(CFWConfig.BASE_URL+""+relativePath);	
+        ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);   
 		
         new HandlerChainBuilder(unsecureContextHandler)
 	        .chain(new GzipHandler())
-	        .chain(CFWSetup.createSessionHandler(server))
 	    	.chain(new RequestHandler())
 	        .chain(servletContext);
         
@@ -106,11 +112,10 @@ public class CFWDefaultApp {
         //-------------------------------
         ContextHandler secureContext = new ContextHandler(CFWConfig.BASE_URL+""+relativePath);
        
-        ServletContextHandler servletContext = new ServletContextHandler();
+        ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
         
         new HandlerChainBuilder(secureContext)
         	.chain(new GzipHandler())
-        	.chain(CFWSetup.createSessionHandler(server))
 	        .chain(new RequestHandler())
 	        .chain(new AuthenticationHandler())
 	        .chain(servletContext);
@@ -152,8 +157,8 @@ public class CFWDefaultApp {
         handlerArray.addAll(unsecureContextArray);
         handlerArray.add(rewriteHandler);
         handlerArray.addAll(secureContextArray);
-        handlerArray.add(CFWSetup.createResourceHandler());
-        handlerArray.add(CFWSetup.createCFWHandler());
+        handlerArray.add(CFWApp.createResourceHandler());
+        handlerArray.add(CFWApp.createCFWHandler());
         
         HandlerCollection handlerCollection = new HandlerCollection();
         handlerCollection.setHandlers(handlerArray.toArray(new Handler[] {}));
