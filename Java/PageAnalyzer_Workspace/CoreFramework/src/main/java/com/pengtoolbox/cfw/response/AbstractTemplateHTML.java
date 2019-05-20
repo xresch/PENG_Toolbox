@@ -22,6 +22,10 @@ public abstract class AbstractTemplateHTML extends AbstractTemplate {
 	protected StringBuffer javascript = new StringBuffer();
 	protected StringBuffer javascriptData = new StringBuffer();
 	
+	public enum AlertType {
+		SUCCESS, WARNING, ERROR, INFO
+	}
+	
 	public AbstractTemplateHTML(HttpServletRequest request){
 		super(request);
 		
@@ -85,18 +89,18 @@ public abstract class AbstractTemplateHTML extends AbstractTemplate {
 	 * @param alertType alert type from OMKeys
 	 *   
 	 ****************************************************************/
-	public void addAlert(int alertType, String message){
+	public void addAlert(AlertType alertType, String message){
 		
 //		<div class=\"alert alert-success\" role=\"alert\">...</div>
 
 		String clazz = "";
 		switch(alertType){
 			
-			case CFW.ALERT_SUCCESS: clazz = "alert-success"; break;
-			case CFW.ALERT_INFO: 	clazz = "alert-info"; break;
-			case CFW.ALERT_WARN: 	clazz = "alert-warning"; break;
-			case CFW.ALERT_ERROR: 	clazz = "alert-danger"; break;
-			default:	 			clazz = "alert-info"; break;
+			case SUCCESS: 	clazz = "alert-success"; break;
+			case INFO: 		clazz = "alert-info"; break;
+			case WARNING: 	clazz = "alert-warning"; break;
+			case ERROR: 	clazz = "alert-danger"; break;
+			default:	 	clazz = "alert-info"; break;
 			
 		}
 		

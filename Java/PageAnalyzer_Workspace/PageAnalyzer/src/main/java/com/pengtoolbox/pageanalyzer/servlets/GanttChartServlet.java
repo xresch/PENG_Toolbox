@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class GanttChartServlet extends HttpServlet
@@ -43,12 +44,12 @@ public class GanttChartServlet extends HttpServlet
 		if(resultID.matches("\\d+")) {
 			jsonResults = PageAnalyzerDB.getHARFileByID(request, Integer.parseInt(resultID));
 		}else {
-			html.addAlert(CFW.ALERT_ERROR, "Result ID '"+resultID+"' is not a number.");
+			html.addAlert(AlertType.ERROR, "Result ID '"+resultID+"' is not a number.");
 		}
 	
 		
 		if (jsonResults == null) {
-			html.addAlert(CFW.ALERT_ERROR, "Results could not be loaded.");
+			html.addAlert(AlertType.ERROR, "Results could not be loaded.");
 		}else {
 									
 			content.append("<div id=\"results\"></div>");

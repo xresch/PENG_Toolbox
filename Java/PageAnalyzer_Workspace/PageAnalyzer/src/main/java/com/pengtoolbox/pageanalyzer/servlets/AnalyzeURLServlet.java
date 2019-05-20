@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.phantomjs.PhantomJSInterface;
@@ -68,7 +69,7 @@ public class AnalyzeURLServlet extends HttpServlet
 		String analyzeURL = request.getParameter("analyzeurl");
 		
 		if(analyzeURL == null){
-			html.addAlert(CFW.ALERT_ERROR, "Please specify a URL.");
+			html.addAlert(AlertType.ERROR, "Please specify a URL.");
 		}else {
 
 			//--------------------------

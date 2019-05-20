@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class CompareServlet extends HttpServlet
@@ -44,7 +45,7 @@ public class CompareServlet extends HttpServlet
 		String arrayString = "[]";
 		
 		if(!resultIDs.matches("(\\d,?)+")) {
-			html.addAlert(CFW.ALERT_ERROR, "Result IDs '"+resultIDs+"' is not a string of comma separated numbers.");
+			html.addAlert(AlertType.ERROR, "Result IDs '"+resultIDs+"' is not a string of comma separated numbers.");
 		}
 
 		StringBuffer javascript = html.getJavascript();

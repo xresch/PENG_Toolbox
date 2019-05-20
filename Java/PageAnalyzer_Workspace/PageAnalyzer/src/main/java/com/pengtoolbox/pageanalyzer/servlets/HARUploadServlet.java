@@ -12,6 +12,7 @@ import javax.servlet.http.Part;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
@@ -75,7 +76,7 @@ public class HARUploadServlet extends HttpServlet
 		Part harFile = request.getPart("harFile");
 
 		if (harFile == null) {
-			html.addAlert(CFW.ALERT_ERROR, "HAR File could not be loaded.");
+			html.addAlert(AlertType.ERROR, "HAR File could not be loaded.");
 		}else {
 
 			log.start().method("doPost()-StreamHarFile");

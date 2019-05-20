@@ -1,9 +1,7 @@
 package com.pengtoolbox.cfw._main;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -59,20 +57,6 @@ public class CFW {
 	public static final String PATH_TEMPLATE_SUPPORTINFO = PATH_RESOURCES_HTML+"/default_template/supportInfoModal.html";
 	
 	//##############################################################################
-	// Localization
-	//##############################################################################
-	public static final String LOCALE_LB  = "{!"; 
-	public static final String LOCALE_RB = "!}"; 
-	
-	public static final int LOCALE_LB_SIZE  = LOCALE_LB.length();
-	public static final int LOCALE_RB_SIZE = LOCALE_RB.length(); 
-	
-	static final File LANGUAGE_FOLDER = new File("./resources/lang/");
-	
-	static URLClassLoader urlClassLoader;
-	
-
-	//##############################################################################
 	// METHODS
 	//##############################################################################
 	
@@ -126,12 +110,7 @@ public class CFW {
 		//---------------------------------------
 		// Logging
 		CFWLog log = new CFWLog(CFWApp.logger).method("initialize").start();
-				
-		//------------------------------------
-		// Classloader
-		URL[] urls = {LANGUAGE_FOLDER.toURI().toURL()};
-		urlClassLoader = new URLClassLoader(urls);
-		
+						
 		//------------------------------------
 		// Classloader
 		CFW.Files.addAllowedPackage("com.pengtoolbox.cfw.resources");

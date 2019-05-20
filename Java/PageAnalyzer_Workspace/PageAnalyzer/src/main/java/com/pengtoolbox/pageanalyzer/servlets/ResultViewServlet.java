@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class ResultViewServlet extends HttpServlet
@@ -40,7 +41,7 @@ public class ResultViewServlet extends HttpServlet
 		String resultID = request.getParameter("resultid");
 		
 		if(!resultID.matches("\\d+")) {
-			html.addAlert(CFW.ALERT_ERROR, "Result ID '"+resultID+"' is not a number.");
+			html.addAlert(AlertType.ERROR, "Result ID '"+resultID+"' is not a number.");
 		}
 			
 		content.append("<div id=\"results\"></div>");

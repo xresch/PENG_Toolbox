@@ -12,6 +12,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 
 public class TestServlet extends HttpServlet
@@ -37,10 +38,10 @@ public class TestServlet extends HttpServlet
 		//--------------------------
 		//Add messages manually
 		//--------------------------
-		html.addAlert(CFW.ALERT_INFO, "this is an info.");
-		html.addAlert(CFW.ALERT_WARN, "this is a warning.");
-		html.addAlert(CFW.ALERT_ERROR, "this is an error.");
-		html.addAlert(CFW.ALERT_SUCCESS, "this is an success.");
+		html.addAlert(AlertType.INFO, "this is an info.");
+		html.addAlert(AlertType.WARNING, "this is a warning.");
+		html.addAlert(AlertType.ERROR, "this is an error.");
+		html.addAlert(AlertType.SUCCESS, "this is a success.");
 		
 		//------------------------------
 		//Add messages by log exception

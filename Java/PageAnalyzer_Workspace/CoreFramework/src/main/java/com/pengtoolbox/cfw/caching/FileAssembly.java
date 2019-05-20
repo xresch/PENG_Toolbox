@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWConfig;
-import com.pengtoolbox.cfw.utils.CFWFiles;
 
 public class FileAssembly {
 	

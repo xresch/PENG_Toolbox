@@ -11,6 +11,7 @@ import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.response.AbstractTemplate;
 import com.pengtoolbox.cfw.response.AbstractTemplateHTML;
+import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
 
 public class CFWLog {
 	
@@ -237,7 +238,7 @@ public class CFWLog {
 					
 					if(level == Level.SEVERE || level == Level.WARNING){
 						
-						int alertType = ( level == Level.SEVERE ? CFW.ALERT_ERROR : CFW.ALERT_WARN );
+						AlertType alertType = ( level == Level.SEVERE ? AlertType.ERROR : AlertType.WARNING );
 						
 						if(template instanceof AbstractTemplateHTML){
 							((AbstractTemplateHTML)template).addAlert(alertType, message);

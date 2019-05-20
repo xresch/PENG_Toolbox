@@ -11,10 +11,11 @@ import javax.servlet.http.Part;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWHttp;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
-import com.pengtoolbox.cfw.utils.HTTPUtils;
 
 //@MultipartConfig(maxFileSize=1024*1024*100, maxRequestSize=1024*1024*100)
 public class HARUploadNodeJSServlet extends HttpServlet
@@ -62,7 +63,7 @@ public class HARUploadNodeJSServlet extends HttpServlet
 		
 		Part harFile = request.getPart("harFile");
 		if (harFile == null) {
-			html.addAlert(CFW.ALERT_ERROR, "HAR File could not be loaded.");
+			html.addAlert(AlertType.ERROR, "HAR File could not be loaded.");
 		}else {
 
 			log.start().method("doPost()-StreamAndCacheHarFile");
@@ -86,7 +87,7 @@ public class HARUploadNodeJSServlet extends HttpServlet
 												"&har="+harLink;
 			
 			log.start().method("doPost()-NodeJSAnalysis");
-				String results = HTTPUtils.sendGETRequest(url);
+				String results = CFWHttp.sendGETRequest(url);
 			log.end();
 			
 			content.append("<div id=\"yslow-results\"></div>");

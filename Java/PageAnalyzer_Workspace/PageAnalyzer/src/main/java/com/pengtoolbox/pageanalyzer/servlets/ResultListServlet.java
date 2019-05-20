@@ -13,6 +13,7 @@ import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class ResultListServlet extends HttpServlet
@@ -51,7 +52,7 @@ public class ResultListServlet extends HttpServlet
 		//TODO: Check User
 		
 		if (jsonResults == null) {
-			html.addAlert(CFW.ALERT_ERROR, "Results could not be loaded.");
+			html.addAlert(AlertType.ERROR, "Results could not be loaded.");
 		}else {
 									
 			content.append("<div id=\"results\"></div>");
