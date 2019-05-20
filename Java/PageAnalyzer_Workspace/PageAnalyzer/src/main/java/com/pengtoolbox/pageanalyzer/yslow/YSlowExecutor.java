@@ -15,6 +15,7 @@ import org.w3c.dom.Document;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.utils.CFWFiles;
+import com.pengtoolbox.pageanalyzer._main.Main;
 import com.sun.javafx.webkit.WebConsoleListener;
 
 import javafx.application.Application;
@@ -61,7 +62,7 @@ public class YSlowExecutor extends Application {
 		
 		int contextCount = CFWConfig.configAsInt("pa_analysis_threads", 10);
 		
-		CFW.javafxLogWorkaround(Level.INFO, "Create "+contextCount+" execution context for analysis", "YSlowExecutor.start()");
+		Main.javafxLogWorkaround(Level.INFO, "Create "+contextCount+" execution context for analysis", "YSlowExecutor.start()");
 		for(int i = 0; i < contextCount; i++) {
 			
 			//--------------------------
@@ -73,7 +74,7 @@ public class YSlowExecutor extends Application {
 			
 			WebConsoleListener.setDefaultListener((webView, message, lineNumber, sourceId) -> {
 			    String log = "[JS at line "+ lineNumber + "]"+ message;
-				CFW.javafxLogWorkaround(Level.INFO, log, "YSlowJavascriptConsoleOutput");
+				Main.javafxLogWorkaround(Level.INFO, log, "YSlowJavascriptConsoleOutput");
 			});
 	
 			engine.setJavaScriptEnabled(true);
@@ -108,7 +109,7 @@ public class YSlowExecutor extends Application {
 			String result = (String) window.call("analyzeHARString", harString);
 			context.setResult(result);
 		}catch(Exception e){
-			CFW.javafxLogWorkaround(Level.INFO, e.getMessage(), e, "YSlowExecutor.analyzeHARString()");
+			Main.javafxLogWorkaround(Level.INFO, e.getMessage(), e, "YSlowExecutor.analyzeHARString()");
 			context.setResult("{\"error\": \""+e.getMessage().replace("\"", "'")+" - Check if your HAR file is a valid JSON file. \"}");
 		}
 				

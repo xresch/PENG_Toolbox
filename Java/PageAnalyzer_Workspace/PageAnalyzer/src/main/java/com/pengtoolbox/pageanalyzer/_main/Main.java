@@ -1,11 +1,15 @@
 package com.pengtoolbox.pageanalyzer._main;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWDefaultApp;
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.servlets.AnalyzeURLServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CompareServlet;
@@ -25,6 +29,9 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+	
+	public static Logger logger = CFWLog.getLogger(Main.class.getName());
+	protected static CFWLog log = new CFWLog(logger);
 	
     public static void main( String[] args ) throws Exception
     {
@@ -100,6 +107,22 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/********************************************************
+	 * Workaround for classloading issue
+	 ********************************************************/
+	public static void javafxLogWorkaround(Level level, String message, String method){
+		
+		log.method(method).log(level, message, null);
+	}
+	
+	/********************************************************
+	 * Workaround for classloading issue
+	 ********************************************************/
+	public static void javafxLogWorkaround(Level level, String message, Throwable e, String method){
+		
+		log.method(method).log(level, message, e);
 	}
 
 }

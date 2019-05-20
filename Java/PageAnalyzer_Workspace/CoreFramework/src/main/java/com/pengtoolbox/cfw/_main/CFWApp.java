@@ -33,6 +33,7 @@ import com.pengtoolbox.cfw.servlets.AssemblyServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
+import com.pengtoolbox.cfw.tests.web.servlets.TestServlet;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
 /***********************************************************************
@@ -123,6 +124,7 @@ public class CFWApp {
 	 * Add the servlets provided by CFW to the given context.
 	 *  AssemblyServlet on /assembly
 	 *  JARFontServlet on /jarfont
+	 *  TestServlet on /test
 	 ***********************************************************************/
 	public static HandlerWrapper createCFWHandler() {
 		
@@ -134,7 +136,7 @@ public class CFWApp {
 
 		servletContextHandler.addServlet(AssemblyServlet.class, "/assembly"); 
 		servletContextHandler.addServlet(JARResourceServlet.class, "/jarresource");
-		
+
         GzipHandler servletGzipHandler = new GzipHandler();
         RequestHandler requestHandler = new RequestHandler();
 

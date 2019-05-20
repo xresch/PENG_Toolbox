@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.servlets;
+package com.pengtoolbox.cfw.tests.web.servlets;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -9,11 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
-import com.pengtoolbox.cfw.utils.CFWFiles;
+import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 
 public class TestServlet extends HttpServlet
 {
@@ -56,14 +54,13 @@ public class TestServlet extends HttpServlet
 		// Test cannot read file
 		//------------------------------
 		String cannotReadFile = CFW.Files.getFileContent(request, "./resources/this_file_does_not_exists.txt");
-		
+
 		//------------------------------
 		// Test Localization
 		//------------------------------
-		content.append("<p><strong>Localization Test(success):</strong> {!lang_global_size!}, {!lang_global_top!}, {!lang_global_bottom!}, {!lang_global_left!}{!lang_global_right!}<p>");
+		content.append("<p><strong>Localization Test(success):</strong> {!cfw_lang_test_key!}<p>");
 		content.append("<p><strong>Localization Test(fail):</strong> {!lang.does.not.exist!}<p>");
 		
-		String htmlfile = request.getParameter("file");
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
         

@@ -2,6 +2,7 @@ package com.pengtoolbox.cfw.utils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,7 +19,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
@@ -92,7 +92,7 @@ public class CFWFiles {
 				
 			} catch (IOException e) {
 				//TODO: Localize message
-				new CFWLog(CFW.logger, request)
+				new CFWLog(logger, request)
 					.method("getFileContent")
 					.severe("Could not read file: "+path, e);
 				
@@ -250,7 +250,7 @@ public class CFWFiles {
 			}
 			 
 		} catch (IOException e) {
-			CFW.logger.log(Level.SEVERE, "IOException: ", e);
+			new CFWLog(logger, null).log(Level.SEVERE, "IOException: ", e);
 			e.printStackTrace();
 		}finally {
 			try {
@@ -258,7 +258,7 @@ public class CFWFiles {
 					reader.close();
 				}
 			} catch (IOException e) {
-				CFW.logger.log(Level.SEVERE, "IOException", e);
+				new CFWLog(logger, null).log(Level.SEVERE, "IOException", e);
 				e.printStackTrace();
 			}
 		}
@@ -297,7 +297,7 @@ public class CFWFiles {
 			} 
 			 
 		} catch (IOException e) {
-			CFW.logger.log(Level.SEVERE, "IOException: ", e);
+			new CFWLog(logger, null).log(Level.SEVERE, "IOException: ", e);
 			e.printStackTrace();
 		}finally {
 			try {
@@ -305,7 +305,7 @@ public class CFWFiles {
 					reader.close();
 				}
 			} catch (IOException e) {
-				CFW.logger.log(Level.SEVERE, "IOException", e);
+				new CFWLog(logger, null).log(Level.SEVERE, "IOException", e);
 				e.printStackTrace();
 			}
 		}
@@ -313,37 +313,7 @@ public class CFWFiles {
 		return os.toByteArray();
 	}
 
-	/***********************************************************************
-	 * Caches up to 15 files
-	 * @param harContent
-	 * @return the index of the cache use to retrieve the files with getHARFromCache()
-	 ***********************************************************************/
-	public static int temporarlyCacheFile(String fileContent) {
-	
-		synchronized(cachedFiles) {
-			if( fileCounter == cachedFiles.length-1) {
-				fileCounter = 0;
-			}
-			cachedFiles[fileCounter] = fileContent;
-			fileCounter++;
-			
-			return fileCounter-1;
-		}
-	}
 
-	/***********************************************************************
-	 * Retrieve a cached file by it's index.
-	 * @param index the index of the file to be retrieved
-	 ***********************************************************************/
-	public static String getTemporarlyCachedFile(int index) {
-		synchronized(cachedFiles) {
-			if( index >= cachedFiles.length) {
-				return null;
-			}
-			
-			return cachedFiles[index];
-		}
-	}
 	
 	/***********************************************************************
 	 * Caches a file permanently in memory.
@@ -370,6 +340,26 @@ public class CFWFiles {
 	 ***********************************************************************/
 	public static String getPermanentlyCachedFile(String filename) {
 		return CFWFiles.permanentStringFileCache.get(filename);
+	}
+	
+	/***********************************************************************
+	 * Check if the files exists.
+	 * @param filename the name of the file
+	 * @return true or false
+	 ***********************************************************************/
+	public static boolean isFile(String path, String filename) {
+		
+		return isFile(path+"/"+filename);
+	}
+	/***********************************************************************
+	 * Check if the files exists.
+	 * @param filename the name of the file
+	 * @return true or false
+	 ***********************************************************************/
+	public static boolean isFile(String filePath) {
+		File file = new File(filePath);
+		
+		return file.isFile();
 	}
 	
 }

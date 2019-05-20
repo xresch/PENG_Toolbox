@@ -35,7 +35,7 @@ public abstract class AbstractTemplateHTML extends AbstractTemplate {
 		this.addJavascriptData(CFW.REQUEST_ATTR_ID, requestID );
 		this.addJavascriptData(CFW.REQUEST_ATTR_STARTNANOS, String.valueOf(startNanos) );
 		
-		this.addSupportInfo("Timestamp:", CFW.currentTimestamp());
+		this.addSupportInfo("Timestamp:", CFW.Time.currentTimestamp());
 		this.addSupportInfo("RequestID:", requestID);
 		this.addSupportInfo("SessionID:", (String)this.request.getSession().getId());
 		

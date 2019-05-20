@@ -21,7 +21,7 @@ public class AsyncLogHandler extends FileHandler implements Runnable{
 	
 	public AsyncLogHandler() throws SecurityException, IOException{
 		super();
-		this.setFormatter(new CFWLogFormatterJSON());
+		this.setFormatter(new LogFormatterJSON());
 		worker = new Thread(this);
 		
 		worker.start();

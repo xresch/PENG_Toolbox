@@ -1,15 +1,13 @@
 package com.pengtoolbox.cfw.logging;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 import com.pengtoolbox.cfw._main.CFW;
 
-public class CFWLogFormatterJSON extends Formatter {
+public class LogFormatterJSON extends Formatter {
 	
-	private static SimpleDateFormat dateFormatter = new SimpleDateFormat(CFW.TIME_FORMAT);
 	@Override
 	public String format(LogRecord rec) {
 		
@@ -20,7 +18,7 @@ public class CFWLogFormatterJSON extends Formatter {
 			//-------------------------
 			// Timestamp
 			buf.append("\"timestamp\":\"");
-			buf.append(CFW.formatDate(new Date(rec.getMillis())));
+			buf.append(CFW.Time.formatDate(new Date(rec.getMillis())));
 			buf.append("\"");
 			
 			//-------------------------

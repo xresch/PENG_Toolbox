@@ -1,12 +1,10 @@
 package com.pengtoolbox.cfw._main;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URLClassLoader;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +14,9 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.AbstractTemplate;
 
 public class CFWLocalization {
-
+	
+	public static Logger logger = CFWLog.getLogger(CFWLocalization.class.getName());
+	
 	public static final String LOCALE_LB  = "{!";
 	public static final String LOCALE_RB = "!}";
 	
@@ -76,7 +76,7 @@ public class CFWLocalization {
 						
 					}else{
 						//TODO: Localize message
-						new CFWLog(CFW.logger, request)
+						new CFWLog(logger, request)
 						.method("writeLocalized")
 						.warn("Localization Parameter was missing the right bound");
 					
@@ -98,14 +98,16 @@ public class CFWLocalization {
 	public static Map<String,String> loadLanguagePack(String localeString ) {
 		
 		String filename = "language_"+localeString.toLowerCase()+".json";
-
-		if(!languageCache.containsKey(filename) || !CFW.Config.CACHING_FILE_ENABLED) {
-			String jsonString = CFW.Files.getFileContent(null, LANGUAGE_FOLDER_PATH, filename);
-			Gson gson = new Gson();
-			Map<String,String> languageMap = gson.fromJson(jsonString, Map.class);
-			
-			languageCache.put(filename, languageMap);
-			
+		
+		if(CFW.Files.isFile(LANGUAGE_FOLDER_PATH+"/"+filename)){
+			if(!languageCache.containsKey(filename) || !CFW.Config.CACHING_FILE_ENABLED) {
+				String jsonString = CFW.Files.getFileContent(null, LANGUAGE_FOLDER_PATH, filename);
+				Gson gson = new Gson();
+				Map<String,String> languageMap = gson.fromJson(jsonString, Map.class);
+				
+				languageCache.put(filename, languageMap);
+				
+			}
 		}
 		
 		return languageCache.get(filename);
