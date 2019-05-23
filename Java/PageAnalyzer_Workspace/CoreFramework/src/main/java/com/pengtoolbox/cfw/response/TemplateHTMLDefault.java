@@ -9,6 +9,7 @@ import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.BootstrapMenu;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 
 public class TemplateHTMLDefault extends AbstractTemplateHTML {
@@ -33,12 +34,7 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap.js");
 		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "cfw.js");
 		this.addJSFileBottom(HandlingType.FILE, "./resources/js", "custom.js");
-		
-		SessionData data = (SessionData)request.getSession().getAttribute(CFW.SESSION_DATA);
-		if(data.isLoggedIn()) {
-			this.setMenu(new StringBuffer("<li class=\"nav-item\"><a class=\"nav-link\" href=\"./logout\">Logout</a></li>"));
-		}
-      
+		      
 	}
 		
 	@Override
@@ -66,15 +62,22 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 				
 				this.appendSectionTitle(buildedPage, "Menubar");
 				buildedPage.append("");
-				buildedPage.append(this.menu);
-				
-				String menuTemplate = CFW.Files.getFileContent(request,CFW.PATH_TEMPLATE_MENU);
-				if(menuTemplate != null){
-					String customMenuInserted = menuTemplate.replace("{!customMenu!}", this.menu);	
-					buildedPage.append(customMenuInserted);
-				}else{
-					buildedPage.append("<!-- FAILED TO LOAD MENU! -->");
+				SessionData data = (SessionData)request.getSession().getAttribute(CFW.SESSION_DATA);
+				BootstrapMenu menu = data.getMenu();
+				if(menu != null) {
+					buildedPage.append(menu.getHTML());
 				}
+//				this.appendSectionTitle(buildedPage, "Menubar");
+//				buildedPage.append("");
+//				buildedPage.append(this.menu);
+//				
+//				String menuTemplate = CFW.Files.getFileContent(request,CFW.PATH_TEMPLATE_MENU);
+//				if(menuTemplate != null){
+//					String customMenuInserted = menuTemplate.replace("{!customMenu!}", this.menu);	
+//					buildedPage.append(customMenuInserted);
+//				}else{
+//					buildedPage.append("<!-- FAILED TO LOAD MENU! -->");
+//				}
 				
 				//--------------------------
 				// Messages

@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw._main;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Logger;
@@ -29,20 +30,98 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.BootstrapMenu;
+import com.pengtoolbox.cfw.response.bootstrap.UserMenuItem;
 import com.pengtoolbox.cfw.servlets.AssemblyServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
-import com.pengtoolbox.cfw.tests.web.servlets.TestServlet;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
 /***********************************************************************
  * Setup class for the Core Framework
  ***********************************************************************/
 public class CFWApp {
-	public static Logger logger = CFWLog.getLogger(CFW.class.getName());
+	private static Logger logger = CFWLog.getLogger(CFW.class.getName());
 	
-	public static DefaultSessionIdManager idmanager;
+	private static Class<?> defaultMenuClass = null;
+	private static Class<?> defaultUserMenuItemClass = null;
+	
+
+	private static DefaultSessionIdManager idmanager;
+	
+	/***********************************************************************
+	 * Set the class to be used as the default menu for your application.
+	 * @param Class that extends from BootstrapMenu
+	 ***********************************************************************/
+	public static void setDefaultMenu(Class<?> menuClass)  {
+		
+		if(BootstrapMenu.class.isAssignableFrom(menuClass)) {
+			defaultMenuClass = menuClass;
+		}else {
+			new CFWLog(logger).severe("Class is not a subclass of 'BootstrapMenu': "+menuClass.getName());
+		}
+	}
+		
+	/***********************************************************************
+	 * Create a instance of the menu.
+	 * @return a Bootstrap Menu instance
+	 ***********************************************************************/
+	public static BootstrapMenu createDefaultMenuInstance()  {
+		
+		if(defaultMenuClass != null) {
+			try {
+				Object menu = defaultMenuClass.newInstance();
+				
+				if(menu instanceof BootstrapMenu) {
+					return (BootstrapMenu)menu;
+				}else {
+					throw new InstantiationException("Class not an instance of BootstrapMenu");
+				}
+			} catch (Exception e) {
+				new CFWLog(logger).severe("Issue creating instance for Class '"+defaultMenuClass.getSimpleName()+"': "+e.getMessage(), e);
+			}
+		}
+		
+		return new BootstrapMenu().setLabel("Set your custom menu class(extending BootstrapMenu) using CFW.App.setDefaultMenu()! ");
+	}
+	
+	/***********************************************************************
+	 * Set the class to be used as the default UserMenuItem for your application.
+	 * @param Class that extends from {@link UserMenuItem}
+	 ***********************************************************************/
+	public static void setDefaultUserMenuItem(Class<?> menuItemClass)  {
+		
+		if(UserMenuItem.class.isAssignableFrom(menuItemClass)) {
+			defaultUserMenuItemClass = menuItemClass;
+		}else {
+			new CFWLog(logger).severe("Class is not a subclass of 'BootstrapMenu': "+menuItemClass.getName());
+		}
+	}
+	
+	/***********************************************************************
+	 * Create a instance of the user menu.
+	 * @return a UserMenuItem or null.
+	 ***********************************************************************/
+	public static UserMenuItem createUserMenuItemInstance(SessionData data)  {
+		
+		if(defaultUserMenuItemClass != null) {
+			try {
+				Constructor<?> constructor = defaultUserMenuItemClass.getConstructor(SessionData.class);
+				Object menuItem = constructor.newInstance(data);
+				
+				if(menuItem instanceof UserMenuItem) {
+					return (UserMenuItem)menuItem;
+				}else {
+					throw new InstantiationException("Class not an instance of UserMenuItem.");
+				}
+			} catch (Exception e) {
+				new CFWLog(logger).severe("Issue creating instance for Class '"+defaultUserMenuItemClass.getSimpleName()+"': "+e.getMessage(), e);
+			}
+		}
+		
+		return null;
+	}
 	
 	/***********************************************************************
 	 * Create an instance of the CFWDefaultApp.

@@ -11,6 +11,8 @@ import com.pengtoolbox.cfw._main.CFWDefaultApp;
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
+import com.pengtoolbox.pageanalyzer.response.PageAnalyzerMenu;
+import com.pengtoolbox.pageanalyzer.response.PageAnalyzerUserMenuItem;
 import com.pengtoolbox.pageanalyzer.servlets.AnalyzeURLServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CompareServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CustomContentServlet;
@@ -49,6 +51,8 @@ public class Main extends Application {
     		return;
     	}
         
+    	CFW.App.setDefaultMenu(PageAnalyzerMenu.class);
+    	CFW.App.setDefaultUserMenuItem(PageAnalyzerUserMenuItem.class);
 		//------------------------------------
 		// Initialize YSlow Singleton
 		// prevents error on first analysis request.

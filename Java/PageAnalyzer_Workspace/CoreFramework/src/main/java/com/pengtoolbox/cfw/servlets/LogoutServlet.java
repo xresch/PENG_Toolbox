@@ -30,8 +30,8 @@ public class LogoutServlet extends HttpServlet
 		log.info(request.getRequestURL().toString());
 		
 		SessionData data = (SessionData)request.getSession().getAttribute(CFW.SESSION_DATA); 	
-		data.setLoggedIn(false);
 		data.setUsername("");
+		data.triggerLogout();
 		
 		response.sendRedirect(response.encodeRedirectURL("./login"));
         

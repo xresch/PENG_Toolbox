@@ -78,8 +78,9 @@ public class LoginServlet extends HttpServlet
 				//Login success
 				HttpSession session = request.getSession();
 				SessionData data = (SessionData)session.getAttribute(CFW.SESSION_DATA); 
-				data.setLoggedIn(true);
 				data.setUsername(username);
+				data.triggerLogin();
+				
 				
 				response.sendRedirect(response.encodeRedirectURL("./harupload"));
 			}else {
