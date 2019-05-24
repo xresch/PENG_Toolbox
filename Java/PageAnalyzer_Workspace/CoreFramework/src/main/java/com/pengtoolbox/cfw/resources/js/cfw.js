@@ -22,9 +22,11 @@ var CFW = {
 	selection: {
 		selectElementContent: null
 	},
-	table: {
-		toc : null
-	}
+	ui: {
+		toc : null,
+		confirmExecute: null
+	},
+
 }
 
 /**************************************************************************************
@@ -95,7 +97,75 @@ function cfw_table_toc(contentAreaSelector, resultSelector){
 	target.html(resultHTML);
 	
 }
-CFW.table.toc = cfw_table_toc;
+CFW.ui.toc = cfw_table_toc;
+
+/**************************************************************************************
+ * Create a confirmation modal panel that executes the function passed by the argument
+ * @param targetSelector the jQuery selector for the resulting element
+ * @return nothing
+ *************************************************************************************/
+function cfw_confirmExecution(message, confirmLabel, jsCode){
+	
+	var body = $("body");
+	var modalID = 'cfwConfirmDialog';
+	
+	
+	var modal = $('<div id="'+modalID+'" class="modal fade" tabindex="-1" role="dialog">'
+				+ '  <div class="modal-dialog" role="document">'
+				+ '    <div class="modal-content">'
+				+ '      <div class="modal-header">'
+				+ '        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times</span></button>'
+				+ '        <h4 class="modal-title">Modal title</h4>'
+				+ '      </div>'
+				+ '      <div class="modal-body">'
+				+ '        <p>'+message+'</p>'
+				+ '      </div>'
+				+ '      <div class="modal-footer">'
+				+ '        <!--button type="button" class="btn btn-default" onclick="cfw_confirmExecution_Execute(this, \'cancel\')">Cancel</button-->'
+				+ '      </div>'
+				+ '    </div>'
+				+ '  </div>'
+				+ '</div>');
+
+	modal.modal();
+	
+	body.prepend(modal);	
+	
+	var cancelButton = $('<button type="button" class="btn btn-primary">Cancel</button>');
+	cancelButton.attr('onclick', 'cfw_confirmExecution_Execute(this, \'cancel\')');
+	cancelButton.data('modalID', modalID);
+	
+	var confirmButton = $('<button type="button" class="btn btn-primary">'+confirmLabel+'</button>');
+	confirmButton.attr('onclick', 'cfw_confirmExecution_Execute(this, \'confirm\')');
+	confirmButton.data('modalID', modalID);
+	confirmButton.data('jsCode', jsCode);
+	
+	modal.find('.modal-footer').append(cancelButton).append(confirmButton);
+	
+	modal.modal('show');
+}
+
+CFW.ui.confirmExecute = cfw_confirmExecution;
+
+function cfw_confirmExecution_Execute(source, action){
+	
+	var source = $(source);
+	var modalID = source.data('modalID');
+	var jsCode = source.data('jsCode');
+	
+	var modal = $('#'+modalID);
+	
+	if(action == 'confirm'){
+		eval(jsCode);
+	}
+	
+	//remove modal
+	modal.modal('hide');
+	$('.modal-backdrop').remove();
+	$('body').removeClass('modal-open');
+	modal.remove();
+}
+
 /******************************************************************
  * Reads the parameters from the URL and returns an object containing
  * name/value pairs like {"name": "value", "name2": "value2" ...}.

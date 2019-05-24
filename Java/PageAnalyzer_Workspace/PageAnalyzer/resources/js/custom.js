@@ -982,7 +982,7 @@ function printResultList(parent, data){
 		//Save HAR
 		rowString += '<td><a target="_blank" alt="Dowload Result" href=./data?type=har&resultid='+currentData.RESULT_ID+' download="'+resultName+'.har"><i class="fa fa-download"> HAR</i></a></td>';
 
-		rowString += '<td><a target="_blank" alt="Delete Result" href="./delete?resultids='+currentData.RESULT_ID+'"><i class="fa fa-trash text-danger"></i></a></td>';
+		rowString += '<td><a target="_blank" alt="Delete Result" onclick="CFW.ui.confirmExecute(\'Do you want to delete the results?\', \'Delete\', \'deleteResults('+currentData.RESULT_ID+')\')"><i class="fa fa-trash text-danger"></i></a></td>';
 		rowString += "</tr>";
 		
 		table.append(rowString);
@@ -993,8 +993,8 @@ function printResultList(parent, data){
 	//----------------------------------
 	// Create Button
 	var compareButton = $('<a id="resultCompareButton" class="btn btn-primary" onclick="compareResults();" disabled="true">Compare</a>');
-	var deleteButton = $('<a id="resultDeleteButton" class="btn btn-danger" onclick="deleteResults();" disabled="true">Delete</a>');
-	
+	var deleteButton = $('<a id="resultDeleteButton" class="btn btn-danger" disabled="true">Delete</a>');
+	deleteButton.attr('onclick', "CFW.ui.confirmExecute('Do you want to delete the selected results?', 'Delete', 'deleteResults(null)')");
 	parent.append(compareButton);
 	parent.append(deleteButton);
 }
@@ -1041,13 +1041,16 @@ function compareResults(){
  * Delete the selected results.
  * 
  *************************************************************************************/
-function deleteResults(){
-		
-	var resultIDs = "";
-	$.each($(".resultSelectionCheckbox:checked"), function(){
-		resultIDs += $(this).val()+",";
-	});
-	resultIDs = resultIDs.slice(0,-1);
+function deleteResults(resultIDs){
+	
+	if(resultIDs == null){
+		var resultIDs = "";
+		$.each($(".resultSelectionCheckbox:checked"), function(){
+			resultIDs += $(this).val()+",";
+		});
+		resultIDs = resultIDs.slice(0,-1);
+	}
+	
 	
 	self.location = "./delete?resultids="+resultIDs;
 	
