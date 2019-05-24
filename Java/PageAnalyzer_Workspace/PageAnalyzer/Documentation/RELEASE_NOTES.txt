@@ -3,6 +3,19 @@
 ########################################
 
 ########################################
+# Page Analyzer v 1.4
+########################################
+- added shutdown handling for graceful server shutdown.
+- added license files
+- History View: Added download links for results and .har-Files
+- History View: Added select/deselect all buttons
+- fixed delete redirect
+- added confirmation popup to delete actions
+- improved session handling,
+- started test cases
+- made menu creation dynamic
+
+########################################
 # Page Analyzer v 1.3
 ########################################
 - added support for HTTPS

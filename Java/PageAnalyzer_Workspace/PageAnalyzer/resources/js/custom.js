@@ -992,9 +992,13 @@ function printResultList(parent, data){
 	
 	//----------------------------------
 	// Create Button
+	var selectAllButton = $('<a id="selectAllButton" class="btn btn-default" onclick="'+"$('.resultSelectionCheckbox').prop('checked', true);resultSelectionChanged();"+'">Select All</a>');
+	var deselectAllButton = $('<a id="deselectAllButton" class="btn btn-default" onclick="'+"$('.resultSelectionCheckbox').prop('checked', false);resultSelectionChanged();"+'">Deselect All</a>');
 	var compareButton = $('<a id="resultCompareButton" class="btn btn-primary" onclick="compareResults();" disabled="true">Compare</a>');
 	var deleteButton = $('<a id="resultDeleteButton" class="btn btn-danger" disabled="true">Delete</a>');
 	deleteButton.attr('onclick', "CFW.ui.confirmExecute('Do you want to delete the selected results?', 'Delete', 'deleteResults(null)')");
+	parent.append(selectAllButton);
+	parent.append(deselectAllButton);
 	parent.append(compareButton);
 	parent.append(deleteButton);
 }
