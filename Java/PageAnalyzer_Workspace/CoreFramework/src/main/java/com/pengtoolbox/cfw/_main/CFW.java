@@ -10,6 +10,7 @@ import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.response.AbstractTemplate;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWTime;
+import com.pengtoolbox.cfw.validation.CFWValidation;
 
 public class CFW {
 	
@@ -23,6 +24,7 @@ public class CFW {
 	public class Files extends CFWFiles {}
 	public class Localization extends CFWLocalization {}
 	public class Time extends CFWTime {}
+	public class Validation extends CFWValidation {}
 	
 	//##############################################################################
 	// GLOBAL
