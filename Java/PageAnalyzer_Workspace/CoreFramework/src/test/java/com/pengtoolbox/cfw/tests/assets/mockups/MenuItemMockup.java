@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.tests.mockups;
+package com.pengtoolbox.cfw.tests.assets.mockups;
 
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 

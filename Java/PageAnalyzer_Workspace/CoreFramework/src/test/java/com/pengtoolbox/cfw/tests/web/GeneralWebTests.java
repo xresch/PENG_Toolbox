@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.tests._master.WebTestMaster;
-import com.pengtoolbox.cfw.tests.web.servlets.TestServlet;
+import com.pengtoolbox.cfw.tests.assets.servlets.TestServlet;
 
 public class GeneralWebTests extends WebTestMaster {
 
@@ -29,7 +29,7 @@ public class GeneralWebTests extends WebTestMaster {
 	@Test
 	public void testAlertMessages(){
 		
-		testContext.addServlet(TestServlet.class, "/general");
+		addServlet(TestServlet.class, "/general");
 		String response = CFW.HTTP.sendGETRequest(TEST_URL+"/general");
 		
 		Assertions.assertTrue(response.contains("<div class=\"alert alert-dismissible alert-info\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>this is an info.</div>"),
@@ -50,7 +50,7 @@ public class GeneralWebTests extends WebTestMaster {
 	@Test
 	public void testAssembly(){
 		
-		testContext.addServlet(TestServlet.class, "/general");
+		addServlet(TestServlet.class, "/general");
 		String response = CFW.HTTP.sendGETRequest(TEST_URL+"/general");
 		
 		Assertions.assertTrue(response.contains("<link rel=\"stylesheet\" href=\"/cfw/assembly?name=css_assembly_"),

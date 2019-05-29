@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw.response.bootstrap.BootstrapMenu;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
-import com.pengtoolbox.cfw.tests.mockups.MenuItemMockup;
+import com.pengtoolbox.cfw.tests.assets.mockups.MenuItemMockup;
 
 public class MenuTests {
 

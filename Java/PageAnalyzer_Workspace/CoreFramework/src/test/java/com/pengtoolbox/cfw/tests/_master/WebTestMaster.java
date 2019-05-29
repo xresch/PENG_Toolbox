@@ -1,8 +1,10 @@
 package com.pengtoolbox.cfw.tests._master;
 
+import javax.servlet.Servlet;
+
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWDefaultApp;
@@ -14,8 +16,17 @@ public class WebTestMaster {
 	
 	// context path on "/test"
 	protected static ServletContextHandler testContext;
-	@Before
-	public void startDefaultApplication() throws Exception {
+	
+	public static void addServlet(Class<? extends Servlet> clazz, String contextPath) {
+		testContext.addServlet(clazz, contextPath);
+//		if(!testContext.checkContextPath("/test/"+contextPath+"*")){
+//			System.out.println("SERVLET ADDED!!! >> "+contextPath);
+//			testContext.addServlet(clazz, contextPath);
+//		}
+	}
+	
+	@BeforeClass
+	public static void startDefaultApplication() throws Exception {
 		
 		APP  = new CFWDefaultApp(new String[] {});
 		
@@ -44,8 +55,8 @@ public class WebTestMaster {
 		
 	}
 	
-	@After
-	public void stopDefaultApplication() throws Exception {
+	@AfterClass
+	public static void stopDefaultApplication() throws Exception {
 		APP.stop();
 	}
 }

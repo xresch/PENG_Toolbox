@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.tests.web.servlets;
+package com.pengtoolbox.cfw.tests.assets.servlets;
 
 import java.io.IOException;
 import java.util.logging.Logger;
