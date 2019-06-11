@@ -3,6 +3,7 @@ package com.pengtoolbox.cfw.tests._master;
 import javax.servlet.Servlet;
 
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletMapping;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -18,11 +19,25 @@ public class WebTestMaster {
 	protected static ServletContextHandler testContext;
 	
 	public static void addServlet(Class<? extends Servlet> clazz, String contextPath) {
-		testContext.addServlet(clazz, contextPath);
-//		if(!testContext.checkContextPath("/test/"+contextPath+"*")){
-//			System.out.println("SERVLET ADDED!!! >> "+contextPath);
-//			testContext.addServlet(clazz, contextPath);
-//		}
+		
+		boolean alreadyExists = false;
+		for(ServletMapping mappings : testContext.getServletHandler().getServletMappings()) {
+			
+			for(String pathSpec : mappings.getPathSpecs()) {
+				if(contextPath.equals(pathSpec)) {
+					alreadyExists = true;
+					break;
+				}
+			}
+			if(alreadyExists) {
+				break;
+			}
+		}
+		
+		if(!alreadyExists) {
+			System.out.println("ADD SERVLET:"+contextPath);
+			testContext.addServlet(clazz, contextPath);
+		}
 	}
 	
 	@BeforeClass

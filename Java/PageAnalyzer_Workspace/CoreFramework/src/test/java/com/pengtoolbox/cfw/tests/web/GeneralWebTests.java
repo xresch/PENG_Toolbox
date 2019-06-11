@@ -12,7 +12,7 @@ public class GeneralWebTests extends WebTestMaster {
 	@Test
 	public void testLocalization(){
 		
-		testContext.addServlet(TestServlet.class, "/general");
+		addServlet(TestServlet.class, "/general");
 		String response = CFW.HTTP.sendGETRequest(TEST_URL+"/general");
 		
 		
