@@ -1,9 +1,5 @@
 package com.pengtoolbox.cfw.cli;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -26,7 +22,8 @@ import com.pengtoolbox.cfw.validation.ValidationEngine;
 public abstract class CFWCommandLineInterface {
 	
 	public static final String CONFIG_FILE = "-config.file";
-
+	public static final String STOP = "-stop";
+	
 	private static Logger logger = CFWLog.getLogger(CFW.class.getName());
 	
 	protected static LinkedHashMap<String,String> loadedArguments = new LinkedHashMap<String,String>();
@@ -48,6 +45,14 @@ public abstract class CFWCommandLineInterface {
 		
 		valengine.addValidator(new FileCanReadValidator(configFile));
 		addSupportedArgument(configFile.getPropertyName(), configFile);
+		
+		ArgumentDefinition stop = 
+				new ArgumentDefinition(	STOP, 
+										STOP,
+										"",
+										"Stop command for shutting down the running server.");
+		
+		addSupportedArgument(stop.getPropertyName(), stop);
 	}
 
 	
@@ -108,7 +113,9 @@ public abstract class CFWCommandLineInterface {
 				
 				loadedArguments.put(argKey, argValue);
 				
-			}else{
+			}else if(splitted.length == 1){
+				loadedArguments.put(splitted[0], "null");
+			}else {
 				ArgumentsException exception = new ArgumentsException("Argument could not be loaded: "+argument);
 				exception.setArgument(argument);
 				throw exception;
