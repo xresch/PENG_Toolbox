@@ -23,7 +23,7 @@ public class BootstrapMenu extends HierarchicalHTMLItem {
 		html.append("\n<nav class=\"navbar navbar-inverse navbar-fixed-top\">");
 		html.append("\n	  <div class=\"container\">");
 		html.append("\n		<div class=\"navbar-header\">");
-		html.append("\n		  <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#navbar\" aria-expanded=\"false\" aria-controls=\"navbar\">");
+		html.append("\n		  <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#navbarsDefault\" aria-expanded=\"false\" aria-controls=\"navbar\">");
 		html.append("\n			<span class=\"sr-only\">Toggle navigation</span>");
 		html.append("\n			<span class=\"icon-bar\"></span>");
 		html.append("\n			<span class=\"icon-bar\"></span>");
