@@ -21,9 +21,9 @@ public class FileCanReadValidator extends AbstractPropertyValidator {
 
 	@Override
 	public boolean validate(Object value) {
-		
-		
+				
 		Ternary result = validateNullEmptyAllowed(value);
+		if(result == Ternary.FALSE ) this.setInvalidMessage("The following proerty is mandatory: '"+getValidatable().getPropertyName()+"'");
 		if(result != Ternary.DONTCARE ) return result.toBoolean();
 		
 		File file = null;

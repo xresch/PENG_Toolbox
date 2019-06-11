@@ -19,6 +19,7 @@ import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import com.pengtoolbox.cfw.cli.ArgumentsException;
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
 import com.pengtoolbox.cfw.handlers.HTTPSRedirectHandler;
@@ -40,15 +41,22 @@ public class CFWDefaultApp {
 	
 	public static WebAppContext applicationContext;
 	
-	public CFWDefaultApp(String[] args) throws IOException, ShutdownException {
+	public CFWDefaultApp(String[] args) throws IOException, ShutdownException, ArgumentsException {
 		
         //###################################################################
         // Initialize
         //###################################################################
     	
+		CFW.CLI.readArguments(args);
+
+		if (!CFW.CLI.validateArguments()) {
+			System.out.println("Issues loading arguments: \n"+CFW.CLI.getInvalidMessagesAsString());
+			CFW.CLI.printUsage();
+			throw new ArgumentsException(CFW.CLI.getInvalidMessages());
+		}
     	//---------------------------------------
     	// General 
-	    CFW.initialize("./config/cfw.properties");
+	    CFW.initialize(CFW.CLI.getValue(CFW.CLI.CONFIG_FILE));
     	
 	    if (args.length == 1) {
 	    	

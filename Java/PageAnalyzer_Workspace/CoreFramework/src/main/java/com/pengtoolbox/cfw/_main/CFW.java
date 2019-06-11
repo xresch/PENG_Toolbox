@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.pengtoolbox.cfw.cli.CFWCommandLineInterface;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.response.AbstractTemplate;
 import com.pengtoolbox.cfw.utils.CFWFiles;
@@ -25,6 +26,7 @@ public class CFW {
 	public class Localization extends CFWLocalization {}
 	public class Time extends CFWTime {}
 	public class Validation extends CFWValidation {}
+	public class CLI extends CFWCommandLineInterface {}
 	
 	//##############################################################################
 	// GLOBAL

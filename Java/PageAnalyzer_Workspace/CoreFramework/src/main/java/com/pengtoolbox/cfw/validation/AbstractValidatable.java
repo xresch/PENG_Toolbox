@@ -7,7 +7,7 @@ public abstract class AbstractValidatable<T> implements IValidatable<T> {
 	
 	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
 	private String propertyName = "";
-	private T value;
+	protected T value;
 	
 	private ArrayList<String> invalidMessages;
 	
@@ -40,8 +40,12 @@ public abstract class AbstractValidatable<T> implements IValidatable<T> {
 		return invalidMessages;
 	}
 	
-	public boolean addValidator(IValidator e) {
-		return validatorArray.add(e);
+	public boolean addValidator(IValidator validator) {
+		if(!validatorArray.contains(validator)) {
+			return validatorArray.add(validator);
+		}
+		
+		return false;
 	}
 
 	public boolean removeValidator(IValidator o) {

@@ -19,9 +19,9 @@ public abstract class AbstractPropertyValidator implements IValidator {
 	private String tag="";
 	private boolean isNullAllowed = true;
 	
-	public AbstractPropertyValidator(IValidatable argument){
-		this.validateable = argument;
-		argument.addValidator(this);
+	public AbstractPropertyValidator(IValidatable validatable){
+		this.validateable = validatable;
+		validatable.addValidator(this);
 	}
 	
 	public AbstractPropertyValidator(){

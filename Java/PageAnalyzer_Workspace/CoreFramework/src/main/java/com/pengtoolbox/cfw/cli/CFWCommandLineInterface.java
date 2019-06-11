@@ -12,71 +12,44 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.FileCanReadValidator;
-import com.pengtoolbox.cfw.validation.LogLevelValidator;
+import com.pengtoolbox.cfw.validation.ValidationEngine;
 
 
 /**************************************************************************************
- * The AbstractArgumentsHandler provides the basic functionalities for the handling of 
+ * Provides the basic functionalities for the handling of 
  * command line arguments.
  * It provides default arguments for a configuration file and handling of log levels.
  * 
- * @author Reto Scheiwiller, 2015
+ * @author Reto Scheiwiller, 2018
  *
  **************************************************************************************/
-public abstract class AbstractArgumentsHandler {
+public abstract class CFWCommandLineInterface {
 	
-	public static final String CONFIG_LOGLEVEL_FILE = "-config.loglevel.file";
-	public static final String CONFIG_LOGLEVEL_CONSOLE = "-config.loglevel.console";
 	public static final String CONFIG_FILE = "-config.file";
 
 	private static Logger logger = CFWLog.getLogger(CFW.class.getName());
 	
-	protected LinkedHashMap<String,String> loadedArguments;
-	protected LinkedHashMap<String,ArgumentDefinition> supportedArgumentsMap;
+	protected static LinkedHashMap<String,String> loadedArguments = new LinkedHashMap<String,String>();
+	protected static LinkedHashMap<String,ArgumentDefinition> supportedArgumentsMap = new LinkedHashMap<String,ArgumentDefinition>();
 
-	protected ArrayList<String> invalidMessages;
+	protected static ArrayList<String> invalidMessages;
 	
-	public AbstractArgumentsHandler(){
+	protected static ValidationEngine valengine = new ValidationEngine();
+	
+	static {
 		//*********************************************
-		//Initialization
-		//*********************************************
-		loadedArguments = new LinkedHashMap<String,String>();
-		supportedArgumentsMap = new LinkedHashMap<String,ArgumentDefinition>();
+		// Add default arguments
+		//*********************************************	
+		ArgumentDefinition configFile = 
+				new ArgumentDefinition(	CONFIG_FILE, 
+										CONFIG_FILE+"={filepath}",
+										"./config/cfw.properties",
+										"The path to a config-file. The config-file can include all the arguments defined in this list delimited by newline. Also lines starting with �#� are considered as comments, as well blank lines are allowed.");
 		
-//		//*********************************************
-//		// Add default arguments
-//		//*********************************************	
-//		ArgumentDefinition configFile = 
-//				new ArgumentDefinition(	CONFIG_FILE, 
-//										CONFIG_FILE+"={filepath}",
-//										"",
-//										"The path to a config-file. The config-file can include all the arguments defined in this list delimited by newline. Also lines starting with �#� are considered as comments, as well blank lines are allowed.");
-//		
-//		new FileCanReadValidator(configFile);
-//		this.addSupportedArgument(configFile.getPropertyName(), configFile);
-//		
-//		//####################################################################
-//		
-//		ArgumentDefinition configLogLevelConsole = 
-//				new ArgumentDefinition(	CONFIG_LOGLEVEL_CONSOLE, 
-//										CONFIG_LOGLEVEL_CONSOLE+"={ALL|TRACE|DEBUG|INFO|WARN|ERROR|FATAL|OFF}",
-//										"INFO",
-//										"Log level(log4j2) printed to the standard output.");
-//		
-//		new LogLevelValidator(configLogLevelConsole);
-//		this.addSupportedArgument(configLogLevelConsole.getPropertyName(), configLogLevelConsole);
-//		
-//		//####################################################################
-//
-//		ArgumentDefinition configLogLevelFile = 
-//				new ArgumentDefinition(	CONFIG_LOGLEVEL_FILE, 
-//										CONFIG_LOGLEVEL_FILE+"={ALL|TRACE|DEBUG|INFO|WARN|ERROR|FATAL|OFF}",
-//										"DEBUG",
-//										"Log level(log4j2) printed to the logfile.");
-//		new LogLevelValidator(configLogLevelFile);
-//		this.addSupportedArgument(configLogLevelFile.getPropertyName(), configLogLevelFile);
-		
+		valengine.addValidator(new FileCanReadValidator(configFile));
+		addSupportedArgument(configFile.getPropertyName(), configFile);
 	}
+
 	
 	/***********************************************************
 	 * Before resolving all the arguments, first set the log 
@@ -119,7 +92,30 @@ public abstract class AbstractArgumentsHandler {
 	 * @throws ArgumentsException 
 	 * 
 	 ***********************************************************/
-	protected abstract void resolveArguments(String[] argArray) throws ArgumentsException;
+	protected static void resolveArguments(String[] argArray) throws ArgumentsException {
+				
+		//-------------------------------------------
+		// Read the Arguments
+		for(String argument : argArray){
+			
+			String argKey = "";
+			String argValue = "";
+			
+			String[] splitted = argument.split("=");
+			if(splitted.length == 2){
+				argKey = splitted[0];
+				argValue = splitted[1];
+				
+				loadedArguments.put(argKey, argValue);
+				
+			}else{
+				ArgumentsException exception = new ArgumentsException("Argument could not be loaded: "+argument);
+				exception.setArgument(argument);
+				throw exception;
+			}
+			
+		}
+	}
 	
 	/***********************************************************
 	 * Resolves the command line arguments and stores them in
@@ -130,96 +126,76 @@ public abstract class AbstractArgumentsHandler {
 	 * @throws ArgumentsException 
 	 * 
 	 ***********************************************************/
-	protected void resolveArguments(ArrayList<String> argArrayList) throws ArgumentsException {
+	protected static void resolveArguments(ArrayList<String> argArrayList) throws ArgumentsException {
 		resolveArguments(argArrayList.toArray(new String[0]));
 	}
 
 	/***********************************************************
-	 * Parses the command line Arguments. First check if a
-	 * config file is provided and override all other command line
-	 * arguments if it is found.
+	 * Parses the command line arguments. 
 	 * 
 	 * @param args the arguments to parse.
 	 * @throws ArgumentsException 
 	 * 
 	 ***********************************************************/
-	public void readArguments(String[] args) throws ArgumentsException{
+	public static void readArguments(String[] args) throws ArgumentsException{
 		
-		String[] argArray = args;
-		
-		//-------------------------------------------
-		// Check if there is a config file defined
-		// and load it.
-		for(String argument : argArray){
-			if(argument.startsWith(CONFIG_FILE)){
-				int index = argument.indexOf("=");
-				String configFilePath = argument.substring(index+1);
-				
-				readArgumentsFromFile(configFilePath);
-				return;
-			}
-		}
-		
-		//-------------------------------------------
-		// If no -confi.file was specified load
-		// arguments
-		resolveArguments(argArray);
+		resolveArguments(args);
 	}
 	
-	/***********************************************************
-	 * Resolves the arguments from a file and stores them in
-	 * the internal argument list.
-	 * 
-	 * @param configFilePath the path of the config file
-	 * @throws ArgumentsException 
-	 * 
-	 ***********************************************************/
-	public void readArgumentsFromFile(String configFilePath) throws ArgumentsException {
-		ArrayList<String> argArrayList = new ArrayList<String>();
-		
-		//-------------------------------------------
-		// Read config File
-		BufferedReader bf = null;
-		try {
-			bf = new BufferedReader(new FileReader(configFilePath));
-			
-			boolean hasMoreLines = true;
-			while(hasMoreLines){
-			 
-				String line = bf.readLine();
-				
-				if(line != null && !line.trim().isEmpty() && !line.startsWith("#")){
-					argArrayList.add(line);
-				}else{
-					if(line == null) hasMoreLines = false;
-				}
-			}
-			
-			//-------------------------------------------
-			// overwrite CommandLine-Arguments
-			resolveArguments(argArrayList);
-			
-		} catch (FileNotFoundException e) {
-			new CFWLog(logger).severe("specified config file not found:"+e.getMessage());
-		} catch (IOException e) {
-			new CFWLog(logger).severe("error while reading config file:"+e.getMessage());
-		} finally{
-			if(bf != null){
-				try {
-					bf.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-	}
+//	/***********************************************************
+//	 * Resolves the arguments from a file and stores them in
+//	 * the internal argument list.
+//	 * 
+//	 * @param configFilePath the path of the config file
+//	 * @throws ArgumentsException 
+//	 * 
+//	 ***********************************************************/
+//	private static void readArgumentsFromFile(String configFilePath) throws ArgumentsException {
+//		ArrayList<String> argArrayList = new ArrayList<String>();
+//		
+//		//-------------------------------------------
+//		// Read config File
+//		BufferedReader bf = null;
+//		try {
+//			bf = new BufferedReader(new FileReader(configFilePath));
+//			
+//			boolean hasMoreLines = true;
+//			while(hasMoreLines){
+//			 
+//				String line = bf.readLine();
+//				
+//				if(line != null && !line.trim().isEmpty() && !line.startsWith("#")){
+//					argArrayList.add(line);
+//				}else{
+//					if(line == null) hasMoreLines = false;
+//				}
+//			}
+//			
+//			//-------------------------------------------
+//			// overwrite CommandLine-Arguments
+//			resolveArguments(argArrayList);
+//			
+//		} catch (FileNotFoundException e) {
+//			new CFWLog(logger).severe("specified config file not found:"+e.getMessage());
+//		} catch (IOException e) {
+//			new CFWLog(logger).severe("error while reading config file:"+e.getMessage());
+//		} finally{
+//			if(bf != null){
+//				try {
+//					bf.close();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//		
+//	}
 
 	/***********************************************************
 	 * Print a usage listing with supported arguments.
 	 * 
 	 ***********************************************************/
-	public void printUsage(){
+	public static void printUsage(){
 		for(ArgumentDefinition currentArgument : supportedArgumentsMap.values()){
 			System.out.println("");
 			System.out.print(currentArgument.getPropertyName());
@@ -237,9 +213,10 @@ public abstract class AbstractArgumentsHandler {
 	/***********************************************************
 	 * Returns true if all arguments were correct, false otherwise.
 	 ***********************************************************/
-	public boolean validateArguments(){
+	public static boolean validateArguments(){
 		
 		boolean isValid = true;
+		
 		invalidMessages = new ArrayList<String>();
 		
 		for(String argumentKey : loadedArguments.keySet()){
@@ -266,7 +243,7 @@ public abstract class AbstractArgumentsHandler {
 	 * Will be executed if debug is enabled.
 	 * 
 	 ***********************************************************/
-	public void printLoadedArguments(){
+	public static void printLoadedArguments(){
 		Set<String> keySet = loadedArguments.keySet();
 		for(String key : keySet){
 			System.out.println("Key: "+key+", Value:"+loadedArguments.get(key));
@@ -276,7 +253,7 @@ public abstract class AbstractArgumentsHandler {
 	/***********************************************************
 	 * Add a supported Argument.
 	 ***********************************************************/
-	public ArgumentDefinition addSupportedArgument(String key, ArgumentDefinition value) {
+	public static ArgumentDefinition addSupportedArgument(String key, ArgumentDefinition value) {
 		return supportedArgumentsMap.put(key, value);
 	}
 
@@ -285,17 +262,17 @@ public abstract class AbstractArgumentsHandler {
 	 * Check if the argument is supported.
 	 * 
 	 ***********************************************************/
-	public boolean isArgumentSupported(String argument){
+	public static boolean isArgumentSupported(String argumentKey){
 		Set<String> keySet = supportedArgumentsMap.keySet();
 		for(String key : keySet){
-			if(argument.equals(key))
+			if(argumentKey.equals(key))
 				return true;
 		}
 		
 		return false;
 	}
 
-	public boolean hasArguments() {
+	public static boolean hasArguments() {
 		return loadedArguments.size() > 0 ? true : false;
 	}
 	
@@ -303,24 +280,42 @@ public abstract class AbstractArgumentsHandler {
 	// GETTERS & SETTERS
 	//####################################################################################
 	
-	public void addArgument(String key, String value){
+	public static void addArgument(String key, String value){
 		loadedArguments.put(key, value);
 	}
 	
-	public void addAllArgument(LinkedHashMap<String,String> arguments){
+	public static void addAllArgument(LinkedHashMap<String,String> arguments){
 		loadedArguments.putAll(arguments);
 	}
 	
-	public LinkedHashMap<String,String> getLoadedArguments() {
+	public static LinkedHashMap<String,String> getLoadedArguments() {
 		return loadedArguments;
 	}
 
-	public ArrayList<String> getInvalidMessages() {
+	public static ArrayList<String> getInvalidMessages() {
 		return invalidMessages;
 	}
+	
+	public static String getInvalidMessagesAsString() {
+		StringBuilder builder = new StringBuilder();
+		
+		for(String message : invalidMessages) {
+			builder.append(message).append("\n");
+		}
+		
+		return builder.toString();
+	}
 
-	public String getValue(String argument) {
-		return loadedArguments.get(argument);
+	public static String getValue(String argumentKey) {
+		if(loadedArguments.get(argumentKey) != null) {
+			return loadedArguments.get(argumentKey);
+		}else {
+			return supportedArgumentsMap.get(argumentKey).getValue();
+		}
+	}
+	
+	public static void clearLoadedArguments() {
+		loadedArguments = new LinkedHashMap<String,String>();
 	}
 	
 }

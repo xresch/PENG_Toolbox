@@ -27,6 +27,7 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
+import com.pengtoolbox.cfw.cli.ArgumentsException;
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -129,8 +130,9 @@ public class CFWApp {
 	 * @return CFWDefaultApp instance
 	 * @throws ShutdownException 
 	 * @throws IOException 
+	 * @throws ArgumentsException 
 	 ***********************************************************************/
-	public static CFWDefaultApp createApp(String[] args) throws IOException, ShutdownException {
+	public static CFWDefaultApp createApp(String[] args) throws IOException, ShutdownException, ArgumentsException {
 		return new CFWDefaultApp(args);
 	}
 	

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.pengtoolbox.cfw._main.CFW;
 
-class CFWLocalizationTests {
+public class CFWLocalizationTests {
 	
 	public static final String INTERNAL_RESOURCES_PATH = "com/pengtoolbox/cfw/resources";
 	

@@ -1,10 +1,7 @@
 package com.pengtoolbox.cfw.cli;
 
-import java.util.ArrayList;
-
-import com.pengtoolbox.cfw.validation.IValidator;
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.validation.AbstractValidatable;
-import com.pengtoolbox.cfw.validation.IValidatable;
 
 /**************************************************************************************
  * The ArgumentDefinition represents an argument with a key value pair.
@@ -15,28 +12,22 @@ import com.pengtoolbox.cfw.validation.IValidatable;
  **************************************************************************************/
 public class ArgumentDefinition extends AbstractValidatable<String> {
 	
-	private String key = "";
 	private String syntax = "";
-	private String defaultValue = "";
+	private String defaultValue = null;
 	private String description = "";
 	
 	//####################################################################################
 	// CONSTRUCTORS
 	//####################################################################################
-	public ArgumentDefinition(String key){
+	public ArgumentDefinition(String propertyName){
 		
-		this.key = key;
-		this.setValue(key);
+		this.setPropertyName(propertyName);
 		
-		this.syntax = syntax;
-		this.defaultValue = defaultValue;
-		this.description = description;
 	}
 	
-	public ArgumentDefinition(String key, String syntax, String defaultValue, String description){
+	public ArgumentDefinition(String propertyName, String syntax, String defaultValue, String description){
 		
-		this.key = key;
-		this.setPropertyName(key);
+		this.setPropertyName(propertyName);
 		
 		this.syntax = syntax;
 		this.defaultValue = defaultValue;
@@ -65,6 +56,14 @@ public class ArgumentDefinition extends AbstractValidatable<String> {
 	
 	public String getDefaultValue() {
 		return defaultValue;
+	}
+	
+	public String getValue() {
+		if(CFW.Validation.isNotNullNotEmptyString(super.getValue())) {
+			return super.getValue();
+		}else {
+			return this.getDefaultValue();
+		}
 	}
 
 	public ArgumentDefinition description(String description) {
