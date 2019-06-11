@@ -34,8 +34,11 @@ public class PageAnalyzerDB {
 	
 		
 		String addColumnHARFile = "ALTER TABLE results ADD COLUMN IF NOT EXISTS har_file CLOB";
+		
 		CFWDB.preparedExecute(null, addColumnHARFile);
-			
+		
+		String addColumnName = "ALTER TABLE results ADD COLUMN IF NOT EXISTS name VARCHAR(255)";
+		CFWDB.preparedExecute(null, addColumnName);	
 	}
 	
 	/********************************************************************************************
@@ -60,7 +63,7 @@ public class PageAnalyzerDB {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	public static void saveResults(HttpServletRequest request, String jsonResults, String harString) {
+	public static void saveResults(HttpServletRequest request, String resultName, String jsonResults, String harString) {
 		
 		//-------------------------------
 		// Get UserID
@@ -83,11 +86,12 @@ public class PageAnalyzerDB {
 
 		//-------------------------------
 		// Insert into DB
-		String saveResult = "INSERT INTO results(user_id, page_url, json_result,har_file, time) values(?, ?, ?, ?, CURRENT_TIMESTAMP() );";
+		String saveResult = "INSERT INTO results(user_id, page_url, name, json_result,har_file, time) values(?, ?, ?, ?, ?, CURRENT_TIMESTAMP() );";
 		
 		CFWDB.preparedExecute(request, saveResult, 
 				userID,
 				page_url,
+				resultName,
 				jsonResults,
 				harString);
 						
@@ -100,7 +104,7 @@ public class PageAnalyzerDB {
 	 ********************************************************************************************/
 	public static String getResultListForUser(HttpServletRequest request, String userID) {
 					
-		String selectResults = "SELECT result_id, page_url, time FROM results WHERE user_id = ? ORDER BY time DESC";
+		String selectResults = "SELECT result_id, name, page_url, time FROM results WHERE user_id = ? ORDER BY time DESC";
 		
 		ResultSet resultSet = CFWDB.preparedExecuteQuery(request, selectResults, userID);
 		String jsonString = CFWDB.resultSetToJSON(resultSet);

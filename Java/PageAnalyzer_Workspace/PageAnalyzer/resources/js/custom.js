@@ -927,6 +927,7 @@ function printResultList(parent, data){
 		headerRowString += '<th>&nbsp;</th>';
 		headerRowString += '<th>ID</th>';
 		headerRowString += '<th>Timestamp</th>';
+		headerRowString += '<th>Name</th>';
 		headerRowString += '<th>URL</th>';
 		headerRowString += '<th>&nbsp;</th>';
 		headerRowString += '<th>&nbsp;</th>';
@@ -954,6 +955,8 @@ function printResultList(parent, data){
 		rowString += '<td>'+currentData.RESULT_ID+'</td>';
 		rowString += '<td>'+currentData.TIME+'</td>';
 		
+		resultName = (currentData.NAME == "null") ? "" : currentData.NAME;
+		rowString += '<td>'+resultName+'</td>';
 		// URL Column
 		url = CFW.general.secureDecodeURI(currentData.PAGE_URL);
 		rowString += '<td>'+url+'</td>';

@@ -62,6 +62,7 @@ public class AnalyzeURLServlet extends HttpServlet
 		
 		//--------------------------------------
 		// Get Save Results Checkbox
+		String resultName = request.getParameter("resultName");
 		String saveResults = request.getParameter("saveResults");
 		
 		//--------------------------------------
@@ -91,7 +92,7 @@ public class AnalyzeURLServlet extends HttpServlet
 			//--------------------------------------
 			// Save Results to DB
 			if(saveResults != null && saveResults.trim().toLowerCase().equals("on")) {
-				PageAnalyzerDB.saveResults(request, results, harContents);
+				PageAnalyzerDB.saveResults(request, resultName, results, harContents);
 			}
 			
 			//--------------------------------------

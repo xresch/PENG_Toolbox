@@ -63,6 +63,13 @@ public class HARUploadServlet extends HttpServlet
 		
 		//--------------------------------------
 		// Get Save Results Checkbox
+		Part resultNamePart = request.getPart("resultName");
+		String resultName = "";
+		
+		if(resultNamePart != null) {
+			resultName = CFWFiles.readContentsFromInputStream(resultNamePart.getInputStream()).trim();
+		}
+		
 		Part saveResults = request.getPart("saveResults");
 		String saveResultsString = "off";
 		
@@ -88,7 +95,7 @@ public class HARUploadServlet extends HttpServlet
 			//--------------------------------------
 			// Save Results to DB
 			if(saveResultsString.trim().toLowerCase().equals("on")) {
-				PageAnalyzerDB.saveResults(request, results, harContents);
+				PageAnalyzerDB.saveResults(request, resultName, results, harContents);
 			}
 			
 			//--------------------------------------
