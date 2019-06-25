@@ -15,7 +15,7 @@ import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.response.TemplatePlain;
+import com.pengtoolbox.cfw.response.PlaintextResponse;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
@@ -63,7 +63,7 @@ public class DataServlet extends HttpServlet {
 		//-------------------------------------------
 		// Fetch Data
 		//-------------------------------------------
-		TemplatePlain plain = new TemplatePlain(request);
+		PlaintextResponse plain = new PlaintextResponse();
 		StringBuffer content = plain.getContent();
 
 		if (type == null) {
@@ -71,17 +71,17 @@ public class DataServlet extends HttpServlet {
 		}else {
 
 			switch(type.toLowerCase()) {
-				case "yslowresult": 	content.append(PageAnalyzerDB.getResultByID(request, Integer.parseInt(resultID)));
+				case "yslowresult": 	content.append(PageAnalyzerDB.getResultByID(Integer.parseInt(resultID)));
 										break;
 										
-				case "resultlist": 		content.append(PageAnalyzerDB.getResultListForUser(request, userID));
+				case "resultlist": 		content.append(PageAnalyzerDB.getResultListForUser(userID));
 										break;
 										
-				case "har": 			content.append(PageAnalyzerDB.getHARFileByID(request, Integer.parseInt(resultID)));
+				case "har": 			content.append(PageAnalyzerDB.getHARFileByID(Integer.parseInt(resultID)));
 										break;
 				
 				case "compareyslow": 	String resultIDs = request.getParameter("resultids");
-										content.append(PageAnalyzerDB.getResultListForComparison(request, resultIDs));
+										content.append(PageAnalyzerDB.getResultListForComparison(resultIDs));
 										break;
 										
 			}

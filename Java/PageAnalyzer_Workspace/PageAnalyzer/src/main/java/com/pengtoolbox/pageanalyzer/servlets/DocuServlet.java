@@ -40,7 +40,7 @@ public class DocuServlet extends HttpServlet {
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
+		TemplateHTMLDefault html = new TemplateHTMLDefault("Documentation");
 		StringBuffer content = html.getContent();
 		content.append(CFWFiles.getFileContent(request, "./resources/html/docu.html"));
 		

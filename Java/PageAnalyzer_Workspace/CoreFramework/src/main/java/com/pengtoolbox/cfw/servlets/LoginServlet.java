@@ -1,23 +1,21 @@
 package com.pengtoolbox.cfw.servlets;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginFacade;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 
 public class LoginServlet extends HttpServlet
@@ -28,9 +26,7 @@ public class LoginServlet extends HttpServlet
 	private static Logger logger = CFWLog.getLogger(LoginServlet.class.getName());
 	
 	public LoginServlet() {
-		
-
-		
+	
 	}
 	
 	/*****************************************************************
@@ -42,7 +38,7 @@ public class LoginServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
+		TemplateHTMLDefault html = new TemplateHTMLDefault("Login");
 		StringBuffer content = html.getContent();
 		content.append(CFW.Files.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "login.html"));
 		
@@ -68,11 +64,11 @@ public class LoginServlet extends HttpServlet
 		//--------------------------
 		// Check authorization
 		if(username == null || password == null){
-			TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
+			TemplateHTMLDefault html = new TemplateHTMLDefault("Login");
 			StringBuffer content = html.getContent();
 			content.append(CFW.Files.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "login.html"));
 			
-			html.addAlert(AlertType.ERROR, "Please specify a username and password.");
+			CFWContextRequest.addAlert(MessageType.ERROR, "Please specify a username and password.");
 		}else {
 			if(LoginFacade.getInstance().checkCredentials(username, password)) {
 				//Login success
@@ -84,11 +80,11 @@ public class LoginServlet extends HttpServlet
 				
 			}else {
 				//Login Failure
-				TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
+				TemplateHTMLDefault html = new TemplateHTMLDefault("Login");
 				StringBuffer content = html.getContent();
 				content.append(CFWFiles.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "login.html"));
 				
-				html.addAlert(AlertType.ERROR, "Username or password invalid.");
+				CFWContextRequest.addAlert(MessageType.ERROR, "Username or password invalid.");
 			}
 			
 		}

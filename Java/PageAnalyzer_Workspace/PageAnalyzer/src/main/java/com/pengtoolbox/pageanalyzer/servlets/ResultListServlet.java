@@ -10,10 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class ResultListServlet extends HttpServlet
@@ -34,7 +36,7 @@ public class ResultListServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "View Result");
+		TemplateHTMLDefault html = new TemplateHTMLDefault("View Result");
 		StringBuffer content = html.getContent();
 
 		String userID = "";
@@ -47,12 +49,12 @@ public class ResultListServlet extends HttpServlet
 		}else {
 			userID = "anonymous";
 		}
-		String jsonResults = PageAnalyzerDB.getResultListForUser(request, userID);
+		String jsonResults = PageAnalyzerDB.getResultListForUser(userID);
 		
 		//TODO: Check User
 		
 		if (jsonResults == null) {
-			html.addAlert(AlertType.ERROR, "Results could not be loaded.");
+			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Results could not be loaded.");
 		}else {
 									
 			content.append("<div id=\"results\"></div>");

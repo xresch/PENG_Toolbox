@@ -52,7 +52,7 @@ public class FileAssembly {
 	}
 	/***********************************************************************
 	 * Check if the assembly has any files added.
-	 * @param type the 
+	 * @param data.type the 
 	 * @param filetype the file type e.g. "js", "css"
 	 ***********************************************************************/
 	public boolean hasFiles() {

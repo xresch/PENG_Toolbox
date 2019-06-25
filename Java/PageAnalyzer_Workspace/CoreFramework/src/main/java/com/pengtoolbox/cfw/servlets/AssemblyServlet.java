@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.caching.FileAssembly;
-import com.pengtoolbox.cfw.response.TemplatePlain;
+import com.pengtoolbox.cfw.response.PlaintextResponse;
 
 public class AssemblyServlet extends HttpServlet
 {
@@ -28,7 +28,7 @@ public class AssemblyServlet extends HttpServlet
     {
 
 		String assemblyName = request.getParameter("name");
-		TemplatePlain plain = new TemplatePlain(request);
+		PlaintextResponse plain = new PlaintextResponse();
 		
 		if(FileAssembly.hasAssembly(assemblyName)) {
 			FileAssembly assembly = FileAssembly.getAssemblyFromCache(assemblyName);

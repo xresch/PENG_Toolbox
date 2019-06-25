@@ -2,10 +2,10 @@ package com.pengtoolbox.cfw.response;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class TemplatePlain extends AbstractTemplate {
+public class PlaintextResponse extends AbstractResponse {
 
-	public TemplatePlain(HttpServletRequest request) {
-		super(request);
+	public PlaintextResponse() {
+		super();
 	}
 
 	@Override

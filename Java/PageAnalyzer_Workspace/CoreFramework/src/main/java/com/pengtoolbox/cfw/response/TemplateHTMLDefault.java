@@ -1,27 +1,27 @@
 package com.pengtoolbox.cfw.response;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
-
-import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.BootstrapMenu;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 
-public class TemplateHTMLDefault extends AbstractTemplateHTML {
+public class TemplateHTMLDefault extends AbstractHTMLResponse {
 	
 	public static Logger logger = CFWLog.getLogger(TemplateHTMLDefault.class.getName());
 	
 	/*******************************************************************************
 	 * 
 	 *******************************************************************************/
-	public TemplateHTMLDefault(HttpServletRequest request, String pageTitle){
+	public TemplateHTMLDefault(String pageTitle){
 		
-		super(request);
+		super();
 		
 		this.pageTitle = pageTitle;
 		
@@ -83,7 +83,14 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 				// Messages
 				this.appendSectionTitle(buildedPage, "Messages");
 				buildedPage.append("<div id=\"messages\">");
-				buildedPage.append(this.messages);
+					
+				ArrayList<AlertMessage> messageArray = CFW.Context.Request.getMessages();
+					if(messageArray != null) {
+						for(AlertMessage message : messageArray) {
+							buildedPage.append(message.createHTML());
+						}
+					}
+				
 				buildedPage.append("</div>");
 				
 				//--------------------------

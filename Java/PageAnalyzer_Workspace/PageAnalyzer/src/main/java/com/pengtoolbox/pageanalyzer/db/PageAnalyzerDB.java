@@ -1,7 +1,5 @@
 package com.pengtoolbox.pageanalyzer.db;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
@@ -30,21 +28,21 @@ public class PageAnalyzerDB {
 							  + "page_url VARCHAR(4096),"
 							  + "json_result CLOB,"
 							  + "time TIMESTAMP);";
-		CFWDB.preparedExecute(null, createTableSQL);
+		CFWDB.preparedExecute(createTableSQL);
 	
 		
 		String addColumnHARFile = "ALTER TABLE results ADD COLUMN IF NOT EXISTS har_file CLOB";
 		
-		CFWDB.preparedExecute(null, addColumnHARFile);
+		CFWDB.preparedExecute(addColumnHARFile);
 		
 		String addColumnName = "ALTER TABLE results ADD COLUMN IF NOT EXISTS name VARCHAR(255)";
-		CFWDB.preparedExecute(null, addColumnName);	
+		CFWDB.preparedExecute(addColumnName);	
 	}
 	
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	private static String getUserIDForDBAccess(HttpServletRequest request) {
+	private static String getUserIDForDBAccess() {
 		//-------------------------------
 		// Get UserID
 		String userID = "";
@@ -67,7 +65,7 @@ public class PageAnalyzerDB {
 		
 		//-------------------------------
 		// Get UserID
-		String userID = getUserIDForDBAccess(request);
+		String userID = getUserIDForDBAccess();
 		
 		//-------------------------------
 		// Extract URL
@@ -88,7 +86,7 @@ public class PageAnalyzerDB {
 		// Insert into DB
 		String saveResult = "INSERT INTO results(user_id, page_url, name, json_result,har_file, time) values(?, ?, ?, ?, ?, CURRENT_TIMESTAMP() );";
 		
-		CFWDB.preparedExecute(request, saveResult, 
+		CFWDB.preparedExecute(saveResult, 
 				userID,
 				page_url,
 				resultName,
@@ -102,14 +100,14 @@ public class PageAnalyzerDB {
 	 * If the result is null, the method returns an empty array.
 	 * 
 	 ********************************************************************************************/
-	public static String getResultListForUser(HttpServletRequest request, String userID) {
+	public static String getResultListForUser(String userID) {
 					
 		String selectResults = "SELECT result_id, name, page_url, time FROM results WHERE user_id = ? ORDER BY time DESC";
 		
-		ResultSet resultSet = CFWDB.preparedExecuteQuery(request, selectResults, userID);
+		ResultSet resultSet = CFWDB.preparedExecuteQuery(selectResults, userID);
 		String jsonString = CFWDB.resultSetToJSON(resultSet);
 		
-		CFWDB.close(request, resultSet);
+		CFWDB.close(resultSet);
 		
 		return jsonString;
 		
@@ -120,9 +118,9 @@ public class PageAnalyzerDB {
 	 * If the result is null, the method returns an empty array.
 	 * 
 	 ********************************************************************************************/
-	public static String getResultListForComparison(HttpServletRequest request, String resultIDArray) {
+	public static String getResultListForComparison(String resultIDArray) {
 		
-		String userID = getUserIDForDBAccess(request);
+		String userID = getUserIDForDBAccess();
 		
 		//----------------------------------
 		// Check input format
@@ -133,10 +131,10 @@ public class PageAnalyzerDB {
 		//----------------------------------
 		// Execute
 		String selectResults = "SELECT result_id, page_url, time, json_result FROM results WHERE result_id in ("+resultIDArray+") AND user_id = ? ORDER BY time";
-		ResultSet resultSet = CFWDB.preparedExecuteQuery(request, selectResults, userID);
+		ResultSet resultSet = CFWDB.preparedExecuteQuery(selectResults, userID);
 		String jsonString = CFWDB.resultSetToJSON(resultSet);
 		
-		CFWDB.close(request, resultSet);
+		CFWDB.close(resultSet);
 		
 		return jsonString;
 		
@@ -148,16 +146,16 @@ public class PageAnalyzerDB {
 	 * @param request
 	 * @param resultId the ID of the result
 	 ********************************************************************************************/
-	public static String getResultByID(HttpServletRequest request, int resultID) {
+	public static String getResultByID(int resultID) {
 		
 		//----------------------------------
 		// Initialize
 		String jsonResult = null;
-		String userID = getUserIDForDBAccess(request);
+		String userID = getUserIDForDBAccess();
 		
 		//----------------------------------
 		// Execute
-		ResultSet resultSet = CFWDB.preparedExecuteQuery(request,
+		ResultSet resultSet = CFWDB.preparedExecuteQuery(
 				"SELECT json_result FROM results WHERE result_id = ?  AND user_id = ?",
 				resultID, 
 				userID);
@@ -176,7 +174,7 @@ public class PageAnalyzerDB {
 		
 		//----------------------------------
 		// Close and return
-		CFWDB.close(request, resultSet);
+		CFWDB.close(resultSet);
 		
 		return jsonResult;
 
@@ -188,16 +186,16 @@ public class PageAnalyzerDB {
 	 * @param request
 	 * @param resultId the ID of the result
 	 ********************************************************************************************/
-	public static String getHARFileByID(HttpServletRequest request, int resultID) {
+	public static String getHARFileByID(int resultID) {
 		
 		//----------------------------------
 		// Initialize
 		String jsonResult = null;
-		String userID = getUserIDForDBAccess(request);
+		String userID = getUserIDForDBAccess();
 		
 		//----------------------------------
 		// Execute
-		ResultSet resultSet = CFWDB.preparedExecuteQuery(request,
+		ResultSet resultSet = CFWDB.preparedExecuteQuery(
 				"SELECT har_file FROM results WHERE result_id = ? AND user_id = ?",
 				resultID, 
 				userID);
@@ -216,7 +214,7 @@ public class PageAnalyzerDB {
 		
 		//----------------------------------
 		// Close and return
-		CFWDB.close(request, resultSet);
+		CFWDB.close(resultSet);
 		
 		return jsonResult;
 
@@ -225,10 +223,9 @@ public class PageAnalyzerDB {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	public static boolean deleteResults(HttpServletRequest request, String resultIDArray) {
+	public static boolean deleteResults(String resultIDArray) {
 		
 		boolean result = false;
-		String userID = getUserIDForDBAccess(request);
 				
 		//----------------------------------
 		// Check input format
@@ -239,18 +236,18 @@ public class PageAnalyzerDB {
 		//----------------------------------
 		// Execute
 		String deleteResults = "DELETE FROM results WHERE result_id in ("+resultIDArray+");";
-		result = CFWDB.preparedExecute(request, deleteResults);
+		result = CFWDB.preparedExecute(deleteResults);
 		
 		return result;
 		
 	}
 	
-	/********************************************************************************************
-	 *
-	 ********************************************************************************************/
-	public static void cleanupDatabase() {
-		
-		CFWDB.preparedExecute(null, "DROP TABLE results;");
-		
-	}
+//	/********************************************************************************************
+//	 * Test code only
+//	 ********************************************************************************************/
+//	public static void cleanupDatabase() {
+//		
+//		CFWDB.preparedExecute("DROP TABLE results;");
+//		
+//	}
 }

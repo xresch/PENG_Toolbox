@@ -14,6 +14,7 @@ import org.eclipse.jetty.server.handler.HandlerWrapper;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.SessionData;
+import com.pengtoolbox.cfw._main.CFW.Context;
 import com.pengtoolbox.cfw.logging.CFWLog;
  
 public class RequestHandler extends HandlerWrapper
@@ -97,9 +98,10 @@ public class RequestHandler extends HandlerWrapper
     	//if(request.getAttribute(PA.REQUEST_ATTR_TEMPLATE) instanceof AbstractTemplateHTML){
     	CFW.Localization.writeLocalized(request, response);
     	
-    	
     	log.end();
     	
         baseRequest.setHandled(true);
+        
+        Context.Request.clearRequestContext();
     }
 }

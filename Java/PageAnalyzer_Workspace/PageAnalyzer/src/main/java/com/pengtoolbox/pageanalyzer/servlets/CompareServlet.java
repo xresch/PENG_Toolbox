@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class CompareServlet extends HttpServlet
@@ -32,7 +34,7 @@ public class CompareServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Compare Results");
+		TemplateHTMLDefault html = new TemplateHTMLDefault("Compare Results");
 		StringBuffer content = html.getContent();
 
 		content.append("<div id=\"results\"></div>");
@@ -45,7 +47,7 @@ public class CompareServlet extends HttpServlet
 		String arrayString = "[]";
 		
 		if(!resultIDs.matches("(\\d,?)+")) {
-			html.addAlert(AlertType.ERROR, "Result IDs '"+resultIDs+"' is not a string of comma separated numbers.");
+			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Result IDs '"+resultIDs+"' is not a string of comma separated numbers.");
 		}
 
 		StringBuffer javascript = html.getJavascript();

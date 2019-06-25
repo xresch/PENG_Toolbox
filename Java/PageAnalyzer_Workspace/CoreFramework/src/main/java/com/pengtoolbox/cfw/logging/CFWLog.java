@@ -8,10 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw._main.SessionData;
-import com.pengtoolbox.cfw.response.AbstractTemplate;
-import com.pengtoolbox.cfw.response.AbstractTemplateHTML;
-import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
+import com.pengtoolbox.cfw.response.AbstractHTMLResponse;
+import com.pengtoolbox.cfw.response.AbstractResponse;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 public class CFWLog {
 	
@@ -219,7 +220,7 @@ public class CFWLog {
 					this.deltaStartMillis = (endtimeNanos - (long)request.getAttribute(CFW.REQUEST_ATTR_STARTNANOS) ) / 1000000;
 				}
 				
-				AbstractTemplate template = CFW.getTemplate(request);
+				AbstractResponse template = CFW.Context.Request.getResponse();
 				
 				if(template != null){
 					
@@ -227,13 +228,13 @@ public class CFWLog {
 					
 					if(level == Level.SEVERE || level == Level.WARNING){
 						
-						AlertType alertType = ( level == Level.SEVERE ? AlertType.ERROR : AlertType.WARNING );
+						MessageType alertType = ( level == Level.SEVERE ? MessageType.ERROR : MessageType.WARNING );
 						
-						if(template instanceof AbstractTemplateHTML){
-							((AbstractTemplateHTML)template).addAlert(alertType, message);
+						if(template instanceof AbstractHTMLResponse){
+							CFWContextRequest.addAlert(alertType, message);
 							
 							if(this.exception != null){
-								((AbstractTemplateHTML)template).addSupportInfo("Exception: ", this.exception);
+								((AbstractHTMLResponse)template).addSupportInfo("Exception: ", this.exception);
 							}
 						}
 					}

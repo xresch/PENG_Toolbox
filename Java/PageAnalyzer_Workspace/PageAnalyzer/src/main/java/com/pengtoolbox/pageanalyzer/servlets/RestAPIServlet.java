@@ -12,7 +12,7 @@ import javax.servlet.http.Part;
 
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.response.TemplatePlain;
+import com.pengtoolbox.cfw.response.PlaintextResponse;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
@@ -35,7 +35,7 @@ public class RestAPIServlet extends HttpServlet {
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Rest API");
+		TemplateHTMLDefault html = new TemplateHTMLDefault("Rest API");
 		StringBuffer content = html.getContent();
 		content.append(CFWFiles.getFileContent(request, "./resources/html/api.html"));
 		
@@ -52,7 +52,7 @@ public class RestAPIServlet extends HttpServlet {
 		CFWLog log = new CFWLog(logger).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
-		TemplatePlain plain = new TemplatePlain(request);
+		PlaintextResponse plain = new PlaintextResponse();
 		StringBuffer content = plain.getContent();
 
 		Part harFile = request.getPart("harFile");

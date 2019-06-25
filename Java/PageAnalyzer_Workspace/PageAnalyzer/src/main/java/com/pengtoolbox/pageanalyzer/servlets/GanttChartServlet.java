@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class GanttChartServlet extends HttpServlet
@@ -32,7 +34,7 @@ public class GanttChartServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "View Result");
+		TemplateHTMLDefault html = new TemplateHTMLDefault("View Result");
 		StringBuffer content = html.getContent();
 
 		//content.append("<h1>Gantt Chart</h1>");
@@ -42,14 +44,14 @@ public class GanttChartServlet extends HttpServlet
 		
 		String jsonResults = null;
 		if(resultID.matches("\\d+")) {
-			jsonResults = PageAnalyzerDB.getHARFileByID(request, Integer.parseInt(resultID));
+			jsonResults = PageAnalyzerDB.getHARFileByID(Integer.parseInt(resultID));
 		}else {
-			html.addAlert(AlertType.ERROR, "Result ID '"+resultID+"' is not a number.");
+			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Result ID '"+resultID+"' is not a number.");
 		}
 	
 		
 		if (jsonResults == null) {
-			html.addAlert(AlertType.ERROR, "Results could not be loaded.");
+			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Results could not be loaded.");
 		}else {
 									
 			content.append("<div id=\"results\"></div>");

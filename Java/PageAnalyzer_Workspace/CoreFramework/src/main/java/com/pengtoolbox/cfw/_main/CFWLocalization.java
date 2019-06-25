@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.AbstractTemplate;
+import com.pengtoolbox.cfw.response.AbstractResponse;
 
 public class CFWLocalization {
 	
@@ -41,7 +41,7 @@ public class CFWLocalization {
 	 ******************************************************************************************/
 	public static void writeLocalized(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
-		AbstractTemplate template = CFW.getTemplate(request);
+		AbstractResponse template = CFW.Context.Request.getResponse();
 		
 		if(template != null){
 	

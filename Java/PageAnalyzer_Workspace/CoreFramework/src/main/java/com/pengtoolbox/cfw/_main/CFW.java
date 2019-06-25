@@ -2,11 +2,9 @@ package com.pengtoolbox.cfw._main;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.pengtoolbox.cfw.cli.CFWCommandLineInterface;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.response.AbstractTemplate;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWSecurity;
 import com.pengtoolbox.cfw.utils.CFWTime;
@@ -22,7 +20,9 @@ public class CFW {
 	public static class Context {
 		public static class Request extends CFWContextRequest{};
 	}
-	public class DB extends CFWDB {}
+	public static class DB extends CFWDB {
+		public static class Users extends CFWDBUser{};
+	}
 	public class HTTP extends CFWHttp {}
 	public class Files extends CFWFiles {}
 	public class Localization extends CFWLocalization {}
@@ -36,7 +36,7 @@ public class CFW {
 	//##############################################################################
 
 	public static final String REQUEST_ATTR_ID = "requestID";
-	public static final String REQUEST_ATTR_TEMPLATE = "pageTemplate";
+	//public static final String REQUEST_ATTR_TEMPLATE = "pageTemplate";
 	public static final String REQUEST_ATTR_STARTNANOS = "starttime";
 	public static final String REQUEST_ATTR_ENDNANOS = "endtime";
 	
@@ -55,22 +55,22 @@ public class CFW {
 	// METHODS
 	//##############################################################################
 	
-	public static AbstractTemplate getTemplate(HttpServletRequest request){
-		
-		Object o = request.getAttribute(CFW.REQUEST_ATTR_TEMPLATE);
-		
-		if(o != null){
-			if(o instanceof AbstractTemplate){
-				return (AbstractTemplate)o;
-			}else{
-				return null;
-			}
-			
-		}else{
-			return null;
-		}
-
-	}
+//	public static AbstractResponse getTemplate(HttpServletRequest request){
+//		
+//		Object o = request.getAttribute(CFW.REQUEST_ATTR_TEMPLATE);
+//		
+//		if(o != null){
+//			if(o instanceof AbstractResponse){
+//				return (AbstractResponse)o;
+//			}else{
+//				return null;
+//			}
+//			
+//		}else{
+//			return null;
+//		}
+//
+//	}
 	
 	public static void initialize(String configFilePath) throws IOException{
 					

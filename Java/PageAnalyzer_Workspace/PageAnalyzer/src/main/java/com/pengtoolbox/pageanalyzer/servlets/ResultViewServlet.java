@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class ResultViewServlet extends HttpServlet
@@ -32,7 +34,7 @@ public class ResultViewServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "View Result");
+		TemplateHTMLDefault html = new TemplateHTMLDefault("View Result");
 		StringBuffer content = html.getContent();
 
 		content.append("<h1>Results</h1>");
@@ -41,7 +43,7 @@ public class ResultViewServlet extends HttpServlet
 		String resultID = request.getParameter("resultid");
 		
 		if(!resultID.matches("\\d+")) {
-			html.addAlert(AlertType.ERROR, "Result ID '"+resultID+"' is not a number.");
+			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Result ID '"+resultID+"' is not a number.");
 		}
 			
 		content.append("<div id=\"results\"></div>");

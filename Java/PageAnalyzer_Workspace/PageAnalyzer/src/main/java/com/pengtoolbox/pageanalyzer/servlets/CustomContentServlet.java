@@ -29,7 +29,7 @@ public class CustomContentServlet extends HttpServlet
 		String folder = request.getParameter("f");
 		String page = request.getParameter("p");
 		
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, folder);
+		TemplateHTMLDefault html = new TemplateHTMLDefault(folder);
 		StringBuffer content = html.getContent();
 		
         response.setContentType("text/html");

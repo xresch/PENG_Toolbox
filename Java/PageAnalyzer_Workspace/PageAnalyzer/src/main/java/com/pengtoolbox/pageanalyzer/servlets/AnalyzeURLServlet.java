@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.phantomjs.PhantomJSInterface;
@@ -33,7 +35,7 @@ public class AnalyzeURLServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
+		TemplateHTMLDefault html = new TemplateHTMLDefault("Analyze URL");
 		StringBuffer content = html.getContent();
 		content.append(CFWFiles.getFileContent(request, "./resources/html/analyzeurl.html"));
 		
@@ -53,7 +55,7 @@ public class AnalyzeURLServlet extends HttpServlet
 		
 		//--------------------------
 		// Create Content
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
+		TemplateHTMLDefault html = new TemplateHTMLDefault("Analyze URL");
 		StringBuffer content = html.getContent();
 		content.append(CFWFiles.getFileContent(request, "./resources/html/analyzeurl.html"));
 		
@@ -70,7 +72,7 @@ public class AnalyzeURLServlet extends HttpServlet
 		String analyzeURL = request.getParameter("analyzeurl");
 		
 		if(analyzeURL == null){
-			html.addAlert(AlertType.ERROR, "Please specify a URL.");
+			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Please specify a URL.");
 		}else {
 
 			//--------------------------

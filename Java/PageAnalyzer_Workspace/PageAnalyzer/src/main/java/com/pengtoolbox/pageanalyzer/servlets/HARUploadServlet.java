@@ -10,9 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
-import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
@@ -36,7 +38,7 @@ public class HARUploadServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
+		TemplateHTMLDefault html = new TemplateHTMLDefault("Analyze");
 		StringBuffer content = html.getContent();
 		content.append(CFWFiles.getFileContent(request, "./resources/html/harupload.html"));
 		
@@ -54,7 +56,7 @@ public class HARUploadServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze");
+		TemplateHTMLDefault html = new TemplateHTMLDefault("Analyze HAR");
 		StringBuffer content = html.getContent();
 		content.append(CFWFiles.getFileContent(request, "./resources/html/harupload.html"));
 		
@@ -83,7 +85,7 @@ public class HARUploadServlet extends HttpServlet
 		Part harFile = request.getPart("harFile");
 
 		if (harFile == null) {
-			html.addAlert(AlertType.ERROR, "HAR File could not be loaded.");
+			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "HAR File could not be loaded.");
 		}else {
 
 			log.start().method("doPost()-StreamHarFile");

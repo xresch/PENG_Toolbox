@@ -9,9 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.AbstractTemplateHTML.AlertType;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 public class TestServlet extends HttpServlet
 {
@@ -30,16 +31,16 @@ public class TestServlet extends HttpServlet
 		
 		CFWLog log = new CFWLog(logger).method("doGet");
 		
-		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Test Page");
+		TemplateHTMLDefault html = new TemplateHTMLDefault("Test Page");
 		StringBuffer content = html.getContent();
 		
 		//--------------------------
 		//Add messages manually
 		//--------------------------
-		html.addAlert(AlertType.INFO, "this is an info.");
-		html.addAlert(AlertType.WARNING, "this is a warning.");
-		html.addAlert(AlertType.ERROR, "this is an error.");
-		html.addAlert(AlertType.SUCCESS, "this is a success.");
+		CFWContextRequest.addAlert(MessageType.INFO, "this is an info.");
+		CFWContextRequest.addAlert(MessageType.WARNING, "this is a warning.");
+		CFWContextRequest.addAlert(MessageType.ERROR, "this is an error.");
+		CFWContextRequest.addAlert(MessageType.SUCCESS, "this is a success.");
 		
 		//------------------------------
 		//Add messages by log exception

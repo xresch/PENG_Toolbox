@@ -12,12 +12,11 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.Server;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
@@ -67,9 +66,9 @@ public class CFWDB {
 			CFWDB.dataSource.setUser(username);
 			CFWDB.dataSource.setPassword(password);
 			
-			initializeTables();
-			
 			CFWDB.isInitialized = true;
+			
+			initializeTables();
 			
 			
 		} catch (SQLException e) {
@@ -85,6 +84,8 @@ public class CFWDB {
 	 *
 	 ********************************************************************************************/
 	public static void initializeTables() {
+		
+		CFW.DB.Users.initialize();
 		
 	}
 	
@@ -108,7 +109,7 @@ public class CFWDB {
 	 * @param values the values to be placed in the prepared statement
 	 * @throws SQLException 
 	 ********************************************************************************************/
-	public static boolean preparedExecute(HttpServletRequest request, String sql, Object... values){	
+	public static boolean preparedExecute(String sql, Object... values){	
         
 		CFWLog log = new CFWLog(logger).method("preparedExecute").start();
 		Connection conn = null;
@@ -151,7 +152,7 @@ public class CFWDB {
 	 * @param values the values to be placed in the prepared statement
 	 * @throws SQLException 
 	 ********************************************************************************************/
-	public static ResultSet preparedExecuteQuery(HttpServletRequest request, String sql, Object... values){	
+	public static ResultSet preparedExecuteQuery(String sql, Object... values){	
         
 		CFWLog log = new CFWLog(logger)
 				.method("preparedExecuteQuery")
@@ -203,6 +204,7 @@ public class CFWDB {
 				else if (currentValue instanceof Blob) 		{ prepared.setBlob(i+1, (Blob)currentValue); }
 				else if (currentValue instanceof Clob) 		{ prepared.setClob(i+1, (Clob)currentValue); }
 				else if (currentValue instanceof Byte) 		{ prepared.setByte(i+1, (Byte)currentValue); }
+				else { throw new RuntimeException("Unsupported database field type: "+ currentValue.getClass().getName());}
 			}
 		}
 	}
@@ -212,7 +214,7 @@ public class CFWDB {
 	 * @param request HttpServletRequest containing session data used for logging information(null allowed).
 	 * @param resultSet which should be closed.
 	 ********************************************************************************************/
-	public static void close(HttpServletRequest request, ResultSet resultSet){
+	public static void close(ResultSet resultSet){
 		
 		try {
 			if(resultSet != null) {
