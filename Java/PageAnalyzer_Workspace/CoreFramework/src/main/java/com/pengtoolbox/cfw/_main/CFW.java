@@ -1,8 +1,6 @@
 package com.pengtoolbox.cfw._main;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,6 +8,7 @@ import com.pengtoolbox.cfw.cli.CFWCommandLineInterface;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.response.AbstractTemplate;
 import com.pengtoolbox.cfw.utils.CFWFiles;
+import com.pengtoolbox.cfw.utils.CFWSecurity;
 import com.pengtoolbox.cfw.utils.CFWTime;
 import com.pengtoolbox.cfw.validation.CFWValidation;
 
@@ -20,10 +19,14 @@ public class CFW {
 	//##############################################################################
 	public class App extends CFWApp {} 
 	public class Config extends CFWConfig {}
+	public static class Context {
+		public static class Request extends CFWContextRequest{};
+	}
 	public class DB extends CFWDB {}
 	public class HTTP extends CFWHttp {}
 	public class Files extends CFWFiles {}
 	public class Localization extends CFWLocalization {}
+	public class Security extends CFWSecurity {}
 	public class Time extends CFWTime {}
 	public class Validation extends CFWValidation {}
 	public class CLI extends CFWCommandLineInterface {}

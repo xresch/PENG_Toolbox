@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateJSONDefault;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
@@ -28,7 +27,7 @@ public class DeleteResultServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		CFWLog log = new CFWLog(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 		
 		TemplateJSONDefault jsonResponse = new TemplateJSONDefault(request);
@@ -41,6 +40,7 @@ public class DeleteResultServlet extends HttpServlet
 			content.append("{\"result\": "+result+"}");
 		}else {
 			content.append("{\"result\": false, \"error\": \"The result could not be deleted: ResultID is not a number.\"}");
+			log.severe("The result could not be deleted: ResultID is not a number.");
 		}
 		
 		response.sendRedirect(response.encodeRedirectURL("./resultlist"));

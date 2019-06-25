@@ -43,18 +43,6 @@ public class CFWLog {
 		this.logger = logger;
 	}
 	
-	public CFWLog(Logger logger, HttpServletRequest request){
-		this.logger = logger;
-		this.request = request;
-	}
-	
-	public CFWLog request(HttpServletRequest request){
-		
-		this.request = request;
-		
-		return this;
-	}
-	
 	public CFWLog method(String method){
 		
 		this.sourceMethod = method;
@@ -162,7 +150,7 @@ public class CFWLog {
 	public void warn(String message, Throwable throwable){this.log(Level.WARNING, message, throwable);}
 	
 	public void severe(String message){this.log(Level.SEVERE, message, null);}
-	public void severe(String message, Throwable throwable){this.log(Level.SEVERE, message, throwable);}
+	public void severe(String message, Throwable e){this.log(Level.SEVERE, message, e);}
 
 	/***********************************************************************
 	 * This is the main log method that handles all the logging.
@@ -206,6 +194,7 @@ public class CFWLog {
 			//-------------------------
 			// Handle Request
 			//-------------------------
+			request = CFW.Context.Request.getRequest();
 			if(request != null){
 
 				this.webURL = request.getRequestURI();
@@ -214,7 +203,7 @@ public class CFWLog {
 				this.sessionID = request.getSession().getId();
 				
 				if(CFWConfig.AUTHENTICATION_ENABLED) {
-					SessionData data = (SessionData) request.getSession().getAttribute(CFW.SESSION_DATA); 
+					SessionData data = CFW.Context.Request.getSessionData(); 
 					if(data.isLoggedIn()) {
 						this.userID = data.getUsername();
 					}

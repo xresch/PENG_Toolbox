@@ -76,6 +76,9 @@ public class CFWConfig {
 	/** The URL used for LDAP authentication. (Property=authentication_ldap_user_attribute, Default="") */
 	public static String LDAP_USER_ATTRIBUTE = "";
 	
+	/** The name of the database server. (Property=cfw_h2_server, Default="localhost") */
+	public static String DB_SERVER = "localhost";
+	
 	/** The directory where the database should be stored. (Property=cfw_h2_path, Default="false") */
 	public static String DB_STORE_PATH = "./datastore";
 	
@@ -135,11 +138,13 @@ public class CFWConfig {
 		LDAP_SEARCHBASE 				= CFWConfig.configAsString("authentication_ldap_searchbase", LDAP_SEARCHBASE);
 		LDAP_USER_ATTRIBUTE 			= CFWConfig.configAsString("authentication_ldap_user_attribute", LDAP_USER_ATTRIBUTE);
 
+		DB_SERVER					= CFWConfig.configAsString("cfw_h2_server", DB_SERVER);
+		DB_PORT						= CFWConfig.configAsInt("cfw_h2_port", DB_PORT);
 		DB_STORE_PATH				= CFWConfig.configAsString("cfw_h2_path", DB_STORE_PATH);
 		DB_NAME						= CFWConfig.configAsString("cfw_h2_db_name", DB_NAME);
-		DB_PORT						= CFWConfig.configAsInt("cfw_h2_port", DB_PORT);
 		DB_USERNAME					= CFWConfig.configAsString("cfw_h2_username", DB_USERNAME);
 		DB_PASSWORD					= CFWConfig.configAsString("cfw_h2_password", DB_PASSWORD);
+		
 	}
 	
 	

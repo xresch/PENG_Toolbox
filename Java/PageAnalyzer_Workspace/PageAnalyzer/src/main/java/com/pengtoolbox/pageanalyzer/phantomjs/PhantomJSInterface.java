@@ -24,7 +24,7 @@ public class PhantomJSInterface
 	
     public String getHARStringForWebsite(HttpServletRequest request, String url)
     {
-    	CFWLog log = new CFWLog(logger, request).method("getHARStringForWebsite");
+    	CFWLog log = new CFWLog(logger).method("getHARStringForWebsite");
     	
     	log.start();
     	String returnValue = "";

@@ -27,12 +27,12 @@ public class RequestHandler extends HandlerWrapper
                                                       ServletException
     {
     	
+    	CFW.Context.Request.setRequest(request);
     	//##################################
     	// Before
     	//##################################
     	
     	CFWLog log = new CFWLog(logger)
-    			.request(request)
     			.method("handle");
     	// Used to calculate deltaStart by OMLogger.log()
     	// minus 1ms to be always first
@@ -76,10 +76,13 @@ public class RequestHandler extends HandlerWrapper
     	
     	if(session.getAttribute(CFW.SESSION_DATA) == null) {
     		session.setAttribute(CFW.SESSION_DATA, new SessionData());
-        	
+    		
     	};
+    	CFW.Context.Request.setSessionData((SessionData)session.getAttribute(CFW.SESSION_DATA));
+    	
     	//workaround maxInactiveInterval=-1 issue
     	session.setMaxInactiveInterval(CFW.Config.SESSION_TIMEOUT);
+    	
 
     	//##################################
     	// Call Wrapped Handler

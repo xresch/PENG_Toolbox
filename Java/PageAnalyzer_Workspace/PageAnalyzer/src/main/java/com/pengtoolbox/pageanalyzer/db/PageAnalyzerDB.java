@@ -49,7 +49,7 @@ public class PageAnalyzerDB {
 		// Get UserID
 		String userID = "";
 		if(CFWConfig.AUTHENTICATION_ENABLED) {
-			SessionData data = (SessionData) request.getSession().getAttribute(CFW.SESSION_DATA); 
+			SessionData data = CFW.Context.Request.getSessionData(); 
 			if(data.isLoggedIn()) {
 				userID = data.getUsername();
 			}
@@ -169,8 +169,9 @@ public class PageAnalyzerDB {
 				jsonResult = resultSet.getString(1);
 			}
 		} catch (SQLException e) {
-			new CFWLog(logger, request).method("getResultByID")
-			.severe("Exception occured while reading results.", e);
+			new CFWLog(logger)
+				.method("getResultByID")
+				.severe("Exception occured while reading results.", e);
 		}
 		
 		//----------------------------------
@@ -208,8 +209,9 @@ public class PageAnalyzerDB {
 				jsonResult = resultSet.getString(1);
 			}
 		} catch (SQLException e) {
-			new CFWLog(logger, request).method("getResultByID")
-			.severe("Exception occured while reading results.", e);
+			new CFWLog(logger)
+				.method("getHARFileByID")
+				.severe("Exception occured while reading results.", e);
 		}
 		
 		//----------------------------------

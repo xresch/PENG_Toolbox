@@ -62,7 +62,7 @@ public class TemplateHTMLDefault extends AbstractTemplateHTML {
 				
 				this.appendSectionTitle(buildedPage, "Menubar");
 				buildedPage.append("");
-				SessionData data = (SessionData)request.getSession().getAttribute(CFW.SESSION_DATA);
+				SessionData data = CFW.Context.Request.getSessionData();
 				BootstrapMenu menu = data.getMenu();
 				if(menu != null) {
 					buildedPage.append(menu.getHTML());

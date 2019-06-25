@@ -38,6 +38,7 @@ public class CFWDB {
     	
     	//---------------------------------------
     	// Get variables
+		String server 		= CFWConfig.DB_SERVER;
 		String storePath 	= CFWConfig.DB_STORE_PATH;
 		String databaseName	= CFWConfig.DB_NAME;
 		int port 			= CFWConfig.DB_PORT;
@@ -51,7 +52,9 @@ public class CFWDB {
     		datastoreFolder.mkdir();
     	}
     	
-		String h2_url 		= "jdbc:h2:tcp://localhost:"+port+"/"+storePath+"/"+databaseName;
+		String h2_url 		= "jdbc:h2:tcp://"+server+":"+port+"/"+storePath+"/"+databaseName;
+		new CFWLog(logger).info("H2 DB URL: "+ h2_url);
+		
 		try {
 			
 			CFWDB.server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "" +port).start();
@@ -64,7 +67,11 @@ public class CFWDB {
 			CFWDB.dataSource.setUser(username);
 			CFWDB.dataSource.setPassword(password);
 			
+			initializeTables();
+			
 			CFWDB.isInitialized = true;
+			
+			
 		} catch (SQLException e) {
 			CFWDB.isInitialized = false;
 			new CFWLog(CFWDB.logger)
@@ -72,6 +79,13 @@ public class CFWDB {
 				.severe("Issue initializing H2 Database.", e);
 			e.printStackTrace();
 		}
+	}
+	
+	/********************************************************************************************
+	 *
+	 ********************************************************************************************/
+	public static void initializeTables() {
+		
 	}
 	
 	
@@ -139,7 +153,7 @@ public class CFWDB {
 	 ********************************************************************************************/
 	public static ResultSet preparedExecuteQuery(HttpServletRequest request, String sql, Object... values){	
         
-		CFWLog log = new CFWLog(logger, request)
+		CFWLog log = new CFWLog(logger)
 				.method("preparedExecuteQuery")
 				.start();
 		
@@ -206,7 +220,7 @@ public class CFWDB {
 				resultSet.close();
 			}
 		} catch (SQLException e) {
-			new CFWLog(logger, request)
+			new CFWLog(logger)
 				.method("close")
 				.severe("Exception occured while closing ResultSet. ", e);
 		}

@@ -65,7 +65,7 @@ public class CFWFiles {
 	 * 
 	 ***********************************************************************/
 	public static String getFileContent(HttpServletRequest request, String path){
-		CFWLog omlogger = new CFWLog(logger, request).method("getFileContent");
+		CFWLog omlogger = new CFWLog(logger).method("getFileContent");
 		
 		if( CFWConfig.CACHING_FILE_ENABLED && CFWFiles.permanentStringFileCache.containsKey(path)){
 			omlogger.finest("Read file content from cache");
@@ -92,7 +92,7 @@ public class CFWFiles {
 				
 			} catch (IOException e) {
 				//TODO: Localize message
-				new CFWLog(logger, request)
+				new CFWLog(logger)
 					.method("getFileContent")
 					.severe("Could not read file: "+path, e);
 				
@@ -122,7 +122,7 @@ public class CFWFiles {
 			
 		} catch (IOException e) {
 			//TODO: Localize message
-			new CFWLog(logger, request)
+			new CFWLog(logger)
 				.method("writeFileContent")
 				.severe("Could not write file: "+path, e);
 		}
@@ -250,7 +250,7 @@ public class CFWFiles {
 			}
 			 
 		} catch (IOException e) {
-			new CFWLog(logger, null).log(Level.SEVERE, "IOException: ", e);
+			new CFWLog(logger).log(Level.SEVERE, "IOException: ", e);
 			e.printStackTrace();
 		}finally {
 			try {
@@ -258,7 +258,7 @@ public class CFWFiles {
 					reader.close();
 				}
 			} catch (IOException e) {
-				new CFWLog(logger, null).log(Level.SEVERE, "IOException", e);
+				new CFWLog(logger).log(Level.SEVERE, "IOException", e);
 				e.printStackTrace();
 			}
 		}
@@ -297,7 +297,7 @@ public class CFWFiles {
 			} 
 			 
 		} catch (IOException e) {
-			new CFWLog(logger, null).log(Level.SEVERE, "IOException: ", e);
+			new CFWLog(logger).log(Level.SEVERE, "IOException: ", e);
 			e.printStackTrace();
 		}finally {
 			try {
@@ -305,7 +305,7 @@ public class CFWFiles {
 					reader.close();
 				}
 			} catch (IOException e) {
-				new CFWLog(logger, null).log(Level.SEVERE, "IOException", e);
+				new CFWLog(logger).log(Level.SEVERE, "IOException", e);
 				e.printStackTrace();
 			}
 		}

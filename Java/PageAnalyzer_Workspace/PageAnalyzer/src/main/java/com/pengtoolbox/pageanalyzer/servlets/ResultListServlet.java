@@ -31,7 +31,7 @@ public class ResultListServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		CFWLog log = new CFWLog(logger, request).method("doPost");
+		CFWLog log = new CFWLog(logger).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "View Result");
@@ -40,7 +40,7 @@ public class ResultListServlet extends HttpServlet
 		String userID = "";
 		
 		if(CFWConfig.AUTHENTICATION_ENABLED) {
-			SessionData data = (SessionData) request.getSession().getAttribute(CFW.SESSION_DATA); 
+			SessionData data = CFW.Context.Request.getSessionData(); 
 			if(data.isLoggedIn()) {
 				userID = data.getUsername();
 			}

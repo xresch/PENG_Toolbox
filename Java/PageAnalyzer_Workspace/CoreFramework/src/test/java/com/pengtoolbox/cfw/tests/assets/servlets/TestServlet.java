@@ -28,7 +28,7 @@ public class TestServlet extends HttpServlet
                                                         IOException
     {
 		
-		CFWLog log = new CFWLog(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger).method("doGet");
 		
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Test Page");
 		StringBuffer content = html.getContent();

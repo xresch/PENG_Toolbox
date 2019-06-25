@@ -34,7 +34,7 @@ public class AuthenticationHandler extends HandlerWrapper
         	//##################################
         	HttpSession session = request.getSession();
         	
-        	SessionData data = (SessionData)session.getAttribute(CFW.SESSION_DATA); 
+        	SessionData data = CFW.Context.Request.getSessionData(); 
         	if(data.isLoggedIn()) {
 
 	        	//##################################

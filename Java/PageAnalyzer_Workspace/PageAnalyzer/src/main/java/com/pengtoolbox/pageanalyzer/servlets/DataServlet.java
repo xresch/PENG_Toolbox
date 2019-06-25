@@ -40,7 +40,7 @@ public class DataServlet extends HttpServlet {
 		//-------------------------------------------
 		// Initialize
 		//-------------------------------------------
-		CFWLog log = new CFWLog(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 		
 		String type = request.getParameter("type");
@@ -52,7 +52,7 @@ public class DataServlet extends HttpServlet {
 		String userID = "";
 		
 		if(CFWConfig.AUTHENTICATION_ENABLED) {
-			SessionData data = (SessionData) request.getSession().getAttribute(CFW.SESSION_DATA); 
+			SessionData data = CFW.Context.Request.getSessionData(); 
 			if(data.isLoggedIn()) {
 				userID = data.getUsername();
 			}

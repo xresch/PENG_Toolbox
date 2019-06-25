@@ -27,7 +27,7 @@ public class CSVLoginProvider implements LoginProvider {
 	}
 	
 	private void loadCredentials() {
-		CFWLog log = new CFWLog(logger, null).method("loadCredentials");
+		CFWLog log = new CFWLog(logger).method("loadCredentials");
 		
 		//------------------------------
 		// Load File

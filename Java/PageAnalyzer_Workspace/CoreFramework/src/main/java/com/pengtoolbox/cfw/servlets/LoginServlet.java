@@ -39,7 +39,7 @@ public class LoginServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		CFWLog log = new CFWLog(logger, request).method("doGet");
+		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
 		TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
@@ -57,7 +57,7 @@ public class LoginServlet extends HttpServlet
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		CFWLog log = new CFWLog(logger, request).method("doPost");
+		CFWLog log = new CFWLog(logger).method("doPost");
 		log.info(request.getRequestURL().toString());
 		
 		//--------------------------
@@ -76,13 +76,12 @@ public class LoginServlet extends HttpServlet
 		}else {
 			if(LoginFacade.getInstance().checkCredentials(username, password)) {
 				//Login success
-				HttpSession session = request.getSession();
-				SessionData data = (SessionData)session.getAttribute(CFW.SESSION_DATA); 
+				SessionData data = CFW.Context.Request.getSessionData(); 
 				data.setUsername(username);
 				data.triggerLogin();
 				
-				
 				response.sendRedirect(response.encodeRedirectURL("./harupload"));
+				
 			}else {
 				//Login Failure
 				TemplateHTMLDefault html = new TemplateHTMLDefault(request, "Analyze URL");
