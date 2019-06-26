@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.logging.Logger;
 
 import org.h2.jdbcx.JdbcConnectionPool;
@@ -85,7 +86,7 @@ public class CFWDB {
 	 ********************************************************************************************/
 	public static void initializeTables() {
 		
-		CFW.DB.Users.initialize();
+		CFW.DB.Users.initializeTable();
 		
 	}
 	
@@ -146,6 +147,7 @@ public class CFWDB {
 	}
 	
 	/********************************************************************************************
+	 * Returns the result or null if there was any issue.
 	 * 
 	 * @param request HttpServletRequest containing session data used for logging information(null allowed).
 	 * @param sql string with placeholders
@@ -192,10 +194,12 @@ public class CFWDB {
 	 * @throws SQLException 
 	 ********************************************************************************************/
 	public static void prepareStatement(PreparedStatement prepared, Object... values) throws SQLException{
+
 		if(values != null) {
 			for(int i = 0; i < values.length ; i++) {
 				Object currentValue = values[i];
 				if		(currentValue instanceof String) 	{ prepared.setString(i+1, (String)currentValue); }
+				else if	(currentValue instanceof char[]) 	{ prepared.setString(i+1, new String((char[])currentValue)); }
 				else if (currentValue instanceof Integer) 	{ prepared.setInt(i+1, (Integer)currentValue); }
 				else if (currentValue instanceof Boolean) 	{ prepared.setBoolean(i+1, (Boolean)currentValue); }
 				else if (currentValue instanceof Float) 	{ prepared.setFloat(i+1, (Float)currentValue); }
@@ -204,6 +208,7 @@ public class CFWDB {
 				else if (currentValue instanceof Blob) 		{ prepared.setBlob(i+1, (Blob)currentValue); }
 				else if (currentValue instanceof Clob) 		{ prepared.setClob(i+1, (Clob)currentValue); }
 				else if (currentValue instanceof Byte) 		{ prepared.setByte(i+1, (Byte)currentValue); }
+				else if (currentValue == null) 				{ prepared.setNull(i+1, Types.NULL); }
 				else { throw new RuntimeException("Unsupported database field type: "+ currentValue.getClass().getName());}
 			}
 		}
