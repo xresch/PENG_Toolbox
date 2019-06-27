@@ -16,7 +16,6 @@ public class DBTestMaster {
 	@BeforeClass
 	public static void startDefaultApplication() throws Exception {
 		
-		CFWLog.initializeLogging();
 		CFW.initialize("./config/cfw.properties");
 		CFWDB.initialize();
 	}

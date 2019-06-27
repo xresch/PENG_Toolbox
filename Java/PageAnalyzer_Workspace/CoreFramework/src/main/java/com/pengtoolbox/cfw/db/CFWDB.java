@@ -19,6 +19,9 @@ import org.h2.tools.Server;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.User;
+import com.pengtoolbox.cfw.db.usermanagement.User.UserStatus;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDB {
@@ -70,7 +73,7 @@ public class CFWDB {
 			CFWDB.isInitialized = true;
 			
 			initializeTables();
-			
+			createDefaultEntries();
 			
 		} catch (SQLException e) {
 			CFWDB.isInitialized = false;
@@ -88,6 +91,73 @@ public class CFWDB {
 		
 		CFW.DB.Users.initializeTable();
 		CFW.DB.Groups.initializeTable();
+		CFW.DB.UserGroupMap.initializeTable();
+	}
+	
+	/********************************************************************************************
+	 *
+	 ********************************************************************************************/
+	public static void createDefaultEntries() {
+		
+		//-----------------------------------------
+		// Create default admin user
+		//-----------------------------------------
+		if(!CFW.DB.Users.checkUsernameExists("admin")) {
+			
+			// salt and hash for default password "admin"
+			String salt = ";%IYi6:0ls,!8PQac?;o9570kn{NYSb";
+			String hash = "12f42860e885448d8bcc02d08188f2e860894ae6aa786112c84e2da567b9935090720dd951be7811d68b098375ed9dbcc8fa042ddfceaa6973a83ab9231732";
+			
+			CFW.DB.Users.create(
+				new User()
+				.username("admin")
+				.isDeletable(false)
+				.isRenamable(false)
+				.passwordHash(hash)
+				.passwordSalt(salt)
+				.status(UserStatus.ACTIVE)
+				.isForeign(false)
+			);
+		}
+		
+		User adminUser = CFW.DB.Users.selectByUsernameOrMail("admin");
+		
+		if(adminUser == null) {
+			new CFWLog(logger)
+			.method("createDefaultEntries")
+			.severe("User 'admin' was not found in the database.");
+		}
+		
+		//-----------------------------------------
+		// Create Group Superuser
+		//-----------------------------------------
+		if(!CFW.DB.Groups.checkGroupExists("Superuser")) {
+			CFW.DB.Groups.create(new Group().name("Superuser")
+				.description("Superusers have all the privileges in the system. They are above administrators. ")
+				.isDeletable(false)
+			);
+		}
+		
+		Group superuserGroup = CFW.DB.Groups.selectByName("Superuser");
+		
+		if(adminUser == null) {
+			new CFWLog(logger)
+			.method("createDefaultEntries")
+			.severe("User group 'Superuser' was not found in the database.");
+		}
+		
+		//-----------------------------------------
+		// Add Admin to group Superuser
+		//-----------------------------------------
+		if(!CFW.DB.UserGroupMap.checkIsUserInGroup(adminUser, superuserGroup)) {
+			CFW.DB.UserGroupMap.addUserToGroup(adminUser, superuserGroup);
+		}
+
+		if(!CFW.DB.UserGroupMap.checkIsUserInGroup(adminUser, superuserGroup)) {
+			new CFWLog(logger)
+			.method("createDefaultEntries")
+			.severe("User 'admin' is not assigned to group 'Superuser'.");
+		}
 		
 	}
 	

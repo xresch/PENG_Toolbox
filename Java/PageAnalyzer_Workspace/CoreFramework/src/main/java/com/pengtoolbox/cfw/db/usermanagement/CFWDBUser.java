@@ -6,12 +6,11 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.User.UserStatus;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBUser {
 
-	public static String TABLE_NAME = "CFW_USERS";
+	public static String TABLE_NAME = "CFW_USER";
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBUser.class.getName());
 	
@@ -56,23 +55,29 @@ public class CFWDBUser {
 		
 		CFWDB.preparedExecute(createTableSQL);
 		
-		if(!isUsernameUsed("admin")) {
-			// salt and hash for default password "admin"
-			String salt = ";%IYi6:0ls,!8PQac?;o9570kn{NYSb";
-			String hash = "12f42860e885448d8bcc02d08188f2e860894ae6aa786112c84e2da567b9935090720dd951be7811d68b098375ed9dbcc8fa042ddfceaa6973a83ab9231732";
-			create(new User().username("admin")
-								.isDeletable(false)
-								.isRenamable(false)
-								.passwordHash(hash)
-								.passwordSalt(salt)
-								.status(UserStatus.ACTIVE)
-								.isForeign(false)
-								);
-		}
-		
 	}
 	
-	public static void create(User user) {
+	/********************************************************************************************
+	 * Creates a new user in the DB.
+	 * @param user with the values that should be inserted. ID will be set by the Database.
+	 * @return return true if successful, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static boolean create(User user) {
+		
+		if( checkUsernameExists(user.username())) {
+			new CFWLog(logger)
+				.method("create")
+				.warn("The user '"+user.username()+"' cannot be created as a user with this name already exists.");
+			return false;
+		}
+		
+		if( checkEmailExists(user.email())) {
+			new CFWLog(logger)
+				.method("create")
+				.warn("The user '"+user.username()+"' cannot be created as the email '"+user.email()+"' is already used by another account.");
+			return false;
+		}
 		
 		String insertUserSQL = "INSERT INTO "+TABLE_NAME+"("
 				  + UserDBFields.USERNAME +", "
@@ -89,7 +94,7 @@ public class CFWDBUser {
 				  + UserDBFields.IS_FOREIGN +", "
 				  + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
 		
-		CFWDB.preparedExecute(insertUserSQL, 
+		return CFWDB.preparedExecute(insertUserSQL, 
 				user.username(),
 				user.email(),
 				user.firstname(),
@@ -106,9 +111,11 @@ public class CFWDBUser {
 	}
 	
 	/***************************************************************
-	 * Returns a user or null if not found or in case of exception.
-	 * @param usernameOrMail
-	 * @return
+	 * Select a user by it's username or email address.
+	 * This method is useful for login forms.
+	 * 
+	 * @param username or eMail address
+	 * @return Returns a user or null if not found or in case of exception.
 	 ****************************************************************/
 	public static User selectByUsernameOrMail(String usernameOrMail) {
 		
@@ -154,9 +161,57 @@ public class CFWDBUser {
 	}
 	
 	/***************************************************************
-	 * Returns true or false
-	 * @param usernameOrMail
-	 * @return
+	 * Select a user by it's ID.
+	 * 
+	 * @param id of the User
+	 * @return Returns a user or null if not found or in case of exception.
+	 ****************************************************************/
+	public static User selectByID(int id) {
+		
+		String selectByUsernameOrMail = 
+				"SELECT "
+				  + UserDBFields.PK_ID +", "
+				  + UserDBFields.USERNAME +", "
+				  + UserDBFields.EMAIL +", "
+				  + UserDBFields.FIRSTNAME +", "
+				  + UserDBFields.LASTNAME +", "
+				  + UserDBFields.PASSWORD_HASH +", "
+				  + UserDBFields.PASSWORD_SALT +", "
+				  + UserDBFields.AVATAR_IMAGE +", "
+				  + UserDBFields.DATE_CREATED +", "
+				  + UserDBFields.STATUS +", "
+				  + UserDBFields.IS_DELETABLE +", "
+				  + UserDBFields.IS_RENAMABLE + ", "
+				  + UserDBFields.IS_FOREIGN 
+				+" FROM "+TABLE_NAME
+				+" WHERE "
+					+ UserDBFields.PK_ID	+ " = ?";
+		
+		ResultSet result = CFWDB.preparedExecuteQuery(selectByUsernameOrMail, id);
+		
+		if(result == null) {
+			return null;
+		}
+		
+		try {
+			if(result.next()) {
+				return new User(result);
+			}
+		} catch (SQLException e) {
+			new CFWLog(logger)
+			.method("selectByUsernameOrMail")
+			.severe("Error reading user from database.", e);;
+			
+		}
+		
+		return null;
+		
+	}
+	
+	/***************************************************************
+	 * Updates the object selecting by ID.
+	 * @param group
+	 * @return true or false
 	 ****************************************************************/
 	public static boolean update(User user) {
 		
@@ -197,10 +252,10 @@ public class CFWDBUser {
 		
 	}
 	
-	/***************************************************************
-	 * Returns true or false.
+	/****************************************************************
+	 * Deletes the User by id.
 	 * @param id of the user
-	 * @return
+	 * @return true if successful, false otherwise.
 	 ****************************************************************/
 	public static boolean deleteByID(int id) {
 		
@@ -213,24 +268,38 @@ public class CFWDBUser {
 			
 	}
 	
-	public static boolean checkUsernameUsed(User user) {
-		return isUsernameUsed(user.username());
+	/****************************************************************
+	 * Check if the user exists by it's username.
+	 * 
+	 * @param group to check
+	 * @return true if exists, false otherwise or in case of exception.
+	 ****************************************************************/
+	public static boolean checkUsernameExists(User user) {
+		if(user != null) {
+			return checkUsernameExists(user.username());
+		}
+		return false;
 	}
 	
-	public static boolean isUsernameUsed(String username) {
+	/****************************************************************
+	 * Check if the user exists by it's username.
+	 * 
+	 * @param group to check
+	 * @return true if exists, false otherwise or in case of exception.
+	 ****************************************************************/
+	public static boolean checkUsernameExists(String username) {
 		String checkUserExistsSQL = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE "+UserDBFields.USERNAME+" = ?";
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkUserExistsSQL, username);
 		
 		try {
 			if(result.next()) {
 				int count = result.getInt(1);
-				System.out.println("isUsernameUsed Count: "+1);
 				return (count == 0) ? false : true;
 			}
 		} catch (SQLException e) {
 			new CFWLog(logger)
 			.method("checkUsernameUsed")
-			.severe("Exception occured.", e);
+			.severe("The user '"+username+"' already exists. Please choose another name.", e);
 			
 			return false;
 		}
@@ -238,9 +307,43 @@ public class CFWDBUser {
 		return false; 
 	}
 	
-	public static void checkEmailInUse(User user) {
-		String checkUserExistsSQL = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE "+UserDBFields.EMAIL+" = ?";
-		ResultSet result = CFW.DB.preparedExecuteQuery(checkUserExistsSQL, user.email());
+	/****************************************************************
+	 * Check if the email of the user is already in use.
+	 * 
+	 * @param group to check
+	 * @return true if exists, false otherwise or in case of exception.
+	 ****************************************************************/
+	public static boolean checkEmailExists(User user) {
+		if(user != null) {
+			return checkEmailExists(user.email());
+		}
+		return false;
+	}
+	
+	/****************************************************************
+	 * Check if the email of the user is already in use.
+	 * 
+	 * @param group to check
+	 * @return true if exists, false otherwise or in case of exception.
+	 ****************************************************************/
+	public static boolean checkEmailExists(String email) {
+		String checkEmailExists = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE "+UserDBFields.EMAIL+" = ?";
+		ResultSet result = CFW.DB.preparedExecuteQuery(checkEmailExists, email);
+		
+		try {
+			if(result.next()) {
+				int count = result.getInt(1);
+				return (count == 0) ? false : true;
+			}
+		} catch (SQLException e) {
+			new CFWLog(logger)
+			.method("checkEmailInUse")
+			.severe("The email '"+email+"' is already used by another account.", e);
+			
+			return false;
+		}
+		
+		return false;
 	}
 	
 }

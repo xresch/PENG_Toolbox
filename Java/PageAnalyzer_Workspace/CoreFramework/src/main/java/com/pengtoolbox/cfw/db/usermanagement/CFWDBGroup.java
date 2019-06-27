@@ -8,11 +8,11 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
-public class CFWDBGroups {
+public class CFWDBGroup {
 
-	public static String TABLE_NAME = "CFW_GROUPS";
+	public static String TABLE_NAME = "CFW_GROUP";
 	
-	public static Logger logger = CFWLog.getLogger(CFWDBGroups.class.getName());
+	public static Logger logger = CFWLog.getLogger(CFWDBGroup.class.getName());
 	
 	enum GroupDBFields{
 		PK_ID, 
@@ -37,17 +37,22 @@ public class CFWDBGroups {
 		
 		CFWDB.preparedExecute(createTableSQL);
 		
-		if(!groupExists("Superuser")) {
-			// salt and hash for default password "admin"
-			create(new Group().name("Superuser")
-				.description("Superusers have all the privileges in the system. They are above administrators. ")
-				.isDeletable(false)
-			);
-		}
-		
 	}
 	
-	public static void create(Group group) {
+	/********************************************************************************************
+	 * Creates a new group in the DB.
+	 * @param Group with the values that should be inserted. ID will be set by the Database.
+	 * @return return true if successful, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static boolean create(Group group) {
+		
+		if(checkGroupExists(group)) {
+			new CFWLog(logger)
+				.method("create")
+				.warn("The group '"+group.name()+"' cannot be created as a group with this name already exists.");
+			return false;
+		}
 		
 		String insertGroupSQL = "INSERT INTO "+TABLE_NAME+" ("
 				  + GroupDBFields.NAME +", "
@@ -55,7 +60,7 @@ public class CFWDBGroups {
 				  + GroupDBFields.IS_DELETABLE +" "
 				  + ") VALUES (?,?,?);";
 		
-		CFWDB.preparedExecute(insertGroupSQL, 
+		return CFWDB.preparedExecute(insertGroupSQL, 
 				group.name(),
 				group.description(),
 				group.isDeletable()
@@ -63,9 +68,9 @@ public class CFWDBGroups {
 	}
 	
 	/***************************************************************
-	 * Returns a user or null if not found or in case of exception.
-	 * @param usernameOrMail
-	 * @return
+	 * Select a group by it's name.
+	 * @param id of the group
+	 * @return Returns a group or null if not found or in case of exception.
 	 ****************************************************************/
 	public static Group selectByName(String name ) {
 		
@@ -74,7 +79,7 @@ public class CFWDBGroups {
 				  + GroupDBFields.PK_ID +", "
 				  + GroupDBFields.NAME +", "
 				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +", "
+				  + GroupDBFields.IS_DELETABLE +" "
 				+" FROM "+TABLE_NAME
 				+" WHERE "
 				+ GroupDBFields.NAME + " = ?";
@@ -101,9 +106,9 @@ public class CFWDBGroups {
 	}
 	
 	/***************************************************************
-	 * Returns a user or null if not found or in case of exception.
-	 * @param usernameOrMail
-	 * @return
+	 * Select a group by it's ID.
+	 * @param id of the group
+	 * @return Returns a group or null if not found or in case of exception.
 	 ****************************************************************/
 	public static Group selectByID(int id ) {
 		
@@ -112,7 +117,7 @@ public class CFWDBGroups {
 				  + GroupDBFields.PK_ID +", "
 				  + GroupDBFields.NAME +", "
 				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +", "
+				  + GroupDBFields.IS_DELETABLE +" "
 				+" FROM "+TABLE_NAME
 				+" WHERE "
 				+ GroupDBFields.PK_ID + " = ?";
@@ -139,9 +144,9 @@ public class CFWDBGroups {
 	}
 	
 	/***************************************************************
-	 * Returns true or false
-	 * @param usernameOrMail
-	 * @return
+	 * Updates the object selecting by ID.
+	 * @param group
+	 * @return true or false
 	 ****************************************************************/
 	public static boolean update(Group group) {
 		
@@ -166,10 +171,10 @@ public class CFWDBGroups {
 		
 	}
 	
-	/***************************************************************
-	 * Returns true or false.
+	/****************************************************************
+	 * Deletes the group by id.
 	 * @param id of the user
-	 * @return
+	 * @return true if successful, false otherwise.
 	 ****************************************************************/
 	public static boolean deleteByID(int id) {
 		
@@ -182,11 +187,27 @@ public class CFWDBGroups {
 			
 	}
 	
-	public static boolean groupExists(Group group) {
-		return groupExists(group.name());
+	
+	/****************************************************************
+	 * Check if the group exists by name.
+	 * 
+	 * @param group to check
+	 * @return true if exists, false otherwise or in case of exception.
+	 ****************************************************************/
+	public static boolean checkGroupExists(Group group) {
+		if(group != null) {
+			return checkGroupExists(group.name());
+		}
+		return false;
 	}
 	
-	public static boolean groupExists(String groupName) {
+	/****************************************************************
+	 * Check if the group exists by name.
+	 * 
+	 * @param groupname to check
+	 * @return true if exists, false otherwise or in case of exception.
+	 ****************************************************************/
+	public static boolean checkGroupExists(String groupName) {
 		String checkExistsSQL = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE "+GroupDBFields.NAME+" = ?";
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkExistsSQL, groupName);
 		

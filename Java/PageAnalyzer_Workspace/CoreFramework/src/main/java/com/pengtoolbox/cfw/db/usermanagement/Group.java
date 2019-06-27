@@ -12,6 +12,7 @@ public class Group {
 	private boolean isDeletable = true;
 	
 	public Group() {
+	
 	}
 	
 	public Group(ResultSet result) throws SQLException {

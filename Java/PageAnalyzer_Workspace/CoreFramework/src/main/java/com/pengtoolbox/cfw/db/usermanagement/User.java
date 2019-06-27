@@ -15,11 +15,14 @@ public class User {
 	private String lastname;
 	private String passwordHash;
 	private String passwordSalt;
+	private String status;
 	private Blob avatarImage;
+	
 	private Timestamp dateCreated = new Timestamp(new Date().getTime());
+	
 	private boolean isDeletable = true;
 	private boolean isRenamable = true;
-	private String status;
+
 	
 	//Username and password is managed in another source, like LDAP or CSV
 	private boolean isForeign;

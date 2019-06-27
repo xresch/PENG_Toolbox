@@ -4,8 +4,9 @@ import java.io.IOException;
 
 import com.pengtoolbox.cfw.cli.CFWCommandLineInterface;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroups;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserGroupMap;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWSecurity;
 import com.pengtoolbox.cfw.utils.CFWTime;
@@ -23,7 +24,8 @@ public class CFW {
 	}
 	public static class DB extends CFWDB {
 		public static class Users extends CFWDBUser{};
-		public static class Groups extends CFWDBGroups{};
+		public static class Groups extends CFWDBGroup{};
+		public static class UserGroupMap extends CFWDBUserGroupMap{};
 	}
 	public class HTTP extends CFWHttp {}
 	public class Files extends CFWFiles {}

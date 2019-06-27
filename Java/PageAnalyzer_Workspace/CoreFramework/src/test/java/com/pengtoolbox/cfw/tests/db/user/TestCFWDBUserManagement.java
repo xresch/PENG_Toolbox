@@ -35,14 +35,17 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//--------------------------------------
 		// Cleanup
 		User userToDelete = CFW.DB.Users.selectByUsernameOrMail(username);
-		CFW.DB.Users.deleteByID(userToDelete.id());
+		if(userToDelete != null) {
+			CFW.DB.Users.deleteByID(userToDelete.id());
+		}
 		
 		userToDelete = CFW.DB.Users.selectByUsernameOrMail(usernameUpdated);
-		CFW.DB.Users.deleteByID(userToDelete.id());
+		if(userToDelete != null) {
+			CFW.DB.Users.deleteByID(userToDelete.id());
+		}
 		
-		Assertions.assertFalse(CFW.DB.Users.isUsernameUsed(username), "DB is cleaned up.");
-		Assertions.assertFalse(CFW.DB.Users.isUsernameUsed(usernameUpdated), "DB is cleaned up.");
-		
+		Assertions.assertFalse(CFW.DB.Users.checkUsernameExists(username), "User doesn't exist, checkUsernameExists(string) works.");
+		Assertions.assertFalse(CFW.DB.Users.checkUsernameExists(userToDelete), "User doesn't exist, checkUsernameExists(user) works.");
 		
 		//--------------------------------------
 		// CREATE
@@ -59,10 +62,10 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 				.isForeign(true)
 				);
 		
-		Assertions.assertTrue(CFW.DB.Users.isUsernameUsed(username));
+		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(username), "User created successfully, checkUsernameExists(string) works.");
 		
 		//--------------------------------------
-		// SELECT
+		// SELECT BY USERNAME
 		User user = CFW.DB.Users.selectByUsernameOrMail(username);
 		
 		System.out.println("===== USER =====");
@@ -96,36 +99,48 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		CFW.DB.Users.update(user);
 		
 		//--------------------------------------
-		// SELECT
-		User userUpdated = CFW.DB.Users.selectByUsernameOrMail(usernameUpdated);
+		// SELECT UPDATED USER
+		User updatedUser = CFW.DB.Users.selectByUsernameOrMail(usernameUpdated);
 		
 		System.out.println("===== UPDATED USER =====");
-		System.out.println(userUpdated.toString());
+		System.out.println(updatedUser.toString());
 		
-		Assertions.assertTrue(userUpdated != null);
-		Assertions.assertTrue(userUpdated.username().equals(usernameUpdated));
-		Assertions.assertTrue(userUpdated.email().equals("t.testonia2@cfw.com"));
-		Assertions.assertTrue(userUpdated.firstname().equals("Testika2"));
-		Assertions.assertTrue(userUpdated.lastname().equals("Testonia2"));
-		Assertions.assertTrue(userUpdated.passwordHash().equals("hash2"));
-		Assertions.assertTrue(userUpdated.passwordSalt().equals("salt2"));
-		Assertions.assertTrue(userUpdated.status().equals(UserStatus.INACTIVE.toString()));
-		Assertions.assertTrue(userUpdated.isDeletable() == true);
-		Assertions.assertTrue(userUpdated.isRenamable() == true);
-		Assertions.assertTrue(userUpdated.isForeign() == false);
+		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(updatedUser), "User exists, checkUsernameExists(user) works.");
+		Assertions.assertTrue(updatedUser != null);
+		Assertions.assertTrue(updatedUser.username().equals(usernameUpdated));
+		Assertions.assertTrue(updatedUser.email().equals("t.testonia2@cfw.com"));
+		Assertions.assertTrue(updatedUser.firstname().equals("Testika2"));
+		Assertions.assertTrue(updatedUser.lastname().equals("Testonia2"));
+		Assertions.assertTrue(updatedUser.passwordHash().equals("hash2"));
+		Assertions.assertTrue(updatedUser.passwordSalt().equals("salt2"));
+		Assertions.assertTrue(updatedUser.status().equals(UserStatus.INACTIVE.toString()));
+		Assertions.assertTrue(updatedUser.isDeletable() == true);
+		Assertions.assertTrue(updatedUser.isRenamable() == true);
+		Assertions.assertTrue(updatedUser.isForeign() == false);
 
+		
 		//--------------------------------------
-		// SELECT
+		// SELECT BY Mail
+		Assertions.assertTrue(CFW.DB.Users.checkEmailExists(updatedUser), "Email exists, checkEmailExists(User) works.");
+		Assertions.assertTrue(CFW.DB.Users.checkEmailExists("t.testonia2@cfw.com"), "Email exists, checkEmailExists(String) works.");
+		
 		User userbyMail = CFW.DB.Users.selectByUsernameOrMail("t.testonia2@cfw.com");
 		
 		Assertions.assertTrue( (userbyMail != null), "Select User by Mail works.");
+		
+		//--------------------------------------
+		// SELECT BY ID
+
+		User userbyID = CFW.DB.Users.selectByID(userbyMail.id());
+		
+		Assertions.assertTrue( (userbyID != null), "Select User by ID works.");
 		
 		
 		//--------------------------------------
 		// DELETE
 		CFW.DB.Users.deleteByID(userbyMail.id());
 		
-		Assertions.assertFalse(CFW.DB.Users.isUsernameUsed(username));
+		Assertions.assertFalse(CFW.DB.Users.checkUsernameExists(username));
 		
 	}
 	
@@ -138,13 +153,17 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//--------------------------------------
 		// Cleanup
 		Group groupToDelete = CFW.DB.Groups.selectByName(groupname);
-		CFW.DB.Groups.deleteByID(groupToDelete.id());
+		if(groupToDelete != null) {
+			CFW.DB.Groups.deleteByID(groupToDelete.id());
+		}
 		
 		groupToDelete = CFW.DB.Groups.selectByName(groupnameUpdated);
-		CFW.DB.Groups.deleteByID(groupToDelete.id());
+		if(groupToDelete != null) {
+			CFW.DB.Groups.deleteByID(groupToDelete.id());
+		}
 		
-		Assertions.assertFalse(CFW.DB.Groups.groupExists(groupname), "DB is cleaned up.");
-		Assertions.assertFalse(CFW.DB.Groups.groupExists(groupnameUpdated), "DB is cleaned up.");
+		Assertions.assertFalse(CFW.DB.Groups.checkGroupExists(groupname), "Group doesn't exists, checkGroupExists(String) works.");
+		Assertions.assertFalse(CFW.DB.Groups.checkGroupExists(groupToDelete), "Group doesn't exist, checkGroupExists(Group) works.");
 		
 		
 		//--------------------------------------
@@ -155,15 +174,16 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 				.isDeletable(false)
 				);
 		
-		Assertions.assertTrue(CFW.DB.Groups.groupExists(groupname));
-		
+		Assertions.assertTrue(CFW.DB.Groups.checkGroupExists(groupname), "Group created successfully, checkGroupExists(String) works.");
+
 		//--------------------------------------
-		// SELECT
+		// SELECT BY NAME
 		Group group = CFW.DB.Groups.selectByName(groupname);
 		
 		System.out.println("===== USER =====");
 		System.out.println(group.toString());
 
+		Assertions.assertTrue(CFW.DB.Groups.checkGroupExists(group), "Group created successfully, checkGroupExists(Group) works.");
 		Assertions.assertTrue(group != null);
 		Assertions.assertTrue(group.name().equals(groupname));
 		Assertions.assertTrue(group.description().equals("Testdescription"));
@@ -178,23 +198,27 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		CFW.DB.Groups.update(group);
 		
 		//--------------------------------------
-		// SELECT
-		Group userUpdated = CFW.DB.Groups.selectByName(groupnameUpdated);
+		// SELECT UPDATED GROUP
+		Group updatedGroup = CFW.DB.Groups.selectByName(groupnameUpdated);
 		
 		System.out.println("===== UPDATED GROUP =====");
-		System.out.println(userUpdated.toString());
+		System.out.println(updatedGroup.toString());
 		
 		Assertions.assertTrue(group != null);
-		Assertions.assertTrue(group.name().equals(groupname));
-		Assertions.assertTrue(group.description().equals("Testdescription"));
+		Assertions.assertTrue(group.name().equals(groupnameUpdated));
+		Assertions.assertTrue(group.description().equals("Testdescription2"));
 		Assertions.assertTrue(group.isDeletable() == true);
 		
+		//--------------------------------------
+		// SELECT BY ID
+		Group groupByID = CFW.DB.Groups.selectByID(updatedGroup.id());
 		
+		Assertions.assertTrue(groupByID != null, "Group is selected by ID.");
 		//--------------------------------------
 		// DELETE
-		CFW.DB.Groups.deleteByID(userUpdated.id());
+		CFW.DB.Groups.deleteByID(updatedGroup.id());
 		
-		Assertions.assertFalse(CFW.DB.Groups.groupExists(groupname));
+		Assertions.assertFalse(CFW.DB.Groups.checkGroupExists(groupname));
 		
 	}
 }
