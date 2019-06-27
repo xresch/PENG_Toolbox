@@ -87,6 +87,7 @@ public class CFWDB {
 	public static void initializeTables() {
 		
 		CFW.DB.Users.initializeTable();
+		CFW.DB.Groups.initializeTable();
 		
 	}
 	

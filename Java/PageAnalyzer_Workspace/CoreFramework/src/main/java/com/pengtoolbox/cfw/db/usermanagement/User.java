@@ -30,23 +30,23 @@ public class User {
 	
 	public User(ResultSet result) throws SQLException {
 		
-		if(result.next()) {
-			int col = 1;
-			this.id(result.getInt(col++))
-			.username(result.getString(col++))
-			.email(result.getString(col++))
-			.firstname(result.getString(col++))
-			.lastname(result.getString(col++))
-			.passwordHash(result.getString(col++))
-			.passwordSalt(result.getString(col++))
-			.avatarImage(result.getBlob(col++))
-			.dateCreated(result.getTimestamp(col++))
-			.status(result.getString(col++))
-			.isDeletable(result.getBoolean(col++))
-			.isRenamable(result.getBoolean(col++))
-			.isForeign(result.getBoolean(col++));
-		}
+		int col = 1;
+		this.id(result.getInt(col++))
+		.username(result.getString(col++))
+		.email(result.getString(col++))
+		.firstname(result.getString(col++))
+		.lastname(result.getString(col++))
+		.passwordHash(result.getString(col++))
+		.passwordSalt(result.getString(col++))
+		.avatarImage(result.getBlob(col++))
+		.dateCreated(result.getTimestamp(col++))
+		.status(result.getString(col++))
+		.isDeletable(result.getBoolean(col++))
+		.isRenamable(result.getBoolean(col++))
+		.isForeign(result.getBoolean(col++));
+		
 	}
+	
 	public enum UserStatus {
 		ACTIVE, INACTIVE, BLOCKED
 	}
@@ -177,6 +177,7 @@ public class User {
 	public String toString() {
 		
 		StringBuilder builder = new StringBuilder();
+		builder.append("\nid: "+id);
 		builder.append("\nusername: "+username);
 		builder.append("\nemail: "+email);
 		builder.append("\nfirstname: "+firstname);

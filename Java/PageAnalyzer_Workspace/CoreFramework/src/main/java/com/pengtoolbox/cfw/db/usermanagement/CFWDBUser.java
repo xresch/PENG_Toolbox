@@ -31,6 +31,11 @@ public class CFWDBUser {
 		IS_FOREIGN
 	}
 
+	/********************************************************************************************
+	 * Creates the table and default admin user if not already exists.
+	 * This method is executed by CFW.DB.initialize().
+	 * 
+	 ********************************************************************************************/
 	public static void initializeTable() {
 			
 		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+"("
@@ -134,7 +139,9 @@ public class CFWDBUser {
 		}
 		
 		try {
-			return new User(result);
+			if(result.next()) {
+				return new User(result);
+			}
 		} catch (SQLException e) {
 			new CFWLog(logger)
 			.method("selectByUsernameOrMail")

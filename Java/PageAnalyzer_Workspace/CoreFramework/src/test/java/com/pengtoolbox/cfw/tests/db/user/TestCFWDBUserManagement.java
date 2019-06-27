@@ -1,17 +1,16 @@
 package com.pengtoolbox.cfw.tests.db.user;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.db.usermanagement.User.UserStatus;
 import com.pengtoolbox.cfw.tests._master.DBTestMaster;
 import com.pengtoolbox.cfw.utils.CFWSecurity;
 
-public class TestCFWDBUser extends DBTestMaster {
+public class TestCFWDBUserManagement extends DBTestMaster {
 
 	@Test
 	public void testCreatePasswordHash() {
@@ -41,8 +40,8 @@ public class TestCFWDBUser extends DBTestMaster {
 		userToDelete = CFW.DB.Users.selectByUsernameOrMail(usernameUpdated);
 		CFW.DB.Users.deleteByID(userToDelete.id());
 		
-		Assertions.assertFalse(CFW.DB.Users.isUsernameUsed(username), "DB is not cleaned up.");
-		Assertions.assertFalse(CFW.DB.Users.isUsernameUsed(usernameUpdated), "DB is not cleaned up.");
+		Assertions.assertFalse(CFW.DB.Users.isUsernameUsed(username), "DB is cleaned up.");
+		Assertions.assertFalse(CFW.DB.Users.isUsernameUsed(usernameUpdated), "DB is cleaned up.");
 		
 		
 		//--------------------------------------
@@ -55,7 +54,7 @@ public class TestCFWDBUser extends DBTestMaster {
 				.passwordHash("hash")
 				.passwordSalt("salt")
 				.status(UserStatus.BLOCKED)
-				.isDeletable(true)
+				.isDeletable(false)
 				.isRenamable(false)
 				.isForeign(true)
 				);
@@ -77,7 +76,7 @@ public class TestCFWDBUser extends DBTestMaster {
 		Assertions.assertTrue(user.passwordHash().equals("hash"));
 		Assertions.assertTrue(user.passwordSalt().equals("salt"));
 		Assertions.assertTrue(user.status().equals(UserStatus.BLOCKED.toString()));
-		Assertions.assertTrue(user.isDeletable() == true);
+		Assertions.assertTrue(user.isDeletable() == false);
 		Assertions.assertTrue(user.isRenamable() == false);
 		Assertions.assertTrue(user.isForeign() == true);
 		
@@ -90,7 +89,7 @@ public class TestCFWDBUser extends DBTestMaster {
 			.passwordHash("hash2")
 			.passwordSalt("salt2")
 			.status(UserStatus.INACTIVE)
-			.isDeletable(false)
+			.isDeletable(true)
 			.isRenamable(true)
 			.isForeign(false);
 		
@@ -111,7 +110,7 @@ public class TestCFWDBUser extends DBTestMaster {
 		Assertions.assertTrue(userUpdated.passwordHash().equals("hash2"));
 		Assertions.assertTrue(userUpdated.passwordSalt().equals("salt2"));
 		Assertions.assertTrue(userUpdated.status().equals(UserStatus.INACTIVE.toString()));
-		Assertions.assertTrue(userUpdated.isDeletable() == false);
+		Assertions.assertTrue(userUpdated.isDeletable() == true);
 		Assertions.assertTrue(userUpdated.isRenamable() == true);
 		Assertions.assertTrue(userUpdated.isForeign() == false);
 
@@ -127,6 +126,75 @@ public class TestCFWDBUser extends DBTestMaster {
 		CFW.DB.Users.deleteByID(userbyMail.id());
 		
 		Assertions.assertFalse(CFW.DB.Users.isUsernameUsed(username));
+		
+	}
+	
+	@Test
+	public void testCRUDGroup() {
+		
+		String groupname = "Test Group";
+		String groupnameUpdated = "Test GroupUPDATED";
+		
+		//--------------------------------------
+		// Cleanup
+		Group groupToDelete = CFW.DB.Groups.selectByName(groupname);
+		CFW.DB.Groups.deleteByID(groupToDelete.id());
+		
+		groupToDelete = CFW.DB.Groups.selectByName(groupnameUpdated);
+		CFW.DB.Groups.deleteByID(groupToDelete.id());
+		
+		Assertions.assertFalse(CFW.DB.Groups.groupExists(groupname), "DB is cleaned up.");
+		Assertions.assertFalse(CFW.DB.Groups.groupExists(groupnameUpdated), "DB is cleaned up.");
+		
+		
+		//--------------------------------------
+		// CREATE
+		CFW.DB.Groups.create(new Group()
+				.name(groupname)
+				.description("Testdescription")
+				.isDeletable(false)
+				);
+		
+		Assertions.assertTrue(CFW.DB.Groups.groupExists(groupname));
+		
+		//--------------------------------------
+		// SELECT
+		Group group = CFW.DB.Groups.selectByName(groupname);
+		
+		System.out.println("===== USER =====");
+		System.out.println(group.toString());
+
+		Assertions.assertTrue(group != null);
+		Assertions.assertTrue(group.name().equals(groupname));
+		Assertions.assertTrue(group.description().equals("Testdescription"));
+		Assertions.assertTrue(group.isDeletable() == false);
+		
+		//--------------------------------------
+		// UPDATE
+		group.name(groupnameUpdated)
+			.description("Testdescription2")
+			.isDeletable(true);
+		
+		CFW.DB.Groups.update(group);
+		
+		//--------------------------------------
+		// SELECT
+		Group userUpdated = CFW.DB.Groups.selectByName(groupnameUpdated);
+		
+		System.out.println("===== UPDATED GROUP =====");
+		System.out.println(userUpdated.toString());
+		
+		Assertions.assertTrue(group != null);
+		Assertions.assertTrue(group.name().equals(groupname));
+		Assertions.assertTrue(group.description().equals("Testdescription"));
+		Assertions.assertTrue(group.isDeletable() == true);
+		
+		
+		//--------------------------------------
+		// DELETE
+		CFW.DB.Groups.deleteByID(userUpdated.id());
+		
+		Assertions.assertFalse(CFW.DB.Groups.groupExists(groupname));
 		
 	}
 }

@@ -1,7 +1,9 @@
 package com.pengtoolbox.cfw.logging;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +63,15 @@ public class CFWLog {
 		}
 		
 		System.setProperty("java.util.logging.config.file", "./config/logging.properties");
+		
+		//-------------------------------------------
+		// Make sure the config is loaded
+		try {
+			LogManager.getLogManager().readConfiguration(new FileInputStream("./config/logging.properties"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		isLoggingInitialized = true;
 		
