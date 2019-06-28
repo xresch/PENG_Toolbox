@@ -16,7 +16,7 @@ public class CFWDBUserGroupMap {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBUserGroupMap.class.getName());
 	
-	enum GroupUserMapDBFields{
+	enum UserGroupMapDBFields{
 		PK_ID, 
 		FK_ID_USER,
 		FK_ID_GROUP,
@@ -30,11 +30,11 @@ public class CFWDBUserGroupMap {
 	public static void initializeTable() {
 			
 		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+"("
-							  + GroupUserMapDBFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
-							  + GroupUserMapDBFields.FK_ID_USER + " INT, "
-							  + GroupUserMapDBFields.FK_ID_GROUP + " INT, "
-							  + "FOREIGN KEY ("+GroupUserMapDBFields.FK_ID_USER+") REFERENCES "+CFWDBUser.TABLE_NAME+"("+UserDBFields.PK_ID+"), "
-							  + "FOREIGN KEY ("+GroupUserMapDBFields.FK_ID_GROUP+") REFERENCES "+CFWDBUser.TABLE_NAME+"("+GroupDBFields.PK_ID+") "
+							  + UserGroupMapDBFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
+							  + UserGroupMapDBFields.FK_ID_USER + " INT, "
+							  + UserGroupMapDBFields.FK_ID_GROUP + " INT, "
+							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_USER+") REFERENCES "+CFWDBUser.TABLE_NAME+"("+UserDBFields.PK_ID+"), "
+							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_GROUP+") REFERENCES "+CFWDBUser.TABLE_NAME+"("+GroupDBFields.PK_ID+") "
 							  + ");";
 		
 		CFWDB.preparedExecute(createTableSQL);
@@ -42,12 +42,20 @@ public class CFWDBUserGroupMap {
 	}
 	
 	/********************************************************************************************
-	 * Creates a new group in the DB.
-	 * @param Group with the values that should be inserted. ID will be set by the Database.
+	 * Adds the user to the specified group.
+	 * @param user
+	 * @param group
 	 * @return return true if user was added, false otherwise
 	 * 
 	 ********************************************************************************************/
 	public static boolean addUserToGroup(User user, Group group) {
+		
+		if(user == null || group == null ) {
+			new CFWLog(logger)
+				.method("addUserToGroup")
+				.warn("User and group cannot be null.");
+			return false;
+		}
 		
 		if(checkIsUserInGroup(user, group)) {
 			new CFWLog(logger)
@@ -56,12 +64,47 @@ public class CFWDBUserGroupMap {
 			return false;
 		}
 		String insertGroupSQL = "INSERT INTO "+TABLE_NAME+" ("
-				  + GroupUserMapDBFields.FK_ID_USER +", "
-				  + GroupUserMapDBFields.FK_ID_GROUP +" "
+				  + UserGroupMapDBFields.FK_ID_USER +", "
+				  + UserGroupMapDBFields.FK_ID_GROUP +" "
 				  + ") VALUES (?,?);";
 		
-		
 		return CFWDB.preparedExecute(insertGroupSQL, 
+				user.id(),
+				group.id()
+				);
+	}
+	
+	/********************************************************************************************
+	 * Remove a user from the group.
+	 * @param user
+	 * @param group
+	 * @return return true if user was removed, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static boolean removeUserFromGroup(User user, Group group) {
+		
+		if(user == null || group == null ) {
+			new CFWLog(logger)
+				.method("removeUserFromGroup")
+				.warn("User and group cannot be null.");
+			return false;
+		}
+		
+		if(!checkIsUserInGroup(user, group)) {
+			new CFWLog(logger)
+				.method("removeUserFromGroup")
+				.warn("The user '"+user.username()+"' is not part of the group '"+group.name()+"' and cannot be removed.");
+			return false;
+		}
+		
+		String removeUserFromGroupSQL = "DELETE FROM "+TABLE_NAME
+				+" WHERE "
+				  + UserGroupMapDBFields.FK_ID_USER +" = ? "
+				  + " AND "
+				  + UserGroupMapDBFields.FK_ID_GROUP +" = ? "
+				  + ";";
+		
+		return CFWDB.preparedExecute(removeUserFromGroupSQL, 
 				user.id(),
 				group.id()
 				);
@@ -74,8 +117,14 @@ public class CFWDBUserGroupMap {
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkIsUserInGroup(User user, Group group) {
-		if(group != null) {
+		
+		if(user != null && group != null) {
 			return checkIsUserInGroup(user.id(), group.id());
+		}else {
+			new CFWLog(logger)
+				.method("checkIsUserInGroup")
+				.severe("The user and group cannot be null. User: '"+user+"', Group: '"+group+"'");
+			
 		}
 		return false;
 	}
@@ -89,17 +138,18 @@ public class CFWDBUserGroupMap {
 	public static boolean checkIsUserInGroup(int userid, int groupid) {
 		
 		String checkIsUserInGroup = "SELECT COUNT(*) FROM "+TABLE_NAME
-				+" WHERE "+GroupUserMapDBFields.FK_ID_USER+" = ?"
-				+" AND "+GroupUserMapDBFields.FK_ID_GROUP+" = ?";
+				+" WHERE "+UserGroupMapDBFields.FK_ID_USER+" = ?"
+				+" AND "+UserGroupMapDBFields.FK_ID_GROUP+" = ?";
 		
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkIsUserInGroup, userid, groupid);
+		
 		
 		try {
 			if(result.next()) {
 				int count = result.getInt(1);
 				return (count == 0) ? false : true;
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			new CFWLog(logger)
 			.method("groupExists")
 			.severe("Exception occured while checking of group exists.", e);

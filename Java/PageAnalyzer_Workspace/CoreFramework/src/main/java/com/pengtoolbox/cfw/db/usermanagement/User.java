@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import com.pengtoolbox.cfw._main.CFW;
+
 public class User {
 	
 	private int id;
@@ -48,10 +50,6 @@ public class User {
 		.isRenamable(result.getBoolean(col++))
 		.isForeign(result.getBoolean(col++));
 		
-	}
-	
-	public enum UserStatus {
-		ACTIVE, INACTIVE, BLOCKED
 	}
 	
 	public int id() {
@@ -99,6 +97,14 @@ public class User {
 		return this;
 	}
 	
+	
+	public User setInitialPassword(String password) {
+		
+		this.passwordSalt(CFW.Security.createPasswordSalt(31));
+		this.passwordHash(CFW.Security.createPasswordHash(password, this.passwordSalt()) );
+		
+		return this;
+	}
 	
 	public String passwordHash() {
 		return passwordHash;
@@ -149,12 +155,7 @@ public class User {
 	public String status() {
 		return status;
 	}
-	
-	public User status(UserStatus status) {
-		this.status = status.toString();
-		return this;
-	}
-	
+		
 	public User status(String status) {
 		this.status = status;
 		return this;
@@ -177,7 +178,7 @@ public class User {
 		return this;
 	}
 	
-	public String toString() {
+	public String getKeyValueString() {
 		
 		StringBuilder builder = new StringBuilder();
 		builder.append("\nid: "+id);

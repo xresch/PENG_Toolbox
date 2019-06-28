@@ -2,10 +2,13 @@ package com.pengtoolbox.cfw.db.usermanagement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFW.DB.UserGroupMap;
 import com.pengtoolbox.cfw.db.CFWDB;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserGroupMap.UserGroupMapDBFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBUser {
@@ -58,12 +61,39 @@ public class CFWDBUser {
 	}
 	
 	/********************************************************************************************
+	 * Creates multiple users in the DB.
+	 * @param Users with the values that should be inserted. ID will be set by the Database.
+	 * @return nothing
+	 * 
+	 ********************************************************************************************/
+	public static void create(User... users) {
+		
+		for(User user : users) {
+			create(user);
+		}
+	}
+	
+	/********************************************************************************************
 	 * Creates a new user in the DB.
 	 * @param user with the values that should be inserted. ID will be set by the Database.
 	 * @return return true if successful, false otherwise
 	 * 
 	 ********************************************************************************************/
 	public static boolean create(User user) {
+		
+		if( user == null) {
+			new CFWLog(logger)
+				.method("create")
+				.severe("The user cannot be null");
+			return false;
+		}
+		
+		if( user.username() == null || user.username().isEmpty() ) {
+			new CFWLog(logger)
+				.method("create")
+				.severe("Please provide at least one character for the username.");
+			return false;
+		}
 		
 		if( checkUsernameExists(user.username())) {
 			new CFWLog(logger)
@@ -72,7 +102,10 @@ public class CFWDBUser {
 			return false;
 		}
 		
-		if( checkEmailExists(user.email())) {
+		if( user.email() != null
+		&& !user.email().isEmpty()
+		&& checkEmailExists(user.email())) {
+			
 			new CFWLog(logger)
 				.method("create")
 				.warn("The user '"+user.username()+"' cannot be created as the email '"+user.email()+"' is already used by another account.");
@@ -118,6 +151,13 @@ public class CFWDBUser {
 	 * @return Returns a user or null if not found or in case of exception.
 	 ****************************************************************/
 	public static User selectByUsernameOrMail(String usernameOrMail) {
+		
+		if( usernameOrMail == null) {
+			new CFWLog(logger)
+				.method("selectByUsernameOrMail")
+				.severe("The user or eMail cannot be null.");
+			return null;
+		}
 		
 		String selectByUsernameOrMail = 
 				"SELECT "
@@ -211,6 +251,31 @@ public class CFWDBUser {
 	/***************************************************************
 	 * Updates the object selecting by ID.
 	 * @param group
+	 * @return Hashmap with groups, or null on exception
+	 ****************************************************************/
+	public static HashMap<String, Group> selectGroupsForUser(User user) {
+		
+		if( user == null) {
+			new CFWLog(logger)
+				.method("create")
+				.severe("The user cannot be null");
+			return null;
+		}
+		
+		String selectGroupsForUser = "SELECT * FROM "+CFWDBGroup.TABLE_NAME+" G "
+				+ "INNER JOIN "+CFWDBUserGroupMap.TABLE_NAME+" M"
+				+ "ON M.FK_ID_GROUP = G.PK_ID"
+				+ "WHERE M.FK_ID_USER = 15;";
+		
+		HashMap<String, Group> groupMap = new HashMap<String, Group>(); 
+		
+		xxx
+
+	}
+	
+	/***************************************************************
+	 * Updates the object selecting by ID.
+	 * @param group
 	 * @return true or false
 	 ****************************************************************/
 	public static boolean update(User user) {
@@ -259,10 +324,21 @@ public class CFWDBUser {
 	 ****************************************************************/
 	public static boolean deleteByID(int id) {
 		
+		User user = selectByID(id);
+		
+		if(user != null && user.isDeletable() == false) {
+			new CFWLog(logger)
+			.method("deleteByID")
+			.severe("The user '"+user.username()+"' cannot be deleted as it is marked as not deletable.");
+			return false;
+		}
+		
 		String deleteByID = 
 				"DELETE FROM "+TABLE_NAME
 				+" WHERE "
-					+ UserDBFields.PK_ID+" = ? ";
+					+ UserDBFields.PK_ID+" = ? "
+					+ "AND "
+					+ UserDBFields.IS_DELETABLE+" = TRUE ";
 		
 		return CFWDB.preparedExecute(deleteByID, id);
 			
@@ -298,8 +374,8 @@ public class CFWDBUser {
 			}
 		} catch (SQLException e) {
 			new CFWLog(logger)
-			.method("checkUsernameUsed")
-			.severe("The user '"+username+"' already exists. Please choose another name.", e);
+			.method("checkUsernameExists")
+			.severe("Error while checking the if the user exists.", e);
 			
 			return false;
 		}
@@ -338,7 +414,7 @@ public class CFWDBUser {
 		} catch (SQLException e) {
 			new CFWLog(logger)
 			.method("checkEmailInUse")
-			.severe("The email '"+email+"' is already used by another account.", e);
+			.severe("Error while checking the if the email is in use.", e);
 			
 			return false;
 		}

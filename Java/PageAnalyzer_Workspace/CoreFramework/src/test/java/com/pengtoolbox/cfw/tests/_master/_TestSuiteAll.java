@@ -22,6 +22,6 @@ import com.pengtoolbox.cfw.tests.web.MenuTests;
    GeneralWebTests.class
 })
 
-public class TestSuiteAll { 
+public class _TestSuiteAll { 
 	
 }  

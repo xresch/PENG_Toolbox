@@ -6,16 +6,15 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission.PermissionDBFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
-public class CFWDBGroup {
+public class CFWDBPermission {
 
-	public static String TABLE_NAME = "CFW_GROUP";
+	public static String TABLE_NAME = "CFW_PERMISSION";
 	
-	public static Logger logger = CFWLog.getLogger(CFWDBGroup.class.getName());
+	public static Logger logger = CFWLog.getLogger(CFWDBPermission.class.getName());
 	
-	enum GroupDBFields{
+	enum PermissionDBFields{
 		PK_ID, 
 		NAME,
 		DESCRIPTION,
@@ -30,10 +29,10 @@ public class CFWDBGroup {
 	public static void initializeTable() {
 			
 		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+"("
-							  + GroupDBFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
-							  + GroupDBFields.NAME + " VARCHAR(255) UNIQUE,"
-							  + GroupDBFields.DESCRIPTION + " CLOB,"
-							  + GroupDBFields.IS_DELETABLE + " BOOLEAN"
+							  + PermissionDBFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
+							  + PermissionDBFields.NAME + " VARCHAR(255) UNIQUE,"
+							  + PermissionDBFields.DESCRIPTION + " CLOB,"
+							  + PermissionDBFields.IS_DELETABLE + " BOOLEAN"
 							  + ");";
 		
 		CFWDB.preparedExecute(createTableSQL);
@@ -46,10 +45,10 @@ public class CFWDBGroup {
 	 * @return nothing
 	 * 
 	 ********************************************************************************************/
-	public static void create(Group... groups) {
+	public static void create(Permission... permissions) {
 		
-		for(Group group : groups) {
-			create(group);
+		for(Permission permission : permissions) {
+			create(permission);
 		}
 	}
 	/********************************************************************************************
@@ -58,39 +57,39 @@ public class CFWDBGroup {
 	 * @return true if successful, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean create(Group group) {
+	public static boolean create(Permission permission) {
 		
-		if(group == null) {
+		if(permission == null) {
 			new CFWLog(logger)
 				.method("create")
 				.warn("The group cannot be null");
 			return false;
 		}
 		
-		if(group.name() == null || group.name().isEmpty()) {
+		if(permission.name() == null || permission.name().isEmpty()) {
 			new CFWLog(logger)
 				.method("create")
 				.warn("Please specify a name for the group to create.");
 			return false;
 		}
 		
-		if(checkGroupExists(group)) {
+		if(checkGroupExists(permission)) {
 			new CFWLog(logger)
 				.method("create")
-				.warn("The group '"+group.name()+"' cannot be created as a group with this name already exists.");
+				.warn("The group '"+permission.name()+"' cannot be created as a group with this name already exists.");
 			return false;
 		}
 		
 		String insertGroupSQL = "INSERT INTO "+TABLE_NAME+" ("
-				  + GroupDBFields.NAME +", "
-				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +" "
+				  + PermissionDBFields.NAME +", "
+				  + PermissionDBFields.DESCRIPTION +", "
+				  + PermissionDBFields.IS_DELETABLE +" "
 				  + ") VALUES (?,?,?);";
 		
 		return CFWDB.preparedExecute(insertGroupSQL, 
-				group.name(),
-				group.description(),
-				group.isDeletable()
+				permission.name(),
+				permission.description(),
+				permission.isDeletable()
 				);
 	}
 	
@@ -99,17 +98,17 @@ public class CFWDBGroup {
 	 * @param id of the group
 	 * @return Returns a group or null if not found or in case of exception.
 	 ****************************************************************/
-	public static Group selectByName(String name ) {
+	public static Permission selectByName(String name ) {
 		
 		String selectByName = 
 				"SELECT "
-				  + GroupDBFields.PK_ID +", "
-				  + GroupDBFields.NAME +", "
-				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +" "
+				  + PermissionDBFields.PK_ID +", "
+				  + PermissionDBFields.NAME +", "
+				  + PermissionDBFields.DESCRIPTION +", "
+				  + PermissionDBFields.IS_DELETABLE +" "
 				+" FROM "+TABLE_NAME
 				+" WHERE "
-				+ GroupDBFields.NAME + " = ?";
+				+ PermissionDBFields.NAME + " = ?";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectByName, name);
 		
@@ -119,7 +118,7 @@ public class CFWDBGroup {
 		
 		try {
 			if(result.next()) {
-				return new Group(result);
+				return new Permission(result);
 			}
 		} catch (SQLException e) {
 			new CFWLog(logger)
@@ -137,17 +136,17 @@ public class CFWDBGroup {
 	 * @param id of the group
 	 * @return Returns a group or null if not found or in case of exception.
 	 ****************************************************************/
-	public static Group selectByID(int id ) {
+	public static Permission selectByID(int id ) {
 		
 		String selectByName = 
 				"SELECT "
-				  + GroupDBFields.PK_ID +", "
-				  + GroupDBFields.NAME +", "
-				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +" "
+				  + PermissionDBFields.PK_ID +", "
+				  + PermissionDBFields.NAME +", "
+				  + PermissionDBFields.DESCRIPTION +", "
+				  + PermissionDBFields.IS_DELETABLE +" "
 				+" FROM "+TABLE_NAME
 				+" WHERE "
-				+ GroupDBFields.PK_ID + " = ?";
+				+ PermissionDBFields.PK_ID + " = ?";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectByName, id);
 		
@@ -157,7 +156,7 @@ public class CFWDBGroup {
 		
 		try {
 			if(result.next()) {
-				return new Group(result);
+				return new Permission(result);
 			}
 		} catch (SQLException e) {
 			new CFWLog(logger)
@@ -172,26 +171,26 @@ public class CFWDBGroup {
 	
 	/***************************************************************
 	 * Updates the object selecting by ID.
-	 * @param group
+	 * @param permission
 	 * @return true or false
 	 ****************************************************************/
-	public static boolean update(Group group) {
+	public static boolean update(Permission permission) {
 		
 		String updateByID = 
 				"UPDATE "+TABLE_NAME
 				+" SET ("
-				  + GroupDBFields.NAME +", "
-				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +" "
+				  + PermissionDBFields.NAME +", "
+				  + PermissionDBFields.DESCRIPTION +", "
+				  + PermissionDBFields.IS_DELETABLE +" "
 				  + ") = (?,?,?) "
 				+" WHERE "
-					+ GroupDBFields.PK_ID+" = ?";
+					+ PermissionDBFields.PK_ID+" = ?";
 		
 		boolean result = CFWDB.preparedExecute(updateByID, 
-				group.name(),
-				group.description(),
-				group.isDeletable(),
-				group.id());
+				permission.name(),
+				permission.description(),
+				permission.isDeletable(),
+				permission.id());
 		
 		
 		return result;
@@ -205,18 +204,18 @@ public class CFWDBGroup {
 	 ****************************************************************/
 	public static boolean deleteByID(int id) {
 		
-		Group group = selectByID(id);
-		if(group != null && group.isDeletable() == false) {
+		Permission permission = selectByID(id);
+		if(permission != null && permission.isDeletable() == false) {
 			new CFWLog(logger)
 			.method("deleteByID")
-			.severe("The group '"+group.name()+"' cannot be deleted as it is marked as not deletable.");
+			.severe("The permission '"+permission.name()+"' cannot be deleted as it is marked as not deletable.");
 			return false;
 		}
 		
 		String deleteByID = 
 				"DELETE FROM "+TABLE_NAME
 				+" WHERE "
-					+ GroupDBFields.PK_ID+" = ? "
+					+ PermissionDBFields.PK_ID+" = ? "
 					+ "AND "
 					+ PermissionDBFields.IS_DELETABLE+" = TRUE ";
 		
@@ -228,12 +227,12 @@ public class CFWDBGroup {
 	/****************************************************************
 	 * Check if the group exists by name.
 	 * 
-	 * @param group to check
+	 * @param permission to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
-	public static boolean checkGroupExists(Group group) {
-		if(group != null) {
-			return checkGroupExists(group.name());
+	public static boolean checkGroupExists(Permission permission) {
+		if(permission != null) {
+			return checkPermissionExists(permission.name());
 		}
 		return false;
 	}
@@ -244,9 +243,9 @@ public class CFWDBGroup {
 	 * @param groupname to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
-	public static boolean checkGroupExists(String groupName) {
-		String checkExistsSQL = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE "+GroupDBFields.NAME+" = ?";
-		ResultSet result = CFW.DB.preparedExecuteQuery(checkExistsSQL, groupName);
+	public static boolean checkPermissionExists(String permissionName) {
+		String checkExistsSQL = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE "+PermissionDBFields.NAME+" = ?";
+		ResultSet result = CFW.DB.preparedExecuteQuery(checkExistsSQL, permissionName);
 		
 		try {
 			if(result.next()) {
@@ -255,7 +254,7 @@ public class CFWDBGroup {
 			}
 		} catch (SQLException e) {
 			new CFWLog(logger)
-			.method("groupExists")
+			.method("checkPermissionExists")
 			.severe("Exception occured while checking of group exists.", e);
 			
 			return false;

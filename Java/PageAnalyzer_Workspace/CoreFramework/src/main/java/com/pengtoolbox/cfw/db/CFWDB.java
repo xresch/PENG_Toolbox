@@ -21,7 +21,6 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.User;
-import com.pengtoolbox.cfw.db.usermanagement.User.UserStatus;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDB {
@@ -102,20 +101,16 @@ public class CFWDB {
 		//-----------------------------------------
 		// Create default admin user
 		//-----------------------------------------
+		
 		if(!CFW.DB.Users.checkUsernameExists("admin")) {
 			
-			// salt and hash for default password "admin"
-			String salt = ";%IYi6:0ls,!8PQac?;o9570kn{NYSb";
-			String hash = "12f42860e885448d8bcc02d08188f2e860894ae6aa786112c84e2da567b9935090720dd951be7811d68b098375ed9dbcc8fa042ddfceaa6973a83ab9231732";
-			
-			CFW.DB.Users.create(
+		    CFW.DB.Users.create(
 				new User()
 				.username("admin")
 				.isDeletable(false)
 				.isRenamable(false)
-				.passwordHash(hash)
-				.passwordSalt(salt)
-				.status(UserStatus.ACTIVE)
+				.setInitialPassword("admin")
+				.status("ACTIVE")
 				.isForeign(false)
 			);
 		}
