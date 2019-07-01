@@ -33,8 +33,8 @@ public class User {
 	//Username and password is managed in another source, like LDAP or CSV
 	private boolean isForeign;
 	
-	public User() {
-		
+	public User(String username) {
+		this.username = username;
 	}
 	
 	public User(ResultSet result) throws SQLException {

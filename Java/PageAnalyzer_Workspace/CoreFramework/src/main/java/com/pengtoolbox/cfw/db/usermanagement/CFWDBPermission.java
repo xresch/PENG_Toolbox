@@ -22,7 +22,7 @@ public class CFWDBPermission {
 	}
 
 	/********************************************************************************************
-	 * Creates the table and default admin user if not already exists.
+	 * Creates the table if not already exists.
 	 * This method is executed by CFW.DB.initialize().
 	 * 
 	 ********************************************************************************************/
@@ -40,8 +40,8 @@ public class CFWDBPermission {
 	}
 	
 	/********************************************************************************************
-	 * Creates multiple groups in the DB.
-	 * @param Groups with the values that should be inserted. ID will be set by the Database.
+	 * Creates multiple permissions in the DB.
+	 * @param Permissions with the values that should be inserted. ID will be set by the database.
 	 * @return nothing
 	 * 
 	 ********************************************************************************************/
@@ -52,8 +52,8 @@ public class CFWDBPermission {
 		}
 	}
 	/********************************************************************************************
-	 * Creates a new group in the DB.
-	 * @param Group with the values that should be inserted. ID will be set by the Database.
+	 * Creates a new permission in the DB.
+	 * @param permission with the values that should be inserted. ID will be set by the Database.
 	 * @return true if successful, false otherwise
 	 * 
 	 ********************************************************************************************/
@@ -62,21 +62,21 @@ public class CFWDBPermission {
 		if(permission == null) {
 			new CFWLog(logger)
 				.method("create")
-				.warn("The group cannot be null");
+				.warn("The permission cannot be null");
 			return false;
 		}
 		
 		if(permission.name() == null || permission.name().isEmpty()) {
 			new CFWLog(logger)
 				.method("create")
-				.warn("Please specify a name for the group to create.");
+				.warn("Please specify a name for the permission to create.");
 			return false;
 		}
 		
-		if(checkGroupExists(permission)) {
+		if(checkPermissionExists(permission)) {
 			new CFWLog(logger)
 				.method("create")
-				.warn("The group '"+permission.name()+"' cannot be created as a group with this name already exists.");
+				.warn("The permission '"+permission.name()+"' cannot be created as a permission with this name already exists.");
 			return false;
 		}
 		
@@ -94,9 +94,9 @@ public class CFWDBPermission {
 	}
 	
 	/***************************************************************
-	 * Select a group by it's name.
-	 * @param id of the group
-	 * @return Returns a group or null if not found or in case of exception.
+	 * Select a permission by it's name.
+	 * @param id of the permission
+	 * @return Returns a permission or null if not found or in case of exception.
 	 ****************************************************************/
 	public static Permission selectByName(String name ) {
 		
@@ -123,7 +123,7 @@ public class CFWDBPermission {
 		} catch (SQLException e) {
 			new CFWLog(logger)
 			.method("selectByName")
-			.severe("Error reading group from database.", e);;
+			.severe("Error reading permission from database.", e);;
 			
 		}finally {
 			CFWDB.close(result);
@@ -134,9 +134,9 @@ public class CFWDBPermission {
 	}
 	
 	/***************************************************************
-	 * Select a group by it's ID.
-	 * @param id of the group
-	 * @return Returns a group or null if not found or in case of exception.
+	 * Select a permission by it's ID.
+	 * @param id of the permission
+	 * @return Returns a permission or null if not found or in case of exception.
 	 ****************************************************************/
 	public static Permission selectByID(int id ) {
 		
@@ -163,7 +163,7 @@ public class CFWDBPermission {
 		} catch (SQLException e) {
 			new CFWLog(logger)
 			.method("selectByID")
-			.severe("Error reading group from database.", e);;
+			.severe("Error reading permission from database.", e);;
 			
 		}finally {
 			CFWDB.close(result);
@@ -202,8 +202,8 @@ public class CFWDBPermission {
 	}
 	
 	/****************************************************************
-	 * Deletes the group by id.
-	 * @param id of the user
+	 * Deletes the permission by id.
+	 * @param id of the permission
 	 * @return true if successful, false otherwise.
 	 ****************************************************************/
 	public static boolean deleteByID(int id) {
@@ -229,7 +229,7 @@ public class CFWDBPermission {
 	
 	/****************************************************************
 	 * Deletes the permission by id.
-	 * @param id of the user
+	 * @param id of the permission
 	 * @return true if successful, false otherwise.
 	 ****************************************************************/
 	public static boolean deleteByName(String name) {
@@ -255,12 +255,12 @@ public class CFWDBPermission {
 	
 	
 	/****************************************************************
-	 * Check if the group exists by name.
+	 * Check if the permission exists by name.
 	 * 
 	 * @param permission to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
-	public static boolean checkGroupExists(Permission permission) {
+	public static boolean checkPermissionExists(Permission permission) {
 		if(permission != null) {
 			return checkPermissionExists(permission.name());
 		}
@@ -268,9 +268,9 @@ public class CFWDBPermission {
 	}
 	
 	/****************************************************************
-	 * Check if the group exists by name.
+	 * Check if the permission exists by name.
 	 * 
-	 * @param groupname to check
+	 * @param permission to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkPermissionExists(String permissionName) {

@@ -5,10 +5,12 @@ import java.io.IOException;
 import com.pengtoolbox.cfw.cli.CFWCommandLineInterface;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroupPermissionMap;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserGroupMap;
-import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
+import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWTime;
 import com.pengtoolbox.cfw.validation.CFWValidation;
 
@@ -26,6 +28,8 @@ public class CFW {
 		public static class Users extends CFWDBUser{};
 		public static class Groups extends CFWDBGroup{};
 		public static class UserGroupMap extends CFWDBUserGroupMap{};
+		public static class Permissions extends CFWDBPermission{};
+		public static class GroupPermissionMap extends CFWDBGroupPermissionMap{};
 	}
 	public class HTTP extends CFWHttp {}
 	public class Files extends CFWFiles {}

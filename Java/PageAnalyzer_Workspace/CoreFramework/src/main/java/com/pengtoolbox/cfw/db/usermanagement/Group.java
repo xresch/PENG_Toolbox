@@ -10,8 +10,8 @@ public class Group {
 	private String description;
 	private boolean isDeletable = true;
 	
-	public Group() {
-	
+	public Group(String name) {
+		this.name = name;
 	}
 	
 	public Group(ResultSet result) throws SQLException {

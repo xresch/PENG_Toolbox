@@ -2,17 +2,95 @@ package com.pengtoolbox.cfw.tests.db.user;
 
 import java.util.HashMap;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.tests._master.DBTestMaster;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 
 public class TestCFWDBUserManagement extends DBTestMaster {
 
+	protected static Group testgroupA;
+	protected static Group testgroupB;
+	protected static Group testgroupC;
+	
+	protected static User testuser;
+	protected static User testuser2;
+	protected static User testuser3;
+	
+	protected static Permission permissionA;
+	protected static Permission permissionAA;
+	protected static Permission permissionAAA;
+	
+	protected static Permission permissionB;
+	protected static Permission permissionBB;
+	
+	protected static Permission permissionC;
+	
+	@BeforeClass
+	public static void fillWithTestData() {
+		
+		//------------------------------
+		// Groups
+		CFW.DB.Groups.create(new Group("TestgroupA"));
+		testgroupA = CFW.DB.Groups.selectByName("TestgroupA");
+		
+		CFW.DB.Groups.create(new Group("TestgroupB"));
+		testgroupB = CFW.DB.Groups.selectByName("TestgroupB");
+		
+		CFW.DB.Groups.create(new Group("TestgroupC"));
+		testgroupC = CFW.DB.Groups.selectByName("TestgroupC");
+		
+		//------------------------------
+		// Users
+		CFW.DB.Users.create(new User("testuser").setInitialPassword("testuser", "testuser"));
+		testuser = CFW.DB.Users.selectByUsernameOrMail("testuser");
+		CFW.DB.UserGroupMap.addUserToGroup(testuser, testgroupA);
+		CFW.DB.UserGroupMap.addUserToGroup(testuser, testgroupB);
+		CFW.DB.UserGroupMap.addUserToGroup(testuser, testgroupC);
+		
+		CFW.DB.Users.create(new User("testuser2").setInitialPassword("testuser2", "testuser2"));
+		testuser2 = CFW.DB.Users.selectByUsernameOrMail("testuser2");
+		CFW.DB.UserGroupMap.addUserToGroup(testuser2, testgroupA);
+		CFW.DB.UserGroupMap.addUserToGroup(testuser2, testgroupB);
+		
+		CFW.DB.Users.create(new User("testuser3").setInitialPassword("testuser3", "testuser3"));	
+		testuser3 = CFW.DB.Users.selectByUsernameOrMail("testuser3");
+		CFW.DB.UserGroupMap.addUserToGroup(testuser3, testgroupA);
+		
+		//------------------------------
+		// Permissions
+		CFW.DB.Permissions.create(new Permission("PermissionA"));
+		permissionA = CFW.DB.Permissions.selectByName("PermissionA");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionA, testgroupA);
+		
+		CFW.DB.Permissions.create(new Permission("PermissionAA"));
+		permissionAA = CFW.DB.Permissions.selectByName("PermissionAA");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAA, testgroupA);
+		
+		CFW.DB.Permissions.create(new Permission("PermissionAAA"));
+		permissionAAA = CFW.DB.Permissions.selectByName("PermissionAAA");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAAA, testgroupA);
+		
+		CFW.DB.Permissions.create(new Permission("PermissionB"));
+		permissionB = CFW.DB.Permissions.selectByName("PermissionB");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionB, testgroupB);
+		
+		CFW.DB.Permissions.create(new Permission("PermissionBB"));
+		permissionBB = CFW.DB.Permissions.selectByName("PermissionBB");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionBB, testgroupB);
+		
+		CFW.DB.Permissions.create(new Permission("PermissionC"));
+		permissionC = CFW.DB.Permissions.selectByName("PermissionC");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionC, testgroupC);
+	}
+	
+	
 	@Test
 	public void testCreatePasswordHash() {
 		
@@ -50,8 +128,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//--------------------------------------
 		// CREATE
-		CFW.DB.Users.create(new User()
-				.username(username)
+		CFW.DB.Users.create(new User(username)
 				.email("t.testonia@cfw.com")
 				.firstname("Testika")
 				.lastname("Testonia")
@@ -174,8 +251,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//--------------------------------------
 		// CREATE
-		CFW.DB.Groups.create(new Group()
-				.name(groupname)
+		CFW.DB.Groups.create(new Group(groupname)
 				.description("Testdescription")
 				.isDeletable(false)
 				);
@@ -238,7 +314,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//--------------------------------------
 		// Preparation
-		User newUser = new User().username("newUser");
+		User newUser = new User("newUser");
 		CFW.DB.Users.create(newUser);
 		CFW.DB.UserGroupMap.removeUserFromGroup(newUser, testgroupA);
 		
@@ -289,7 +365,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//Cleanup
 		CFW.DB.Groups.deleteByName("TestGroupToDelete");
 		
-		Group groupToDelete = new Group().name("TestGroupToDelete");
+		Group groupToDelete = new Group("TestGroupToDelete");
 		
 		CFW.DB.Groups.create(groupToDelete);
 		groupToDelete = CFW.DB.Groups.selectByName("TestGroupToDelete");
@@ -306,6 +382,88 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		CFW.DB.Groups.deleteByID(groupToDelete.id());
 		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser2, groupToDelete), "UserGroupMapping was removed when group was deleted.");
 		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser3, groupToDelete), "UserGroupMapping was removed when group was deleted.");
+		
+	}
+	
+	@Test
+	public void testCRUDPermission() {
+		
+		String permissionname = "Test Permission";
+		String permissionnameUpdated = "Test PermissionUPDATED";
+		
+		//--------------------------------------
+		// Cleanup
+		Permission permissionToDelete = CFW.DB.Permissions.selectByName(permissionname);
+		if(permissionToDelete != null) {
+			CFW.DB.Permissions.deleteByID(permissionToDelete.id());
+		}
+		
+		permissionToDelete = CFW.DB.Permissions.selectByName(permissionnameUpdated);
+		if(permissionToDelete != null) {
+			CFW.DB.Permissions.deleteByID(permissionToDelete.id());
+		}
+		
+		Assertions.assertFalse(CFW.DB.Permissions.checkPermissionExists(permissionname), "Permission doesn't exists, checkPermissionExists(String) works.");
+		Assertions.assertFalse(CFW.DB.Permissions.checkPermissionExists(permissionToDelete), "Permission doesn't exist, checkPermissionExists(Permission) works.");
+		
+		
+		//--------------------------------------
+		// CREATE
+		CFW.DB.Permissions.create(new Permission(permissionname)
+				.description("Testdescription")
+				.isDeletable(false)
+				);
+		
+		Assertions.assertTrue(CFW.DB.Permissions.checkPermissionExists(permissionname), "Permission created successfully, checkPermissionExists(String) works.");
+
+		//--------------------------------------
+		// SELECT BY NAME
+		Permission permission = CFW.DB.Permissions.selectByName(permissionname);
+		
+		//System.out.println("===== USER =====");
+		//System.out.println(permission.getKeyValueString());
+
+		Assertions.assertTrue(CFW.DB.Permissions.checkPermissionExists(permission), "Permission created successfully, checkPermissionExists(Permission) works.");
+		Assertions.assertTrue(permission != null);
+		Assertions.assertTrue(permission.name().equals(permissionname));
+		Assertions.assertTrue(permission.description().equals("Testdescription"));
+		Assertions.assertTrue(permission.isDeletable() == false);
+		
+		//--------------------------------------
+		// CHECK NOT DELETABLE
+		Assertions.assertFalse(CFW.DB.Permissions.deleteByID(permission.id()), "The permission is not deleted, returns false.");
+		Assertions.assertTrue(CFW.DB.Permissions.checkPermissionExists(permission), "The permission still exists.");
+		
+		//--------------------------------------
+		// UPDATE
+		permission.name(permissionnameUpdated)
+			.description("Testdescription2")
+			.isDeletable(true);
+		
+		CFW.DB.Permissions.update(permission);
+		
+		//--------------------------------------
+		// SELECT UPDATED PERMISSION
+		Permission updatedPermission = CFW.DB.Permissions.selectByName(permissionnameUpdated);
+		
+		//System.out.println("===== UPDATED PERMISSION =====");
+		//System.out.println(updatedPermission.getKeyValueString());
+		
+		Assertions.assertTrue(permission != null);
+		Assertions.assertTrue(permission.name().equals(permissionnameUpdated));
+		Assertions.assertTrue(permission.description().equals("Testdescription2"));
+		Assertions.assertTrue(permission.isDeletable() == true);
+		
+		//--------------------------------------
+		// SELECT BY ID
+		Permission permissionByID = CFW.DB.Permissions.selectByID(updatedPermission.id());
+		
+		Assertions.assertTrue(permissionByID != null, "Permission is selected by ID.");
+		//--------------------------------------
+		// DELETE
+		CFW.DB.Permissions.deleteByID(updatedPermission.id());
+		
+		Assertions.assertFalse(CFW.DB.Permissions.checkPermissionExists(permissionname));
 		
 	}
 }

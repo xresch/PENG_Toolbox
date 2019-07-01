@@ -91,6 +91,8 @@ public class CFWDB {
 		CFW.DB.Users.initializeTable();
 		CFW.DB.Groups.initializeTable();
 		CFW.DB.UserGroupMap.initializeTable();
+		CFW.DB.Permissions.initializeTable();
+		CFW.DB.GroupPermissionMap.initializeTable();
 	}
 	
 	/********************************************************************************************
@@ -105,8 +107,7 @@ public class CFWDB {
 		if(!CFW.DB.Users.checkUsernameExists("admin")) {
 			
 		    CFW.DB.Users.create(
-				new User()
-				.username("admin")
+				new User("admin")
 				.isDeletable(false)
 				.isRenamable(false)
 				.setInitialPassword("admin", "admin")
@@ -127,7 +128,7 @@ public class CFWDB {
 		// Create Group Superuser
 		//-----------------------------------------
 		if(!CFW.DB.Groups.checkGroupExists("Superuser")) {
-			CFW.DB.Groups.create(new Group().name("Superuser")
+			CFW.DB.Groups.create(new Group("Superuser")
 				.description("Superusers have all the privileges in the system. They are above administrators. ")
 				.isDeletable(false)
 			);

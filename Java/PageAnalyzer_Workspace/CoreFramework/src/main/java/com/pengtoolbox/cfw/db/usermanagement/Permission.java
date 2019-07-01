@@ -11,8 +11,8 @@ public class Permission {
 	private String description;
 	private boolean isDeletable = true;
 	
-	public Permission() {
-	
+	public Permission(String name) {
+		this.name = name;
 	}
 	
 	public Permission(ResultSet result) throws SQLException {
