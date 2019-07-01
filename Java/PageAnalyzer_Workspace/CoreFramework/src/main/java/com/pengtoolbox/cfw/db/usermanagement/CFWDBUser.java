@@ -194,6 +194,8 @@ public class CFWDBUser {
 			.method("selectByUsernameOrMail")
 			.severe("Error reading user from database.", e);;
 			
+		}finally {
+			CFWDB.close(result);
 		}
 		
 		return null;
@@ -242,6 +244,8 @@ public class CFWDBUser {
 			.method("selectByUsernameOrMail")
 			.severe("Error reading user from database.", e);;
 			
+		}finally {
+			CFWDB.close(result);
 		}
 		
 		return null;
@@ -251,26 +255,12 @@ public class CFWDBUser {
 	/***************************************************************
 	 * Updates the object selecting by ID.
 	 * @param group
-	 * @return Hashmap with groups, or null on exception
+	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
 	 ****************************************************************/
 	public static HashMap<String, Group> selectGroupsForUser(User user) {
 		
-		if( user == null) {
-			new CFWLog(logger)
-				.method("create")
-				.severe("The user cannot be null");
-			return null;
-		}
-		
-		String selectGroupsForUser = "SELECT * FROM "+CFWDBGroup.TABLE_NAME+" G "
-				+ "INNER JOIN "+CFWDBUserGroupMap.TABLE_NAME+" M"
-				+ "ON M.FK_ID_GROUP = G.PK_ID"
-				+ "WHERE M.FK_ID_USER = 15;";
-		
-		HashMap<String, Group> groupMap = new HashMap<String, Group>(); 
-		
-		xxx
-
+		return CFW.DB.UserGroupMap.selectGroupsForUser(user);
+	
 	}
 	
 	/***************************************************************

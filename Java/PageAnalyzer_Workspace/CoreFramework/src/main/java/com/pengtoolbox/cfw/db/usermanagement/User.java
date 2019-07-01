@@ -5,8 +5,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.utils.CFWEncryption;
 
 public class User {
 	
@@ -25,6 +28,7 @@ public class User {
 	private boolean isDeletable = true;
 	private boolean isRenamable = true;
 
+	private static Logger logger = CFWLog.getLogger(User.class.getName());
 	
 	//Username and password is managed in another source, like LDAP or CSV
 	private boolean isForeign;
@@ -98,10 +102,16 @@ public class User {
 	}
 	
 	
-	public User setInitialPassword(String password) {
+	public User setInitialPassword(String password, String repeatedPassword) {
 		
-		this.passwordSalt(CFW.Security.createPasswordSalt(31));
-		this.passwordHash(CFW.Security.createPasswordHash(password, this.passwordSalt()) );
+		if(!password.equals(repeatedPassword)) {
+			new CFWLog(logger)
+			.method("setInitialPassword")
+			.severe("The two provided passwords are not equal.");
+		}
+		
+		this.passwordSalt(CFW.Encryption.createPasswordSalt(31));
+		this.passwordHash(CFW.Encryption.createPasswordHash(password, this.passwordSalt()) );
 		
 		return this;
 	}

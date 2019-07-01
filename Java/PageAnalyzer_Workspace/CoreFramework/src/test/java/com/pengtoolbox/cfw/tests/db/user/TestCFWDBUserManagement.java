@@ -1,5 +1,7 @@
 package com.pengtoolbox.cfw.tests.db.user;
 
+import java.util.HashMap;
+
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -7,21 +9,21 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.tests._master.DBTestMaster;
-import com.pengtoolbox.cfw.utils.CFWSecurity;
+import com.pengtoolbox.cfw.utils.CFWEncryption;
 
 public class TestCFWDBUserManagement extends DBTestMaster {
 
 	@Test
 	public void testCreatePasswordHash() {
 		
-		String salt = CFW.Security.createPasswordSalt(31);
-		String hashtext = CFWSecurity.createPasswordHash("admin", salt);
+		String salt = CFW.Encryption.createPasswordSalt(31);
+		String hashtext = CFWEncryption.createPasswordHash("admin", salt);
 		
-		System.out.println("Salt: "+salt);
-        System.out.println("Hashtext: "+hashtext);
+		//System.out.println("Salt: "+salt);
+        //System.out.println("Hashtext: "+hashtext);
 
         Assertions.assertTrue(salt.length() == 31);
-        Assertions.assertTrue(hashtext.length() == 127);
+        Assertions.assertTrue(hashtext.length() <= 127);
         
 	}
 	
@@ -235,27 +237,46 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 	public void testCRUDUserGroupMap() {
 		
 		//--------------------------------------
+		// Preparation
+		User newUser = new User().username("newUser");
+		CFW.DB.Users.create(newUser);
+		CFW.DB.UserGroupMap.removeUserFromGroup(newUser, testgroupA);
+		
+		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(newUser, testgroupA), "User is not in the group to the group.");
+		
+		//--------------------------------------
 		// Test checkIsUserInGroup()
-		System.out.println(testuser);
-		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser, testgroup), "checkIsUserInGroup() finds the testuser.");
-		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(98921, testgroup.id()), "checkIsUserInGroup() cannot find not existing user.");
+		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser, testgroupA), "checkIsUserInGroup() finds the testuser.");
+		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(99, testgroupA.id()), "checkIsUserInGroup() cannot find not existing user.");
 	
 		//--------------------------------------
 		// Test  addUserToGroup()
-		CFW.DB.Users.create(new User().username("newUser"));
-		User newUser = CFW.DB.Users.selectByUsernameOrMail("newUser");
-		CFW.DB.UserGroupMap.addUserToGroup(newUser, testgroup);
+		User newUserFromDB = CFW.DB.Users.selectByUsernameOrMail("newUser");
+		CFW.DB.UserGroupMap.addUserToGroup(newUserFromDB, testgroupA);
 		
-		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(newUser, testgroup), "User was added to the group.");
+		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(newUserFromDB, testgroupA), "User was added to the group.");
 		
 		//--------------------------------------
 		// Test  removeUserFromGroup
-		CFW.DB.UserGroupMap.removeUserFromGroup(newUser, testgroup);
+		CFW.DB.UserGroupMap.removeUserFromGroup(newUserFromDB, testgroupA);
+		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(newUserFromDB, testgroupA), "User was removed from the group.");
 		
-		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(newUser, testgroup), "User was removed to the group.");
+		//--------------------------------------
+		// Test  remove Group when user is deleted
+		CFW.DB.UserGroupMap.addUserToGroup(newUserFromDB, testgroupA);
+		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(newUserFromDB, testgroupA), "User was added to the group.");
 		
+		CFW.DB.Users.deleteByID(newUserFromDB.id());
+		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(newUserFromDB, testgroupA), "User was removed from the group when it was deleted.");
 		
+		//--------------------------------------
+		// Test 
+		HashMap<String, Group> groups = CFW.DB.UserGroupMap.selectGroupsForUser(testuser2);
 		
+		Assertions.assertEquals(groups.size(), 2, "Testuser2 is part of 2 groups.");
+		Assertions.assertTrue(groups.containsKey(testgroupA.name()), "User is part of testgroupA.");
+		Assertions.assertTrue(groups.containsKey(testgroupB.name()), "User is part of testgroupB.");
+		Assertions.assertFalse(groups.containsKey(testgroupC.name()), "User is NOT part of testgroupC.");
 		
 	}
 }

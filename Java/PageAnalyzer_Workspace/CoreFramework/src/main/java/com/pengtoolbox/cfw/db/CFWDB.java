@@ -62,7 +62,7 @@ public class CFWDB {
 			CFWDB.server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "" +port).start();
 			
 			connectionPool = JdbcConnectionPool.create(h2_url, username, password);
-			connectionPool.setMaxConnections(50);
+			connectionPool.setMaxConnections(90);
 			
 			CFWDB.dataSource = new JdbcDataSource();
 			CFWDB.dataSource.setURL(h2_url);
@@ -109,7 +109,7 @@ public class CFWDB {
 				.username("admin")
 				.isDeletable(false)
 				.isRenamable(false)
-				.setInitialPassword("admin")
+				.setInitialPassword("admin", "admin")
 				.status("ACTIVE")
 				.isForeign(false)
 			);

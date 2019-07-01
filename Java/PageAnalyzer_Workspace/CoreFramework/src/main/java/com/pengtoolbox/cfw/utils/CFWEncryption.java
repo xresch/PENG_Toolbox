@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.logging.CFWLog;
 
-public class CFWSecurity {
+public class CFWEncryption {
 
 	// internal salt to make it even more complicated to recreate a password
 	// Don't change this if you don't want to mess up existing passwords!
@@ -17,16 +17,16 @@ public class CFWSecurity {
 	
 	public static final String CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12345678901234567890+*%&/()=?!{}[]><:;.,-_+*%&/()=?!{}[]><:;.,-_";
 		
-	private static Logger logger = CFWLog.getLogger(CFWSecurity.class.getName());
+	private static Logger logger = CFWLog.getLogger(CFWEncryption.class.getName());
 	
 	/******************************************************************************
-	 * Creates a salted SHA512 password hash and returns a string of 127 bytes by
-	 * removing the first character of the resulting hash string. This adds as 
+	 * Creates a salted SHA512 password hash and returns a string of 127 or less bytes.
+	 * Removes the first character of the resulting hash string. This adds as 
 	 * well some more complexity to the hashing algorithm.
 	 * 
 	 * @param password
 	 * @param salt
-	 * @return
+	 * @return hash with 127 or less bytes
 	 ******************************************************************************/
 	public static String createPasswordHash(String password, String salt) {
 		

@@ -126,6 +126,8 @@ public class CFWDBGroup {
 			.method("selectByName")
 			.severe("Error reading group from database.", e);;
 			
+		}finally {
+			CFWDB.close(result);
 		}
 		
 		return null;
@@ -164,6 +166,8 @@ public class CFWDBGroup {
 			.method("selectByID")
 			.severe("Error reading group from database.", e);;
 			
+		}finally {
+			CFWDB.close(result);
 		}
 		
 		return null;

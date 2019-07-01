@@ -8,7 +8,7 @@ import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserGroupMap;
 import com.pengtoolbox.cfw.utils.CFWFiles;
-import com.pengtoolbox.cfw.utils.CFWSecurity;
+import com.pengtoolbox.cfw.utils.CFWEncryption;
 import com.pengtoolbox.cfw.utils.CFWTime;
 import com.pengtoolbox.cfw.validation.CFWValidation;
 
@@ -30,7 +30,7 @@ public class CFW {
 	public class HTTP extends CFWHttp {}
 	public class Files extends CFWFiles {}
 	public class Localization extends CFWLocalization {}
-	public class Security extends CFWSecurity {}
+	public class Encryption extends CFWEncryption {}
 	public class Time extends CFWTime {}
 	public class Validation extends CFWValidation {}
 	public class CLI extends CFWCommandLineInterface {}
@@ -51,30 +51,8 @@ public class CFW {
 	// PATHS
 	//##############################################################################
 	public static final String PATH_RESOURCES_HTML = "./resources/html";
-	public static final String PATH_TEMPLATE_MENU = PATH_RESOURCES_HTML+"/default_template/menu.html";
 	public static final String PATH_TEMPLATE_FOOTER = PATH_RESOURCES_HTML+"/default_template/footer.html";
 	public static final String PATH_TEMPLATE_SUPPORTINFO = PATH_RESOURCES_HTML+"/default_template/supportInfoModal.html";
-	
-	//##############################################################################
-	// METHODS
-	//##############################################################################
-	
-//	public static AbstractResponse getTemplate(HttpServletRequest request){
-//		
-//		Object o = request.getAttribute(CFW.REQUEST_ATTR_TEMPLATE);
-//		
-//		if(o != null){
-//			if(o instanceof AbstractResponse){
-//				return (AbstractResponse)o;
-//			}else{
-//				return null;
-//			}
-//			
-//		}else{
-//			return null;
-//		}
-//
-//	}
 	
 	public static void initialize(String configFilePath) throws IOException{
 					

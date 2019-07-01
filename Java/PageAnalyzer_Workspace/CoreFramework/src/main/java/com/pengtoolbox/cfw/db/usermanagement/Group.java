@@ -1,6 +1,5 @@
 package com.pengtoolbox.cfw.db.usermanagement;
 
-import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
