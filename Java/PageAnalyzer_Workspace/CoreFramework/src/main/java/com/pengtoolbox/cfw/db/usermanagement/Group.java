@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 public class Group {
 	
-	private int id;
+	private int id = -999;
 	private String name;
 	private String description;
 	private boolean isDeletable = true;

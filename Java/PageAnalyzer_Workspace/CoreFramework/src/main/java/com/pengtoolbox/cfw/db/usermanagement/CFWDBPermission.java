@@ -227,6 +227,32 @@ public class CFWDBPermission {
 			
 	}
 	
+	/****************************************************************
+	 * Deletes the permission by id.
+	 * @param id of the user
+	 * @return true if successful, false otherwise.
+	 ****************************************************************/
+	public static boolean deleteByName(String name) {
+		
+		Permission permission = selectByName(name);
+		if(permission != null && permission.isDeletable() == false) {
+			new CFWLog(logger)
+			.method("deleteByName")
+			.severe("The permission '"+permission.name()+"' cannot be deleted as it is marked as not deletable.");
+			return false;
+		}
+		
+		String deleteByID = 
+				"DELETE FROM "+TABLE_NAME
+				+" WHERE "
+					+ PermissionDBFields.NAME+" = ? "
+					+ "AND "
+					+ PermissionDBFields.IS_DELETABLE+" = TRUE ";
+		
+		return CFWDB.preparedExecute(deleteByID, name);
+			
+	}
+	
 	
 	/****************************************************************
 	 * Check if the group exists by name.

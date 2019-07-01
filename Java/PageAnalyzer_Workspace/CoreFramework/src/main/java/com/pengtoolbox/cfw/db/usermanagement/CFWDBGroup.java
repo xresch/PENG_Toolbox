@@ -228,6 +228,32 @@ public class CFWDBGroup {
 			
 	}
 	
+	/****************************************************************
+	 * Deletes the group by id.
+	 * @param id of the user
+	 * @return true if successful, false otherwise.
+	 ****************************************************************/
+	public static boolean deleteByName(String name) {
+		
+		Group group = selectByName(name);
+		if(group != null && group.isDeletable() == false) {
+			new CFWLog(logger)
+			.method("deleteByName")
+			.severe("The group '"+group.name()+"' cannot be deleted as it is marked as not deletable.");
+			return false;
+		}
+		
+		String deleteByID = 
+				"DELETE FROM "+TABLE_NAME
+				+" WHERE "
+					+ GroupDBFields.NAME+" = ? "
+					+ "AND "
+					+ PermissionDBFields.IS_DELETABLE+" = TRUE ";
+		
+		return CFWDB.preparedExecute(deleteByID, name);
+			
+	}
+	
 	
 	/****************************************************************
 	 * Check if the group exists by name.

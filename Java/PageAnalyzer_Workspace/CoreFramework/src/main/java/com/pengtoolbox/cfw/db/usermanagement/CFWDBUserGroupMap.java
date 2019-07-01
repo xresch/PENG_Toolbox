@@ -35,7 +35,7 @@ public class CFWDBUserGroupMap {
 							  + UserGroupMapDBFields.FK_ID_USER + " INT, "
 							  + UserGroupMapDBFields.FK_ID_GROUP + " INT, "
 							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_USER+") REFERENCES "+CFWDBUser.TABLE_NAME+"("+UserDBFields.PK_ID+") ON DELETE CASCADE, "
-							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_GROUP+") REFERENCES "+CFWDBUser.TABLE_NAME+"("+GroupDBFields.PK_ID+") ON DELETE CASCADE"
+							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_GROUP+") REFERENCES "+CFWDBGroup.TABLE_NAME+"("+GroupDBFields.PK_ID+") ON DELETE CASCADE"
 							  + ");";
 		
 		CFWDB.preparedExecute(createTableSQL);
@@ -58,12 +58,20 @@ public class CFWDBUserGroupMap {
 			return false;
 		}
 		
+		if(user.id() < 0 || group.id() < 0) {
+			new CFWLog(logger)
+				.method("addUserToGroup")
+				.warn("User-ID and group-ID are not set correctly.");
+			return false;
+		}
+		
 		if(checkIsUserInGroup(user, group)) {
 			new CFWLog(logger)
 				.method("addUserToGroup")
 				.warn("The user '"+user.username()+"' is already part of the group '"+group.name()+"'.");
 			return false;
 		}
+		
 		String insertGroupSQL = "INSERT INTO "+TABLE_NAME+" ("
 				  + UserGroupMapDBFields.FK_ID_USER +", "
 				  + UserGroupMapDBFields.FK_ID_GROUP +" "

@@ -69,8 +69,8 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// SELECT BY USERNAME
 		User user = CFW.DB.Users.selectByUsernameOrMail(username);
 		
-		System.out.println("===== USER =====");
-		System.out.println(user.getKeyValueString());
+		//System.out.println("===== USER =====");
+		//System.out.println(user.getKeyValueString());
 
 		Assertions.assertTrue(user != null);
 		Assertions.assertTrue(user.username().equals(username));
@@ -108,8 +108,8 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// SELECT UPDATED USER
 		User updatedUser = CFW.DB.Users.selectByUsernameOrMail(usernameUpdated);
 		
-		System.out.println("===== UPDATED USER =====");
-		System.out.println(updatedUser.getKeyValueString());
+		//System.out.println("===== UPDATED USER =====");
+		//System.out.println(updatedUser.getKeyValueString());
 		
 		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(updatedUser), "User exists, checkUsernameExists(user) works.");
 		Assertions.assertTrue(updatedUser != null);
@@ -186,8 +186,8 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// SELECT BY NAME
 		Group group = CFW.DB.Groups.selectByName(groupname);
 		
-		System.out.println("===== USER =====");
-		System.out.println(group.getKeyValueString());
+		//System.out.println("===== USER =====");
+		//System.out.println(group.getKeyValueString());
 
 		Assertions.assertTrue(CFW.DB.Groups.checkGroupExists(group), "Group created successfully, checkGroupExists(Group) works.");
 		Assertions.assertTrue(group != null);
@@ -212,8 +212,8 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// SELECT UPDATED GROUP
 		Group updatedGroup = CFW.DB.Groups.selectByName(groupnameUpdated);
 		
-		System.out.println("===== UPDATED GROUP =====");
-		System.out.println(updatedGroup.getKeyValueString());
+		//System.out.println("===== UPDATED GROUP =====");
+		//System.out.println(updatedGroup.getKeyValueString());
 		
 		Assertions.assertTrue(group != null);
 		Assertions.assertTrue(group.name().equals(groupnameUpdated));
@@ -246,23 +246,27 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//--------------------------------------
 		// Test checkIsUserInGroup()
+		System.out.println("================= checkIsUserInGroup() =================");
 		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser, testgroupA), "checkIsUserInGroup() finds the testuser.");
 		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(99, testgroupA.id()), "checkIsUserInGroup() cannot find not existing user.");
 	
 		//--------------------------------------
 		// Test  addUserToGroup()
+		System.out.println("================= Test addUserToGroup() =================");
 		User newUserFromDB = CFW.DB.Users.selectByUsernameOrMail("newUser");
 		CFW.DB.UserGroupMap.addUserToGroup(newUserFromDB, testgroupA);
 		
 		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(newUserFromDB, testgroupA), "User was added to the group.");
 		
 		//--------------------------------------
-		// Test  removeUserFromGroup
+		// Test removeUserFromGroup()
+		System.out.println("================= Test removeUserFromGroup() =================");
 		CFW.DB.UserGroupMap.removeUserFromGroup(newUserFromDB, testgroupA);
 		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(newUserFromDB, testgroupA), "User was removed from the group.");
 		
 		//--------------------------------------
-		// Test  remove Group when user is deleted
+		// Test remove UserGroupMapping when user is deleted
+		System.out.println("================= Test remove UserGroupMapping when user is deleted =================");
 		CFW.DB.UserGroupMap.addUserToGroup(newUserFromDB, testgroupA);
 		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(newUserFromDB, testgroupA), "User was added to the group.");
 		
@@ -270,13 +274,38 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(newUserFromDB, testgroupA), "User was removed from the group when it was deleted.");
 		
 		//--------------------------------------
-		// Test 
-		HashMap<String, Group> groups = CFW.DB.UserGroupMap.selectGroupsForUser(testuser2);
+		// Test selectGroupsForUser()
+		System.out.println("================= Test selectGroupsForUser() =================");
+		HashMap<String, Group> groups = CFW.DB.Users.selectGroupsForUser(testuser2);
 		
 		Assertions.assertEquals(groups.size(), 2, "Testuser2 is part of 2 groups.");
 		Assertions.assertTrue(groups.containsKey(testgroupA.name()), "User is part of testgroupA.");
 		Assertions.assertTrue(groups.containsKey(testgroupB.name()), "User is part of testgroupB.");
 		Assertions.assertFalse(groups.containsKey(testgroupC.name()), "User is NOT part of testgroupC.");
+		
+		//--------------------------------------
+		// Test remove UserGroupMapping when group is deleted
+		System.out.println("================= Test remove UserGroupMapping when group is deleted =================");
+		//Cleanup
+		CFW.DB.Groups.deleteByName("TestGroupToDelete");
+		
+		Group groupToDelete = new Group().name("TestGroupToDelete");
+		
+		CFW.DB.Groups.create(groupToDelete);
+		groupToDelete = CFW.DB.Groups.selectByName("TestGroupToDelete");
+		
+		System.out.println("testuser2: "+testuser2.id());
+		System.out.println("groupToDelete:"+groupToDelete.id());
+		
+		CFW.DB.UserGroupMap.addUserToGroup(testuser2, groupToDelete);
+		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser2, groupToDelete), "User was added to the group.");
+		
+		CFW.DB.UserGroupMap.addUserToGroup(testuser3, groupToDelete);
+		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser3, groupToDelete), "User was added to the group.");
+		
+		CFW.DB.Groups.deleteByID(groupToDelete.id());
+		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser2, groupToDelete), "UserGroupMapping was removed when group was deleted.");
+		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser3, groupToDelete), "UserGroupMapping was removed when group was deleted.");
 		
 	}
 }

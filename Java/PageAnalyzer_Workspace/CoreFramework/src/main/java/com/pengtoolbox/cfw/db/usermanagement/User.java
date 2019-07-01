@@ -13,7 +13,7 @@ import com.pengtoolbox.cfw.utils.CFWEncryption;
 
 public class User {
 	
-	private int id;
+	private int id = -999;
 	private String username;
 	private String email;
 	private String firstname;
