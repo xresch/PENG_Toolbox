@@ -246,6 +246,12 @@ public class CFWDB {
 			
 		} catch (SQLException e) {
 			log.severe("Issue executing prepared statement.", e);
+			try {
+				if(conn != null) { conn.close(); }
+				if(prepared != null) { prepared.close(); }
+			} catch (SQLException e2) {
+				log.severe("Issue closing resources.", e2);
+			}
 		} 
 		
 		log.end("Duration SQL Statement: "+sql);

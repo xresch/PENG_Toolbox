@@ -12,6 +12,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.caching.FileAssembly;
+import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginFacade;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
@@ -73,7 +74,7 @@ public class LoginServlet extends HttpServlet
 			if(LoginFacade.getInstance().checkCredentials(username, password)) {
 				//Login success
 				SessionData data = CFW.Context.Request.getSessionData(); 
-				data.setUsername(username);
+				data.setUser(new User(username));
 				data.triggerLogin();
 				
 				response.sendRedirect(response.encodeRedirectURL("./harupload"));

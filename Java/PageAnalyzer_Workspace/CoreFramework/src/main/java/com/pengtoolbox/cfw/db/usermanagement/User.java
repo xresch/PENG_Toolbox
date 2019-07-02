@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserDBFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 
@@ -39,20 +40,19 @@ public class User {
 	
 	public User(ResultSet result) throws SQLException {
 		
-		int col = 1;
-		this.id(result.getInt(col++))
-		.username(result.getString(col++))
-		.email(result.getString(col++))
-		.firstname(result.getString(col++))
-		.lastname(result.getString(col++))
-		.passwordHash(result.getString(col++))
-		.passwordSalt(result.getString(col++))
-		.avatarImage(result.getBlob(col++))
-		.dateCreated(result.getTimestamp(col++))
-		.status(result.getString(col++))
-		.isDeletable(result.getBoolean(col++))
-		.isRenamable(result.getBoolean(col++))
-		.isForeign(result.getBoolean(col++));
+		this.id 			= result.getInt(UserDBFields.PK_ID.toString());
+		this.username 		= result.getString(UserDBFields.USERNAME.toString());
+		this.email 			= result.getString(UserDBFields.EMAIL.toString());
+		this.firstname		= result.getString(UserDBFields.FIRSTNAME.toString());
+		this.lastname 		= result.getString(UserDBFields.LASTNAME.toString());
+		this.passwordHash 	= result.getString(UserDBFields.PASSWORD_HASH.toString());
+		this.passwordSalt 	= result.getString(UserDBFields.PASSWORD_SALT.toString());
+		this.avatarImage 	= result.getBlob(UserDBFields.AVATAR_IMAGE.toString());
+		this.dateCreated 	= result.getTimestamp(UserDBFields.DATE_CREATED.toString());
+		this.status 		= result.getString(UserDBFields.STATUS.toString());
+		this.isDeletable 	= result.getBoolean(UserDBFields.IS_DELETABLE.toString());
+		this.isRenamable 	= result.getBoolean(UserDBFields.IS_RENAMABLE.toString());
+		this.isForeign 		= result.getBoolean(UserDBFields.IS_FOREIGN.toString());
 		
 	}
 	
@@ -108,6 +108,7 @@ public class User {
 			new CFWLog(logger)
 			.method("setInitialPassword")
 			.severe("The two provided passwords are not equal.");
+			return null;
 		}
 		
 		this.passwordSalt(CFW.Encryption.createPasswordSalt(31));
@@ -115,6 +116,39 @@ public class User {
 		
 		return this;
 	}
+	
+	public boolean changePassword(String oldPassword, String password, String repeatedPassword) {
+		
+		if(!passwordValidation(oldPassword)) {
+			new CFWLog(logger)
+			.method("changePassword")
+			.severe("The provided old password was wrong.");
+			return false;
+		}
+		
+		if(!password.equals(repeatedPassword)) {
+			new CFWLog(logger)
+			.method("changePassword")
+			.severe("The two provided passwords are not equal.");
+			return false;
+		}
+		
+		this.passwordSalt(CFW.Encryption.createPasswordSalt(31));
+		this.passwordHash(CFW.Encryption.createPasswordHash(password, this.passwordSalt()) );
+		
+		return true;
+	}
+	
+	/**************************************************************************
+	 * Validate if the correct password for the user account was provided.
+	 * @param password
+	 * @return true if correct password, false otherwise
+	 **************************************************************************/
+	public boolean passwordValidation(String providedPassword) {
+		String providedPasswordHash = CFW.Encryption.createPasswordHash(providedPassword, this.passwordSalt());
+		return (providedPasswordHash.equals(this.passwordHash));
+	}
+		
 	
 	public String passwordHash() {
 		return passwordHash;

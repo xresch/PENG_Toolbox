@@ -1,11 +1,12 @@
 package com.pengtoolbox.cfw._main;
 
+import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.response.bootstrap.BootstrapMenu;
 
 public class SessionData {
 	
 	private boolean isLoggedIn = false;
-	private String username = null;
+	private User user = null;
 	private BootstrapMenu menu;
 
 	
@@ -21,6 +22,7 @@ public class SessionData {
 	
 	public void triggerLogout() {
 		menu.setUserMenuItem(null);
+		user = null;
 		isLoggedIn = false;
 	}
 	
@@ -28,12 +30,12 @@ public class SessionData {
 		return isLoggedIn;
 	}
 		
-	public String getUsername() {
-		return username;
+	public User getUser() {
+		return user;
 	}
 	
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
 	public BootstrapMenu getMenu() {

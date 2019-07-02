@@ -13,6 +13,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 public class CFWDBGroup {
 
 	public static String TABLE_NAME = "CFW_GROUP";
+	public static String DEFAULT_GROUP_SUPERUSER = "Superuser";
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBGroup.class.getName());
 	

@@ -217,7 +217,7 @@ public class CFWLog {
 				if(CFWConfig.AUTHENTICATION_ENABLED) {
 					SessionData data = CFW.Context.Request.getSessionData(); 
 					if(data.isLoggedIn()) {
-						this.userID = data.getUsername();
+						this.userID = data.getUser().username();
 					}
 				}else {
 					this.userID = "anonymous";

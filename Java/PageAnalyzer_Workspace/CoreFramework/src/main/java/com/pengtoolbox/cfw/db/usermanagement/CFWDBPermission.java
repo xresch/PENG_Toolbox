@@ -87,11 +87,19 @@ public class CFWDBPermission {
 				  + PermissionDBFields.IS_DELETABLE +" "
 				  + ") VALUES (?,?,?);";
 		
-		return CFWDB.preparedExecute(insertGroupSQL, 
+		CFWDB.preparedExecute(insertGroupSQL, 
 				permission.name(),
 				permission.description(),
 				permission.isDeletable()
 				);
+		
+		//----------------------------------------
+		// Add new permission to superuser
+		Permission permissionFromDB = CFW.DB.Permissions.selectByName(permission.name());
+		Group superuser = CFW.DB.Groups.selectByName(CFW.DB.Groups.DEFAULT_GROUP_SUPERUSER);
+		
+		return CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionFromDB, superuser);
+				
 	}
 	
 	/***************************************************************

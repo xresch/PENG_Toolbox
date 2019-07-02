@@ -39,17 +39,17 @@ public class ResultListServlet extends HttpServlet
 		TemplateHTMLDefault html = new TemplateHTMLDefault("View Result");
 		StringBuffer content = html.getContent();
 
-		String userID = "";
+		String username = "";
 		
 		if(CFWConfig.AUTHENTICATION_ENABLED) {
 			SessionData data = CFW.Context.Request.getSessionData(); 
 			if(data.isLoggedIn()) {
-				userID = data.getUsername();
+				username = data.getUser().username();
 			}
 		}else {
-			userID = "anonymous";
+			username = "anonymous";
 		}
-		String jsonResults = PageAnalyzerDB.getResultListForUser(userID);
+		String jsonResults = PageAnalyzerDB.getResultListForUser(username);
 		
 		//TODO: Check User
 		

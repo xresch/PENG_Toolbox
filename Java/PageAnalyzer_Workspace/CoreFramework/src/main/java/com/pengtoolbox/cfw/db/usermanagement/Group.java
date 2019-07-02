@@ -3,6 +3,8 @@ package com.pengtoolbox.cfw.db.usermanagement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission.PermissionDBFields;
+
 public class Group {
 	
 	private int id = -999;
@@ -15,11 +17,11 @@ public class Group {
 	}
 	
 	public Group(ResultSet result) throws SQLException {
-		int col = 1;
-		this.id(result.getInt(col++))
-		.name(result.getString(col++))
-		.description(result.getString(col++))
-		.isDeletable(result.getBoolean(col++));
+		
+		this.id = result.getInt(PermissionDBFields.PK_ID.toString());
+		this.name = result.getString(PermissionDBFields.NAME.toString());
+		this.description = result.getString(PermissionDBFields.DESCRIPTION.toString());
+		this.isDeletable = result.getBoolean(PermissionDBFields.IS_DELETABLE.toString());
 		
 	}
 

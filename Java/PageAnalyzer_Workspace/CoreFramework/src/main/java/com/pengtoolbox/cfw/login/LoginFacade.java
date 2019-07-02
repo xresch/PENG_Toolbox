@@ -17,6 +17,9 @@ public class LoginFacade {
 				 			
 			case "LDAP": 	provider = new LDAPLoginProvider();
  							break;
+ 			
+			case "DB": 		provider = new DBLoginProvider();
+				break;
  							
 			default:		throw new RuntimeException("Unknown authentication method'"+CFWConfig.AUTHENTICATION_METHOD+"', please review the config file.");
 		}

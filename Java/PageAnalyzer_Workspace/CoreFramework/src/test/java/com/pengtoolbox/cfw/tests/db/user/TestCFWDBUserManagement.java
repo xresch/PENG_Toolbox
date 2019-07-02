@@ -92,17 +92,44 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 	
 	
 	@Test
-	public void testCreatePasswordHash() {
+	public void testPasswordHandling() {
 		
+		//--------------------------------------
+		// Test Password encryption methods
 		String salt = CFW.Encryption.createPasswordSalt(31);
 		String hashtext = CFWEncryption.createPasswordHash("admin", salt);
 		
-		//System.out.println("Salt: "+salt);
-        //System.out.println("Hashtext: "+hashtext);
-
         Assertions.assertTrue(salt.length() == 31);
         Assertions.assertTrue(hashtext.length() <= 127);
         
+		//System.out.println("Salt: "+salt);
+        //System.out.println("Hashtext: "+hashtext);
+        
+		//--------------------------------------
+		// Check Initial Password
+        User testUser = new User("PasswordTestUser").setInitialPassword("correctPassword", "correctPassword");
+        
+        CFW.DB.Users.create(testUser);
+        testUser = CFW.DB.Users.selectByUsernameOrMail("PasswordTestUser");
+
+		Assertions.assertTrue(testUser.passwordValidation("correctPassword"), "The password is correct.");
+		Assertions.assertFalse(testUser.passwordValidation("wrongPassword"), "The password is wrong.");
+		Assertions.assertFalse(testUser.passwordValidation(" correctPassword "), "The password is wrong.");
+		
+		testUser.setInitialPassword("wrongPW", "test");
+		Assertions.assertTrue(testUser.passwordValidation("correctPassword"), "The password was not changed.");
+		
+		//--------------------------------------
+		// Check Initial Password with new 
+		testUser.changePassword("wrongPW", "newPassword", "newPassword");
+		Assertions.assertTrue(testUser.passwordValidation("correctPassword"), "The password was not changed because old password is wrong.");
+		
+		testUser.changePassword("correctPassword", "newPassword", "newPasswordxxx");
+		Assertions.assertTrue(testUser.passwordValidation("correctPassword"), "The password was not changed because new password is not the same.");
+		
+		testUser.changePassword("correctPassword", "newPassword", "newPassword");
+		Assertions.assertTrue(testUser.passwordValidation("newPassword"), "The password was successfully changed.");
+		
 	}
 	
 	@Test
@@ -217,8 +244,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		User userbyID = CFW.DB.Users.selectByID(userbyMail.id());
 		
 		Assertions.assertTrue( (userbyID != null), "Select User by ID works.");
-		
-		
+				
 		//--------------------------------------
 		// DELETE
 		CFW.DB.Users.deleteByID(userbyMail.id());

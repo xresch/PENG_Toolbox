@@ -42,20 +42,20 @@ public class PageAnalyzerDB {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	private static String getUserIDForDBAccess() {
+	private static String getUsernameForDBAccess() {
 		//-------------------------------
 		// Get UserID
-		String userID = "";
+		String username = "";
 		if(CFWConfig.AUTHENTICATION_ENABLED) {
 			SessionData data = CFW.Context.Request.getSessionData(); 
 			if(data.isLoggedIn()) {
-				userID = data.getUsername();
+				username = data.getUser().username();
 			}
 		}else {
-			userID = "anonymous";
+			username = "anonymous";
 		}
 		
-		return userID;
+		return username;
 	}
 	
 	/********************************************************************************************
@@ -65,7 +65,7 @@ public class PageAnalyzerDB {
 		
 		//-------------------------------
 		// Get UserID
-		String userID = getUserIDForDBAccess();
+		String username = getUsernameForDBAccess();
 		
 		//-------------------------------
 		// Extract URL
@@ -87,7 +87,7 @@ public class PageAnalyzerDB {
 		String saveResult = "INSERT INTO results(user_id, page_url, name, json_result,har_file, time) values(?, ?, ?, ?, ?, CURRENT_TIMESTAMP() );";
 		
 		CFWDB.preparedExecute(saveResult, 
-				userID,
+				username,
 				page_url,
 				resultName,
 				jsonResults,
@@ -120,7 +120,7 @@ public class PageAnalyzerDB {
 	 ********************************************************************************************/
 	public static String getResultListForComparison(String resultIDArray) {
 		
-		String userID = getUserIDForDBAccess();
+		String userID = getUsernameForDBAccess();
 		
 		//----------------------------------
 		// Check input format
@@ -151,7 +151,7 @@ public class PageAnalyzerDB {
 		//----------------------------------
 		// Initialize
 		String jsonResult = null;
-		String userID = getUserIDForDBAccess();
+		String userID = getUsernameForDBAccess();
 		
 		//----------------------------------
 		// Execute
@@ -191,7 +191,7 @@ public class PageAnalyzerDB {
 		//----------------------------------
 		// Initialize
 		String jsonResult = null;
-		String userID = getUserIDForDBAccess();
+		String userID = getUsernameForDBAccess();
 		
 		//----------------------------------
 		// Execute

@@ -49,15 +49,15 @@ public class DataServlet extends HttpServlet {
 		//-------------------------------------------
 		// Resolve User ID
 		//-------------------------------------------
-		String userID = "";
+		String username = "";
 		
 		if(CFWConfig.AUTHENTICATION_ENABLED) {
 			SessionData data = CFW.Context.Request.getSessionData(); 
 			if(data.isLoggedIn()) {
-				userID = data.getUsername();
+				username = data.getUser().username();
 			}
 		}else {
-			userID = "anonymous";
+			username = "anonymous";
 		}
 		
 		//-------------------------------------------
@@ -74,7 +74,7 @@ public class DataServlet extends HttpServlet {
 				case "yslowresult": 	content.append(PageAnalyzerDB.getResultByID(Integer.parseInt(resultID)));
 										break;
 										
-				case "resultlist": 		content.append(PageAnalyzerDB.getResultListForUser(userID));
+				case "resultlist": 		content.append(PageAnalyzerDB.getResultListForUser(username));
 										break;
 										
 				case "har": 			content.append(PageAnalyzerDB.getHARFileByID(Integer.parseInt(resultID)));
