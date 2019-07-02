@@ -19,9 +19,9 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 	protected static Group testgroupB;
 	protected static Group testgroupC;
 	
-	protected static User testuser;
-	protected static User testuser2;
-	protected static User testuser3;
+	protected static User testuserA;
+	protected static User testuserB;
+	protected static User testuserC;
 	
 	protected static Permission permissionA;
 	protected static Permission permissionAA;
@@ -48,20 +48,20 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//------------------------------
 		// Users
-		CFW.DB.Users.create(new User("testuser").setInitialPassword("testuser", "testuser"));
-		testuser = CFW.DB.Users.selectByUsernameOrMail("testuser");
-		CFW.DB.UserGroupMap.addUserToGroup(testuser, testgroupA);
-		CFW.DB.UserGroupMap.addUserToGroup(testuser, testgroupB);
-		CFW.DB.UserGroupMap.addUserToGroup(testuser, testgroupC);
+		CFW.DB.Users.create(new User("TestuserA").setInitialPassword("TestuserA", "TestuserA"));
+		testuserA = CFW.DB.Users.selectByUsernameOrMail("TestuserA");
+		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupA);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupB);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupC);
 		
-		CFW.DB.Users.create(new User("testuser2").setInitialPassword("testuser2", "testuser2"));
-		testuser2 = CFW.DB.Users.selectByUsernameOrMail("testuser2");
-		CFW.DB.UserGroupMap.addUserToGroup(testuser2, testgroupA);
-		CFW.DB.UserGroupMap.addUserToGroup(testuser2, testgroupB);
+		CFW.DB.Users.create(new User("TestuserB").setInitialPassword("TestuserB", "TestuserB"));
+		testuserB = CFW.DB.Users.selectByUsernameOrMail("TestuserB");
+		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupA);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupB);
 		
-		CFW.DB.Users.create(new User("testuser3").setInitialPassword("testuser3", "testuser3"));	
-		testuser3 = CFW.DB.Users.selectByUsernameOrMail("testuser3");
-		CFW.DB.UserGroupMap.addUserToGroup(testuser3, testgroupA);
+		CFW.DB.Users.create(new User("TestuserC").setInitialPassword("TestuserC", "TestuserC"));	
+		testuserC = CFW.DB.Users.selectByUsernameOrMail("TestuserC");
+		CFW.DB.UserGroupMap.addUserToGroup(testuserC, testgroupC);
 		
 		//------------------------------
 		// Permissions
@@ -323,7 +323,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//--------------------------------------
 		// Test checkIsUserInGroup()
 		System.out.println("================= checkIsUserInGroup() =================");
-		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser, testgroupA), "checkIsUserInGroup() finds the testuser.");
+		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuserA, testgroupA), "checkIsUserInGroup() finds the testuser.");
 		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(99, testgroupA.id()), "checkIsUserInGroup() cannot find not existing user.");
 	
 		//--------------------------------------
@@ -352,9 +352,9 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//--------------------------------------
 		// Test selectGroupsForUser()
 		System.out.println("================= Test selectGroupsForUser() =================");
-		HashMap<String, Group> groups = CFW.DB.Users.selectGroupsForUser(testuser2);
+		HashMap<String, Group> groups = CFW.DB.Users.selectGroupsForUser(testuserB);
 		
-		Assertions.assertEquals(groups.size(), 2, "Testuser2 is part of 2 groups.");
+		Assertions.assertEquals(2, groups.size(), "Testuser2 is part of 2 groups.");
 		Assertions.assertTrue(groups.containsKey(testgroupA.name()), "User is part of testgroupA.");
 		Assertions.assertTrue(groups.containsKey(testgroupB.name()), "User is part of testgroupB.");
 		Assertions.assertFalse(groups.containsKey(testgroupC.name()), "User is NOT part of testgroupC.");
@@ -370,18 +370,15 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		CFW.DB.Groups.create(groupToDelete);
 		groupToDelete = CFW.DB.Groups.selectByName("TestGroupToDelete");
 		
-		System.out.println("testuser2: "+testuser2.id());
-		System.out.println("groupToDelete:"+groupToDelete.id());
+		CFW.DB.UserGroupMap.addUserToGroup(testuserB, groupToDelete);
+		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuserB, groupToDelete), "User was added to the group.");
 		
-		CFW.DB.UserGroupMap.addUserToGroup(testuser2, groupToDelete);
-		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser2, groupToDelete), "User was added to the group.");
-		
-		CFW.DB.UserGroupMap.addUserToGroup(testuser3, groupToDelete);
-		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser3, groupToDelete), "User was added to the group.");
+		CFW.DB.UserGroupMap.addUserToGroup(testuserC, groupToDelete);
+		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuserC, groupToDelete), "User was added to the group.");
 		
 		CFW.DB.Groups.deleteByID(groupToDelete.id());
-		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser2, groupToDelete), "UserGroupMapping was removed when group was deleted.");
-		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(testuser3, groupToDelete), "UserGroupMapping was removed when group was deleted.");
+		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(testuserB, groupToDelete), "UserGroupMapping was removed when group was deleted.");
+		Assertions.assertFalse(CFW.DB.UserGroupMap.checkIsUserInGroup(testuserC, groupToDelete), "UserGroupMapping was removed when group was deleted.");
 		
 	}
 	
@@ -466,4 +463,92 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		Assertions.assertFalse(CFW.DB.Permissions.checkPermissionExists(permissionname));
 		
 	}
+	
+	@Test
+	public void testCRUDGroupPermissionMap() {
+		
+		//--------------------------------------
+		// Preparation
+		Permission newPermission = new Permission("newPermission");
+		CFW.DB.Permissions.create(newPermission);
+		CFW.DB.GroupPermissionMap.removePermissionFromGroup(newPermission, testgroupA);
+		
+		Assertions.assertFalse(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(newPermission, testgroupA), "Permission is not in the group to the group.");
+		
+		//--------------------------------------
+		// Test checkIsPermissionInGroup()
+		System.out.println("================= checkIsPermissionInGroup() =================");
+		Assertions.assertTrue(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(permissionA, testgroupA), "checkIsPermissionInGroup() finds the permissionA.");
+		Assertions.assertFalse(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(99, testgroupA.id()), "checkIsPermissionInGroup() cannot find not existing permission.");
+	
+		//--------------------------------------
+		// Test  addPermissionToGroup()
+		System.out.println("================= Test addPermissionToGroup() =================");
+		Permission newPermissionFromDB = CFW.DB.Permissions.selectByName("newPermission");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(newPermissionFromDB, testgroupA);
+		
+		Assertions.assertTrue(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(newPermissionFromDB, testgroupA), "Permission was added to the group.");
+		
+		//--------------------------------------
+		// Test removePermissionFromGroup()
+		System.out.println("================= Test removePermissionFromGroup() =================");
+		CFW.DB.GroupPermissionMap.removePermissionFromGroup(newPermissionFromDB, testgroupA);
+		Assertions.assertFalse(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(newPermissionFromDB, testgroupA), "Permission was removed from the group.");
+		
+		//--------------------------------------
+		// Test remove GroupPermissionMapping when permission is deleted
+		System.out.println("================= Test remove GroupPermissionMapping when permission is deleted =================");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(newPermissionFromDB, testgroupA);
+		Assertions.assertTrue(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(newPermissionFromDB, testgroupA), "Permission was added to the group.");
+		
+		CFW.DB.Permissions.deleteByID(newPermissionFromDB.id());
+		Assertions.assertFalse(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(newPermissionFromDB, testgroupA), "Permission was removed from the group when it was deleted.");
+		
+		//--------------------------------------
+		// Test selectPermissionsForGroup()
+		System.out.println("================= Test selectPermissionsForGroup() =================");
+		HashMap<String, Permission> groupPermissions = CFW.DB.Groups.selectPermissionsForGroup(testgroupA);
+		
+		Assertions.assertEquals(3, groupPermissions.size(), "TestgroupA has 3 permissions.");
+		Assertions.assertTrue(groupPermissions.containsKey(permissionA.name()), "PermissionA is part of testgroupA.");
+		Assertions.assertTrue(groupPermissions.containsKey(permissionAA.name()), "PermissionAA is part of testgroupA.");
+		Assertions.assertTrue(groupPermissions.containsKey(permissionAAA.name()), "PermissionAAA is part of testgroupA.");
+		Assertions.assertFalse(groupPermissions.containsKey(permissionB.name()), "PermissionB is NOT part of testgroupA.");
+		
+		//--------------------------------------
+		// Test selectPermissionsForUser()
+		System.out.println("================= Test selectPermissionsForUser() =================");
+		HashMap<String, Permission> userPermissions = CFW.DB.Users.selectPermissionsForUser(testuserB);
+		
+		Assertions.assertEquals(5, userPermissions.size(), "TestuserB has 5 permissions.");
+		Assertions.assertTrue(userPermissions.containsKey(permissionA.name()), "TestuserB has PermissionA.");
+		Assertions.assertTrue(userPermissions.containsKey(permissionAA.name()), "TestuserB has PermissionAA.");
+		Assertions.assertTrue(userPermissions.containsKey(permissionAAA.name()), "TestuserB has PermissionAAA.");
+		Assertions.assertTrue(userPermissions.containsKey(permissionB.name()), "TestuserB has PermissionB.");
+		Assertions.assertTrue(userPermissions.containsKey(permissionBB.name()), "TestuserB has PermissionBB.");
+		Assertions.assertFalse(userPermissions.containsKey(permissionC.name()), "TestuserB HASN'Ts PermissionC.");
+		
+		//--------------------------------------
+		// Test remove GroupPermissionMapping when group is deleted
+		System.out.println("================= Test remove GroupPermissionMapping when group is deleted =================");
+		//Cleanup
+		CFW.DB.Groups.deleteByName("TestGroupToDelete");
+		
+		Group groupToDelete = new Group("TestGroupToDelete");
+		
+		CFW.DB.Groups.create(groupToDelete);
+		groupToDelete = CFW.DB.Groups.selectByName("TestGroupToDelete");
+		
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAA, groupToDelete);
+		Assertions.assertTrue(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(permissionAA, groupToDelete), "Permission was added to the group.");
+		
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAAA, groupToDelete);
+		Assertions.assertTrue(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(permissionAAA, groupToDelete), "Permission was added to the group.");
+		
+		CFW.DB.Groups.deleteByID(groupToDelete.id());
+		Assertions.assertFalse(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(permissionAA, groupToDelete), "GroupPermissionMapping was removed when group was deleted.");
+		Assertions.assertFalse(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(permissionAAA, groupToDelete), "GroupPermissionMapping was removed when group was deleted.");
+		
+	}
+	
 }

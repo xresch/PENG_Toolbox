@@ -253,7 +253,7 @@ public class CFWDBUser {
 	}
 	
 	/***************************************************************
-	 * Updates the object selecting by ID.
+	 * Retrieve the groups for the specified user.
 	 * @param group
 	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
 	 ****************************************************************/
@@ -261,6 +261,15 @@ public class CFWDBUser {
 		
 		return CFW.DB.UserGroupMap.selectGroupsForUser(user);
 	
+	}
+	
+	/***************************************************************
+	 * Retrieve the permissions for the specified user.
+	 * @param group
+	 * @return Hashmap with permissions(key=group name), or null on exception
+	 ****************************************************************/
+	public static HashMap<String, Permission> selectPermissionsForUser(User user) {
+		return CFW.DB.GroupPermissionMap.selectPermissionsForUser(user);
 	}
 	
 	/***************************************************************

@@ -169,7 +169,7 @@ public class CFWDBGroupPermissionMap {
 	}
 	
 	/***************************************************************
-	 * Updates the object selecting by ID.
+	 * Retrieve the permissions for the specified group.
 	 * @param group
 	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
 	 ****************************************************************/
@@ -182,10 +182,10 @@ public class CFWDBGroupPermissionMap {
 			return null;
 		}
 		
-		String selectPermissionsForGroup = "SELECT * FROM "+CFWDBGroup.TABLE_NAME+" G "
+		String selectPermissionsForGroup = "SELECT * FROM "+CFWDBPermission.TABLE_NAME+" P "
 				+ " INNER JOIN "+CFWDBGroupPermissionMap.TABLE_NAME+" M "
-				+ " ON M.FK_ID_GROUP = G.PK_ID "
-				+ " WHERE M.FK_ID_USER = ?";
+				+ " ON M.FK_ID_PERMISSION = P.PK_ID "
+				+ " WHERE M.FK_ID_GROUP = ?";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectPermissionsForGroup, 
 				group.id());
@@ -209,5 +209,52 @@ public class CFWDBGroupPermissionMap {
 		return permissionMap;
 	
 	}
+	
+	
+	/***************************************************************
+	 * Retrieve the permissions for the specified user.
+	 * @param group
+	 * @return Hashmap with permissions(key=group name), or null on exception
+	 ****************************************************************/
+	public static HashMap<String, Permission> selectPermissionsForUser(User user) {
+		
+		if( user == null) {
+			new CFWLog(logger)
+				.method("create")
+				.severe("The user cannot be null.");
+			return null;
+		}
+		
+		String selectPermissionsForUser = 
+				"SELECT P.* "
+				+"FROM CFW_PERMISSION P "
+				+"JOIN CFW_GROUP_PERMISSION_MAP AS GP ON GP.FK_ID_PERMISSION = P.PK_ID "
+				+"JOIN CFW_USER_GROUP_MAP AS UG ON UG.FK_ID_GROUP = GP.FK_ID_GROUP "
+				+"WHERE UG.FK_ID_USER = ?;";
+		
+		ResultSet result = CFWDB.preparedExecuteQuery(selectPermissionsForUser, 
+				user.id());
+		
+		HashMap<String, Permission> permissionMap = new HashMap<String, Permission>(); 
+		
+		try {
+			while(result != null && result.next()) {
+				Permission permission = new Permission(result);
+				permissionMap.put(permission.name(), permission);
+			}
+		} catch (SQLException e) {
+			new CFWLog(logger)
+			.method("selectGroupsForUser")
+			.severe("Error while selecting permissions for the group '"+user.username()+"'.", e);
+			return null;
+		}finally {
+			CFWDB.close(result);
+		}
+		
+		return permissionMap;
+	
+	}
+	
+	
 		
 }

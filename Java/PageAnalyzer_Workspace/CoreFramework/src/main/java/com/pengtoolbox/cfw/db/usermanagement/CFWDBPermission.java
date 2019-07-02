@@ -2,6 +2,7 @@ package com.pengtoolbox.cfw.db.usermanagement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
@@ -172,6 +173,16 @@ public class CFWDBPermission {
 		return null;
 		
 	}
+	
+	/***************************************************************
+	 * Retrieve the permissions for the specified user.
+	 * @param group
+	 * @return Hashmap with permissions(key=group name), or null on exception
+	 ****************************************************************/
+	public static HashMap<String, Permission> selectPermissionsForUser(User user) {
+		return CFW.DB.GroupPermissionMap.selectPermissionsForUser(user);
+	}
+	
 	
 	/***************************************************************
 	 * Updates the object selecting by ID.

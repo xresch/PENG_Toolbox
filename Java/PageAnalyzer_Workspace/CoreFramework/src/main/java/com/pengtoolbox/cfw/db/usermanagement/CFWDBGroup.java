@@ -2,6 +2,7 @@ package com.pengtoolbox.cfw.db.usermanagement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
@@ -200,6 +201,15 @@ public class CFWDBGroup {
 		
 		return result;
 		
+	}
+	
+	/***************************************************************
+	 * Retrieve the permissions for the specified group.
+	 * @param group
+	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
+	 ****************************************************************/
+	public static HashMap<String, Permission> selectPermissionsForGroup(Group group) {
+		return CFW.DB.GroupPermissionMap.selectPermissionsForGroup(group);
 	}
 	
 	/****************************************************************
