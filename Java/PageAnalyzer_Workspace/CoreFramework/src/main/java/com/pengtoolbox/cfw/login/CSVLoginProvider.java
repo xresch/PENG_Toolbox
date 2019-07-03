@@ -21,7 +21,7 @@ public class CSVLoginProvider implements LoginProvider {
 	}
 	
 	@Override
-	public boolean checkCredentials(String username, String password) {
+	public User checkCredentials(String username, String password) {
 		
 		if(CFW.DB.Users.checkUsernameExists(username)) {
 			//--------------------------------
@@ -29,13 +29,17 @@ public class CSVLoginProvider implements LoginProvider {
 			User user = CFW.DB.Users.selectByUsernameOrMail(username);
 			if(user.isForeign()) {
 				String passwordFromFile = userCredentials.get(username);
-				return password.equals(passwordFromFile);
+				if(password.equals(passwordFromFile)) {
+					return user;
+				}
 			}else {
-				return user.passwordValidation(password);
+				if(user.passwordValidation(password)) {
+					return user;
+				}
 			}
 		}else {
 			//--------------------------------
-			// Create User if password is correct
+			// Create user if password is correct
 			String passwordFromFile = userCredentials.get(username);
 			
 			if(password.equals(passwordFromFile))
@@ -49,11 +53,11 @@ public class CSVLoginProvider implements LoginProvider {
 				
 				CFW.DB.UserGroupMap.addUserToGroup(userFromDB, CFW.DB.Groups.DEFAULT_GROUP_FOREIGN_USER);
 				
-				return true;
+				return newUser;
 			}
 		}
 		
-		return false;
+		return null;
 	}
 	
 	private void loadCredentials() {

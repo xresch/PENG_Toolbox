@@ -71,10 +71,11 @@ public class LoginServlet extends HttpServlet
 			
 			CFWContextRequest.addAlert(MessageType.ERROR, "Please specify a username and password.");
 		}else {
-			if(LoginFacade.getInstance().checkCredentials(username, password)) {
+			User user = LoginFacade.getInstance().checkCredentials(username, password);
+			if(user != null) {
 				//Login success
 				SessionData data = CFW.Context.Request.getSessionData(); 
-				data.setUser(new User(username));
+				data.setUser(user);
 				data.triggerLogin();
 				
 				response.sendRedirect(response.encodeRedirectURL("./harupload"));

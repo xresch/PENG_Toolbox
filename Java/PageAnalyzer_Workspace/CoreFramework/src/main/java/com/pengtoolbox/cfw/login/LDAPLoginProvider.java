@@ -8,7 +8,9 @@ import javax.naming.NamingEnumeration;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 
@@ -16,13 +18,53 @@ public class LDAPLoginProvider implements LoginProvider {
 	
 	private static Logger logger = CFWLog.getLogger(LoginServlet.class.getName());
 		
-	public LDAPLoginProvider() {
-		
-	}
+	public LDAPLoginProvider() {}
 	
 	@Override
-	public boolean checkCredentials(String username, String password) {
+	public User checkCredentials(String username, String password) {
+
+		if(CFW.DB.Users.checkUsernameExists(username)) {
+			//--------------------------------
+			// Check User in DB			
+			User user = CFW.DB.Users.selectByUsernameOrMail(username);
+			if(user.isForeign()) {
+				if(authenticateAgainstLDAP(username, password)) {
+					return user;
+				}
+			}else {
+				if(user.passwordValidation(password)) {
+					return user;
+				}
+			}
+		}else {
+			//--------------------------------
+			// Create User if password is correct
+			
+			if(authenticateAgainstLDAP(username, password))
+			{
+				User newUser = new User(username)
+						.isForeign(true)
+						.status("ACTIVE");
+				
+				CFW.DB.Users.create(newUser);
+				User userFromDB = CFW.DB.Users.selectByUsernameOrMail(username);
+				
+				CFW.DB.UserGroupMap.addUserToGroup(userFromDB, CFW.DB.Groups.DEFAULT_GROUP_FOREIGN_USER);
+				
+				return newUser;
+			}
+		}
 		
+		return null;
+	}
+		
+	/**********************************************************************
+	 * Authenticate against the LDAP defined in the cfw.properties.
+	 * @param username
+	 * @param password
+	 * @return true if credentials are valid, false otherwise
+	 **********************************************************************/
+	private boolean authenticateAgainstLDAP(String username, String password) {
 		Properties props = new Properties(); 
 		InitialDirContext context = null;
 		String user = "";
@@ -40,9 +82,13 @@ public class LDAPLoginProvider implements LoginProvider {
 		    ctrls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 	
 		    NamingEnumeration<javax.naming.directory.SearchResult> answers = context.search(CFWConfig.LDAP_SEARCHBASE, "("+CFWConfig.LDAP_USER_ATTRIBUTE+"=" + username + ")", ctrls);
-		    javax.naming.directory.SearchResult result = answers.nextElement();
+		    if(answers.hasMore()) {
+		    	javax.naming.directory.SearchResult result = answers.nextElement();
+		    	user = result.getNameInNamespace();
+		    }else {
+		    	return false;
+		    }
 	
-		    user = result.getNameInNamespace();
 		}catch (Exception e) {
 	        e.printStackTrace();
 	        return false;

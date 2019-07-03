@@ -14,11 +14,15 @@ public class DBLoginProvider implements LoginProvider {
 	private static Logger logger = CFWLog.getLogger(LoginServlet.class.getName());
 	
 	@Override
-	public boolean checkCredentials(String username, String password) {
+	public User checkCredentials(String username, String password) {
 
 		User user = CFW.DB.Users.selectByUsernameOrMail(username);
 		
-		return user.passwordValidation(password);
+		if(user != null && user.passwordValidation(password)) {
+			return user;
+		}
+		
+		return null;
 	}
 	
 }
