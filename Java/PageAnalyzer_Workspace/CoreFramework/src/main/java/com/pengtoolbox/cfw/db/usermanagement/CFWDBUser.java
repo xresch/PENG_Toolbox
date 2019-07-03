@@ -367,7 +367,7 @@ public class CFWDBUser {
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkUserExistsSQL, username);
 		
 		try {
-			if(result.next()) {
+			if(result != null && result.next()) {
 				int count = result.getInt(1);
 				return (count == 0) ? false : true;
 			}

@@ -131,12 +131,12 @@ public class User {
 			.method("changePassword")
 			.severe("The two provided passwords are not equal.");
 			return false;
+		}else {
+			this.passwordSalt(CFW.Encryption.createPasswordSalt(31));
+			this.passwordHash(CFW.Encryption.createPasswordHash(password, this.passwordSalt()) );
+			
+			return true;
 		}
-		
-		this.passwordSalt(CFW.Encryption.createPasswordSalt(31));
-		this.passwordHash(CFW.Encryption.createPasswordHash(password, this.passwordSalt()) );
-		
-		return true;
 	}
 	
 	/**************************************************************************

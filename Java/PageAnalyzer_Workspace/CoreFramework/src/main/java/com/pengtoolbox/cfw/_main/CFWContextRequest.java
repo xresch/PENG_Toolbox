@@ -1,10 +1,14 @@
 package com.pengtoolbox.cfw._main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.Permission;
+import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.AbstractResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
@@ -46,6 +50,27 @@ public class CFWContextRequest {
 	
 	public static SessionData getSessionData() {
 		return sessionData.get();
+	}
+	
+	public static User getUser() {
+		if(sessionData.get() != null) {
+			return sessionData.get().getUser();
+		}
+		return null;
+	}
+	
+	public static HashMap<String, Group> getUserGroups() {
+		if(sessionData.get() != null) {
+			return sessionData.get().getUserGroups();
+		}
+		return null;
+	}
+	
+	public static HashMap<String, Permission> getUserPermissions() {
+		if(sessionData.get() != null) {
+			return sessionData.get().getUserPermissions();
+		}
+		return null;
 	}
 
 	public static void setSessionData(SessionData sessionData) {

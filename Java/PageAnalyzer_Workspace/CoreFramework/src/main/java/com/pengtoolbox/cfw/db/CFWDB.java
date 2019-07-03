@@ -213,13 +213,14 @@ public class CFWDB {
 	 * @param request HttpServletRequest containing session data used for logging information(null allowed).
 	 * @param sql string with placeholders
 	 * @param values the values to be placed in the prepared statement
-	 * @throws SQLException 
+	 * @return true if update count is > 0, false otherwise
 	 ********************************************************************************************/
 	public static boolean preparedExecute(String sql, Object... values){	
         
 		CFWLog log = new CFWLog(logger).method("preparedExecute").start();
 		Connection conn = null;
 		PreparedStatement prepared = null;
+
 		boolean result = false;
 		try {
 			//-----------------------------------------
@@ -233,8 +234,13 @@ public class CFWDB {
 			
 			//-----------------------------------------
 			// Execute
-			result = prepared.execute();
-			
+			boolean isResultSet = prepared.execute();
+
+			if(!isResultSet) {
+				if(prepared.getUpdateCount() > 0) {
+					result = true;
+				}
+			}
 		} catch (SQLException e) {
 			log.severe("Issue executing prepared statement: "+sql, e);
 		} finally {

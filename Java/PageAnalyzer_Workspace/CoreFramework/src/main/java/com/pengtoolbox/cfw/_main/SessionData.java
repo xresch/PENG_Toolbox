@@ -1,5 +1,9 @@
 package com.pengtoolbox.cfw._main;
 
+import java.util.HashMap;
+
+import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.response.bootstrap.BootstrapMenu;
 
@@ -7,6 +11,8 @@ public class SessionData {
 	
 	private boolean isLoggedIn = false;
 	private User user = null;
+	private HashMap<String, Group> userGroups = new HashMap<String, Group>();
+	private HashMap<String, Permission> userPermissions = new HashMap<String, Permission>();
 	private BootstrapMenu menu;
 
 	
@@ -35,12 +41,28 @@ public class SessionData {
 	}
 	
 	public void setUser(User user) {
-		this.user = user;
+		if(user != null) {
+			this.user = user;
+			this.userGroups = CFW.DB.Users.selectGroupsForUser(user);
+			this.userPermissions = CFW.DB.Users.selectPermissionsForUser(user);
+		}
 	}
 	
+	
+	
+	public HashMap<String, Group> getUserGroups() {
+		return userGroups;
+	}
+
+	public HashMap<String, Permission> getUserPermissions() {
+		return userPermissions;
+	}
+
 	public BootstrapMenu getMenu() {
 		return menu;
 	}
+	
+	
 
 	
 }

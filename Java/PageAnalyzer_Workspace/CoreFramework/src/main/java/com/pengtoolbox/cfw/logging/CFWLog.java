@@ -169,7 +169,6 @@ public class CFWLog {
 	 * 
 	 ***********************************************************************/
 	public void log(Level level, String message, Throwable throwable){
-		
 		//check logging level before proceeding
 		if(logger != null && logger.isLoggable(level)){
 			
@@ -231,25 +230,27 @@ public class CFWLog {
 					this.deltaStartMillis = (endtimeNanos - (long)request.getAttribute(CFW.REQUEST_ATTR_STARTNANOS) ) / 1000000;
 				}
 				
+				//----------------------------------------
+				// Current response size
 				AbstractResponse template = CFW.Context.Request.getResponse();
-				
 				if(template != null){
-					
 					this.estimatedResponseSizeChars = template.getEstimatedSizeChars();
+				}
+				
+				//----------------------------------------
+				// Handle alert messages
+				if(level.equals(Level.SEVERE) || level.equals(Level.WARNING) ){
 					
-					if(level == Level.SEVERE || level == Level.WARNING){
-						
-						MessageType alertType = ( level == Level.SEVERE ? MessageType.ERROR : MessageType.WARNING );
-						
-						if(template instanceof AbstractHTMLResponse){
-							CFWContextRequest.addAlert(alertType, message);
-							
-							if(this.exception != null){
-								((AbstractHTMLResponse)template).addSupportInfo("Exception: ", this.exception);
-							}
+					MessageType alertType = ( level == Level.SEVERE ? MessageType.ERROR : MessageType.WARNING );
+					CFW.Context.Request.addAlert(alertType, message);
+					
+					if(template instanceof AbstractHTMLResponse){
+						if(this.exception != null){
+							((AbstractHTMLResponse)template).addSupportInfo("Exception: ", this.exception);
 						}
 					}
 				}
+				
 			}
 			
 			//-------------------------

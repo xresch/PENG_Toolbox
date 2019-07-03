@@ -292,7 +292,7 @@ public class CFWDBGroup {
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkExistsSQL, groupName);
 		
 		try {
-			if(result.next()) {
+			if(result != null && result.next()) {
 				int count = result.getInt(1);
 				return (count == 0) ? false : true;
 			}

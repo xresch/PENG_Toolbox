@@ -37,6 +37,7 @@ import com.pengtoolbox.cfw.servlets.AssemblyServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
+import com.pengtoolbox.cfw.servlets.userprofile.ChangePasswordServlet;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
 /***********************************************************************
@@ -198,6 +199,8 @@ public class CFWApp {
 	        servletContextHandler.addServlet(LoginServlet.class, "/login");
 	        servletContextHandler.addServlet(LogoutServlet.class,  "/logout");
 	    }
+	    
+	    servletContextHandler.addServlet(ChangePasswordServlet.class,  "/changepassword");
                 
 	}
 	
