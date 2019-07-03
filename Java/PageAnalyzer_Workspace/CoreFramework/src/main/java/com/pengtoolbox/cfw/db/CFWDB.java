@@ -19,6 +19,7 @@ import org.h2.tools.Server;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -127,20 +128,57 @@ public class CFWDB {
 		//-----------------------------------------
 		// Create Group Superuser
 		//-----------------------------------------
-		if(!CFW.DB.Groups.checkGroupExists("Superuser")) {
-			CFW.DB.Groups.create(new Group("Superuser")
+		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.DEFAULT_GROUP_SUPERUSER)) {
+			CFW.DB.Groups.create(new Group(CFWDBGroup.DEFAULT_GROUP_SUPERUSER)
 				.description("Superusers have all the privileges in the system. They are above administrators. ")
 				.isDeletable(false)
 			);
 		}
 		
-		Group superuserGroup = CFW.DB.Groups.selectByName("Superuser");
+		Group superuserGroup = CFW.DB.Groups.selectByName(CFWDBGroup.DEFAULT_GROUP_SUPERUSER);
 		
-		if(adminUser == null) {
+		if(superuserGroup == null) {
 			new CFWLog(logger)
 			.method("createDefaultEntries")
-			.severe("User group 'Superuser' was not found in the database.");
+			.severe("User group '"+CFWDBGroup.DEFAULT_GROUP_SUPERUSER+"' was not found in the database.");
 		}
+		
+		//-----------------------------------------
+		// Create Group Foreign
+		//-----------------------------------------
+		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.DEFAULT_GROUP_USER)) {
+			CFW.DB.Groups.create(new Group(CFWDBGroup.DEFAULT_GROUP_USER)
+				.description("Default User group. New users will automatically be added to this group if they are not managed by a foreign source.")
+				.isDeletable(false)
+			);
+		}
+		
+		Group userGroup = CFW.DB.Groups.selectByName(CFWDBGroup.DEFAULT_GROUP_USER);
+		
+		if(userGroup == null) {
+			new CFWLog(logger)
+			.method("createDefaultEntries")
+			.severe("User group '"+CFWDBGroup.DEFAULT_GROUP_USER+"' was not found in the database.");
+		}
+		
+		//-----------------------------------------
+		// Create Group Foreign
+		//-----------------------------------------
+		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.DEFAULT_GROUP_FOREIGN_USER)) {
+			CFW.DB.Groups.create(new Group(CFWDBGroup.DEFAULT_GROUP_FOREIGN_USER)
+				.description("Foreign users are accounts which are managed by other sources like LDAP or .csv-Files. They normally don't have certain perissions like changing the password, as this is managed by the foreign account source.")
+				.isDeletable(false)
+			);
+		}
+		
+		Group foreignuserGroup = CFW.DB.Groups.selectByName(CFWDBGroup.DEFAULT_GROUP_FOREIGN_USER);
+		
+		if(foreignuserGroup == null) {
+			new CFWLog(logger)
+			.method("createDefaultEntries")
+			.severe("User group '"+CFWDBGroup.DEFAULT_GROUP_FOREIGN_USER+"' was not found in the database.");
+		}
+		
 		
 		//-----------------------------------------
 		// Add Admin to group Superuser

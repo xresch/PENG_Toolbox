@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 
@@ -22,8 +22,38 @@ public class CSVLoginProvider implements LoginProvider {
 	
 	@Override
 	public boolean checkCredentials(String username, String password) {
-		String passwordFromFile = userCredentials.get(username);
-		return password.equals(passwordFromFile);
+		
+		if(CFW.DB.Users.checkUsernameExists(username)) {
+			//--------------------------------
+			// Check User in DB			
+			User user = CFW.DB.Users.selectByUsernameOrMail(username);
+			if(user.isForeign()) {
+				String passwordFromFile = userCredentials.get(username);
+				return password.equals(passwordFromFile);
+			}else {
+				return user.passwordValidation(password);
+			}
+		}else {
+			//--------------------------------
+			// Create User if password is correct
+			String passwordFromFile = userCredentials.get(username);
+			
+			if(password.equals(passwordFromFile))
+			{
+				User newUser = new User(username)
+						.isForeign(true)
+						.status("ACTIVE");
+				
+				CFW.DB.Users.create(newUser);
+				User userFromDB = CFW.DB.Users.selectByUsernameOrMail(username);
+				
+				CFW.DB.UserGroupMap.addUserToGroup(userFromDB, CFW.DB.Groups.DEFAULT_GROUP_FOREIGN_USER);
+				
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	private void loadCredentials() {

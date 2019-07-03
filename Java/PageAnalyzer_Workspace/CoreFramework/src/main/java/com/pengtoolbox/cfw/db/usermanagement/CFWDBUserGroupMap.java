@@ -45,6 +45,16 @@ public class CFWDBUserGroupMap {
 	/********************************************************************************************
 	 * Adds the user to the specified group.
 	 * @param user
+	 * @param groupname
+	 * @return return true if user was added, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static boolean addUserToGroup(User user, String groupname) {
+		return addUserToGroup(user, CFW.DB.Groups.selectByName(groupname));
+	}
+	/********************************************************************************************
+	 * Adds the user to the specified group.
+	 * @param user
 	 * @param group
 	 * @return return true if user was added, false otherwise
 	 * 
