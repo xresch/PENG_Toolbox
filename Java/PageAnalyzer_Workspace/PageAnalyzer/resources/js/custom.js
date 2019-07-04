@@ -75,7 +75,10 @@ function fetchData(args){
 		case "resultlist":		if(RESULT_LIST != null) return;
 								url += "?type="+args.data;
 								break;
-								
+		
+		case "allresults":		if(RESULT_LIST != null) return;
+								url += "?type="+args.data;
+								break;
 		case "har":				if(HAR_DATA != null) return;
 								url += "?type="+args.data+"&resultid="+URL_PARAMETERS.resultid;
 								break;
@@ -110,6 +113,10 @@ function fetchData(args){
 										break;
 										
 				case "resultlist":		RESULT_LIST = data;
+										draw(args);
+										break;
+										
+				case "allresults":		RESULT_LIST = data;
 										draw(args);
 										break;
 										
@@ -927,6 +934,9 @@ function printResultList(parent, data){
 		headerRowString += '<th>&nbsp;</th>';
 		headerRowString += '<th>ID</th>';
 		headerRowString += '<th>Timestamp</th>';
+		if(data[0] != null && data[0].USER_ID != undefined){
+			headerRowString += '<th>User</th>';
+		}
 		headerRowString += '<th>Name</th>';
 		headerRowString += '<th>URL</th>';
 		headerRowString += '<th>&nbsp;</th>';
@@ -954,6 +964,10 @@ function printResultList(parent, data){
 		rowString += '<td><input class="resultSelectionCheckbox" type="checkbox" onchange="resultSelectionChanged();" value="'+currentData.RESULT_ID+'" /></td>';
 		rowString += '<td>'+currentData.RESULT_ID+'</td>';
 		rowString += '<td>'+currentData.TIME+'</td>';
+		
+		if(data[0] != null && data[0].USER_ID != undefined){
+			headerRowString += rowString += '<td>'+currentData.USER_ID+'</td>';;
+		}
 		
 		resultName = (currentData.NAME == "null") ? "" : currentData.NAME;
 		rowString += '<td>'+resultName+'</td>';
@@ -1445,6 +1459,7 @@ function draw(options){
 		switch (options.data){
 			case "yslowresult": 	if(YSLOW_RESULT == null) { fetchData(options);  return;} break;
 			case "resultlist":		if(RESULT_LIST == null) { fetchData(options); return;} break;
+			case "allresults":		if(RESULT_LIST == null) { fetchData(options); return;} break;
 			case "har":				if(HAR_DATA == null) { fetchData(options); return;} break;
 			case "compareyslow":	if(COMPARE_YSLOW == null) { fetchData(options); return;} break;
 			

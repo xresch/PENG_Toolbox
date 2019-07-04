@@ -10,6 +10,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWDefaultApp;
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.response.PageAnalyzerMenu;
 import com.pengtoolbox.pageanalyzer.response.PageAnalyzerUserMenuItem;
@@ -21,6 +22,7 @@ import com.pengtoolbox.pageanalyzer.servlets.DeleteResultServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DocuServlet;
 import com.pengtoolbox.pageanalyzer.servlets.GanttChartServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARUploadServlet;
+import com.pengtoolbox.pageanalyzer.servlets.ManageResultsServlet;
 import com.pengtoolbox.pageanalyzer.servlets.RestAPIServlet;
 import com.pengtoolbox.pageanalyzer.servlets.ResultListServlet;
 import com.pengtoolbox.pageanalyzer.servlets.ResultViewServlet;
@@ -63,6 +65,7 @@ public class Main extends Application {
 		//------------------------------------
 		// Initialize Database
     	PageAnalyzerDB.initialize();
+    	PAPermissions.initializePermissions();
     	
         //###################################################################
         // Create API ServletContext, no login needed
@@ -92,7 +95,7 @@ public class Main extends Application {
         appContext.addServlet(DeleteResultServlet.class, "/delete");
         appContext.addServlet(ResultListServlet.class, "/resultlist");
         appContext.addServlet(GanttChartServlet.class, "/ganttchart");
-        
+        appContext.addServlet(ManageResultsServlet.class, "/manageresults");
         appContext.addServlet(DocuServlet.class, "/docu");
         appContext.addServlet(CustomContentServlet.class, "/custom");
         

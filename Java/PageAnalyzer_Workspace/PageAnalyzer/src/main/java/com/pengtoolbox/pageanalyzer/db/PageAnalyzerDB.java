@@ -13,6 +13,7 @@ import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 public class PageAnalyzerDB {
 
@@ -118,6 +119,31 @@ public class PageAnalyzerDB {
 	 * If the result is null, the method returns an empty array.
 	 * 
 	 ********************************************************************************************/
+	public static String getAllResults() {
+		
+		if(CFW.Context.Request.getUserPermissions() != null
+			&& CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)) {
+			String selectResults = "SELECT user_id, result_id, name, page_url, time FROM results ORDER BY time DESC";
+			
+			ResultSet resultSet = CFWDB.preparedExecuteQuery(selectResults);
+			String jsonString = CFWDB.resultSetToJSON(resultSet);
+			
+			CFWDB.close(resultSet);
+			
+			return jsonString;
+		}else {
+			CFW.Context.Request.addAlert(MessageType.ERROR, "Access Denied");
+		}
+		
+		return null;
+		
+	}
+	
+	/********************************************************************************************
+	 * Returns a result as a json array.
+	 * If the result is null, the method returns an empty array.
+	 * 
+	 ********************************************************************************************/
 	public static String getResultListForComparison(String resultIDArray) {
 		
 		String userID = getUsernameForDBAccess();
@@ -130,8 +156,18 @@ public class PageAnalyzerDB {
 		
 		//----------------------------------
 		// Execute
-		String selectResults = "SELECT result_id, page_url, time, json_result FROM results WHERE result_id in ("+resultIDArray+") AND user_id = ? ORDER BY time";
-		ResultSet resultSet = CFWDB.preparedExecuteQuery(selectResults, userID);
+		String selectResults;
+		ResultSet resultSet;
+		if( CFW.Context.Request.getUserPermissions() != null
+		 && CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)) {
+			selectResults = "SELECT result_id, page_url, time, json_result FROM results WHERE result_id in ("+resultIDArray+") ORDER BY time";
+			resultSet = CFWDB.preparedExecuteQuery(selectResults);
+		}else {
+			selectResults = "SELECT result_id, page_url, time, json_result FROM results WHERE result_id in ("+resultIDArray+") AND user_id = ? ORDER BY time";
+			resultSet = CFWDB.preparedExecuteQuery(selectResults, userID);
+		}
+			
+	    
 		String jsonString = CFWDB.resultSetToJSON(resultSet);
 		
 		CFWDB.close(resultSet);
@@ -155,15 +191,25 @@ public class PageAnalyzerDB {
 		
 		//----------------------------------
 		// Execute
-		ResultSet resultSet = CFWDB.preparedExecuteQuery(
-				"SELECT json_result FROM results WHERE result_id = ?  AND user_id = ?",
-				resultID, 
-				userID);
+		ResultSet resultSet = null;
+		
+		if( CFW.Context.Request.getUserPermissions() != null
+			&& CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)) {
+			resultSet = CFWDB.preparedExecuteQuery(
+				"SELECT json_result FROM results WHERE result_id = ?",
+				resultID);
+			
+		}else {
+			resultSet = CFWDB.preparedExecuteQuery(
+					"SELECT json_result FROM results WHERE result_id = ?  AND user_id = ?",
+					resultID, 
+					userID);
+		}
 		
 		//----------------------------------
 		// Get First Result
 		try {
-			if(resultSet.next()) {
+			if(resultSet!=null && resultSet.next()) {
 				jsonResult = resultSet.getString(1);
 			}
 		} catch (SQLException e) {
@@ -195,15 +241,22 @@ public class PageAnalyzerDB {
 		
 		//----------------------------------
 		// Execute
-		ResultSet resultSet = CFWDB.preparedExecuteQuery(
-				"SELECT har_file FROM results WHERE result_id = ? AND user_id = ?",
-				resultID, 
-				userID);
-		
+		ResultSet resultSet = null;
+		if( CFW.Context.Request.getUserPermissions() != null
+		 && CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)) {
+			resultSet = CFWDB.preparedExecuteQuery(
+				"SELECT har_file FROM results WHERE result_id = ?",
+				resultID);
+		}else {
+			resultSet = CFWDB.preparedExecuteQuery(
+					"SELECT har_file FROM results WHERE result_id = ? AND user_id = ?",
+					resultID, 
+					userID);
+		}
 		//----------------------------------
 		// Get First Result
 		try {
-			if(resultSet.next()) {
+			if(resultSet != null && resultSet.next()) {
 				jsonResult = resultSet.getString(1);
 			}
 		} catch (SQLException e) {

@@ -76,6 +76,9 @@ public class DataServlet extends HttpServlet {
 										
 				case "resultlist": 		content.append(PageAnalyzerDB.getResultListForUser(username));
 										break;
+				
+				case "allresults": 		content.append(PageAnalyzerDB.getAllResults());
+										break;
 										
 				case "har": 			content.append(PageAnalyzerDB.getHARFileByID(Integer.parseInt(resultID)));
 										break;

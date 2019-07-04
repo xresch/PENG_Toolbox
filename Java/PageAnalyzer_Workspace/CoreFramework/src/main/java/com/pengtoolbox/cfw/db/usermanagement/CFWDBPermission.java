@@ -307,7 +307,10 @@ public class CFWDBPermission {
 			.severe("Exception occured while checking of group exists.", e);
 			
 			return false;
+		}finally {
+			CFWDB.close(result);
 		}
+		
 		
 		return false; 
 	}

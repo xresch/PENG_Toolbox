@@ -220,7 +220,7 @@ public class CFWApp {
 
 		servletContextHandler.addServlet(AssemblyServlet.class, "/assembly"); 
 		servletContextHandler.addServlet(JARResourceServlet.class, "/jarresource");
-
+		
         GzipHandler servletGzipHandler = new GzipHandler();
         RequestHandler requestHandler = new RequestHandler();
 

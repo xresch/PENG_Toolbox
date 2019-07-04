@@ -16,16 +16,17 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
+import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
-public class ResultListServlet extends HttpServlet
+public class ManageResultsServlet extends HttpServlet
 {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = CFWLog.getLogger(ResultListServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(ManageResultsServlet.class.getName());
 
 	/*****************************************************************
 	 *
@@ -35,36 +36,32 @@ public class ResultListServlet extends HttpServlet
     {
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
-			
-		TemplateHTMLDefault html = new TemplateHTMLDefault("View Result");
-		StringBuffer content = html.getContent();
-
-		String username = "";
 		
-		if(CFWConfig.AUTHENTICATION_ENABLED) {
-			SessionData data = CFW.Context.Request.getSessionData(); 
-			if(data.isLoggedIn()) {
-				username = data.getUser().username();
+		TemplateHTMLDefault html = new TemplateHTMLDefault("Manage Results");
+		StringBuffer content = html.getContent();
+		
+		if(CFW.Context.Request.getUserPermissions() != null
+		&& CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)) {
+					
+			String jsonResults = PageAnalyzerDB.getAllResults();
+			
+			//TODO: Check User
+			
+			if (jsonResults == null || jsonResults.isEmpty()) {
+				CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Results could not be loaded.");
+			}else {
+										
+				content.append("<div id=\"results\"></div>");
+				
+				StringBuffer javascript = html.getJavascript();
+				javascript.append("<script defer>");
+					javascript.append("initialize();");
+					javascript.append("draw({data: 'allresults', info: 'resultlist', view: ''})");
+				javascript.append("</script>");
+					
 			}
 		}else {
-			username = "anonymous";
-		}
-		String jsonResults = PageAnalyzerDB.getResultListForUser(username);
-		
-		//TODO: Check User
-		
-		if (jsonResults == null || jsonResults.isEmpty()) {
-			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Results could not be loaded.");
-		}else {
-									
-			content.append("<div id=\"results\"></div>");
-			
-			StringBuffer javascript = html.getJavascript();
-			javascript.append("<script defer>");
-				javascript.append("initialize();");
-				javascript.append("draw({data: 'resultlist', info: 'resultlist', view: ''})");
-			javascript.append("</script>");
-				
+			CFW.Context.Request.addAlert(MessageType.ERROR, "Access denied");
 		}
         
     }

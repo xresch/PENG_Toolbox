@@ -16,6 +16,10 @@ public class CFWConfig {
 	/** Application ID, used to make your application more secure. (Property=cfw_application_id, Default="change_me_now") */
 	public static String APPLICATION_ID = "change_me_now";
 	
+	/** Reset the admin password on the next restart. (Property=cfw_reset_admin_pw, Default=false) */
+	public static boolean RESET_ADMIN_PW = false;
+	
+	
 	/** Enables or disables the HTTP connector. (Property=cfw_http_enabled, Default=true) */
 	public static boolean HTTP_ENABLED = true;
 	
@@ -110,6 +114,7 @@ public class CFWConfig {
 		
 		APPLICATION_ID					= CFWConfig.configAsString("cfw_application_id", APPLICATION_ID);
 		APPLICATION_NAME				= CFWConfig.configAsString("cfw_application_name", APPLICATION_NAME);
+		RESET_ADMIN_PW 					= CFWConfig.configAsBoolean("cfw_reset_admin_pw", RESET_ADMIN_PW);
 		
 		BASE_URL 						= "/"+APPLICATION_NAME;
 		

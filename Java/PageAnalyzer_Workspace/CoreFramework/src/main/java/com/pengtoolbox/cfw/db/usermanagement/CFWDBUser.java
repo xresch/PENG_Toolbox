@@ -377,6 +377,8 @@ public class CFWDBUser {
 			.severe("Error while checking the if the user exists.", e);
 			
 			return false;
+		}finally {
+			CFWDB.close(result);
 		}
 		
 		return false; 
@@ -416,6 +418,8 @@ public class CFWDBUser {
 			.severe("Error while checking the if the email is in use.", e);
 			
 			return false;
+		}finally {
+			CFWDB.close(result);
 		}
 		
 		return false;

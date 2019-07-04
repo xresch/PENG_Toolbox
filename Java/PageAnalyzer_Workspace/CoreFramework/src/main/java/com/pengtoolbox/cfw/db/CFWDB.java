@@ -18,11 +18,13 @@ import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.Server;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFW.Config;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 public class CFWDB {
 
@@ -74,6 +76,7 @@ public class CFWDB {
 			
 			initializeTables();
 			createDefaultEntries();
+			resetAdminPW();
 			
 		} catch (SQLException e) {
 			CFWDB.isInitialized = false;
@@ -84,6 +87,27 @@ public class CFWDB {
 		}
 	}
 	
+	public static void resetAdminPW() {
+		
+		if(Config.RESET_ADMIN_PW) {
+			User admin = CFW.DB.Users.selectByUsernameOrMail("admin");
+			admin.setInitialPassword("admin", "admin");
+			
+			if(CFW.DB.Users.update(admin)) {
+				new CFWLog(logger)
+				.method("resetAdminPW")
+				.info("Admin password was reset to default!");
+			}else{
+				new CFWLog(logger)
+				.method("resetAdminPW")
+				.warn("Admin password was reset failed!");
+			};
+		}else {
+			new CFWLog(logger)
+			.method("resetAdminPW")
+			.warn("Admin password was reset failed!");
+		}
+	}
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
@@ -202,6 +226,9 @@ public class CFWDB {
 	 ********************************************************************************************/
 	public static Connection getConnection() throws SQLException {	
 		if(isInitialized) {
+			CFWLog log = new CFWLog(logger).method("getConnection");
+			log.finer("DB Connections Active: "+connectionPool.getActiveConnections());
+			
 			return connectionPool.getConnection();
 		}else {
 			throw new SQLException("DB not initialized, call CFWDB.initialize() first.");
@@ -352,7 +379,8 @@ public class CFWDB {
 
 
 	/********************************************************************************************
-	 *
+	 * Returns a jsonString with an array containing a json object for eeach row.
+	 * 
 	 ********************************************************************************************/
 	public static String resultSetToJSON(ResultSet resultSet) {
 		

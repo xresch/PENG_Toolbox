@@ -1,6 +1,7 @@
 package com.pengtoolbox.pageanalyzer.servlets;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -43,7 +44,7 @@ public class DeleteResultServlet extends HttpServlet
 			log.severe("The result could not be deleted: ResultID is not a number.");
 		}
 		
-		response.sendRedirect(response.encodeRedirectURL("./resultlist"));
+		response.sendRedirect(response.encodeRedirectURL(request.getHeader("referer")));
         
     }
 	
