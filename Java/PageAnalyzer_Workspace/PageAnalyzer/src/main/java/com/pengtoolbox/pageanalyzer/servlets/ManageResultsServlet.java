@@ -9,9 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.CFWContextRequest;
-import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
@@ -66,5 +64,4 @@ public class ManageResultsServlet extends HttpServlet
         
     }
 	
-
 }

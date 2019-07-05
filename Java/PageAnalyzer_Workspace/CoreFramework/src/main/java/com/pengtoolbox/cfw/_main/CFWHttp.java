@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw.logging.CFWLog;
 
@@ -19,6 +20,14 @@ public class CFWHttp {
 	
 	public static Logger logger = CFWLog.getLogger(CFWHttp.class.getName());
 	
+	
+	/******************************************************************************************************
+	 * Redirects to the referer of the request.
+	 * @throws IOException 
+	 ******************************************************************************************************/
+	public static void redirectToReferer( HttpServletRequest request, HttpServletResponse response ) throws IOException {
+		response.sendRedirect(response.encodeRedirectURL(request.getHeader("referer")));
+	}
 	
 	/******************************************************************************************************
 	 * Send a HTTP GET request and returns the result as a String.
@@ -95,4 +104,6 @@ public class CFWHttp {
 		return null;
 		
 	}
+	
+	
 }

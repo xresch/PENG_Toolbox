@@ -1,8 +1,16 @@
+TODO
+====
+- Fix gantt chart
+- implement delete properly
+- implement isRenamable check
+- implement isDeletable check
+- Check if url exists and prompt for compare
+- Add modal panel for comparing rules.
+- SPNEGO/Kerberos Authentication
+
+DONE
+====
 - add confirmation dialog to delete button
 - create admin dashboard
   - manage all results
   - delete results of other users
-  - 
-- Check if url exists and prompt for compare
-- Add modal panel for comparing rules.
-- SPNEGO/Kerberos Authentication

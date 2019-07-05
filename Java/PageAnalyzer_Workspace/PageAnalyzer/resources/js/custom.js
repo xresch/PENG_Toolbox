@@ -344,7 +344,6 @@ function prepareGanttData(data){
 		}
 		
 		console.log(entry.ganttdata);
-
 		
 	}
 
@@ -657,9 +656,13 @@ function printGanttChart(parent, data){
 		// Gantt Chart Column
 		var  rowString = '';
 		var gd = currentEntry.ganttdata;
+		//workaround for wrong timing deviations
+		var shortPercentDelta = (gd.percentdelta >= 1) ? Math.floor(gd.percentdelta-1): gd.percentdelta;
+		var shortPercentTime = (gd.percenttime >= 2) ? Math.floor(gd.percenttime-1): gd.percenttime;
+		
 		rowString += '<td> <div class="ganttWrapper" style="width: 500px;">';
-			rowString += '<div class="ganttBlock percentdelta" style="width: '+gd.percentdelta+'%">&nbsp;</div>';
-			rowString += '<div class="ganttBlock ganttTimings" style="width: '+gd.percenttime+'%">';
+			rowString += '<div class="ganttBlock percentdelta" style="width: '+shortPercentDelta+'%">&nbsp;</div>';
+			rowString += '<div class="ganttBlock ganttTimings" style="width: '+shortPercentTime+'%">';
 				rowString += createGanttBar(currentEntry, "blocked");
 				rowString += createGanttBar(currentEntry, "dns");
 				rowString += createGanttBar(currentEntry, "connect");
@@ -700,7 +703,7 @@ function createGanttBar(entry, metric){
 	var percentString = "percent"+metric;
 	
 	if(entry.ganttdata[percentString] > 0){ 
-		return '<div class="ganttBlock '+percentString+'" alt="test" style="width: '+entry.ganttdata[percentString]+'%">&nbsp;</div>'
+		return '<div class="ganttBlock '+percentString+'" alt="test" style="width: '+Math.floor(entry.ganttdata[percentString])+'%">&nbsp;</div>'
 	}else{
 		return "";
 	}

@@ -3,6 +3,14 @@
 ########################################
 
 ########################################
+# Page Analyzer v 1.6
+########################################
+- added user management to core framework
+- added default admin users
+- added change passwword functionality
+- added manage results feature for admin accounts
+
+########################################
 # Page Analyzer v 1.5
 ########################################
 - added command line argument -config.file
