@@ -44,6 +44,12 @@ public class GeneralWebTests extends WebTestMaster {
 		Assertions.assertTrue(response.contains("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>this is a success.</div>"),
 				"TemplateHTMLDefault.addAlert(AlertType.SUCCESS) creates a success message.");
 		
+		Assertions.assertEquals(
+				response.indexOf("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>Test make same message unique...</div>"),
+				response.lastIndexOf("<div class=\"alert alert-dismissible alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>Test make same message unique...</div>"),
+				"TemplateHTMLDefault.addAlert(AlertType.SUCCESS) ignores redundant message.");
+		
+		
 		//System.out.println(response);
 	}
 	

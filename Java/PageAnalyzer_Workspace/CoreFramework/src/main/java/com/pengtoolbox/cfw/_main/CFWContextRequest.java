@@ -1,6 +1,6 @@
 package com.pengtoolbox.cfw._main;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -20,7 +20,7 @@ public class CFWContextRequest {
 	private static InheritableThreadLocal<AbstractResponse> response = new InheritableThreadLocal<AbstractResponse>();
 	private static InheritableThreadLocal<SessionData> sessionData = new InheritableThreadLocal<SessionData>();
 	
-	private static InheritableThreadLocal<ArrayList<AlertMessage>> messageArray = new InheritableThreadLocal<ArrayList<AlertMessage>>();
+	private static InheritableThreadLocal<HashMap<String,AlertMessage>> messageArray = new InheritableThreadLocal<HashMap<String,AlertMessage>>();
 	
 	private static Logger logger = CFWLog.getLogger(CFWContextRequest.class.getName());
 	
@@ -79,6 +79,7 @@ public class CFWContextRequest {
 
 	/****************************************************************
 	 * Adds a message to the message div of the template.
+	 * Ignored if the message was already exists.
 	 *   
 	 * @param alertType alert type from OMKeys
 	 *   
@@ -86,15 +87,15 @@ public class CFWContextRequest {
 	public static void addAlert(MessageType type, String message){
 		
 		if(messageArray.get() == null) {
-			messageArray.set(new ArrayList<AlertMessage>());
+			messageArray.set(new HashMap<String,AlertMessage>());
 		}
 		
-		messageArray.get().add(new AlertMessage(type, message));
+		messageArray.get().put(message, new AlertMessage(type, message));
 				
 	}
 	
-	public static ArrayList<AlertMessage> getMessages() {
-		return messageArray.get();
+	public static Collection<AlertMessage> getMessages() {
+		return messageArray.get().values();
 	}
 	
 	

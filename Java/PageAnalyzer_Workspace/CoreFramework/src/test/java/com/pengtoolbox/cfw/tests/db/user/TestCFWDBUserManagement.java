@@ -191,7 +191,13 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//--------------------------------------
 		// CHECK NOT DELETABLE
 		Assertions.assertFalse(CFW.DB.Users.deleteByID(user.id()), "The user is not deleted, returns false.");
-		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(user.username()), "The user still exists.");
+		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(username), "The user still exists.");
+		
+		//--------------------------------------
+		// CHECK NOT RENAMABME
+		user.username("notRenamable");
+		Assertions.assertFalse(CFW.DB.Users.update(user), "The user is not renamed, returns false.");
+		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(username), "The user still exists.");
 		
 		//--------------------------------------
 		// UPDATE

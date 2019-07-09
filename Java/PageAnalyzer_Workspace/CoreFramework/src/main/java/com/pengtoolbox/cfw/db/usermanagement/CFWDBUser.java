@@ -279,10 +279,16 @@ public class CFWDBUser {
 	 ****************************************************************/
 	public static boolean update(User user) {
 		
+		if(user == null) {
+			new CFWLog(logger)
+			.method("update")
+			.severe("The user cannot be null.");
+			return false;
+		}
+		
 		String updateByID = 
 				"UPDATE "+TABLE_NAME
 				+" SET ("
-				  + UserDBFields.USERNAME +", "
 				  + UserDBFields.EMAIL +", "
 				  + UserDBFields.FIRSTNAME +", "
 				  + UserDBFields.LASTNAME +", "
@@ -293,12 +299,11 @@ public class CFWDBUser {
 				  + UserDBFields.IS_DELETABLE +", "
 				  + UserDBFields.IS_RENAMABLE + ", "
 				  + UserDBFields.IS_FOREIGN 
-				  + ") = (?,?,?,?,?,?,?,?,?,?,?) "
+				  + ") = (?,?,?,?,?,?,?,?,?,?) "
 				+" WHERE "
 					+ UserDBFields.PK_ID+" = ?";
 		
-		boolean result = CFWDB.preparedExecute(updateByID, 
-				user.username(),
+		boolean resultUpdate = CFWDB.preparedExecute(updateByID, 
 				user.email(),
 				user.firstname(),
 				user.lastname(),
@@ -311,8 +316,28 @@ public class CFWDBUser {
 				user.isForeign(),
 				user.id());
 		
+		boolean resultRename = false;
 		
-		return result;
+		if(user.isRenamable() == false) {
+			new CFWLog(logger)
+			.method("update")
+			.severe("The user '"+user.username()+"' cannot be renamed as it is marked as not renamable.");
+			return false;
+		}else {
+			String updateNameByID = 
+				"UPDATE "+TABLE_NAME
+				+" SET ("
+				  + UserDBFields.USERNAME +""
+				  + ") = (?) "
+				+" WHERE "
+					+ UserDBFields.PK_ID+" = ? AND "
+					+ UserDBFields.IS_RENAMABLE+"=TRUE";
+		
+			resultRename = CFWDB.preparedExecute(updateNameByID, 
+				user.username(),
+				user.id());
+		}
+		return resultUpdate && resultRename;
 		
 	}
 	

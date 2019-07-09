@@ -42,6 +42,10 @@ public class TestServlet extends HttpServlet
 		CFWContextRequest.addAlert(MessageType.ERROR, "this is an error.");
 		CFWContextRequest.addAlert(MessageType.SUCCESS, "this is a success.");
 		
+		CFWContextRequest.addAlert(MessageType.SUCCESS, "Test make same message unique...");
+		CFWContextRequest.addAlert(MessageType.SUCCESS, "Test make same message unique...");
+		CFWContextRequest.addAlert(MessageType.SUCCESS, "Test make same message unique...");
+		CFWContextRequest.addAlert(MessageType.SUCCESS, "Test make same message unique...");
 		//------------------------------
 		//Add messages by log exception
 		//------------------------------

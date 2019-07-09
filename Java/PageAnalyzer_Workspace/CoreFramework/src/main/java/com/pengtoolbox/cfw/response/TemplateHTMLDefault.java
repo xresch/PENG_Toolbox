@@ -1,6 +1,6 @@
 package com.pengtoolbox.cfw.response;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
@@ -85,7 +85,7 @@ public class TemplateHTMLDefault extends AbstractHTMLResponse {
 				this.appendSectionTitle(buildedPage, "Messages");
 				buildedPage.append("<div id=\"messages\">");
 					
-				ArrayList<AlertMessage> messageArray = CFW.Context.Request.getMessages();
+				Collection<AlertMessage> messageArray = CFW.Context.Request.getMessages();
 					if(messageArray != null) {
 						for(AlertMessage message : messageArray) {
 							buildedPage.append(message.createHTML());

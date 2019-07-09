@@ -1,6 +1,6 @@
 TODO
 ====
-- Fix gantt chart
+
 - implement delete properly
 - implement isRenamable check
 - implement isDeletable check
@@ -8,9 +8,13 @@ TODO
 - Add modal panel for comparing rules.
 - SPNEGO/Kerberos Authentication
 
+
 DONE
 ====
+- Make Alerts Unique
+- Fix gantt chart
 - add confirmation dialog to delete button
 - create admin dashboard
   - manage all results
   - delete results of other users
+  
