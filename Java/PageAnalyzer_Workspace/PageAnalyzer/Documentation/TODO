@@ -1,6 +1,8 @@
 TODO
 ====
 - Support Info: Use default Modal, make exceptions unique.
+- Forward login url
+- Default Error page
 
 - Check if url exists and prompt for compare
 - Add modal panel for comparing rules.
