@@ -15,7 +15,8 @@ var CFW = {
 		selectElementContent: null
 	},
 	ui: {
-		toc : null,
+		toc: null,
+		showModal: null,
 		confirmExecute: null,
 		toogleLoader: null
 	},
@@ -122,28 +123,71 @@ function cfw_toogleLoader(isVisible){
 CFW.ui.toogleLoader = cfw_toogleLoader;
 
 /**************************************************************************************
+ * Create a model with content.
+ * @param modalTitle the title for the modal
+ * @param modalBody the body of the modal
+ * @return nothing
+ *************************************************************************************/
+function cfw_showModal(modalTitle, modalBody){
+	
+	var body = $("body");
+	var modalID = 'cfw-default-modal';
+	
+	var defaultModal = $("#"+modalID);
+	if(defaultModal.length == 0){
+	
+		defaultModal = $(
+				'<div id="'+modalID+'" class="modal fade" tabindex="-1" role="dialog">'
+				+ '  <div class="modal-dialog modal-lg" role="document">'
+				+ '    <div class="modal-content">'
+				+ '      <div class="modal-header">'
+				+ '        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times</span></button>'
+				+ '        <h2 class="modal-title">Title</h2>'
+				+ '      </div>'
+				+ '      <div class="modal-body" >'
+				+ '      </div>'
+				+ '      <div class="modal-footer">'
+				+ '         <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>'
+				+ '      </div>'
+				+ '    </div>'
+				+ '  </div>'
+				+ '</div>');
+		
+		defaultModal.modal();
+		$('body').prepend(defaultModal);
+	}
+
+	defaultModal.find(".modal-title").html(modalTitle);
+	defaultModal.find('.modal-body').html("").append(modalBody);
+	
+	defaultModal.modal('show');
+}
+CFW.ui.showModal = cfw_showModal;
+
+/**************************************************************************************
  * Create a confirmation modal panel that executes the function passed by the argument
- * @param targetSelector the jQuery selector for the resulting element
+ * @param message the message to show
+ * @param confirmLabel the text for the confirm button
+ * @param jsCode the javascript to execute when confirmed
  * @return nothing
  *************************************************************************************/
 function cfw_confirmExecution(message, confirmLabel, jsCode){
 	
 	var body = $("body");
-	var modalID = 'cfwConfirmDialog';
+	var modalID = 'cfw-confirm-dialog';
 	
 	
 	var modal = $('<div id="'+modalID+'" class="modal fade" tabindex="-1" role="dialog">'
 				+ '  <div class="modal-dialog" role="document">'
 				+ '    <div class="modal-content">'
 				+ '      <div class="modal-header">'
-				+ '        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times</span></button>'
-				+ '        <h4 class="modal-title">Modal title</h4>'
+				+ '        '
+				+ '        <h2 class="modal-title">Confirm</h2>'
 				+ '      </div>'
 				+ '      <div class="modal-body">'
 				+ '        <p>'+message+'</p>'
 				+ '      </div>'
 				+ '      <div class="modal-footer">'
-				+ '        <!--button type="button" class="btn btn-default" onclick="cfw_confirmExecution_Execute(this, \'cancel\')">Cancel</button-->'
 				+ '      </div>'
 				+ '    </div>'
 				+ '  </div>'
@@ -152,6 +196,10 @@ function cfw_confirmExecution(message, confirmLabel, jsCode){
 	modal.modal();
 	
 	body.prepend(modal);	
+	
+	var closeButton = $('<button type="button" class="close"><span aria-hidden="true">&times</span></button>');
+	closeButton.attr('onclick', 'cfw_confirmExecution_Execute(this, \'cancel\')');
+	closeButton.data('modalID', modalID);
 	
 	var cancelButton = $('<button type="button" class="btn btn-primary">Cancel</button>');
 	cancelButton.attr('onclick', 'cfw_confirmExecution_Execute(this, \'cancel\')');
@@ -162,6 +210,7 @@ function cfw_confirmExecution(message, confirmLabel, jsCode){
 	confirmButton.data('modalID', modalID);
 	confirmButton.data('jsCode', jsCode);
 	
+	modal.find('.modal-header').prepend(closeButton);
 	modal.find('.modal-footer').append(cancelButton).append(confirmButton);
 	
 	modal.modal('show');
@@ -183,10 +232,12 @@ function cfw_confirmExecution_Execute(source, action){
 	
 	//remove modal
 	modal.modal('hide');
+	modal.remove();
 	$('.modal-backdrop').remove();
 	$('body').removeClass('modal-open');
 	modal.remove();
 }
+
 
 /******************************************************************
  * Reads the parameters from the URL and returns an object containing
@@ -205,7 +256,7 @@ function cfw_getURLParams()
         vars[splitted[0]] = splitted[1];
     }
     
-    console.log(vars);
+    //console.log(vars);
     return vars;
 }
 CFW.general.getURLParams = cfw_getURLParams;

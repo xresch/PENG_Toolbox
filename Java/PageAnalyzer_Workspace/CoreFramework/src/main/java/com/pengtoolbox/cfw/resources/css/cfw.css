@@ -12,6 +12,11 @@
     margin-bottom: 0px;
 }
 
+.modal-body{
+	overflow: auto;
+	max-height: 80%; 
+}
+
 
  /*************************************************************************
  * Default Layout

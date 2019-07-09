@@ -280,21 +280,31 @@ function prepareGanttData(data){
 	var entries = data.log.entries; 
 	var entriesCount = entries.length;
 	
-	var firstDate;
-	var lastDate;
+	var dateStartTime;
+	var dateEndTime;
 	var totalTimeMillis;
-	if(entries.length > 1){
-		firstDate = new Date(entries[0].startedDateTime);
-		console.log("FirstDate:"+firstDate.toString());
-		
-		last = entries.length -1;
-		lastDate = new Date(entries[last].startedDateTime);
-		lastDate = new Date(lastDate.valueOf() + Math.ceil(entries[last].time));
-		console.log("LastDate:"+lastDate.toString());
-		
-		totalTimeMillis = lastDate.valueOf() - firstDate.valueOf();
-		console.log("totalTimeMillis:"+totalTimeMillis);
+
+	if(entriesCount > 0){
+		dateStartTime = new Date(entries[0].startedDateTime);
+		//console.log("FirstDate:"+dateStartTime.toString());
 	}
+	//----------------------------------
+	// Find lastMillis
+	var lastMillis = 0;
+	for(var i = 0; i < entriesCount; i++ ){
+		var entry = entries[i];
+		
+		dateEndTime = new Date(entry.startedDateTime);
+		dateEndTime = new Date(dateEndTime.valueOf() + Math.ceil(entry.time));
+		entry.endDateTime = dateEndTime.valueOf();
+
+		if(lastMillis < entry.endDateTime){
+			lastMillis = entry.endDateTime;
+		}
+		
+	}
+	
+	totalTimeMillis = lastMillis - dateStartTime.valueOf();
 	
 	//----------------------------------
 	// Loop Data
@@ -312,7 +322,7 @@ function prepareGanttData(data){
 	for(var i = 0; i < entriesCount; i++ ){
 		var entry = entries[i];
 		var startDate = new Date(entry.startedDateTime);
-		var deltaMillis = startDate.valueOf() - firstDate.valueOf();
+		var deltaMillis = startDate.valueOf() - dateStartTime.valueOf();
 		var duration = entry.time;
 		var timings = entry.timings;
 		
@@ -330,7 +340,14 @@ function prepareGanttData(data){
 			"percenttime": duration / totalTimeMillis * 100
 		}
 		
-		console.log(entry.ganttdata);
+		// Workaround: Delta + duration could not be greater than totalTime.
+		// If it is, do this to avoid display issues.
+		if(totalTimeMillis < (deltaMillis + duration)){
+			duration = totalTimeMillis - deltaMillis;
+			entry.ganttdata.percentTime = duration / totalTimeMillis * 100;
+		}
+			
+		//console.log(entry.ganttdata);
 		
 	}
 
@@ -354,7 +371,7 @@ function filterTable(searchField){
 	filter = input.value.toUpperCase();
 	
 	table.find("tbody tr").each(function( index ) {
-		  console.log( index + ": " + $(this).text() );
+		  //console.log( index + ": " + $(this).text() );
 		  
 		  if ($(this).html().toUpperCase().indexOf(filter) > -1) {
 			  $(this).css("display", "");
@@ -383,7 +400,7 @@ function printComparison(parent, data){
 	for(key in data){
 		
 		for(ruleName in data[key].JSON_RESULT.g){
-			console.log("RuleName"+ruleName);
+			//console.log("RuleName"+ruleName);
 			uniqueRuleList[ruleName] = {"Metric": ruleName};
 		}
 	}
@@ -502,7 +519,7 @@ function createAnalyzeDropdown(parent, data, type){
 			
 	if(distinctNames != null){
 		nameArray = Object.keys(distinctNames);
-		console.log(nameArray);
+		//console.log(nameArray);
 		for(i = 0; i < nameArray.length; i++){
 			dropdownHTML += '<li class="dropdown-item"><a onclick="analyzeCookiesOrHeaders(\''+nameArray[i]+'\', \''+type+'\')">'+nameArray[i]+'</a></li>';
 		}
@@ -526,14 +543,10 @@ function analyzeCookiesOrHeaders(key, type){
 	//-----------------------------------------
 	// Initialize
 	//-----------------------------------------
-	var parent = $('#defaultModalBody');
-	
-	parent.html('');
-	
-	resultHTML = '<h1>Values for '+type+' "'+key+'"</h1>';
-	resultHTML += '<div style="max-height: 80%; width: 100%; overflow: scroll;">'
-		+'<table class="table table-striped">'
+
+	resultHTML = '<table class="table table-striped">'
 		+ '<thead><tr><td>Request Cookie Value</td><td>Response Cookie Value</td><td>URL</td></tr></thead>'
+	
 	//---------------------------------------------
 	// Loop Entries
 	data = HAR_DATA;
@@ -576,11 +589,11 @@ function analyzeCookiesOrHeaders(key, type){
 		}
 	}	
 	
-	resultHTML += "</table></div>";
+	resultHTML += "</table>";
 	
-	parent.html(resultHTML);
+	CFW.ui.showModal('Values for '+type+' "'+key+'"',
+			resultHTML);
 	
-	$('#defaultModal').modal('show');
 	
 }
 /******************************************************************
@@ -689,8 +702,9 @@ function createGanttBar(entry, metric){
 	
 	var percentString = "percent"+metric;
 	
+	// Workaround: Reduce size by 5% with "/100*95" to minimize display issues
 	if(entry.ganttdata[percentString] > 0){ 
-		return '<div class="ganttBlock '+percentString+'" alt="test" style="width: '+Math.floor(entry.ganttdata[percentString])+'%">&nbsp;</div>'
+		return '<div class="ganttBlock '+percentString+'" alt="test" style="width: '+Math.floor(entry.ganttdata[percentString]/100*95)+'%">&nbsp;</div>'
 	}else{
 		return "";
 	}
@@ -709,34 +723,30 @@ function showGanttDetails(element){
 	// Initialize
 	//-----------------------------------------
 	var entry = $(element).data('entry');
-	var parent = $('#defaultModalBody');
-	
-	parent.html('');
-	  
-	console.log(entry);
+
+	//console.log(entry);
 	CURRENT_DETAILS_ENTRY = entry;
 	
 	//-----------------------------------------
 	// Print Tabs
 	//-----------------------------------------
-	tabsString  = '<ul id="tabs" class="nav nav-tabs">';
-	tabsString += '    <li class="active"><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'request\')">Request</a></li>';
-	tabsString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'response\')">Response</a></li>';
-	tabsString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'cookies\')">Cookies</a></li>';
-	tabsString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'headers\')">Headers</a></li>';
-	tabsString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'timings\')">Timings</a></li>';
-	tabsString += '</ul>';
+	htmlString  = '<ul id="tabs" class="nav nav-tabs">';
+	htmlString += '    <li class="active"><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'request\')">Request</a></li>';
+	htmlString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'response\')">Response</a></li>';
+	htmlString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'cookies\')">Cookies</a></li>';
+	htmlString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'headers\')">Headers</a></li>';
+	htmlString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'timings\')">Timings</a></li>';
+	htmlString += '</ul>';
 	
-	parent.append(tabsString);
+	htmlString += '<div id="ganttDetails"></div>';
 	
 	//-----------------------------------------
-	// Gantt Details
+	// Show Modal and Update
 	//-----------------------------------------
-	parent.append('<div id="ganttDetails"></div>');
-	
+	CFW.ui.showModal('Details', htmlString);
+			
 	updateGanttDetails('request');
-	
-	$('#defaultModal').modal('show');
+
 	
 }
 
@@ -980,10 +990,9 @@ function printResultList(parent, data){
 		
 		var resultName = "result";
 		if(matches != null){
-			console.log("HIT");
 			resultName = matches[1];
 		}
-		console.log(resultName);
+		
 		rowString += '<td><a target="_blank" alt="Dowload Result" href=./data?type=yslowresult&resultid='+currentData.RESULT_ID+' download="'+resultName+'_yslow_results.json"><i class="fa fa-save"></i></a></td>';
 		
 		//Save HAR
@@ -1016,9 +1025,7 @@ function printResultList(parent, data){
  * 
  *************************************************************************************/
 function resultSelectionChanged(){
-	
-	console.log("changed");
-	
+		
 	if($(".resultSelectionCheckbox:checked").size() > 1){
 		$("#resultCompareButton").attr("disabled", false);
 	}else{
