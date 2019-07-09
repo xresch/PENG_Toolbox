@@ -138,19 +138,6 @@ function fetchData(args){
 		  });
 }
 
-/*******************************************************************************
- * Set if the Loading animation is visible or not.
- * @param isVisible true or false
- ******************************************************************************/
-function showLoader(isVisible){
-	
-	if(isVisible){
-		$("#loading").css("visibility", "visible");
-	}else{
-		$("#loading").css("visibility", "hidden");
-	}
-}
-
 /**************************************************************************************
  * Get the Grade as A/B/C/D/E/F/None depending on the given YSlow score.
  * 
@@ -1449,7 +1436,7 @@ function draw(options){
 	
 	reset();
 	
-	showLoader(true);
+	CFW.ui.toogleLoader(true);
 	
 	window.setTimeout( 
 	function(){
@@ -1521,7 +1508,8 @@ function draw(options){
 								
 			default:				RESULTS_DIV.text("Sorry some error occured, be patient while nobody is looking into it.");
 		}
-		showLoader(false);
+		
+		CFW.ui.toogleLoader(false);
 	}, 100);
 	
 	

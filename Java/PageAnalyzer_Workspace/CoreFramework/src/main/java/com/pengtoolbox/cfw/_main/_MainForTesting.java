@@ -2,8 +2,12 @@ package com.pengtoolbox.cfw._main;
 
 import java.util.logging.Logger;
 
+import org.eclipse.jetty.servlet.ServletContextHandler;
+
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.tests.assets.mockups.TestMenu;
+import com.pengtoolbox.cfw.tests.assets.servlets.TestServlet;
 
 public class _MainForTesting {
 		
@@ -26,6 +30,21 @@ public class _MainForTesting {
     		//do not proceed if shutdown was registered
     		return;
     	}
+    	
+    	CFW.App.setDefaultMenu(TestMenu.class);
+
+        //###################################################################
+        // Create API ServletContext, no login needed
+        //################################################################### 
+    	ServletContextHandler testContext = app.createUnsecureContext("/test");
+    	
+        testContext.addServlet(TestServlet.class, "/general");
+        
+        //###################################################################
+        // Startup
+        //###################################################################
+        app.setDefaultURL("/test/general");
+        app.start();
     }
 }
 

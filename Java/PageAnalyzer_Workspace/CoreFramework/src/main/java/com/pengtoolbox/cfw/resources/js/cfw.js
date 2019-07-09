@@ -16,7 +16,8 @@ var CFW = {
 	},
 	ui: {
 		toc : null,
-		confirmExecute: null
+		confirmExecute: null,
+		toogleLoader: null
 	},
 
 }
@@ -90,6 +91,35 @@ function cfw_table_toc(contentAreaSelector, resultSelector){
 	
 }
 CFW.ui.toc = cfw_table_toc;
+
+/*******************************************************************************
+ * Set if the Loading animation is visible or not.
+ * @param isVisible true or false
+ ******************************************************************************/
+function cfw_toogleLoader(isVisible){
+	
+	var loader = $("#cfw-loader");
+	if(loader.length == 0){
+		loader = $('<div id="cfw-loader">'
+				+'<i class="fa fa-cog fa-spin fa-3x fa-fw margin-bottom"></i>'
+				+'<p>Loading...</p>'
+			+'</div>');	
+		
+		loader.css("position","absolute");
+		loader.css("top","50%");
+		loader.css("left","50%");
+		loader.css("transform","translateX(-50%) translateY(-50%);");
+		loader.css("visibility","hidden");
+		
+		$("body").append(loader);
+	}
+	if(isVisible){
+		loader.css("visibility", "visible");
+	}else{
+		loader.css("visibility", "hidden");
+	}
+}
+CFW.ui.toogleLoader = cfw_toogleLoader;
 
 /**************************************************************************************
  * Create a confirmation modal panel that executes the function passed by the argument

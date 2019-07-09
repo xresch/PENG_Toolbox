@@ -1,5 +1,6 @@
 package com.pengtoolbox.cfw._main;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -95,6 +96,9 @@ public class CFWContextRequest {
 	}
 	
 	public static Collection<AlertMessage> getMessages() {
+		if(messageArray.get() == null) {
+			return new ArrayList<AlertMessage>();
+		}
 		return messageArray.get().values();
 	}
 	

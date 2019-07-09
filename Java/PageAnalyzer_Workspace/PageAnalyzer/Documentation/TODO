@@ -1,9 +1,7 @@
 TODO
 ====
+- Support Info: Use default Modal, make exceptions unique.
 
-- implement delete properly
-- implement isRenamable check
-- implement isDeletable check
 - Check if url exists and prompt for compare
 - Add modal panel for comparing rules.
 - SPNEGO/Kerberos Authentication
@@ -11,6 +9,9 @@ TODO
 
 DONE
 ====
+- implement delete properly
+- implement isRenamable check
+- implement isDeletable check
 - Make Alerts Unique
 - Fix gantt chart
 - add confirmation dialog to delete button

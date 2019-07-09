@@ -1,5 +1,40 @@
-
-
+/*************************************************************************
+ * 
+ * @author Reto Scheiwiller, 2019
+ * 
+ * Distributed under the MIT license
+ *************************************************************************/
+ 
+ /*************************************************************************
+ * Bootstrap overwrite
+ *************************************************************************/
 .alert {
     margin-bottom: 0px;
+}
+
+
+ /*************************************************************************
+ * Default Layout
+ *************************************************************************/
+#pa-content {
+	min-height: 90%;
+}
+
+#pa-footer {
+	padding: 20px;
+	min-height: 10%;
+	background-color: black;
+}
+
+#pa-footer a {
+	padding: 5px;
+	color: #ccc;
+}
+
+#loading{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	visibility: hidden;
 }
