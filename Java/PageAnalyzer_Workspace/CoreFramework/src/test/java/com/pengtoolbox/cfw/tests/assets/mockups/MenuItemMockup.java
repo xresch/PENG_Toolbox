@@ -7,8 +7,10 @@ public class MenuItemMockup extends MenuItem {
 	public MenuItemMockup(String label) {
 		super(label);
 		
-		MenuItem subDropdown = new MenuItem("Sub Dropdown").cssClass("dropdownClass");
-		subDropdown.addChild(new MenuItem("Sub Subitem 1"))
+		MenuItem subDropdown = new MenuItem("Sub Dropdown");
+		
+		subDropdown.cssClass("dropdownClass")
+				   .addChild(new MenuItem("Sub Subitem 1"))
 				   .addChild(new MenuItem("Sub Subitem 2"));
 		
 		this.addChild(new MenuItem("href Subitem").href("./test/servlet"))

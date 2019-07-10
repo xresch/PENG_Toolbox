@@ -4,7 +4,7 @@ package com.pengtoolbox.cfw.tests.web;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
-import com.pengtoolbox.cfw.response.bootstrap.BootstrapMenu;
+import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 import com.pengtoolbox.cfw.tests.assets.mockups.MenuItemMockup;
 
@@ -13,7 +13,7 @@ public class MenuTests {
 	@Test
 	public void testBootstrapMenu() {
 		
-		BootstrapMenu menu = new BootstrapMenu().setLabel("TEST MENU");
+		BTMenu menu = new BTMenu().setLabel("TEST MENU");
 		
 		menu.addChild(new MenuItemMockup("Mockup Menu A"))
 			.addChild(new MenuItemMockup("Mockup Menu B"))

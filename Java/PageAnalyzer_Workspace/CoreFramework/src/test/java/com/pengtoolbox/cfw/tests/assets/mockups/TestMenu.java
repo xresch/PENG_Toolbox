@@ -1,9 +1,9 @@
 package com.pengtoolbox.cfw.tests.assets.mockups;
 
-import com.pengtoolbox.cfw.response.bootstrap.BootstrapMenu;
+import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 
-public class TestMenu extends BootstrapMenu {
+public class TestMenu extends BTMenu {
 	
 	public TestMenu() {
 		this.setLabel("TEST MENU");

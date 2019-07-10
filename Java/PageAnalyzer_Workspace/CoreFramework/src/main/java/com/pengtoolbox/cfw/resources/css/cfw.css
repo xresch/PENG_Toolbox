@@ -17,7 +17,6 @@
 	max-height: 80%; 
 }
 
-
  /*************************************************************************
  * Default Layout
  *************************************************************************/
@@ -25,14 +24,17 @@
 	min-height: 90%;
 }
 
-#pa-footer {
+#cfw-footer {
 	padding: 20px;
 	min-height: 10%;
+	max-height: 200px;
 	background-color: black;
 }
 
-#pa-footer a {
+#cfw-footer a {
 	padding: 5px;
+	margin-left: 20px;
+	margin-right: 20px;
 	color: #ccc;
 }
 
@@ -43,3 +45,43 @@
 	transform: translateX(-50%) translateY(-50%);
 	visibility: hidden;
 }
+
+/*************************************************************************
+ * Flex Classes
+ *************************************************************************/
+
+.flex-row{ display: flex; }
+.flex-column{ display: flex; flex-direction: column;}
+
+.flex-wrap{ flex-wrap: wrap; }
+.flex-nowrap{ flex-wrap: nowrap; }
+
+.flex-align-stretch{align-items: stretch;}
+.flex-align-center{align-items: center;}
+
+.flex-justify-center{justify-content: center;}
+.flex-justify-evenly{justify-content: space-evenly;}
+
+.flex-default{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+}
+
+
+.flex-item-grow{
+	flex-grow: 1;
+	margin: 5px;
+}
+
+/*use a div with background-image attribute*/
+.flex-image{
+	min-width: 200px;
+	max-width: 500px;
+	min-height: 200px;
+	background-size: cover; 
+	background-position: center; 
+}
+

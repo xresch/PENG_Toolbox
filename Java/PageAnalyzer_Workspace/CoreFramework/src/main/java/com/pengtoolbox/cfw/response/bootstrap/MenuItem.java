@@ -8,9 +8,6 @@ package com.pengtoolbox.cfw.response.bootstrap;
 public class MenuItem extends HierarchicalHTMLItem {
 	
 	private String label = "&nbsp;";
-	private String href = "#";
-	private String cssClass = "";
-	private String onclick = null;
 	
 	public MenuItem(String label) {
 		this.label = label;
@@ -22,17 +19,15 @@ public class MenuItem extends HierarchicalHTMLItem {
 	 ***********************************************************************************/
 	public void createHTML(StringBuilder html) {
 		
+		String cssClass = this.popAttributeValue("class");
+		
 		if(!this.hasChildren() && !this.hasOneTimeChildren()) {
-			String hrefString = (href == null) ? "" : "href=\""+href+"\"";
-			String onclickString = (onclick == null) ? "" : "onclick=\""+onclick+"\"";
 			html.append("\n<li class=\"nav-item "+cssClass+"\">");
-			html.append("<a "+hrefString+" "+onclickString+">"+label+"</a></li>");   
+			html.append("<a "+this.getAttributesString()+">"+label+"</a></li>");   
 		}else {
 			
-			String hrefString = (href == null) ? "" : "href=\""+href+"\"";
-			String onclickString = (onclick == null) ? "" : "onclick=\""+onclick+"\"";
 			html.append("\n<li class=\"dropdown "+cssClass+"\">");
-			html.append("\n<a "+hrefString+" "+onclickString+" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">"+label+"<span class=\"caret\"></span></a>");   
+			html.append("\n<a "+this.getAttributesString()+" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">"+label+"<span class=\"caret\"></span></a>");   
 			html.append("\n<ul class=\"dropdown-menu\">");
 			
 			for(HierarchicalHTMLItem child : children) {
@@ -56,51 +51,16 @@ public class MenuItem extends HierarchicalHTMLItem {
 		return label;
 	}
 
-
-	
 	public MenuItem setLabel(String label) {
 		fireChange();
 		this.label = label;
 		return this;
 	}
-
-	public String getHref() {
-		return href;
+	
+	public HierarchicalHTMLItem href(String href) {
+		return addAttribute("href", href);
 	}
 
-	public MenuItem href(String href) {
-		fireChange();
-		this.href = href;
-		return this;
-	}
-
-	/***********************************************************************************
-	 * Get the CSS Class attribute.
-	 * @return String 
-	 ***********************************************************************************/
-	public String getCSSClass() {
-		return cssClass;
-	}
-
-	/***********************************************************************************
-	 * Set the CSS Class attribute.
-	 * @param cssClass the css classes you want to set on this item.
-	 ***********************************************************************************/
-	public MenuItem cssClass(String cssClass) {
-		fireChange();
-		this.cssClass = cssClass;
-		return this;
-	}
-
-	public String getOnclick() {
-		return onclick;
-	}
-
-	public MenuItem onclick(String onclick) {
-		fireChange();
-		this.onclick = onclick;
-		return this;
-	}
 
 
 	

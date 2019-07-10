@@ -5,7 +5,8 @@ import java.util.HashMap;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
-import com.pengtoolbox.cfw.response.bootstrap.BootstrapMenu;
+import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
+import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 
 public class SessionData {
 	
@@ -13,21 +14,26 @@ public class SessionData {
 	private User user = null;
 	private HashMap<String, Group> userGroups = new HashMap<String, Group>();
 	private HashMap<String, Permission> userPermissions = new HashMap<String, Permission>();
-	private BootstrapMenu menu;
-
+	private BTMenu menu;
+	private BTFooter footer;
 	
 	public SessionData() {
 		menu = CFW.App.createDefaultMenuInstance();
+		footer = CFW.App.createDefaultFooterInstance();
 	}
 	
 	public void triggerLogin() {
 		menu = CFW.App.createDefaultMenuInstance();
 		menu.setUserMenuItem(CFW.App.createUserMenuItemInstance(this));
+		footer = CFW.App.createDefaultFooterInstance();
+		
 		isLoggedIn = true;
 	}
 	
 	public void triggerLogout() {
-		menu.setUserMenuItem(null);
+		menu = CFW.App.createDefaultMenuInstance();
+		footer = CFW.App.createDefaultFooterInstance();
+		
 		user = null;
 		isLoggedIn = false;
 	}
@@ -58,8 +64,12 @@ public class SessionData {
 		return userPermissions;
 	}
 
-	public BootstrapMenu getMenu() {
+	public BTMenu getMenu() {
 		return menu;
+	}
+	
+	public BTFooter getFooter() {
+		return footer;
 	}
 	
 	

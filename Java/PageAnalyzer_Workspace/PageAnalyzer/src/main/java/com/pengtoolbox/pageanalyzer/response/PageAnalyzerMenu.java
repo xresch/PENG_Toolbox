@@ -1,11 +1,11 @@
 package com.pengtoolbox.pageanalyzer.response;
 
-import com.pengtoolbox.cfw.response.bootstrap.BootstrapMenu;
+import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 
 
 
-public class PageAnalyzerMenu extends BootstrapMenu {
+public class PageAnalyzerMenu extends BTMenu {
 
 	public PageAnalyzerMenu() {
 		

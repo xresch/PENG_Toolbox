@@ -31,7 +31,8 @@ import com.pengtoolbox.cfw.cli.ArgumentsException;
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.bootstrap.BootstrapMenu;
+import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
+import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.response.bootstrap.UserMenuItem;
 import com.pengtoolbox.cfw.servlets.AssemblyServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
@@ -48,20 +49,20 @@ public class CFWApp {
 	
 	private static Class<?> defaultMenuClass = null;
 	private static Class<?> defaultUserMenuItemClass = null;
+	private static Class<?> defaultFooterClass = null;
 	
-
 	private static DefaultSessionIdManager idmanager;
 	
 	/***********************************************************************
 	 * Set the class to be used as the default menu for your application.
-	 * @param Class that extends from BootstrapMenu
+	 * @param Class that extends from BTMenu
 	 ***********************************************************************/
 	public static void setDefaultMenu(Class<?> menuClass)  {
 		
-		if(BootstrapMenu.class.isAssignableFrom(menuClass)) {
+		if(BTMenu.class.isAssignableFrom(menuClass)) {
 			defaultMenuClass = menuClass;
 		}else {
-			new CFWLog(logger).severe("Class is not a subclass of 'BootstrapMenu': "+menuClass.getName());
+			new CFWLog(logger).severe("Class is not a subclass of 'BTMenu': "+menuClass.getName());
 		}
 	}
 		
@@ -69,14 +70,14 @@ public class CFWApp {
 	 * Create a instance of the menu.
 	 * @return a Bootstrap Menu instance
 	 ***********************************************************************/
-	public static BootstrapMenu createDefaultMenuInstance()  {
+	public static BTMenu createDefaultMenuInstance()  {
 		
 		if(defaultMenuClass != null) {
 			try {
 				Object menu = defaultMenuClass.newInstance();
 				
-				if(menu instanceof BootstrapMenu) {
-					return (BootstrapMenu)menu;
+				if(menu instanceof BTMenu) {
+					return (BTMenu)menu;
 				}else {
 					throw new InstantiationException("Class not an instance of BootstrapMenu");
 				}
@@ -85,7 +86,7 @@ public class CFWApp {
 			}
 		}
 		
-		return new BootstrapMenu().setLabel("Set your custom menu class(extending BootstrapMenu) using CFW.App.setDefaultMenu()! ");
+		return new BTMenu().setLabel("Set your custom menu class(extending BootstrapMenu) using CFW.App.setDefaultMenu()! ");
 	}
 	
 	/***********************************************************************
@@ -123,6 +124,43 @@ public class CFWApp {
 		}
 		
 		return null;
+	}
+	
+	/***********************************************************************
+	 * Set the class to be used as the default footer for your application.
+	 * @param Class that extends from BTFooter
+	 ***********************************************************************/
+	public static void setDefaultFooter(Class<?> menuClass)  {
+		
+		if(BTFooter.class.isAssignableFrom(menuClass)) {
+			defaultFooterClass = menuClass;
+		}else {
+			new CFWLog(logger).severe("Class is not a subclass of 'BTFooter': "+menuClass.getName());
+		}
+	}
+	
+	
+	/***********************************************************************
+	 * Create a instance of the footer.
+	 * @return a Bootstrap Menu instance
+	 ***********************************************************************/
+	public static BTFooter createDefaultFooterInstance()  {
+		
+		if(defaultFooterClass != null) {
+			try {
+				Object menu = defaultFooterClass.newInstance();
+				
+				if(menu instanceof BTFooter) {
+					return (BTFooter)menu;
+				}else {
+					throw new InstantiationException("Class not an instance of BTFooter");
+				}
+			} catch (Exception e) {
+				new CFWLog(logger).severe("Issue creating instance for Class '"+defaultFooterClass.getSimpleName()+"': "+e.getMessage(), e);
+			}
+		}
+		
+		return new BTFooter().setLabel("Set your custom menu class(extending BTFooter) using CFW.App.setDefaultFooter()! ");
 	}
 	
 	/***********************************************************************

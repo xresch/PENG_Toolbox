@@ -5,12 +5,12 @@ package com.pengtoolbox.cfw.response.bootstrap;
  * @author Reto Scheiwiller
  * 
  **********************************************************************************/
-public class BootstrapMenu extends HierarchicalHTMLItem {
+public class BTMenu extends HierarchicalHTMLItem {
 	
 	private String label = "&nbsp;";
 	private UserMenuItem userMenuItem = null;
 	
-	public BootstrapMenu() {
+	public BTMenu() {
 	}
 	
 	/***********************************************************************************
@@ -64,7 +64,7 @@ public class BootstrapMenu extends HierarchicalHTMLItem {
 		return label;
 	}
 
-	public BootstrapMenu setLabel(String label) {
+	public BTMenu setLabel(String label) {
 		fireChange();
 		this.label = label;
 		return this;
@@ -74,7 +74,7 @@ public class BootstrapMenu extends HierarchicalHTMLItem {
 		return userMenuItem;
 	}
 
-	public BootstrapMenu setUserMenuItem(UserMenuItem userMenuItem) {
+	public BTMenu setUserMenuItem(UserMenuItem userMenuItem) {
 		fireChange();
 		this.userMenuItem = userMenuItem;
 		return this;

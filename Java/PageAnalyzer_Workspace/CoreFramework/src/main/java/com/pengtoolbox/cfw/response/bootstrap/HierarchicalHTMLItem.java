@@ -1,6 +1,8 @@
 package com.pengtoolbox.cfw.response.bootstrap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 
 public abstract class HierarchicalHTMLItem {
@@ -9,6 +11,8 @@ public abstract class HierarchicalHTMLItem {
 	protected ArrayList<HierarchicalHTMLItem> oneTimeChildren = new ArrayList<HierarchicalHTMLItem> ();
 	protected boolean hasChanged = true;
 	protected StringBuilder html = null;
+	
+	protected HashMap<String, String> attributes = new HashMap<String, String>();
 	
 	protected HierarchicalHTMLItem parent = null;
 	
@@ -119,6 +123,82 @@ public abstract class HierarchicalHTMLItem {
 	
 	public boolean hasOneTimeChildren() {
 		return !oneTimeChildren.isEmpty();
+	}
+
+	/***********************************************************************************
+	 * Add an attribute to the html tag.
+	 * Adding a value for the same attribute multiple times will overwrite preceeding values.
+	 * @param name the name of the attribute.
+	 * @param key the key of the attribute.
+	 ***********************************************************************************/
+	public HierarchicalHTMLItem addAttribute(String name, String value) {
+		fireChange();
+		this.attributes.put(name, value);
+		return this;
+	}
+
+	/***********************************************************************************
+	 * Return the attributes.
+	 * @return HashMap of attributes
+	 ***********************************************************************************/
+	public HashMap<String, String> getAttributes() {
+		return attributes;
+	}
+	
+	/***********************************************************************************
+	 * Return the attributes as a String with concatenated key="value" pairs that can
+	 * be inserted into a html tag.
+	 * @return HashMap of attributes
+	 ***********************************************************************************/
+	public String getAttributesString() {
+		StringBuilder builder = new StringBuilder(" ");
+		for(Entry<String, String> entry : attributes.entrySet()) {
+			builder.append(entry.getKey())
+			.append("=\"")
+			.append(entry.getValue())
+			.append("\" ");
+		}
+		return builder.toString();
+	}
+	
+	/***********************************************************************************
+	 * Get the value of the attribute.
+	 * @return String with the value, empty string if not defined.
+	 ***********************************************************************************/
+	public String getAttributeValue(String value) {
+		
+		String returnValue = "";
+		if(attributes.containsKey(value)) {
+			returnValue = attributes.get(value);
+		}
+		
+		return returnValue;
+	}
+	
+	/***********************************************************************************
+	 * Get the value of the attribute and removes it from the attribute list.
+	 * @return String with the value, empty string if not defined.
+	 ***********************************************************************************/
+	public String popAttributeValue(String value) {
+		
+		String returnValue = "";
+		if(attributes.containsKey(value)) {
+			returnValue = attributes.remove(value);
+		}
+		
+		return returnValue;
+	}
+	
+	/***********************************************************************************
+	 * Set the CSS Class attribute.
+	 * @param cssClass the css classes you want to set on this item.
+	 ***********************************************************************************/
+	public HierarchicalHTMLItem cssClass(String cssClass) {
+		return addAttribute("class", cssClass);
+	}
+
+	public HierarchicalHTMLItem onclick(String onclick) {
+		return addAttribute("onclick", onclick);
 	}
 	
 }

@@ -1,6 +1,7 @@
 ########################################
 # Page Analyzer in progress
 ########################################
+- fixed gantt chart breaking because of wrong percentage calculation
 
 ########################################
 # Page Analyzer v 1.6

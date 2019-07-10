@@ -9,7 +9,8 @@ import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
-import com.pengtoolbox.cfw.response.bootstrap.BootstrapMenu;
+import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
+import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 
 public class TemplateHTMLDefault extends AbstractHTMLResponse {
@@ -63,22 +64,11 @@ public class TemplateHTMLDefault extends AbstractHTMLResponse {
 				
 				this.appendSectionTitle(buildedPage, "Menubar");
 				buildedPage.append("");
-				SessionData data = CFW.Context.Request.getSessionData();
-				BootstrapMenu menu = data.getMenu();
+				SessionData sessionData = CFW.Context.Request.getSessionData();
+				BTMenu menu = sessionData.getMenu();
 				if(menu != null) {
 					buildedPage.append(menu.getHTML());
 				}
-//				this.appendSectionTitle(buildedPage, "Menubar");
-//				buildedPage.append("");
-//				buildedPage.append(this.menu);
-//				
-//				String menuTemplate = CFW.Files.getFileContent(request,CFW.PATH_TEMPLATE_MENU);
-//				if(menuTemplate != null){
-//					String customMenuInserted = menuTemplate.replace("{!customMenu!}", this.menu);	
-//					buildedPage.append(customMenuInserted);
-//				}else{
-//					buildedPage.append("<!-- FAILED TO LOAD MENU! -->");
-//				}
 				
 				//--------------------------
 				// Messages
@@ -105,13 +95,18 @@ public class TemplateHTMLDefault extends AbstractHTMLResponse {
 				// Footer
 				this.appendSectionTitle(buildedPage, "Footer");
 
-				String footerTemplate = CFWFiles.getFileContent(request,CFW.PATH_TEMPLATE_FOOTER);
-				if(footerTemplate != null){
-					String customFooterInserted = footerTemplate.replace("{!customFooter!}", this.footer);	
-					buildedPage.append(customFooterInserted);
-				}else{
-					buildedPage.append("<!-- FAILED TO LOAD FOOTER! -->");
+				BTFooter footer = sessionData.getFooter();
+				if(footer != null) {
+					buildedPage.append(footer.getHTML());
 				}
+				
+//				String footerTemplate = CFWFiles.getFileContent(request,CFW.PATH_TEMPLATE_FOOTER);
+//				if(footerTemplate != null){
+//					String customFooterInserted = footerTemplate.replace("{!customFooter!}", this.footer);	
+//					buildedPage.append(customFooterInserted);
+//				}else{
+//					buildedPage.append("<!-- FAILED TO LOAD FOOTER! -->");
+//				}
 
 				//--------------------------
 				// Javascript

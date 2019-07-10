@@ -12,6 +12,7 @@ import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
+import com.pengtoolbox.pageanalyzer.response.PageAnalyzerFooter;
 import com.pengtoolbox.pageanalyzer.response.PageAnalyzerMenu;
 import com.pengtoolbox.pageanalyzer.response.PageAnalyzerUserMenuItem;
 import com.pengtoolbox.pageanalyzer.servlets.AnalyzeURLServlet;
@@ -56,6 +57,7 @@ public class Main extends Application {
         
     	CFW.App.setDefaultMenu(PageAnalyzerMenu.class);
     	CFW.App.setDefaultUserMenuItem(PageAnalyzerUserMenuItem.class);
+    	CFW.App.setDefaultFooter(PageAnalyzerFooter.class);
 		//------------------------------------
 		// Initialize YSlow Singleton
 		// prevents error on first analysis request.
