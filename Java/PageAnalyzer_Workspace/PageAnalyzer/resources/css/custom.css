@@ -23,31 +23,8 @@ h4 {
 	border-bottom: 1px solid black;
 }
 
-#messages {
-	padding-top: 60px;
-}
-#pa-content {
-	min-height: 90%;
-}
 
-#pa-footer {
-	padding: 20px;
-	min-height: 10%;
-	background-color: black;
-}
 
-#pa-footer a {
-	padding: 5px;
-	color: #ccc;
-}
-
-#loading{
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translateX(-50%) translateY(-50%);
-	visibility: hidden;
-}
 
 /*************************************************************************
  * Gantt Chart

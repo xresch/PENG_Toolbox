@@ -20,7 +20,11 @@
  /*************************************************************************
  * Default Layout
  *************************************************************************/
-#pa-content {
+#cfw-messages {
+	padding-top: 50px;
+}
+
+#cfw-content {
 	min-height: 90%;
 }
 
@@ -38,6 +42,12 @@
 	color: #ccc;
 }
 
+#cfw-login {
+    margin: auto;
+    max-width: 400px;
+    min-width: 300px;
+    padding-top: 100px;
+}
 #loading{
 	position: absolute;
 	top: 50%;

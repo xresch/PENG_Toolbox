@@ -73,7 +73,7 @@ public class TemplateHTMLDefault extends AbstractHTMLResponse {
 				//--------------------------
 				// Messages
 				this.appendSectionTitle(buildedPage, "Messages");
-				buildedPage.append("<div id=\"messages\">");
+				buildedPage.append("<div id=\"cfw-messages\">");
 					
 				Collection<AlertMessage> messageArray = CFW.Context.Request.getMessages();
 					if(messageArray != null) {
@@ -87,8 +87,10 @@ public class TemplateHTMLDefault extends AbstractHTMLResponse {
 				//--------------------------
 				// Content
 				this.appendSectionTitle(buildedPage, "Content");
-				buildedPage.append("<div id=\"pa-content\" class=\"container\">");
-				buildedPage.append(this.content);
+				buildedPage.append("<div id=\"cfw-content\"> ");
+					buildedPage.append("<div id=\"cfw-container\" class=\"container\">");
+						buildedPage.append(this.content);
+					buildedPage.append("</div>");
 				buildedPage.append("</div>");
 				
 				//--------------------------

@@ -1,13 +1,11 @@
 TODO
 ====
 - Support Info: Use default Modal, make exceptions unique.
-
 - Default Error page
 
 - Check if url exists and prompt for compare
 - Add modal panel for comparing rules.
 - SPNEGO/Kerberos Authentication
-
 
 DONE
 ====
