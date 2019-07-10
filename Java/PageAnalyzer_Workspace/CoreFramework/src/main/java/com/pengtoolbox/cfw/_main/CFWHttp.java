@@ -30,6 +30,14 @@ public class CFWHttp {
 	}
 	
 	/******************************************************************************************************
+	 * Redirects to the specified url.
+	 * @throws IOException 
+	 ******************************************************************************************************/
+	public static void redirectToURL(HttpServletResponse response, String url ) throws IOException {
+		response.sendRedirect(response.encodeRedirectURL(url));
+	}
+	
+	/******************************************************************************************************
 	 * Send a HTTP GET request and returns the result as a String.
 	 * @param url used for the request.
 	 * @return String response

@@ -1,9 +1,8 @@
 TODO
 ====
 - Support Info: Use default Modal, make exceptions unique.
-- Forward login url
+
 - Default Error page
-- Create Footer
 
 - Check if url exists and prompt for compare
 - Add modal panel for comparing rules.
@@ -12,6 +11,8 @@ TODO
 
 DONE
 ====
+- Forward login url
+- Create Footer
 - implement delete properly
 - implement isRenamable check
 - implement isDeletable check

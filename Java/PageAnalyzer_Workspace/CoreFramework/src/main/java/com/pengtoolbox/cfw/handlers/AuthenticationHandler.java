@@ -1,6 +1,8 @@
 package com.pengtoolbox.cfw.handlers;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -48,7 +50,7 @@ public class AuthenticationHandler extends HandlerWrapper
         		   || request.getRequestURI().toString().contains("/login;jsessionid")) {
         			this._handler.handle(target, baseRequest, request, response);
         		}else {
-        			response.sendRedirect(response.encodeRedirectURL("./login"));
+        			CFW.HTTP.redirectToURL(response, "./login?url="+URLEncoder.encode(request.getRequestURI()) );
         		}
         	}
 	
