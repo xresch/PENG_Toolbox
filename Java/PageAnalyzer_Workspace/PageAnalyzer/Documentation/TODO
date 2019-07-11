@@ -1,7 +1,10 @@
 TODO
 ====
 - Support Info: Use default Modal, make exceptions unique.
-- Default Error page
+- Custom Error page CFW.App.createErrorHandler();
+- Check is user active
+- Add status table for user active
+- Add password policy
 
 - Check if url exists and prompt for compare
 - Add modal panel for comparing rules.
@@ -9,6 +12,7 @@ TODO
 
 DONE
 ====
+- user exists compare lowercase.
 - Forward login url
 - Create Footer
 - implement delete properly

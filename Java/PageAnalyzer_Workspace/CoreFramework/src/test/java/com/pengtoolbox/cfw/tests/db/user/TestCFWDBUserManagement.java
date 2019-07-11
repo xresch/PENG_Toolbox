@@ -135,8 +135,8 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 	@Test
 	public void testCRUDUser() {
 		
-		String username = "t.testonia";
-		String usernameUpdated = "t.testonia2";
+		String username = "T.Testonia";
+		String usernameUpdated = "T.Testonia2";
 		
 		//--------------------------------------
 		// Cleanup
@@ -170,6 +170,11 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(username), "User created successfully, checkUsernameExists(string) works.");
 		
 		//--------------------------------------
+		// USERNAME IS CASE INSENSITIVE
+		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(username.toUpperCase()), "User is found uppercase letters.");
+		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(username.toLowerCase()), "User is found lowercase letters.");
+		
+		//--------------------------------------
 		// SELECT BY USERNAME
 		User user = CFW.DB.Users.selectByUsernameOrMail(username);
 		
@@ -187,6 +192,11 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		Assertions.assertTrue(user.isDeletable() == false);
 		Assertions.assertTrue(user.isRenamable() == false);
 		Assertions.assertTrue(user.isForeign() == true);
+		
+		//--------------------------------------
+		// SELECT BY USERNAME CASE INSENSITIVE
+		Assertions.assertNotNull(CFW.DB.Users.selectByUsernameOrMail(username.toLowerCase()),"User is selected with lowercase letters.");
+		Assertions.assertNotNull(CFW.DB.Users.selectByUsernameOrMail(user.email().toUpperCase()),"User is selected with uppercase letters.");
 		
 		//--------------------------------------
 		// CHECK NOT DELETABLE
@@ -236,9 +246,10 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 
 		
 		//--------------------------------------
-		// SELECT BY Mail
+		// CHECH EMAIL METHODS
 		Assertions.assertTrue(CFW.DB.Users.checkEmailExists(updatedUser), "Email exists, checkEmailExists(User) works.");
 		Assertions.assertTrue(CFW.DB.Users.checkEmailExists("t.testonia2@cfw.com"), "Email exists, checkEmailExists(String) works.");
+		Assertions.assertTrue(CFW.DB.Users.checkEmailExists("t.testonia2@cfw.com".toUpperCase()), "Email case insensitive works. ");
 		
 		User userbyMail = CFW.DB.Users.selectByUsernameOrMail("t.testonia2@cfw.com");
 		

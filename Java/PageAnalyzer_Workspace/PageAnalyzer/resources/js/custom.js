@@ -1037,7 +1037,6 @@ function resultSelectionChanged(){
 	}else{
 		$("#resultDeleteButton").attr("disabled", true);
 	}
-	
 }
 
 /**************************************************************************************

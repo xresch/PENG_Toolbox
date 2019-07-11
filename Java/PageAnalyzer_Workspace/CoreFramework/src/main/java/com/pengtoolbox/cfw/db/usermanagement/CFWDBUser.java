@@ -176,8 +176,8 @@ public class CFWDBUser {
 				  + UserDBFields.IS_FOREIGN 
 				+" FROM "+TABLE_NAME
 				+" WHERE "
-					+ UserDBFields.USERNAME+" = ? OR "
-					+ UserDBFields.EMAIL	+ " = ?";
+					+ "LOWER(" + UserDBFields.USERNAME+") = LOWER(?) OR "
+					+ "LOWER(" +UserDBFields.EMAIL	+ ") = LOWER(?)";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectByUsernameOrMail, usernameOrMail, usernameOrMail);
 		
@@ -388,7 +388,7 @@ public class CFWDBUser {
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkUsernameExists(String username) {
-		String checkUserExistsSQL = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE "+UserDBFields.USERNAME+" = ?";
+		String checkUserExistsSQL = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE LOWER("+UserDBFields.USERNAME+") = LOWER(?)";
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkUserExistsSQL, username);
 		
 		try {
@@ -429,7 +429,7 @@ public class CFWDBUser {
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkEmailExists(String email) {
-		String checkEmailExists = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE "+UserDBFields.EMAIL+" = ?";
+		String checkEmailExists = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE LOWER("+UserDBFields.EMAIL+") = LOWER(?)";
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkEmailExists, email);
 		
 		try {

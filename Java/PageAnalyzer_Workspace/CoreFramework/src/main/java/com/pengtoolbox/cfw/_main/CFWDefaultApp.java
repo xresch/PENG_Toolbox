@@ -13,9 +13,11 @@ import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.ShutdownHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
+import org.eclipse.jetty.servlet.ErrorPageErrorHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 
@@ -41,7 +43,7 @@ public class CFWDefaultApp {
 	
 	public static WebAppContext applicationContext;
 	
-	public CFWDefaultApp(String[] args) throws IOException, ShutdownException, ArgumentsException {
+	public CFWDefaultApp(String[] args) throws Exception {
 		
         //###################################################################
         // Initialize
@@ -74,6 +76,7 @@ public class CFWDefaultApp {
         applicationContext.setContextPath("/");
         applicationContext.setServer(server);
         applicationContext.setSessionHandler(CFW.App.createSessionHandler());
+        applicationContext.setErrorHandler(CFW.App.createErrorHandler());
     	//---------------------------------------
     	// Database    	
     	CFW.DB.initialize();

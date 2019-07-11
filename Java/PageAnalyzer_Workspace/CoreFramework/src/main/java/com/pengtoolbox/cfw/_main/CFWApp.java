@@ -16,6 +16,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
@@ -167,11 +168,9 @@ public class CFWApp {
 	 * Create an instance of the CFWDefaultApp.
 	 * @param args command line arguments
 	 * @return CFWDefaultApp instance
-	 * @throws ShutdownException 
-	 * @throws IOException 
-	 * @throws ArgumentsException 
+	 * @throws Exception 
 	 ***********************************************************************/
-	public static CFWDefaultApp createApp(String[] args) throws IOException, ShutdownException, ArgumentsException {
+	public static CFWDefaultApp createApp(String[] args) throws Exception {
 		return new CFWDefaultApp(args);
 	}
 	
@@ -328,6 +327,20 @@ public class CFWApp {
         sessionHandler.setSessionCache(cache);
 
 	    return sessionHandler;
+	}
+	
+	/**************************************************************************************************
+	 * Create an error handler.
+	 * @throws Exception
+	 **************************************************************************************************/
+	public static ErrorHandler createErrorHandler() throws Exception {
+//	    ErrorPageErrorHandler errorHandler = new ErrorPageErrorHandler();
+//	    errorHandler.addErrorPage(404, "/missing.html");
+//	    context.setErrorHandler(errorHandler);
+	    
+		// Extend ErrorHandler and overwrite methods to create custom error page
+	    ErrorHandler handler = new ErrorHandler();
+	    return handler;
 	}
 
 }
