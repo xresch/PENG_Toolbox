@@ -108,7 +108,7 @@ function fetchData(args){
 				case "yslowresult": 	YSLOW_RESULT = data;
 										prepareYSlowResults(YSLOW_RESULT);
 										RULES = CFW.array.sortArrayByValueOfObject(RULES, "score");
-										$(".result-view-tabs").css("visibility", "visible");
+										$(".result-view-tabs").css("display", "block");
 										draw(args);
 										break;
 										

@@ -3,13 +3,14 @@ package com.pengtoolbox.cfw.caching;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import com.pengtoolbox.cfw._main.CFW;
 
 public class FileAssembly {
 	
 	/** Static field to store the assembled results by their file names. */
-	private static final HashMap<String,FileAssembly> assemblyCache = new HashMap<String, FileAssembly>();
+	private static final LinkedHashMap<String,FileAssembly> assemblyCache = new LinkedHashMap<String, FileAssembly>();
 	
 	private ArrayList<FileDefinition> fileArray = new ArrayList<FileDefinition>();
 	

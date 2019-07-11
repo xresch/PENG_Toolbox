@@ -5,8 +5,8 @@
  * Distributed under the MIT license
  *************************************************************************/
 
-.result-view-tabs{
-	visibility: hidden;
+.nav>li.result-view-tabs{
+	display: none;
 }
 
 code {

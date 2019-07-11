@@ -23,19 +23,19 @@ public class SessionData {
 	}
 	
 	public void triggerLogin() {
+		isLoggedIn = true;
+		
 		menu = CFW.App.createDefaultMenuInstance();
 		menu.setUserMenuItem(CFW.App.createUserMenuItemInstance(this));
 		footer = CFW.App.createDefaultFooterInstance();
-		
-		isLoggedIn = true;
 	}
 	
 	public void triggerLogout() {
+		isLoggedIn = false;
+		
 		menu = CFW.App.createDefaultMenuInstance();
 		footer = CFW.App.createDefaultFooterInstance();
-		
 		user = null;
-		isLoggedIn = false;
 	}
 	
 	public boolean isLoggedIn() {
