@@ -369,13 +369,15 @@ function filterTable(searchField){
 	var input = searchField;
 	
 	filter = input.value.toUpperCase();
-	
-	table.find("tbody tr").each(function( index ) {
+
+	table.find("tbody tr, >tr").each(function( index ) {
 		  //console.log( index + ": " + $(this).text() );
 		  
 		  if ($(this).html().toUpperCase().indexOf(filter) > -1) {
+			  console.log("HIDE");
 			  $(this).css("display", "");
 		  } else {
+			  console.log("SHOW");
 			  $(this).css("display", "none");
 			}
 	});
@@ -511,8 +513,8 @@ function createAnalyzeDropdown(parent, data, type){
 	//------------------------------------
 	// Create Dropdown
 	dropdownID = type+"Dropdown";
-	var dropdownHTML = '<div class="dropdown" style="display: inline; margin-right: 10px;" >' +
-		'<button class="btn btn-primary dropdown-toggle" type="button" id="'+dropdownID+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
+	var dropdownHTML = '<div class="dropdown" style="display: inline;" >' +
+		'<button class="btn btn-info dropdown-toggle" style="margin: 5px;" type="button" id="'+dropdownID+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
 	    'Analyze '+type+' <span class="caret"></span>' +
 		'</button>' +
 		'<ul class="dropdown-menu" aria-labelledby="'+dropdownID+'">';
@@ -521,7 +523,7 @@ function createAnalyzeDropdown(parent, data, type){
 		nameArray = Object.keys(distinctNames);
 		//console.log(nameArray);
 		for(i = 0; i < nameArray.length; i++){
-			dropdownHTML += '<li class="dropdown-item"><a onclick="analyzeCookiesOrHeaders(\''+nameArray[i]+'\', \''+type+'\')">'+nameArray[i]+'</a></li>';
+			dropdownHTML += '<li class="dropdown-item" onclick="analyzeCookiesOrHeaders(\''+nameArray[i]+'\', \''+type+'\')"><a >'+nameArray[i]+'</a></li>';
 		}
 	}
 
@@ -629,7 +631,8 @@ function printGanttChart(parent, data){
 	
 	//----------------------------------
 	// Create Table
-	var table = $('<table class="table table-striped table-responsive table-condensed" style="font-size: smaller;">');
+	var responsiveDiv = $('<div class="table-responsive">');
+	var table = $('<table class="table table-striped table-sm" style="font-size: smaller;">');
 	filter.data("table", table);
 	table.append(headerRowString);
 
@@ -681,12 +684,14 @@ function printGanttChart(parent, data){
 		
 		row.append(rowString);
 		
+		
 		table.append(row);
 	}
 	
 	var legendHTML = createGanttChartLegend();
 	parent.append(legendHTML);
-	parent.append(table);
+	responsiveDiv.append(table);
+	parent.append(responsiveDiv);
 	parent.append(legendHTML);
 	
 }
@@ -731,11 +736,11 @@ function showGanttDetails(element){
 	// Print Tabs
 	//-----------------------------------------
 	htmlString  = '<ul id="tabs" class="nav nav-tabs">';
-	htmlString += '    <li class="active"><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'request\')">Request</a></li>';
-	htmlString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'response\')">Response</a></li>';
-	htmlString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'cookies\')">Cookies</a></li>';
-	htmlString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'headers\')">Headers</a></li>';
-	htmlString += '    <li><a href="#tabs" data-toggle="tab" onclick="updateGanttDetails(\'timings\')">Timings</a></li>';
+	htmlString += '    <li class="nav-item"><a class="nav-link" href="#" onclick="updateGanttDetails(\'request\')">Request</a></li>';
+	htmlString += '    <li class="nav-item"><a class="nav-link" href="#" onclick="updateGanttDetails(\'response\')">Response</a></li>';
+	htmlString += '    <li class="nav-item"><a class="nav-link" href="#" onclick="updateGanttDetails(\'cookies\')">Cookies</a></li>';
+	htmlString += '    <li class="nav-item"><a class="nav-link" href="#" onclick="updateGanttDetails(\'headers\')">Headers</a></li>';
+	htmlString += '    <li class="nav-item"><a class="nav-link" href="#" onclick="updateGanttDetails(\'timings\')">Timings</a></li>';
 	htmlString += '</ul>';
 	
 	htmlString += '<div id="ganttDetails"></div>';
@@ -943,16 +948,14 @@ function printResultList(parent, data){
 		headerRowString += '<th>&nbsp;</th>';
 		headerRowString += '<th>&nbsp;</th>';
 		headerRowString += '<th>&nbsp;</th>';
+		headerRowString += '<th>&nbsp;</th>';
+		headerRowString += '<th>&nbsp;</th>';
 	headerRowString += '</tr></thead>';
 	
 	//----------------------------------
 	// Create Table
-	var table = $('<table class="table table-striped table-responsive">');
-
-	table.append(headerRowString);
-	
-	parent.append(table);
-	filter.data("table", table);
+	var responsiveDiv = $('<div class="table-responsive">');
+	var table = $('<table class="table table-striped table-hover">');
 	
 	//----------------------------------
 	// Create Rows
@@ -966,7 +969,7 @@ function printResultList(parent, data){
 		rowString += '<td>'+currentData.TIME+'</td>';
 		
 		if(data[0] != null && data[0].USER_ID != undefined){
-			headerRowString += rowString += '<td>'+currentData.USER_ID+'</td>';;
+			rowString += '<td>'+currentData.USER_ID+'</td>';;
 		}
 		
 		resultName = (currentData.NAME == "null") ? "" : currentData.NAME;
@@ -1003,15 +1006,18 @@ function printResultList(parent, data){
 		
 		table.append(rowString);
 	}
-	parent.append(table);
+	parent.append(responsiveDiv);
+	responsiveDiv.append(table);
+	table.append(headerRowString);
+	filter.data("table", table);
 	
 	
 	//----------------------------------
 	// Create Button
-	var selectAllButton = $('<a id="selectAllButton" class="btn btn-default" onclick="'+"$('.resultSelectionCheckbox').prop('checked', true);resultSelectionChanged();"+'">Select All</a>');
-	var deselectAllButton = $('<a id="deselectAllButton" class="btn btn-default" onclick="'+"$('.resultSelectionCheckbox').prop('checked', false);resultSelectionChanged();"+'">Deselect All</a>');
-	var compareButton = $('<a id="resultCompareButton" class="btn btn-primary" onclick="compareResults();" disabled="true">Compare</a>');
-	var deleteButton = $('<a id="resultDeleteButton" class="btn btn-danger" disabled="true">Delete</a>');
+	var selectAllButton = $('<button id="selectAllButton" class="btn btn-primary" onclick="'+"$('.resultSelectionCheckbox').prop('checked', true);resultSelectionChanged();"+'">Select All</button>');
+	var deselectAllButton = $('<button id="deselectAllButton" class="btn btn-primary" onclick="'+"$('.resultSelectionCheckbox').prop('checked', false);resultSelectionChanged();"+'">Deselect All</button>');
+	var compareButton = $('<button id="resultCompareButton" class="btn btn-info" onclick="compareResults();" disabled="disabled">Compare</button>');
+	var deleteButton = $('<button id="resultDeleteButton" class="btn btn-danger" disabled="disabled">Delete</button>');
 	deleteButton.attr('onclick', "CFW.ui.confirmExecute('Do you want to delete the selected results?', 'Delete', 'deleteResults(null)')");
 	parent.append(selectAllButton);
 	parent.append(deselectAllButton);
@@ -1026,16 +1032,16 @@ function printResultList(parent, data){
  *************************************************************************************/
 function resultSelectionChanged(){
 		
-	if($(".resultSelectionCheckbox:checked").size() > 1){
+	if($(".resultSelectionCheckbox:checked").length > 1){
 		$("#resultCompareButton").attr("disabled", false);
 	}else{
-		$("#resultCompareButton").attr("disabled", true);
+		$("#resultCompareButton").attr("disabled", "disabled");
 	}
 	
-	if($(".resultSelectionCheckbox:checked").size() > 0){
+	if($(".resultSelectionCheckbox:checked").length > 0){
 		$("#resultDeleteButton").attr("disabled", false);
 	}else{
-		$("#resultDeleteButton").attr("disabled", true);
+		$("#resultDeleteButton").attr("disabled", "disabled");
 	}
 }
 
@@ -1119,20 +1125,30 @@ function createRulePanel(rule){
 	
 	GLOBAL_COUNTER++;
 	
-	
+	var gradeClass = GRADE_CLASS[rule.grade];
 	var panel = $(document.createElement("div"));
-	panel.addClass("panel panel-"+GRADE_CLASS[rule.grade]);
+	panel.addClass("card border-"+gradeClass);
 	
+//	<div class="card">
+//	  <div class="card-header">
+//	    Featured
+//	  </div>
+//	  <div class="card-body">
+//	    <h5 class="card-title">Special title treatment</h5>
+//	    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+//	    <a href="#" class="btn btn-primary">Go somewhere</a>
+//	  </div>
+//	</div>
 	//----------------------------
 	// Create Header
 	var panelHeader = $(document.createElement("div"));
-	panelHeader.addClass("panel-heading");
+	panelHeader.addClass("card-header bg-"+gradeClass);
 	panelHeader.attr("id", "panelHead"+GLOBAL_COUNTER);
-	panelHeader.attr("role", "tab");
+	//panelHeader.attr("role", "tab");
 	panelHeader.append(
-		'<span class="panel-title">'+
+		'<span class="card-title">'+
 		/*style.icon+*/
-		'<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse'+GLOBAL_COUNTER+'" aria-expanded="false" aria-controls="collapse'+GLOBAL_COUNTER+'">'+
+		'<a role="button" data-toggle="collapse" data-target="#collapse'+GLOBAL_COUNTER+'">'+
 		'<strong>Grade '+rule.grade+' ('+rule.score+'%):</strong>&nbsp;'+rule.title+
 		'</a></span>'
 	); 
@@ -1145,9 +1161,9 @@ function createRulePanel(rule){
 	//----------------------------
 	// Create Collapse Container
 	var collapseContainer = $(document.createElement("div"));
-	collapseContainer.addClass("panel-collapse collapse");
+	collapseContainer.addClass("collapse");
 	collapseContainer.attr("id", "collapse"+GLOBAL_COUNTER);
-	collapseContainer.attr("role", "tabpanel");
+	//collapseContainer.attr("role", "tabpanel");
 	collapseContainer.attr("aria-labelledby", "panelHead"+GLOBAL_COUNTER);
 	
 	panel.append(collapseContainer);
@@ -1155,7 +1171,7 @@ function createRulePanel(rule){
 	//----------------------------
 	// Create Body
 	var panelBody = $(document.createElement("div"));
-	panelBody.addClass("panel-body");
+	panelBody.addClass("card-body");
 	collapseContainer.append(panelBody);
 	
 	printRuleDetails(panelBody, rule);
@@ -1325,7 +1341,8 @@ function printTable(parent, data, title){
 	parent.append(filter);
 	parent.append('<span style="font-size: xx-small;"><strong>Hint:</strong> The filter searches through the innerHTML of the table rows. Use &quot;&gt;&quot; and &quot;&lt;&quot; to search for the beginning and end of a cell content(e.g. &quot;&gt;Test&lt;&quot; )</span>');
 	
-	var table = $('<table class="table table-striped table-responsive">');
+	var responsiveDiv = $('<div class="table-responsive">');
+	var table = $('<table class="table table-striped">');
 	var header = $('<thead>');
 	var headerRow = $('<tr>');
 	
@@ -1340,6 +1357,7 @@ function printTable(parent, data, title){
 	}
 	
 	var ruleCount = data.length;
+	
 	for(var i = 0; i < ruleCount; i++ ){
 		var currentData = data[i];
 		var row = $('<tr>');
@@ -1365,7 +1383,8 @@ function printTable(parent, data, title){
 		}
 		table.append(row);
 	}
-	parent.append(table);
+	responsiveDiv.append(table);
+	parent.append(responsiveDiv);
 }
 
 /******************************************************************

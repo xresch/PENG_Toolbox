@@ -14,7 +14,8 @@ public class PageAnalyzerMenu extends BTMenu {
 		
 		this.setLabel("PAGE ANALYZER");
 		SessionData session = CFW.Context.Request.getSessionData();
-		if(session != null && session.isLoggedIn()) {
+		if( CFW.Config.AUTHENTICATION_ENABLED == false ||
+			( session != null && session.isLoggedIn()) ) {
 			this.addChild(new MenuItem("HAR Upload").href("./harupload"))
 			.addChild(new MenuItem("Analyze URL").href("./analyzeurl"))
 			.addChild(new MenuItem("History").href("./resultlist"))

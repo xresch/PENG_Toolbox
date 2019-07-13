@@ -6,7 +6,7 @@ public abstract class UserMenuItem extends MenuItem {
 
 	public UserMenuItem(SessionData data) {
 		super(data.getUser().username());
-		
+		this.alignDropdownRight(true);
 	}
 
 }

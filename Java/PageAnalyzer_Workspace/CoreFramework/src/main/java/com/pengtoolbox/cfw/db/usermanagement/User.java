@@ -28,6 +28,7 @@ public class User {
 	
 	private boolean isDeletable = true;
 	private boolean isRenamable = true;
+	private boolean hasUsernameChanged = false;
 
 	private static Logger logger = CFWLog.getLogger(User.class.getName());
 	
@@ -70,7 +71,10 @@ public class User {
 	}
 	
 	public User username(String username) {
-		this.username = username;
+		if(!this.username.equals(username)) {
+			this.username = username;
+			hasUsernameChanged = true;
+		}
 		return this;
 	}
 	
@@ -208,9 +212,14 @@ public class User {
 	public boolean isRenamable() {
 		return isRenamable;
 	}
+	
 	public User isRenamable(boolean isRenamable) {
 		this.isRenamable = isRenamable;
 		return this;
+	}
+	
+	public boolean hasUsernameChanged() {
+		return hasUsernameChanged;
 	}
 	
 	public boolean isForeign() {

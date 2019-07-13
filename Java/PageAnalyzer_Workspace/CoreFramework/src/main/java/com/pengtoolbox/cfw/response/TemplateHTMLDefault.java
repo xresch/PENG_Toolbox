@@ -26,15 +26,15 @@ public class TemplateHTMLDefault extends AbstractHTMLResponse {
 		
 		this.pageTitle = pageTitle;
 		
-		this.addCSSFile(HandlingType.FILE, "./resources/css", "custom.css");
-		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap.min.css");
-		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap-theme.css");
+
+		//this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap.min.css");
+		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap-slate.css");
 		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "cfw.css");
 		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "font-awesome.css");
+		this.addCSSFile(HandlingType.FILE, "./resources/css", "custom.css");
 		
-		
-		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "jquery-2.2.3.js");
-		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap.js");
+		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "jquery-3.4.1.min.js");
+		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap.bundle.min.js");
 		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "cfw.js");
 		this.addJSFileBottom(HandlingType.FILE, "./resources/js", "custom.js");
 		      
@@ -50,7 +50,7 @@ public class TemplateHTMLDefault extends AbstractHTMLResponse {
 			buildedPage.append("<head>\n");
 				buildedPage.append("<meta charset=\"utf-8\">");
 				buildedPage.append("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
-		    	buildedPage.append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+		    	buildedPage.append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">");
 				buildedPage.append("<title>").append(this.pageTitle).append("</title>");
 				buildedPage.append(head);
 				if(assemblyCSS.hasFiles()) {

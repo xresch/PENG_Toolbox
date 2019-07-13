@@ -316,14 +316,17 @@ public class CFWDBUser {
 				user.isForeign(),
 				user.id());
 		
-		boolean resultRename = false;
+		boolean resultRename = true;
 		
-		if(user.isRenamable() == false) {
-			new CFWLog(logger)
-			.method("update")
-			.severe("The user '"+user.username()+"' cannot be renamed as it is marked as not renamable.");
-			return false;
-		}else {
+		if(user.hasUsernameChanged()) {
+			
+			if(!user.isRenamable()) {
+				new CFWLog(logger)
+				.method("update")
+				.severe("The user '"+user.username()+"' cannot be renamed as it is marked as not renamable.");
+				return false;
+			}
+
 			String updateNameByID = 
 				"UPDATE "+TABLE_NAME
 				+" SET ("

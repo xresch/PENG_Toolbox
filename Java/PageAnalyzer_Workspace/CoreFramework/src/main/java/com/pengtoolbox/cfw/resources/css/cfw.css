@@ -17,15 +17,28 @@
 	max-height: 80%; 
 }
 
+.navbar{
+	background-color: black;
+}
+.dropdown-menu{
+	background-color: #212529;
+}
+
+.dropdown-item{
+	color: #a6aeb9;
+}
+
+
  /*************************************************************************
  * Default Layout
  *************************************************************************/
 #cfw-messages {
-	padding-top: 50px;
+	padding-top: 56px;
 }
 
 #cfw-content {
 	min-height: 90%;
+	padding-top: 20px;
 }
 
 #cfw-footer {
@@ -47,6 +60,10 @@
     max-width: 400px;
     min-width: 300px;
     padding-top: 100px;
+}
+
+#cfw-default-modal{
+	
 }
 #loading{
 	position: absolute;

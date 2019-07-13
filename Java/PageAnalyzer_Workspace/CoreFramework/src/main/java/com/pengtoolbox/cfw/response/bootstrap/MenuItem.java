@@ -8,6 +8,7 @@ package com.pengtoolbox.cfw.response.bootstrap;
 public class MenuItem extends HierarchicalHTMLItem {
 	
 	private String label = "&nbsp;";
+	private String alignRightClass = "";
 	
 	public MenuItem(String label) {
 		this.label = label;
@@ -21,27 +22,36 @@ public class MenuItem extends HierarchicalHTMLItem {
 		
 		String cssClass = this.popAttributeValue("class");
 		
+//		html.append("      <li class=\"nav-item dropdown\">");
+//		html.append("        <a class=\"nav-link dropdown-toggle\" href=\"#\" id=\"dropdown01\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">Dropdown</a>");
+//		html.append("        <div class=\"dropdown-menu\" aria-labelledby=\"dropdown01\">");
+//		html.append("          <a class=\"dropdown-item\" href=\"#\">Action</a>");
+//		html.append("          <a class=\"dropdown-item\" href=\"#\">Another action</a>");
+//		html.append("          <a class=\"dropdown-item\" href=\"#\">Something else here</a>");
+//		html.append("        </div>");
+//		html.append("      </li>");
+		
 		if(!this.hasChildren() && !this.hasOneTimeChildren()) {
-			html.append("\n<li class=\"nav-item "+cssClass+"\">");
-			html.append("<a "+this.getAttributesString()+">"+label+"</a></li>");   
+			html.append("\n<li class=\""+cssClass+"\">");
+			html.append("<a class=\"dropdown-item\" "+this.getAttributesString()+" href=\"#\">"+label+"</a></li>");   
 		}else {
 			
 			html.append("\n<li class=\"dropdown "+cssClass+"\">");
-			html.append("\n<a "+this.getAttributesString()+" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">"+label+"<span class=\"caret\"></span></a>");   
-			html.append("\n<ul class=\"dropdown-menu\">");
-			
+			html.append("\n<a "+this.getAttributesString()+" class=\"dropdown-item dropdown-toggle\" href=\"#\" id=\"dropdown01\" data-toggle=\"dropdown\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">"+label+"<span class=\"caret\"></span></a>");   
+			html.append("\n<ul class=\"dropdown-menu "+alignRightClass+"\" aria-labelledby=\"dropdown01\">");
+			html.append("<!-- A -->");
 			for(HierarchicalHTMLItem child : children) {
 				if(child instanceof MenuItem) {
+					html.append("<!-- B -->");
 					html.append("\t"+((MenuItem)child).getHTML());
 				}
 			}
-			
 			for(HierarchicalHTMLItem child : oneTimeChildren) {
 				if(child instanceof MenuItem) {
 					html.append("\t"+((MenuItem)child).getHTML());
 				}
 			}
-			
+			html.append("<!-- C -->");
 			html.append("\n</ul></li>");
 		}
 		
@@ -61,7 +71,13 @@ public class MenuItem extends HierarchicalHTMLItem {
 		return addAttribute("href", href);
 	}
 
-
+	public void alignDropdownRight(boolean alignRight) {
+		if(alignRight) {
+			alignRightClass = "dropdown-menu-right";
+		}else {
+			alignRightClass = "";
+		}
+	}
 
 	
 	

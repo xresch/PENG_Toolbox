@@ -5,7 +5,7 @@
  * Distributed under the MIT license
  *************************************************************************/
 
-.nav>li.result-view-tabs{
+.result-view-tabs{
 	display: none;
 }
 
@@ -13,14 +13,9 @@ code {
 	color: black;
 }
 
-h3 {
+#docu h1, #docu h2 {
 	margin-top: 40px;
-	border-bottom: 1px solid black;
-}
 
-h4 {
-	margin-top: 20px;
-	border-bottom: 1px solid black;
 }
 
 

@@ -18,24 +18,19 @@ public class BTMenu extends HierarchicalHTMLItem {
 	 * @return String html for this item. 
 	 ***********************************************************************************/
 	public void createHTML(StringBuilder html) {
-
+		
 		html.append("\n<div id=\"menubar\">");
-		html.append("\n<nav class=\"navbar navbar-inverse navbar-fixed-top\">");
-		html.append("\n	  <div class=\"container\">");
-		html.append("\n		<div class=\"navbar-header\">");
-		html.append("\n		  <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#navbarsDefault\" aria-expanded=\"false\" aria-controls=\"navbar\">");
-		html.append("\n			<span class=\"sr-only\">Toggle navigation</span>");
-		html.append("\n			<span class=\"icon-bar\"></span>");
-		html.append("\n			<span class=\"icon-bar\"></span>");
-		html.append("\n			<span class=\"icon-bar\"></span>");
-		html.append("\n		  </button>");
-		html.append("\n		  <a class=\"navbar-brand\" href=\"#\">"+this.label+"</a>");
-		html.append("\n		</div>");
-		html.append("\n	  ");
-		html.append("\n		<div class=\"collapse navbar-collapse\" id=\"navbarsDefault\">");
-		html.append("\n			<ul class=\"nav navbar-nav\">");
 		
+		html.append("<nav class=\"navbar navbar-expand-md fixed-top navbar-dark\">");
+		html.append("  <a class=\"navbar-brand\" href=\"#\">"+this.label+"</a>");
+		html.append("  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#cfw-navbar-top\" aria-controls=\"cfw-navbar-top\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">");
+		html.append("    <span class=\"navbar-toggler-icon\"></span>");
+		html.append("  </button>");
+
+		html.append("  <div class=\"collapse navbar-collapse\" id=\"cfw-navbar-top\">");
+		html.append("    <ul class=\"navbar-nav mr-auto\">");
 		
+
 		if(this.hasChildren()) {
 				
 			for(HierarchicalHTMLItem child : children) {

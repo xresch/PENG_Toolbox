@@ -37,7 +37,7 @@ public class LoginServlet extends HttpServlet
 		String loginHTML = CFW.Files.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "login.html");
 		
 		String url = request.getParameter("url");
-		System.out.println("URL: "+url);
+
 		if(url == null) { url = "";}
 		loginHTML = loginHTML.replace("urlvalue", url);
 		
