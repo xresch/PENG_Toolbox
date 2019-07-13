@@ -16,6 +16,9 @@ public class CFWConfig {
 	/** Application ID, used to make your application more secure. (Property=cfw_application_id, Default="change_me_now") */
 	public static String APPLICATION_ID = "change_me_now";
 	
+	/** Bootstrap Theme for the application. (Property=cfw_application_theme, Default="superhero") */
+	public static String APPLICATION_THEME = "slate";
+	
 	/** Reset the admin password on the next restart. (Property=cfw_reset_admin_pw, Default=false) */
 	public static boolean RESET_ADMIN_PW = false;
 	
@@ -110,10 +113,9 @@ public class CFWConfig {
 		CFWConfig.configProperties.load(new FileReader(new File(configFilePath)));
 		printConfiguration();
 		
-		
-		
 		APPLICATION_ID					= CFWConfig.configAsString("cfw_application_id", APPLICATION_ID);
 		APPLICATION_NAME				= CFWConfig.configAsString("cfw_application_name", APPLICATION_NAME);
+		APPLICATION_THEME				= CFWConfig.configAsString("cfw_application_theme", APPLICATION_THEME);
 		RESET_ADMIN_PW 					= CFWConfig.configAsBoolean("cfw_reset_admin_pw", RESET_ADMIN_PW);
 		
 		BASE_URL 						= "/"+APPLICATION_NAME;
