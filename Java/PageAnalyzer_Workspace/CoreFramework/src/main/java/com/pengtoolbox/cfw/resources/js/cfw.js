@@ -147,7 +147,7 @@ function cfw_showModal(modalTitle, modalBody){
 				+ '      <div class="modal-body" >'
 				+ '      </div>'
 				+ '      <div class="modal-footer">'
-				+ '         <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>'
+				+ '         <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>'
 				+ '      </div>'
 				+ '    </div>'
 				+ '  </div>'
@@ -201,11 +201,11 @@ function cfw_confirmExecution(message, confirmLabel, jsCode){
 	closeButton.attr('onclick', 'cfw_confirmExecution_Execute(this, \'cancel\')');
 	closeButton.data('modalID', modalID);
 	
-	var cancelButton = $('<button type="button" class="btn btn-info">Cancel</button>');
+	var cancelButton = $('<button type="button" class="btn btn-primary">Cancel</button>');
 	cancelButton.attr('onclick', 'cfw_confirmExecution_Execute(this, \'cancel\')');
 	cancelButton.data('modalID', modalID);
 	
-	var confirmButton = $('<button type="button" class="btn btn-info">'+confirmLabel+'</button>');
+	var confirmButton = $('<button type="button" class="btn btn-primary">'+confirmLabel+'</button>');
 	confirmButton.attr('onclick', 'cfw_confirmExecution_Execute(this, \'confirm\')');
 	confirmButton.data('modalID', modalID);
 	confirmButton.data('jsCode', jsCode);

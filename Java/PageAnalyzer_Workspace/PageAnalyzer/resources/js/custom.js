@@ -514,7 +514,7 @@ function createAnalyzeDropdown(parent, data, type){
 	// Create Dropdown
 	dropdownID = type+"Dropdown";
 	var dropdownHTML = '<div class="dropdown" style="display: inline;" >' +
-		'<button class="btn btn-info dropdown-toggle" style="margin: 5px;" type="button" id="'+dropdownID+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
+		'<button class="btn btn-primary dropdown-toggle" style="margin: 5px;" type="button" id="'+dropdownID+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
 	    'Analyze '+type+' <span class="caret"></span>' +
 		'</button>' +
 		'<ul class="dropdown-menu" aria-labelledby="'+dropdownID+'">';
@@ -1014,9 +1014,9 @@ function printResultList(parent, data){
 	
 	//----------------------------------
 	// Create Button
-	var selectAllButton = $('<button id="selectAllButton" class="btn btn-primary" onclick="'+"$('.resultSelectionCheckbox').prop('checked', true);resultSelectionChanged();"+'">Select All</button>');
-	var deselectAllButton = $('<button id="deselectAllButton" class="btn btn-primary" onclick="'+"$('.resultSelectionCheckbox').prop('checked', false);resultSelectionChanged();"+'">Deselect All</button>');
-	var compareButton = $('<button id="resultCompareButton" class="btn btn-info" onclick="compareResults();" disabled="disabled">Compare</button>');
+	var selectAllButton = $('<button id="selectAllButton" class="btn btn-secondary" onclick="'+"$('.resultSelectionCheckbox').prop('checked', true);resultSelectionChanged();"+'">Select All</button>');
+	var deselectAllButton = $('<button id="deselectAllButton" class="btn btn-secondary" onclick="'+"$('.resultSelectionCheckbox').prop('checked', false);resultSelectionChanged();"+'">Deselect All</button>');
+	var compareButton = $('<button id="resultCompareButton" class="btn btn-primary" onclick="compareResults();" disabled="disabled">Compare</button>');
 	var deleteButton = $('<button id="resultDeleteButton" class="btn btn-danger" disabled="disabled">Delete</button>');
 	deleteButton.attr('onclick', "CFW.ui.confirmExecute('Do you want to delete the selected results?', 'Delete', 'deleteResults(null)')");
 	parent.append(selectAllButton);
