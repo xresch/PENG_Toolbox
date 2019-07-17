@@ -12,7 +12,7 @@ import javax.servlet.http.Part;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
@@ -38,7 +38,7 @@ public class HARUploadServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault("Analyze");
+		HTMLResponse html = new HTMLResponse("Analyze");
 		StringBuffer content = html.getContent();
 		content.append(CFWFiles.getFileContent(request, "./resources/html/harupload.html"));
 		
@@ -56,7 +56,7 @@ public class HARUploadServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault("Analyze HAR");
+		HTMLResponse html = new HTMLResponse("Analyze HAR");
 		StringBuffer content = html.getContent();
 		content.append(CFWFiles.getFileContent(request, "./resources/html/harupload.html"));
 		

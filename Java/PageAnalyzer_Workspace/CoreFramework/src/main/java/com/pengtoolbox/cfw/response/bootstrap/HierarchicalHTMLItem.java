@@ -2,6 +2,7 @@ package com.pengtoolbox.cfw.response.bootstrap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 
@@ -12,7 +13,7 @@ public abstract class HierarchicalHTMLItem {
 	protected boolean hasChanged = true;
 	protected StringBuilder html = null;
 	
-	protected HashMap<String, String> attributes = new HashMap<String, String>();
+	protected LinkedHashMap<String, String> attributes = new LinkedHashMap<String, String>();
 	
 	protected HierarchicalHTMLItem parent = null;
 	
@@ -153,10 +154,12 @@ public abstract class HierarchicalHTMLItem {
 	public String getAttributesString() {
 		StringBuilder builder = new StringBuilder(" ");
 		for(Entry<String, String> entry : attributes.entrySet()) {
-			builder.append(entry.getKey())
-			.append("=\"")
-			.append(entry.getValue())
-			.append("\" ");
+			if(entry.getValue() != null) {
+				builder.append(entry.getKey())
+				.append("=\"")
+				.append(entry.getValue())
+				.append("\" ");
+			}
 		}
 		return builder.toString();
 	}

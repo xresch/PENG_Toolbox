@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 public class TestServlet extends HttpServlet
@@ -31,7 +31,7 @@ public class TestServlet extends HttpServlet
 		
 		CFWLog log = new CFWLog(logger).method("doGet");
 		
-		TemplateHTMLDefault html = new TemplateHTMLDefault("Test Page");
+		HTMLResponse html = new HTMLResponse("Test Page");
 		StringBuffer content = html.getContent();
 		
 		//--------------------------

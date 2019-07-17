@@ -297,7 +297,7 @@ public class CFWDBPermission {
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkExistsSQL, permissionName);
 		
 		try {
-			if(result.next()) {
+			if(result != null && result.next()) {
 				int count = result.getInt(1);
 				return (count == 0) ? false : true;
 			}

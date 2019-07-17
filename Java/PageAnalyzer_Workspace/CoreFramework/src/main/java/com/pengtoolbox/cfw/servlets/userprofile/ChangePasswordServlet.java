@@ -15,7 +15,7 @@ import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginFacade;
-import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 
@@ -39,7 +39,7 @@ public class ChangePasswordServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault("Login");
+		HTMLResponse html = new HTMLResponse("Login");
 		StringBuffer content = html.getContent();
 		content.append(CFW.Files.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "changepassword.html"));
 		
@@ -78,7 +78,7 @@ public class ChangePasswordServlet extends HttpServlet
 			}
 		}
 		
-		TemplateHTMLDefault html = new TemplateHTMLDefault("Change Password");
+		HTMLResponse html = new HTMLResponse("Change Password");
 		StringBuffer content = html.getContent();
 		content.append(CFW.Files.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "changepassword.html"));
 		

@@ -1,8 +1,11 @@
 package com.pengtoolbox.cfw.response;
 
+import java.util.ArrayList;
+
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
+import com.pengtoolbox.cfw.caching.FileDefinition;
 
 public abstract class AbstractHTMLResponse extends AbstractResponse {
 
@@ -11,6 +14,7 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 	protected FileAssembly headjs = new FileAssembly("js_assembly_jshead", "js");
 	protected FileAssembly bottomjs = new FileAssembly("js_assembly_bottom", "js");
 	protected FileAssembly assemblyCSS = new FileAssembly("css_assembly", "css");
+	protected ArrayList<FileDefinition> singleJSBottom = new ArrayList<FileDefinition>();
 	
 	protected StringBuffer head = new StringBuffer();
 	protected StringBuffer menu = new StringBuffer();
@@ -38,12 +42,24 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 	// Class Methods
 	//##############################################################################
 	
-	public void addJSFileHead(HandlingType type, String path, String filename){
+	public void addJSFileHeadAssembly(HandlingType type, String path, String filename){
 		headjs.addFile(type, path, filename);
 	}
 	
-	public void addJSFileBottom(HandlingType type, String path, String filename){
+	public void addJSFileBottomAssembly(HandlingType type, String path, String filename){
 		bottomjs.addFile(type, path, filename);
+	}
+	
+	public void addJSFileBottomSingle(HandlingType type, String path, String filename){
+		singleJSBottom.add(new FileDefinition(type, path, filename));
+	}
+	
+	/***************************************************************************
+	 * Adds the javascript code to the bottom of the page.
+	 * @param javascript
+	 ***************************************************************************/
+	public void addJavascriptCode(String javascript) {
+		singleJSBottom.add(new FileDefinition(javascript));
 	}
 	
 	public void addJavascriptData(String key, String value){
@@ -112,7 +128,6 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 	public void setHead(StringBuffer head) { this.head = head; }
 	public void setMenu(StringBuffer menu) { this.menu = menu; }
 	public void setFooter(StringBuffer footer) {this.footer = footer;}
-	public void setJavascript(StringBuffer javascript) {this.javascript = javascript;}
 	public void setSupportInfo(StringBuffer comments) {this.supportInfo = comments;}
 	
 	

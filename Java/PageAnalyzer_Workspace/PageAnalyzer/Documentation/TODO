@@ -7,7 +7,7 @@ TODO
 - Add password policy
 - JS: Create request method for exchanging standard json format
 - Java: Create validatable form
-- 
+- add single js file to html template
 
 - Check if url exists and prompt for compare
 - Add modal panel for comparing rules.

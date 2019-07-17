@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
@@ -35,7 +35,7 @@ public class AnalyzeURLServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
-		TemplateHTMLDefault html = new TemplateHTMLDefault("Analyze URL");
+		HTMLResponse html = new HTMLResponse("Analyze URL");
 		StringBuffer content = html.getContent();
 		content.append(CFWFiles.getFileContent(request, "./resources/html/analyzeurl.html"));
 		
@@ -55,7 +55,7 @@ public class AnalyzeURLServlet extends HttpServlet
 		
 		//--------------------------
 		// Create Content
-		TemplateHTMLDefault html = new TemplateHTMLDefault("Analyze URL");
+		HTMLResponse html = new HTMLResponse("Analyze URL");
 		StringBuffer content = html.getContent();
 		content.append(CFWFiles.getFileContent(request, "./resources/html/analyzeurl.html"));
 		

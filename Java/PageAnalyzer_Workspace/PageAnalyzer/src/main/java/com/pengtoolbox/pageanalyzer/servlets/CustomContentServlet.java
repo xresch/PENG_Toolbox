@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.HTMLResponse;
 
 public class CustomContentServlet extends HttpServlet
 {
@@ -29,7 +29,7 @@ public class CustomContentServlet extends HttpServlet
 		String folder = request.getParameter("f");
 		String page = request.getParameter("p");
 		
-		TemplateHTMLDefault html = new TemplateHTMLDefault(folder);
+		HTMLResponse html = new HTMLResponse(folder);
 		StringBuffer content = html.getContent();
 		
         response.setContentType("text/html");

@@ -16,7 +16,7 @@ import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginFacade;
-import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 public class LoginServlet extends HttpServlet
@@ -31,7 +31,7 @@ public class LoginServlet extends HttpServlet
 	}
 	
 	protected void createLoginPage( HttpServletRequest request, HttpServletResponse response ) {
-		TemplateHTMLDefault html = new TemplateHTMLDefault("Login");
+		HTMLResponse html = new HTMLResponse("Login");
 		StringBuffer content = html.getContent();
 		
 		String loginHTML = CFW.Files.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "login.html");

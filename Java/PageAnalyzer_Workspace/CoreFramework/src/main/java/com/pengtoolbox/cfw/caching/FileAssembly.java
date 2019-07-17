@@ -86,23 +86,11 @@ public class FileAssembly {
 			for(FileDefinition fileDef : fileArray) {
 				
 				
-				String content = "";
+				String content = fileDef.readContents();
 				
-				switch(fileDef.getType()) {
-					case FILE:			content = CFW.Files.getFileContent(null, fileDef.getPath(), fileDef.getFilename());
-										break;
-						
-					case JAR_RESOURCE: 	content = CFW.Files.readPackageResource(fileDef.getPath(), fileDef.getFilename());
-										break;
-						
-					case STRING: 		content = fileDef.getContent();
-										break;
-						
-					default: 			content = "";
-										break;
-				}
 				
-				if(content != null) {
+				
+				if(content != null  && !content.isEmpty()) {
 					concatenatedFile.append(content).append("\n");
 				}
 			}

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.TemplateHTMLDefault;
+import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
@@ -35,7 +35,7 @@ public class ManageResultsServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 		
-		TemplateHTMLDefault html = new TemplateHTMLDefault("Manage Results");
+		HTMLResponse html = new HTMLResponse("Manage Results");
 		StringBuffer content = html.getContent();
 		
 		if(CFW.Context.Request.getUserPermissions() != null

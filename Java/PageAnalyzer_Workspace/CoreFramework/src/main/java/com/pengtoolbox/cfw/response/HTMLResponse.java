@@ -7,36 +7,36 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
+import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 
-public class TemplateHTMLDefault extends AbstractHTMLResponse {
+public class HTMLResponse extends AbstractHTMLResponse {
 	
-	public static Logger logger = CFWLog.getLogger(TemplateHTMLDefault.class.getName());
+	public static Logger logger = CFWLog.getLogger(HTMLResponse.class.getName());
 	
 	/*******************************************************************************
 	 * 
 	 *******************************************************************************/
-	public TemplateHTMLDefault(String pageTitle){
+	public HTMLResponse(String pageTitle){
 		
 		super();
 		
 		this.pageTitle = pageTitle;
 		
-
 		//this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap.min.css");
 		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap-theme-"+CFW.Config.APPLICATION_THEME.toLowerCase()+".css");
 		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "cfw.css");
 		this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "font-awesome.css");
 		this.addCSSFile(HandlingType.FILE, "./resources/css", "custom.css");
 		
-		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "jquery-3.4.1.min.js");
-		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap.bundle.min.js");
-		this.addJSFileBottom(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "cfw.js");
-		this.addJSFileBottom(HandlingType.FILE, "./resources/js", "custom.js");
+		this.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "jquery-3.4.1.min.js");
+		this.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap.bundle.min.js");
+		this.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".js", "cfw.js");
+		this.addJSFileBottomAssembly(HandlingType.FILE, "./resources/js", "custom.js");
 		      
 	}
 		
@@ -115,21 +115,25 @@ public class TemplateHTMLDefault extends AbstractHTMLResponse {
 //				}
 
 				//--------------------------
+				// JavascriptData
+				this.appendSectionTitle(buildedPage, "Javascript Data");
+				buildedPage.append("<div id=\"javaScriptData\" style=\"display: none;\">");
+				buildedPage.append(this.javascriptData);
+				buildedPage.append("</div>");
+				
+				//--------------------------
 				// Javascript
 				this.appendSectionTitle(buildedPage, "Javascript");
 				buildedPage.append("<div id=\"javascripts\">");
 				if(assemblyCSS.hasFiles()) {
 					buildedPage.append("<script src=\""+bottomjs.assemble().cache().getAssemblyServletPath()+"\"></script>");
 				}
-				buildedPage.append(this.javascript);
-				buildedPage.append("</div>");
 				
-
-				//--------------------------
-				// JavascriptData
-				this.appendSectionTitle(buildedPage, "Javascript Data");
-				buildedPage.append("<div id=\"javaScriptData\" style=\"display: none;\">");
-				buildedPage.append(this.javascriptData);
+				for(FileDefinition fileDef : singleJSBottom) {
+					buildedPage.append(fileDef.getJavascriptTag());
+				}
+				
+				buildedPage.append(this.javascript);
 				buildedPage.append("</div>");
 				
 				//--------------------------

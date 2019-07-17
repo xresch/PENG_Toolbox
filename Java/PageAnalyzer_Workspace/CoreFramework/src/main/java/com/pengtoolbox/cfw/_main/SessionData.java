@@ -28,6 +28,7 @@ public class SessionData {
 		menu = CFW.App.createDefaultMenuInstance();
 		menu.setUserMenuItem(CFW.App.createUserMenuItemInstance(this));
 		footer = CFW.App.createDefaultFooterInstance();
+
 	}
 	
 	public void triggerLogout() {

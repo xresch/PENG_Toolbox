@@ -34,15 +34,15 @@ public class MenuTests {
 		Assertions.assertTrue(html.contains("aria-expanded=\"false\">Mockup Menu B<span"), 
 				"Mockup Menu B is set.");
 		
-		Assertions.assertTrue(html.contains("<li class=\"nav-item \"><a href=\"./singleitemlink\" >Single Item</a></li>"), 
+		Assertions.assertTrue(html.contains("href=\"./singleitemlink\""), 
 				"Single Item is present.");
 		
-		Assertions.assertTrue(html.contains("<li class=\"nav-item \"><a href=\"#\" >OneTime Item</a></li>"), 
+		Assertions.assertTrue(html.contains(">OneTime Item<"), 
 				"OneTime Item is present.");
 		
 		String htmlNoOneTimeItem = menu.getHTML();
 		
-		Assertions.assertTrue(!htmlNoOneTimeItem.contains("<li class=\"nav-item \"><a href=\"#\" >OneTime Item</a></li>"), 
+		Assertions.assertTrue(!htmlNoOneTimeItem.contains(">OneTime Item<"), 
 				"OneTime Item was removed.");
 		
 	}
@@ -59,19 +59,19 @@ public class MenuTests {
 		Assertions.assertTrue(html.contains("Mockup Menu Item<span class=\"caret\">"), 
 				"Mockup Menu Item label is set");
 		
-		Assertions.assertTrue(html.contains("<a href=\"./test/servlet\" >href Subitem</a>"), 
+		Assertions.assertTrue(html.contains("href=\"./test/servlet\""), 
 				"href is set.");
 		
-		Assertions.assertTrue(html.contains("<a  onclick=\"draw('test');\">onclick Subitem</a>"), 
+		Assertions.assertTrue(html.contains("<a class=\"dropdown-item\"  onclick=\"draw('test');\" >onclick Subitem</a></li>"), 
 				"Onlick is set and href was excluded.");
 		
-		Assertions.assertTrue(html.contains("<li class=\"nav-item mockup-class test-class\"><a href=\"#\" >cssClass Subitem</a>"), 
+		Assertions.assertTrue(html.contains("<li class=\"mockup-class test-class\"><a class=\"dropdown-item\"  href=\"#\" >cssClass Subitem</a></li>"), 
 				"CSS Class is present.");
 		
 		Assertions.assertTrue(html.contains("Sub Dropdown<span class=\"caret\">"), 
 				"Sub dropdown is present.");
 		
-		Assertions.assertTrue(html.contains("<li class=\"nav-item \"><a href=\"#\" >Sub Subitem 1</a></li>"), 
+		Assertions.assertTrue(html.contains("<li class=\"\"><a class=\"dropdown-item\"  href=\"#\" >Sub Subitem 1</a></li>	"), 
 				"Sub Sub Item 1 is present.");
 	}
 	
