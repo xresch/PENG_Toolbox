@@ -1,28 +1,4 @@
 
-/********************************************************************
- * CFW FRAMEWORK STRUCTURE
- * -----------------------
- ********************************************************************/
-var CFW = {
-	array: {
-		sortArrayByValueOfObject: null
-	},
-	general: {
-		getURLParams: null,
-		secureDecodeURI: null
-	},
-	selection: {
-		selectElementContent: null
-	},
-	ui: {
-		toc: null,
-		showModal: null,
-		confirmExecute: null,
-		toogleLoader: null
-	},
-
-}
-
 /**************************************************************************************
  * Sort an object array by the values for the given key.
  * @param array the object array to be sorted
@@ -43,7 +19,43 @@ function cfw_sortArrayByValueOfObject(array, key){
 	
 	return array;
 }
-CFW.array.sortArrayByValueOfObject = cfw_sortArrayByValueOfObject;
+
+/**************************************************************************************
+ * Add an alert message to the message section.
+ * Ignores duplicated messages.
+ * @param type the type of the alert: INFO, SUCCESS, WARNING, ERROR
+ * @param message
+ *************************************************************************************/
+function cfw_addAlertMessage(type, message){
+	
+	var clazz = "";
+	
+	switch(type.toLowerCase()){
+		
+		case "success": clazz = "alert-success"; break;
+		case "info": 	clazz = "alert-info"; break;
+		case "warning": clazz = "alert-warning"; break;
+		case "error": 	clazz = "alert-danger"; break;
+		case "severe": 	clazz = "alert-danger"; break;
+		case "danger": 	clazz = "alert-danger"; break;
+		default:	 	clazz = "alert-info"; break;
+		
+	}
+	
+	var htmlString = '<div class="alert alert-dismissible '+clazz+'" role=alert>'
+		+ '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+		+ message
+		+"</div>\n";
+	
+	//----------------------------------------------
+	// Add if not already exists
+	var messages = $("#cfw-messages");
+	
+	if (messages.html().indexOf(message) <= 0) {
+		messages.append(htmlString);
+	}
+	
+}
 
 /**************************************************************************************
  * Create a table of contents for the h-elements on the page.
@@ -91,26 +103,38 @@ function cfw_table_toc(contentAreaSelector, resultSelector){
 	target.html(resultHTML);
 	
 }
-CFW.ui.toc = cfw_table_toc;
+
 
 /*******************************************************************************
  * Set if the Loading animation is visible or not.
+ * 
+ * The following example shows how to call this method to create a proper rendering
+ * of the loader:
+ * 	
+ *  CFW.ui.toogleLoader(true);
+ *	window.setTimeout( 
+ *	  function(){
+ *	    // Do your stuff
+ *	    CFW.ui.toogleLoader(false);
+ *	  }, 100);
+ *
  * @param isVisible true or false
  ******************************************************************************/
 function cfw_toogleLoader(isVisible){
 	
 	var loader = $("#cfw-loader");
+	
 	if(loader.length == 0){
 		loader = $('<div id="cfw-loader">'
 				+'<i class="fa fa-cog fa-spin fa-3x fa-fw margin-bottom"></i>'
 				+'<p>Loading...</p>'
 			+'</div>');	
 		
-		loader.css("position","absolute");
-		loader.css("top","50%");
-		loader.css("left","50%");
-		loader.css("transform","translateX(-50%) translateY(-50%);");
-		loader.css("visibility","hidden");
+//		loader.css("position","absolute");
+//		loader.css("top","50%");
+//		loader.css("left","50%");
+//		loader.css("transform","translateX(-50%) translateY(-50%);");
+//		loader.css("visibility","hidden");
 		
 		$("body").append(loader);
 	}
@@ -119,8 +143,9 @@ function cfw_toogleLoader(isVisible){
 	}else{
 		loader.css("visibility", "hidden");
 	}
+	
 }
-CFW.ui.toogleLoader = cfw_toogleLoader;
+
 
 /**************************************************************************************
  * Create a model with content.
@@ -162,7 +187,7 @@ function cfw_showModal(modalTitle, modalBody){
 	
 	defaultModal.modal('show');
 }
-CFW.ui.showModal = cfw_showModal;
+
 
 /**************************************************************************************
  * Create a confirmation modal panel that executes the function passed by the argument
@@ -216,7 +241,6 @@ function cfw_confirmExecution(message, confirmLabel, jsCode){
 	modal.modal('show');
 }
 
-CFW.ui.confirmExecute = cfw_confirmExecution;
 
 function cfw_confirmExecution_Execute(source, action){
 	
@@ -259,8 +283,6 @@ function cfw_getURLParams()
     //console.log(vars);
     return vars;
 }
-CFW.general.getURLParams = cfw_getURLParams;
-
 
 /**************************************************************************************
  * Tries to decode a URI and handles errors when they are thrown.
@@ -278,7 +300,55 @@ function cfw_secureDecodeURI(uri){
 	
 	return decoded;
 }
-CFW.general.secureDecodeURI = cfw_secureDecodeURI;
+
+/**************************************************************************************
+ * Executes a get request with JQuery and retrieves a standard JSON format of the CFW
+ * framework. Handles alert messages if there are any.
+ * 
+ * The structure of the response has to adhere to the following structure:
+ * {
+ * 		success: true|false,
+ * 		messages: [
+ * 			{
+ * 				type: info | success | warning | danger
+ * 				message: "string",
+ * 				stacktrace: null | "stacketrace string"
+ * 			},
+ * 			{...}
+ * 		],
+ * 		payload: {...}|[...] object or array
+ * }
+ * 
+ * @param uri to decode
+ * @return decoded URI or the same URI in case of errors.
+ *************************************************************************************/
+function cfw_getJSON(url, params, callbackFunc){
+
+	$.get(url, params)
+		  .done(function(response) {
+		    //alert( "done" );
+			  callbackFunc(response);
+		  })
+		  .fail(function(response) {
+			  console.error("Request failed: "+url);
+			  
+			  CFW.ui.addAlert("error", "Request to URL failed: "+url);
+			  
+			  //callbackFunc(response);
+		  })
+		  .always(function(response) {
+			  var msgArray = response.messages;
+			  
+			  if(msgArray != undefined
+			  && msgArray != null
+			  && msgArray.length > 1){
+				  for(var i = 0; i < msgArray.length; i++ ){
+					  CFW.ui.addAlert(msgArray[i].type, msgArray[i].message);
+				  }
+			  }
+			  
+		  });
+}
 
 /**************************************************************************************
  * Select all the content of the given element.
@@ -300,4 +370,31 @@ function cfw_selectElementContent(el) {
     }
 }
 
-CFW.selection.selectElementContent = cfw_selectElementContent;
+/********************************************************************
+ * CFW FRAMEWORK STRUCTURE
+ * -----------------------
+ ********************************************************************/
+var CFW = {
+	array: {
+		sortArrayByValueOfObject: cfw_sortArrayByValueOfObject
+	},
+	
+	http: {
+		getURLParams: cfw_getURLParams,
+		secureDecodeURI: cfw_secureDecodeURI,
+		getJSON: cfw_getJSON
+	},
+	
+	selection: {
+		selectElementContent: cfw_selectElementContent
+	},
+	
+	ui: {
+		toc: cfw_table_toc,
+		showModal: cfw_showModal,
+		confirmExecute: cfw_confirmExecution,
+		toogleLoader: cfw_toogleLoader,
+		addAlert: cfw_addAlertMessage
+	},
+
+}

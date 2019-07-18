@@ -43,7 +43,7 @@ public class ResultViewServlet extends HttpServlet
 		String resultID = request.getParameter("resultid");
 		
 		if(!resultID.matches("\\d+")) {
-			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Result ID '"+resultID+"' is not a number.");
+			CFWContextRequest.addAlertMessage(AlertMessage.MessageType.ERROR, "Result ID '"+resultID+"' is not a number.");
 		}
 			
 		content.append("<div id=\"results\"></div>");

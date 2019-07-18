@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.TemplateJSONDefault;
+import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class DeleteResultServlet extends HttpServlet
@@ -31,7 +31,7 @@ public class DeleteResultServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 		
-		TemplateJSONDefault jsonResponse = new TemplateJSONDefault(request);
+		JSONResponse jsonResponse = new JSONResponse();
 		StringBuffer content = jsonResponse.getContent();
 		
 		String resultIDs = request.getParameter("resultids");

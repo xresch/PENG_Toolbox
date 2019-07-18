@@ -72,7 +72,7 @@ public class AnalyzeURLServlet extends HttpServlet
 		String analyzeURL = request.getParameter("analyzeurl");
 		
 		if(analyzeURL == null){
-			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Please specify a URL.");
+			CFWContextRequest.addAlertMessage(AlertMessage.MessageType.ERROR, "Please specify a URL.");
 		}else {
 
 			//--------------------------

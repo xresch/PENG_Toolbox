@@ -13,8 +13,8 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw._main.CFW.Context;
+import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
  
 public class RequestHandler extends HandlerWrapper
@@ -29,6 +29,7 @@ public class RequestHandler extends HandlerWrapper
     {
     	
     	CFW.Context.Request.setRequest(request);
+    	CFW.Context.Request.setHttpServletResponse(response);
     	//##################################
     	// Before
     	//##################################
@@ -79,6 +80,7 @@ public class RequestHandler extends HandlerWrapper
     		session.setAttribute(CFW.SESSION_DATA, new SessionData());
     		
     	};
+    	
     	CFW.Context.Request.setSessionData((SessionData)session.getAttribute(CFW.SESSION_DATA));
     	
     	//workaround maxInactiveInterval=-1 issue

@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.pengtoolbox.cfw.caching.FileAssembly;
-import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
+import com.pengtoolbox.cfw.caching.FileDefinition;
+import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 
 public class FileUtilsTests {
@@ -16,10 +17,10 @@ public class FileUtilsTests {
 		
 		FileAssembly assembler = new FileAssembly("common", "js");
 		
-		CFWFiles.addAllowedPackage(FileAssembly.CFW_JAR_RESOURCES_PATH);
+		CFWFiles.addAllowedPackage(FileDefinition.CFW_JAR_RESOURCES_PATH);
 		
-		String assemblyName = assembler.addFile(HandlingType.FILE, "./testdata", "test.css")
-				.addFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH +".test", "junit_test.js")
+		String assemblyName = assembler.addFile(FileDefinition.HandlingType.FILE, "./testdata", "test.css")
+				.addFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH +".test", "junit_test.js")
 				.addFileContent("/* just some comment */")
 				.assemble()
 				.cache()

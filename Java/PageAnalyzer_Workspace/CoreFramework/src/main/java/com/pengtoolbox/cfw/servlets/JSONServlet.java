@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.cfw.response.TemplateJSONDefault;
+import com.pengtoolbox.cfw.response.JSONResponse;
 
 public class JSONServlet extends HttpServlet
 {
@@ -27,7 +27,7 @@ public class JSONServlet extends HttpServlet
     {
 		String filename = request.getParameter("file");
 		
-		TemplateJSONDefault json = new TemplateJSONDefault(request);
+		JSONResponse json = new JSONResponse();
 		StringBuffer content = json.getContent();
 		
         response.setContentType("text/html");

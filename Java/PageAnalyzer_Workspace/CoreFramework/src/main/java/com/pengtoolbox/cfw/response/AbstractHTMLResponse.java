@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileAssembly;
-import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
 import com.pengtoolbox.cfw.caching.FileDefinition;
+import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 
 public abstract class AbstractHTMLResponse extends AbstractResponse {
 
@@ -42,16 +42,20 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 	// Class Methods
 	//##############################################################################
 	
-	public void addJSFileHeadAssembly(HandlingType type, String path, String filename){
+	public void addJSFileHeadAssembly(FileDefinition.HandlingType type, String path, String filename){
 		headjs.addFile(type, path, filename);
 	}
 	
-	public void addJSFileBottomAssembly(HandlingType type, String path, String filename){
+	public void addJSFileBottomAssembly(FileDefinition.HandlingType type, String path, String filename){
 		bottomjs.addFile(type, path, filename);
 	}
 	
-	public void addJSFileBottomSingle(HandlingType type, String path, String filename){
-		singleJSBottom.add(new FileDefinition(type, path, filename));
+	/***************************************************************************
+	 * Adds a javascript file to the bottom of the page.
+	 * @param javascript
+	 ***************************************************************************/
+	public void addJSFileBottomSingle(FileDefinition fileDef){
+		singleJSBottom.add(fileDef);
 	}
 	
 	/***************************************************************************
@@ -63,7 +67,6 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 	}
 	
 	public void addJavascriptData(String key, String value){
-		
 		this.javascriptData.append("<p id=\"jsdata_");
 		this.javascriptData.append(key);
 		this.javascriptData.append("\">");
@@ -72,7 +75,7 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 
 	}
 	
-	public void addCSSFile(HandlingType type, String path, String filename){
+	public void addCSSFile(FileDefinition.HandlingType type, String path, String filename){
 		assemblyCSS.addFile(type, path, filename);
 	}
 	
@@ -131,5 +134,4 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 	public void setSupportInfo(StringBuffer comments) {this.supportInfo = comments;}
 	
 	
-
 }

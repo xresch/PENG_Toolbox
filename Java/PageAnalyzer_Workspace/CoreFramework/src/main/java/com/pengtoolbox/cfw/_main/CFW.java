@@ -11,6 +11,7 @@ import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserGroupMap;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 import com.pengtoolbox.cfw.utils.CFWFiles;
+import com.pengtoolbox.cfw.utils.CFWJson;
 import com.pengtoolbox.cfw.utils.CFWTime;
 import com.pengtoolbox.cfw.validation.CFWValidation;
 
@@ -38,7 +39,7 @@ public class CFW {
 	public class Time extends CFWTime {}
 	public class Validation extends CFWValidation {}
 	public class CLI extends CFWCommandLineInterface {}
-	
+	public class JSON extends CFWJson {}
 	//##############################################################################
 	// GLOBAL
 	//##############################################################################

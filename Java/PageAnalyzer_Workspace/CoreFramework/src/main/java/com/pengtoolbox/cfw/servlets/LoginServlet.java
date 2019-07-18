@@ -12,7 +12,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFW.Config;
 import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw._main.SessionData;
-import com.pengtoolbox.cfw.caching.FileAssembly;
+import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginFacade;
@@ -34,7 +34,7 @@ public class LoginServlet extends HttpServlet
 		HTMLResponse html = new HTMLResponse("Login");
 		StringBuffer content = html.getContent();
 		
-		String loginHTML = CFW.Files.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "login.html");
+		String loginHTML = CFW.Files.readPackageResource(FileDefinition.CFW_JAR_RESOURCES_PATH + ".html", "login.html");
 		
 		String url = request.getParameter("url");
 
@@ -79,7 +79,7 @@ public class LoginServlet extends HttpServlet
 		// Check authorization
 		if(username == null || password == null){
 			
-			CFWContextRequest.addAlert(MessageType.ERROR, "Please specify a username and password.");
+			CFWContextRequest.addAlertMessage(MessageType.ERROR, "Please specify a username and password.");
 			createLoginPage(request, response);
 			
 		}else {
@@ -98,7 +98,7 @@ public class LoginServlet extends HttpServlet
 			}else {
 				//Login Failure
 				createLoginPage(request, response);
-				CFWContextRequest.addAlert(MessageType.ERROR, "Username or password invalid.");
+				CFWContextRequest.addAlertMessage(MessageType.ERROR, "Username or password invalid.");
 			}
 			
 		}

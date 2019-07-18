@@ -47,7 +47,7 @@ public class CompareServlet extends HttpServlet
 		String arrayString = "[]";
 		
 		if(!resultIDs.matches("(\\d,?)+")) {
-			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Result IDs '"+resultIDs+"' is not a string of comma separated numbers.");
+			CFWContextRequest.addAlertMessage(AlertMessage.MessageType.ERROR, "Result IDs '"+resultIDs+"' is not a string of comma separated numbers.");
 		}
 
 		StringBuffer javascript = html.getJavascript();

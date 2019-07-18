@@ -1,24 +1,34 @@
 package com.pengtoolbox.cfw.caching;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.caching.FileAssembly.HandlingType;
 
 public class FileDefinition {
 
+	public enum HandlingType {FILE, JAR_RESOURCE, STRING}
+	public static final String CFW_JAR_RESOURCES_PATH = "com.pengtoolbox.cfw.resources";
+	
 	private HandlingType type; 
 	private String path;
 	private String filename;
 	private String content;
 	
+	
+	/***********************************************************************
+	 * Use this constructor with HandlingType FILE and JAR_RESOURCE.
+	 * Use the constructor FileDefinition(String) for HandlingType.STRING.
+	 * @param type
+	 * @param path
+	 * @param filename
+	 ***********************************************************************/
 	public FileDefinition(HandlingType type, String path, String filename) {
 		this.type = type;
 		this.path = path;
 		this.filename = filename;
 	}
 	
-	public FileDefinition(String content) {
+	public FileDefinition(String fileContent) {
 		this.type = HandlingType.STRING;
-		this.content = content;
+		this.content = fileContent;
 		this.path = "";
 		this.filename = "";
 	}

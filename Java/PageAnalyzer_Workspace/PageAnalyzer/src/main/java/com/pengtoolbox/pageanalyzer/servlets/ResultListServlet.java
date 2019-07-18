@@ -54,7 +54,7 @@ public class ResultListServlet extends HttpServlet
 		//TODO: Check User
 		
 		if (jsonResults == null || jsonResults.isEmpty()) {
-			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Results could not be loaded.");
+			CFWContextRequest.addAlertMessage(AlertMessage.MessageType.ERROR, "Results could not be loaded.");
 		}else {
 									
 			content.append("<div id=\"results\"></div>");

@@ -85,7 +85,7 @@ public class HARUploadServlet extends HttpServlet
 		Part harFile = request.getPart("harFile");
 
 		if (harFile == null) {
-			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "HAR File could not be loaded.");
+			CFWContextRequest.addAlertMessage(AlertMessage.MessageType.ERROR, "HAR File could not be loaded.");
 		}else {
 
 			log.start().method("doPost()-StreamHarFile");

@@ -132,7 +132,7 @@ public class PageAnalyzerDB {
 			
 			return jsonString;
 		}else {
-			CFW.Context.Request.addAlert(MessageType.ERROR, "Access Denied");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access Denied");
 		}
 		
 		return null;
@@ -150,7 +150,7 @@ public class PageAnalyzerDB {
 		
 		//----------------------------------
 		// Check input format
-		if(!resultIDArray.matches("(\\d,?)+")) {
+		if(resultIDArray == null ^ !resultIDArray.matches("(\\d,?)+")) {
 			return null;
 		}
 		

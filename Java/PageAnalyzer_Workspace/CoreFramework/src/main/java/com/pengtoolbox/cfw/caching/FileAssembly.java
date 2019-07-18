@@ -20,9 +20,6 @@ public class FileAssembly {
 	private String filetype = "";
 	private String contentType = "";
 	private String assemblyContent = "";
-	public static final String CFW_JAR_RESOURCES_PATH = "com.pengtoolbox.cfw.resources";
-	
-	public enum HandlingType {FILE, JAR_RESOURCE, STRING};
 	
 	/***********************************************************************
 	 * Constructor for the FileAssembler.
@@ -40,7 +37,7 @@ public class FileAssembly {
 	 * @param type the handling type of the file.
 	 * @param filetype the file type e.g. "js", "css"
 	 ***********************************************************************/
-	public FileAssembly addFile(HandlingType type, String path, String filename) {
+	public FileAssembly addFile(FileDefinition.HandlingType type, String path, String filename) {
 		FileDefinition fileDef = new FileDefinition(type, path, filename);
 		fileArray.add(fileDef);
 		return this;

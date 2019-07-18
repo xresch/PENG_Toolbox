@@ -46,7 +46,7 @@ public class ManageResultsServlet extends HttpServlet
 			//TODO: Check User
 			
 			if (jsonResults == null || jsonResults.isEmpty()) {
-				CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Results could not be loaded.");
+				CFWContextRequest.addAlertMessage(AlertMessage.MessageType.ERROR, "Results could not be loaded.");
 			}else {
 										
 				content.append("<div id=\"results\"></div>");
@@ -59,7 +59,7 @@ public class ManageResultsServlet extends HttpServlet
 					
 			}
 		}else {
-			CFW.Context.Request.addAlert(MessageType.ERROR, "Access denied");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied");
 		}
         
     }

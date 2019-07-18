@@ -8,17 +8,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.HTMLResponse;
-import com.pengtoolbox.cfw.response.PlaintextResponse;
-import com.pengtoolbox.cfw.utils.CFWFiles;
+import com.pengtoolbox.cfw.response.JSONResponse;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
-import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
 /*************************************************************************
  * 
@@ -63,11 +60,12 @@ public class DataServlet extends HttpServlet {
 		//-------------------------------------------
 		// Fetch Data
 		//-------------------------------------------
-		PlaintextResponse plain = new PlaintextResponse();
+		JSONResponse plain = new JSONResponse();
 		StringBuffer content = plain.getContent();
 
 		if (type == null) {
-			content.append("{\"error\": \"Type was not specified.\"}");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Type was not specified");
+			//content.append("{\"error\": \"Type was not specified.\"}");
 		}else {
 
 			switch(type.toLowerCase()) {
@@ -87,10 +85,13 @@ public class DataServlet extends HttpServlet {
 										content.append(PageAnalyzerDB.getResultListForComparison(resultIDs));
 										break;
 										
+				default: 				CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The type '"+type+"' is not supported.");
+										break;
+										
 			}
 						
 		}
 		
-		response.setContentType("application/json");
+		//response.setContentType("application/json");
 	}
 }

@@ -242,7 +242,7 @@ public class CFWLog {
 				if(level.equals(Level.SEVERE) || level.equals(Level.WARNING) ){
 					
 					MessageType alertType = ( level == Level.SEVERE ? MessageType.ERROR : MessageType.WARNING );
-					CFW.Context.Request.addAlert(alertType, message);
+					CFW.Context.Request.addAlertMessage(alertType, message);
 					
 					if(template instanceof AbstractHTMLResponse){
 						if(this.exception != null){

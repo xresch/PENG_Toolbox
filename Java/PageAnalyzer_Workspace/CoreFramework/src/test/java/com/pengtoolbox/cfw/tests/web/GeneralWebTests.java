@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.tests._master.WebTestMaster;
 import com.pengtoolbox.cfw.tests.assets.servlets.TestServlet;
 
@@ -66,6 +67,24 @@ public class GeneralWebTests extends WebTestMaster {
 				"Javascript Assembly is added to page.");
 		
 		//System.out.println(response);
+	}
+	
+	@Test
+	public void testAddSingleJS(){
+		
+		addServlet(TestServlet.class, "/general");
+		String response = CFW.HTTP.sendGETRequest(TEST_URL+"/general");
+		
+		Assertions.assertTrue(response.contains("/*Test*/Math.random();"),
+				"AbstractHTMLResponse.addJavascriptCode() adds custom javascript.");
+		
+		Assertions.assertTrue(response.contains("<script src=\"/resources/js/custom.js\"></script>"),
+				"html.addJSFileBottomSingle(HandlingType.FILE, ...) adds file resource.");
+		
+		Assertions.assertTrue(response.contains("<script src=\"/cfw/jarresource?pkg=com.pengtoolbox.cfw.resources.test&file=junit_test.js\">"),
+				"html.addJSFileBottomSingle(HandlingType.JAR_RESOURCE, ...) adds package resource.");
+		
+		System.out.println(response);
 	}
 	
 	

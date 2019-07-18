@@ -45,7 +45,7 @@ var GRADE_CLASS = {
  ******************************************************************/
 function initialize(){
 	
-	URL_PARAMETERS = CFW.general.getURLParams();
+	URL_PARAMETERS = CFW.http.getURLParams();
 	
 }
 
@@ -67,24 +67,24 @@ function fetchData(args){
 	// Check loading status and create URL
 	//---------------------------------------
 	var url = "./data";
+	var params = {type: args.data};
 	switch (args.data){
 		case "yslowresult": 	if(YSLOW_RESULT != null) return;
-								url += "?type="+args.data+"&resultid="+URL_PARAMETERS.resultid;
+								params.resultid = URL_PARAMETERS.resultid;
 								break;
 								
 		case "resultlist":		if(RESULT_LIST != null) return;
-								url += "?type="+args.data;
 								break;
 		
 		case "allresults":		if(RESULT_LIST != null) return;
-								url += "?type="+args.data;
 								break;
+								
 		case "har":				if(HAR_DATA != null) return;
-								url += "?type="+args.data+"&resultid="+URL_PARAMETERS.resultid;
+								params.resultid = URL_PARAMETERS.resultid;
 								break;
 								
 		case "compareyslow":	if(COMPARE_YSLOW != null) return;
-								url += "?type="+args.data+"&resultids="+URL_PARAMETERS.resultids;
+								params.resultids = URL_PARAMETERS.resultid;
 								break;						
 								
 	}
@@ -92,50 +92,37 @@ function fetchData(args){
 	//---------------------------------------
 	// Fetch and Return Data
 	//---------------------------------------
-	$.get(url).done(function(data) {
-		    		    
-		    if(data.error != null){
-				console.error(data.error);
-				var errorDiv = $('<div>');
-				errorDiv.attr("class", "bg-danger");
-				errorDiv.append('<p>Sorry some error occured loading the data, be patient while nobody is looking into it.</p>');
-				errorDiv.append('<p>'+data.error+'</p>');
-				$("#results").append(errorDiv);
-				return;
-			}
-		    
+	
+	CFW.http.getJSON(url, params, 
+			function(data) {
+				    
 			switch (args.data){
-				case "yslowresult": 	YSLOW_RESULT = data;
+				case "yslowresult": 	YSLOW_RESULT = data.payload;
 										prepareYSlowResults(YSLOW_RESULT);
 										RULES = CFW.array.sortArrayByValueOfObject(RULES, "score");
 										$(".result-view-tabs").css("display", "block");
 										draw(args);
 										break;
 										
-				case "resultlist":		RESULT_LIST = data;
+				case "resultlist":		RESULT_LIST = data.payload;
 										draw(args);
 										break;
 										
-				case "allresults":		RESULT_LIST = data;
+				case "allresults":		RESULT_LIST = data.payload;
 										draw(args);
 										break;
 										
-				case "har":				HAR_DATA = data;
+				case "har":				HAR_DATA = data.payload;
 										prepareGanttData(HAR_DATA);
 										draw(args);
 										break;
-				case "compareyslow":	COMPARE_YSLOW = data;
+										
+				case "compareyslow":	COMPARE_YSLOW = data.payload;
 										draw(args);
 										break;						
 										
 			}
-		})
-		  .fail(function() {
-				var errorDiv = $('<div>');
-				errorDiv.attr("class", "bg-danger");
-				errorDiv.append('<p>Sorry some error occured loading the data, be patient while nobody is looking into it.</p>');
-				$("#results").append(errorDiv);
-		  });
+		});
 }
 
 /**************************************************************************************
@@ -374,10 +361,8 @@ function filterTable(searchField){
 		  //console.log( index + ": " + $(this).text() );
 		  
 		  if ($(this).html().toUpperCase().indexOf(filter) > -1) {
-			  console.log("HIDE");
 			  $(this).css("display", "");
 		  } else {
-			  console.log("SHOW");
 			  $(this).css("display", "none");
 			}
 	});
@@ -432,7 +417,7 @@ function printComparison(parent, data){
 		
 		//----------------------------
 		// URL Row
-		url = CFW.general.secureDecodeURI(result.u);
+		url = CFW.http.secureDecodeURI(result.u);
 		urlRow[time]	= '<a target="_blank" href="'+url+'">'+url+'</a>';
 		
 		//----------------------------
@@ -587,7 +572,7 @@ function analyzeCookiesOrHeaders(key, type){
 		//--------------------------------------
 		// Create Table Row
 		if(requestValue != "" || responseValue != ""){
-			resultHTML += '	<tr><td>'+requestValue+'</td><td>'+responseValue+'</td><td>'+CFW.general.secureDecodeURI(currentEntry.request.url)+'</td></tr>';
+			resultHTML += '	<tr><td>'+requestValue+'</td><td>'+responseValue+'</td><td>'+CFW.http.secureDecodeURI(currentEntry.request.url)+'</td></tr>';
 		}
 	}	
 	
@@ -680,7 +665,7 @@ function printGanttChart(parent, data){
 		// Other Columns
 		rowString += '<td>'+createHTTPStatusBadge(currentEntry.response.status)+'</td>';
 		rowString += '<td>'+Math.round(currentEntry.time)+' ms</td>';
-		rowString += '<td>'+CFW.general.secureDecodeURI(currentEntry.request.url)+'</td>';
+		rowString += '<td>'+CFW.http.secureDecodeURI(currentEntry.request.url)+'</td>';
 		
 		row.append(rowString);
 		
@@ -960,6 +945,10 @@ function printResultList(parent, data){
 	//----------------------------------
 	// Create Rows
 	var resultCount = data.length;
+	
+	if(resultCount == 0){
+		CFW.ui.addAlert("info", "Hmm... seems you don't have any results. Try to upload a HAR file oe analyze a URL.");
+	}
 	for(var i = 0; i < resultCount; i++ ){
 		var currentData = data[i];
 		var rowString = '<tr>';
@@ -975,7 +964,7 @@ function printResultList(parent, data){
 		resultName = (currentData.NAME == "null") ? "" : currentData.NAME;
 		rowString += '<td>'+resultName+'</td>';
 		// URL Column
-		url = CFW.general.secureDecodeURI(currentData.PAGE_URL);
+		url = CFW.http.secureDecodeURI(currentData.PAGE_URL);
 		rowString += '<td>'+url+'</td>';
 		
 		// View Result Icon
@@ -989,7 +978,7 @@ function printResultList(parent, data){
 		
 		// Save Result
 		var regex = /.*?http.?:\/\/([^\/]*)/g;
-		var matches = regex.exec(CFW.general.secureDecodeURI(currentData.PAGE_URL));
+		var matches = regex.exec(CFW.http.secureDecodeURI(currentData.PAGE_URL));
 		
 		var resultName = "result";
 		if(matches != null){

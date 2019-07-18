@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
@@ -17,8 +18,10 @@ import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 public class CFWContextRequest {
 	
-	private static InheritableThreadLocal<HttpServletRequest> request = new InheritableThreadLocal<HttpServletRequest>();
-	private static InheritableThreadLocal<AbstractResponse> response = new InheritableThreadLocal<AbstractResponse>();
+	private static InheritableThreadLocal<HttpServletRequest> httpRequest = new InheritableThreadLocal<HttpServletRequest>();
+	private static InheritableThreadLocal<HttpServletResponse> httpResponse = new InheritableThreadLocal<HttpServletResponse>();
+	
+	private static InheritableThreadLocal<AbstractResponse> responseContent = new InheritableThreadLocal<AbstractResponse>();
 	private static InheritableThreadLocal<SessionData> sessionData = new InheritableThreadLocal<SessionData>();
 	
 	private static InheritableThreadLocal<HashMap<String,AlertMessage>> messageArray = new InheritableThreadLocal<HashMap<String,AlertMessage>>();
@@ -26,28 +29,37 @@ public class CFWContextRequest {
 	private static Logger logger = CFWLog.getLogger(CFWContextRequest.class.getName());
 	
 	public static void clearRequestContext() {
-		request.set(null);
-		response.set(null);
+		httpRequest.set(null);
+		responseContent.set(null);
 		sessionData.set(null);
 		messageArray.set(null);
 	}
 	
 	public static HttpServletRequest getRequest() {
-		return request.get();
+		return httpRequest.get();
 	}
 
 	public static void setRequest(HttpServletRequest request) {
-		CFWContextRequest.request.set(request);
+		CFWContextRequest.httpRequest.set(request);
 	}
 	
 	public static AbstractResponse getResponse() {
-		return response.get();
+		return responseContent.get();
+	}
+	
+	public static void setResponse(AbstractResponse response) {
+		CFWContextRequest.responseContent.set(response);
+	}
+	
+	public static void setHttpServletResponse(HttpServletResponse response) {
+		CFWContextRequest.httpResponse.set(response);
+	}
+	
+	public static HttpServletResponse getHttpServletResponse() {
+		return httpResponse.get();
 	}
 
-	public static void setResponse(AbstractResponse response) {
-		CFWContextRequest.response.set(response);
-		
-	}
+
 	
 	public static SessionData getSessionData() {
 		return sessionData.get();
@@ -85,7 +97,7 @@ public class CFWContextRequest {
 	 * @param alertType alert type from OMKeys
 	 *   
 	 ****************************************************************/
-	public static void addAlert(MessageType type, String message){
+	public static void addAlertMessage(MessageType type, String message){
 		
 		if(messageArray.get() == null) {
 			messageArray.set(new HashMap<String,AlertMessage>());
@@ -95,11 +107,26 @@ public class CFWContextRequest {
 				
 	}
 	
-	public static Collection<AlertMessage> getMessages() {
+	public static Collection<AlertMessage> getAlertMessages() {
 		if(messageArray.get() == null) {
 			return new ArrayList<AlertMessage>();
 		}
 		return messageArray.get().values();
+	}
+	
+	/****************************************************************
+	 * Rerturns a json string for the alerts.
+	 * returns "[]" if the array is empty
+	 *   
+	 * @param alertType alert type from OMKeys
+	 *   
+	 ****************************************************************/
+	public static String getAlertsAsJSONArray() {
+		if(messageArray.get() == null) {
+			return "[]";
+		}
+
+		return CFW.JSON.toJSON(messageArray.get().values());
 	}
 	
 	

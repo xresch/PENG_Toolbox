@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWContextRequest;
+import com.pengtoolbox.cfw.caching.FileDefinition;
+import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
@@ -35,17 +37,24 @@ public class TestServlet extends HttpServlet
 		StringBuffer content = html.getContent();
 		
 		//--------------------------
+		// Add single javascripts
+		//--------------------------
+		html.addJSFileBottomSingle(new FileDefinition(FileDefinition.HandlingType.FILE, "/resources/js", "custom.js"));
+		html.addJSFileBottomSingle(new FileDefinition(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".test", "junit_test.js"));
+		html.addJavascriptCode("/*Test*/Math.random();");
+		
+		//--------------------------
 		//Add messages manually
 		//--------------------------
-		CFWContextRequest.addAlert(MessageType.INFO, "this is an info.");
-		CFWContextRequest.addAlert(MessageType.WARNING, "this is a warning.");
-		CFWContextRequest.addAlert(MessageType.ERROR, "this is an error.");
-		CFWContextRequest.addAlert(MessageType.SUCCESS, "this is a success.");
+		CFWContextRequest.addAlertMessage(MessageType.INFO, "this is an info.");
+		CFWContextRequest.addAlertMessage(MessageType.WARNING, "this is a warning.");
+		CFWContextRequest.addAlertMessage(MessageType.ERROR, "this is an error.");
+		CFWContextRequest.addAlertMessage(MessageType.SUCCESS, "this is a success.");
 		
-		CFWContextRequest.addAlert(MessageType.SUCCESS, "Test make same message unique...");
-		CFWContextRequest.addAlert(MessageType.SUCCESS, "Test make same message unique...");
-		CFWContextRequest.addAlert(MessageType.SUCCESS, "Test make same message unique...");
-		CFWContextRequest.addAlert(MessageType.SUCCESS, "Test make same message unique...");
+		CFWContextRequest.addAlertMessage(MessageType.SUCCESS, "Test make same message unique...");
+		CFWContextRequest.addAlertMessage(MessageType.SUCCESS, "Test make same message unique...");
+		CFWContextRequest.addAlertMessage(MessageType.SUCCESS, "Test make same message unique...");
+		CFWContextRequest.addAlertMessage(MessageType.SUCCESS, "Test make same message unique...");
 		//------------------------------
 		//Add messages by log exception
 		//------------------------------

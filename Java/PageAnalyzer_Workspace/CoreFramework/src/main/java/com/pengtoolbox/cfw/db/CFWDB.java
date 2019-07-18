@@ -380,44 +380,55 @@ public class CFWDB {
 
 	/********************************************************************************************
 	 * Returns a jsonString with an array containing a json object for eeach row.
+	 * Returns an empty array 
 	 * 
 	 ********************************************************************************************/
 	public static String resultSetToJSON(ResultSet resultSet) {
-		
 		StringBuffer json = new StringBuffer();
-		json.append("[");
 		
-		if(resultSet != null) {
-			try {
-				ResultSetMetaData metadata = resultSet.getMetaData();
-		
-				int columnCount = metadata.getColumnCount();
-		
-				while(resultSet.next()) {
-					json.append("{");
-					for(int i = 1 ; i <= columnCount; i++) {
-						String column = metadata.getColumnName(i);
-						json.append("\"").append(column).append("\": ");
-						
-						String value = resultSet.getString(i);
-						if(column.equals("JSON_RESULT")) {
-							json.append(value).append(",");
-						}else {
-							json.append("\"").append(value).append("\",");
-						}
-					}
-					json.deleteCharAt(json.length()-1); //remove last comma
-					json.append("},");
-				}
+		try {
 			
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			//--------------------------------------
+			// Check has results
+			resultSet.beforeFirst();
+			if(resultSet == null || !resultSet.isBeforeFirst()) {
+				return "[]";
 			}
+			
+			//--------------------------------------
+			// Iterate results
+			ResultSetMetaData metadata = resultSet.getMetaData();
+			int columnCount = metadata.getColumnCount();
+	
+			json.append("[");
+			while(resultSet.next()) {
+				json.append("{");
+				for(int i = 1 ; i <= columnCount; i++) {
+					String column = metadata.getColumnName(i);
+					json.append("\"").append(column).append("\": ");
+					
+					String value = resultSet.getString(i);
+					if(column.equals("JSON_RESULT")) {
+						json.append(value).append(",");
+					}else {
+						json.append("\"").append(value).append("\",");
+					}
+				}
+				json.deleteCharAt(json.length()-1); //remove last comma
+				json.append("},");
+			}
+			
 			json.deleteCharAt(json.length()-1); //remove last comma
+			json.append("]");
+			
+		} catch (SQLException e) {
+				new CFWLog(logger)
+					.method("resultSetToJSON")
+					.severe("Exception occured while converting ResultSet to JSON.", e);
+				
+				return "[]";
 		}
-		
-		json.append("]");
+
 		return json.toString();
 	}
 

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw._main.SessionData;
-import com.pengtoolbox.cfw.caching.FileAssembly;
+import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginFacade;
@@ -41,7 +41,7 @@ public class ChangePasswordServlet extends HttpServlet
 			
 		HTMLResponse html = new HTMLResponse("Login");
 		StringBuffer content = html.getContent();
-		content.append(CFW.Files.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "changepassword.html"));
+		content.append(CFW.Files.readPackageResource(FileDefinition.CFW_JAR_RESOURCES_PATH + ".html", "changepassword.html"));
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -66,21 +66,21 @@ public class ChangePasswordServlet extends HttpServlet
 		if(oldpassword == null || oldpassword.isEmpty()
 		|| newpassword == null || newpassword.isEmpty()
 		|| repeatpassword == null || repeatpassword.isEmpty()) {
-			CFW.Context.Request.addAlert(MessageType.ERROR, "Please Provide a value in each password field.");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Please Provide a value in each password field.");
 		}else {
 			User currentUser = CFW.Context.Request.getUser();
 			
 			if(currentUser.changePassword(oldpassword, newpassword, repeatpassword)){
 				boolean isUpdateSuccessful = CFW.DB.Users.update(currentUser);
 				if(isUpdateSuccessful) {
-					CFW.Context.Request.addAlert(MessageType.SUCCESS, "Password changed successfully.");
+					CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Password changed successfully.");
 				}
 			}
 		}
 		
 		HTMLResponse html = new HTMLResponse("Change Password");
 		StringBuffer content = html.getContent();
-		content.append(CFW.Files.readPackageResource(FileAssembly.CFW_JAR_RESOURCES_PATH + ".html", "changepassword.html"));
+		content.append(CFW.Files.readPackageResource(FileDefinition.CFW_JAR_RESOURCES_PATH + ".html", "changepassword.html"));
 		
 		
         response.setContentType("text/html");

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 public abstract class AbstractResponse {
 
@@ -16,12 +17,10 @@ public abstract class AbstractResponse {
 	
 	public AbstractResponse(){
 		this.request = CFW.Context.Request.getRequest();
-		
 		CFW.Context.Request.setResponse(this);
 		
 	}
 	
-
 	//##############################################################################
 	// Class Methods
 	//##############################################################################

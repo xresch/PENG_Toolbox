@@ -46,12 +46,12 @@ public class GanttChartServlet extends HttpServlet
 		if(resultID.matches("\\d+")) {
 			jsonResults = PageAnalyzerDB.getHARFileByID(Integer.parseInt(resultID));
 		}else {
-			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Result ID '"+resultID+"' is not a number.");
+			CFWContextRequest.addAlertMessage(AlertMessage.MessageType.ERROR, "Result ID '"+resultID+"' is not a number.");
 		}
 	
 		
 		if (jsonResults == null) {
-			CFWContextRequest.addAlert(AlertMessage.MessageType.ERROR, "Results could not be loaded.");
+			CFWContextRequest.addAlertMessage(AlertMessage.MessageType.ERROR, "Results could not be loaded.");
 		}else {
 									
 			content.append("<div id=\"results\"></div>");
