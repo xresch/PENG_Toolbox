@@ -34,6 +34,7 @@ public class TestServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doGet");
 		
 		HTMLResponse html = new HTMLResponse("Test Page");
+		html.addJSFileBottomSingle(new FileDefinition(HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".test", "cfwjs_test.js"));
 		StringBuffer content = html.getContent();
 		
 		//--------------------------

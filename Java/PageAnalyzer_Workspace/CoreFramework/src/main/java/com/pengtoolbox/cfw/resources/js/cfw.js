@@ -1,3 +1,140 @@
+/**************************************************************************************
+ * CFW.js
+ * ======
+ * Javascript library for the CFW framework.
+ * 
+ * @author Reto Scheiwiller, 2019
+ *************************************************************************************/
+
+/**************************************************************************************
+ * Filter the rows of a table by the value of the search field.
+ * This method is best used by triggering it on the onchange-event on the search field
+ * itself.
+ * The search field has to have an attached JQuery data object($().data(name, value)), ¨
+ * pointing to the table that should be filtered.
+ * 
+ * @param searchField 
+ * @return nothing
+ *************************************************************************************/
+function cfw_filterTable(searchField){
+	
+	var table = $(searchField).data("table");
+	var input = searchField;
+	
+	filter = input.value.toUpperCase();
+
+	table.find("tbody tr, >tr").each(function( index ) {
+		  //console.log( index + ": " + $(this).text() );
+		  
+		  if ($(this).html().toUpperCase().indexOf(filter) > -1) {
+			  $(this).css("display", "");
+		  } else {
+			  $(this).css("display", "none");
+			}
+	});
+
+}
+/******************************************************************
+ * Print the list of results found in the database.
+ * 
+ * @param parent JQuery object
+ * @param data object containing the list of results.
+ * 
+ ******************************************************************/
+ class CFWTable{
+	
+	 constructor(){
+		 this.table = $('<table class="table table-striped table-hover">');
+		 
+		 this.thead = $('<thead>');
+		 this.table.append(this.thead);
+		 
+		 this.tbody = $('<tbody>');
+		 this.table.append(this.tbody);
+		 
+		 this.tableFilter = true;
+		 this.isResponsive = true;
+	 }
+	
+	 /********************************************
+	  * Toggle the table filter, default is true.
+	  ********************************************/
+	 filter(isFilter){
+		 this.tableFilter = isFilter;
+	 }
+	 /********************************************
+	  * Toggle the table filter, default is true.
+	  ********************************************/
+	 responsive(isResponsive){
+		 this.isResponsive = isResponsive;
+	 }
+	 
+	 /********************************************
+	  * Adds a header using a string.
+	  ********************************************/
+	 addHeader(label){
+		 this.thead.append('<th>'+label+'</th>');
+	 }
+	 
+	 /********************************************
+	  * Adds headers using a string array.
+	  ********************************************/
+	 addHeaders(stringArray){
+		 
+		 var htmlString = "";
+		 for(var i = 0; i < stringArray.length; i++){
+			 htmlString += '<th>'+stringArray[i]+'</th>';
+		 }
+		 this.thead.append(htmlString);
+	 }
+	 
+	 /********************************************
+	  * Adds a row using a html string or a 
+	  * jquery object .
+	  ********************************************/
+	 addRow(htmlOrJQueryObject){
+		 this.tbody.append(htmlOrJQueryObject);
+	 }
+	 
+	 /********************************************
+	  * Adds rows using a html string or a 
+	  * jquery object .
+	  ********************************************/
+	 addRows(htmlOrJQueryObject){
+		 this.tbody.append(htmlOrJQueryObject);
+	 }
+	 
+	 /********************************************
+	  * Append the table to the jquery object.
+	  * @param parent JQuery object
+	  ********************************************/
+	 appendTo(parent){
+		 
+		 if(this.tableFilter){
+			 var filter = $('<input type="text" class="form-control" onkeyup="cfw_filterTable(this)" placeholder="Filter Table...">');
+			 parent.append(filter);
+			 //jqueryObject.append('<span style="font-size: xx-small;"><strong>Hint:</strong> The filter searches through the innerHTML of the table rows. Use &quot;&gt;&quot; and &quot;&lt;&quot; to search for the beginning and end of a cell content(e.g. &quot;&gt;Test&lt;&quot; )</span>');
+			 filter.data("table", this.table);
+		 }
+		 
+		 if(this.isResponsive){
+			var responsiveDiv = $('<div class="table-responsive">');
+			responsiveDiv.append(this.table);
+			
+			parent.append(responsiveDiv);
+		 }else{
+			 parent.append(responsiveDiv);
+		 }
+		 
+	 }
+	 
+	 
+	 
+}
+
+function cfw_createTable(){
+	return new CFWTable();
+}
 
 /**************************************************************************************
  * Sort an object array by the values for the given key.
@@ -390,6 +527,7 @@ var CFW = {
 	},
 	
 	ui: {
+		createTable: cfw_createTable,
 		toc: cfw_table_toc,
 		showModal: cfw_showModal,
 		confirmExecute: cfw_confirmExecution,
