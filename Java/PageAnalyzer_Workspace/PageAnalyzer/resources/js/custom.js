@@ -598,28 +598,17 @@ function printGanttChart(parent, data){
 
 	createAnalyzeDropdown(parent, data, "Cookies");
 	createAnalyzeDropdown(parent, data, "Headers");
-	//----------------------------------
-	// Create Table Filter
-	var filter = $('<input type="text" class="form-control" onkeyup="filterTable(this)" placeholder="Filter Table...">');
-	parent.append(filter);
-	parent.append('<span style="font-size: xx-small;"><strong>Hint:</strong> The filter searches through the innerHTML of the table rows. Use &quot;&gt;&quot; and &quot;&lt;&quot; to search for the beginning and end of a cell content(e.g. &quot;&gt;Test&lt;&quot; )</span>');
+
 	
 	//----------------------------------
 	// Create Table Header
-	headerRowString = '<thead><tr>';
-		headerRowString += '<th>&nbsp;</th>';
-		headerRowString += '<th>Gantt Chart</th>';
-		headerRowString += '<th>Status</th>';
-		headerRowString += '<th>Duration</th>';
-		headerRowString += '<th>URL</th>';
-	headerRowString += '</tr></thead>';
-	
-	//----------------------------------
-	// Create Table
-	var responsiveDiv = $('<div class="table-responsive">');
-	var table = $('<table class="table table-striped table-sm" style="font-size: smaller;">');
-	filter.data("table", table);
-	table.append(headerRowString);
+	var cfwTable = CFW.ui.createTable();
+	cfwTable.isNarrow = true;
+	cfwTable.isHover = true;
+	cfwTable.isResponsive = true;
+	cfwTable.isStriped = true;
+	cfwTable.tableFilter = true;
+	cfwTable.addHeaders(['&nbsp;','Timings','Status','Duration','URL']);
 
 	//----------------------------------
 	// Create Rows
@@ -670,13 +659,12 @@ function printGanttChart(parent, data){
 		row.append(rowString);
 		
 		
-		table.append(row);
+		cfwTable.addRow(row);
 	}
 	
 	var legendHTML = createGanttChartLegend();
 	parent.append(legendHTML);
-	responsiveDiv.append(table);
-	parent.append(responsiveDiv);
+	cfwTable.appendTo(parent);
 	parent.append(legendHTML);
 	
 }
@@ -911,36 +899,19 @@ function printResultList(parent, data){
 	// Add title and description.
 	parent.append("<h2>Result History</h2>");
 	parent.append("<p>Click on the eye symbol to open a result. Select multiple results and hit compare to get a comparison.</p>");
-	
-	//----------------------------------
-	// Create Table Filter
-	var filter = $('<input type="text" class="form-control" onkeyup="filterTable(this)" placeholder="Filter Table...">');
-	parent.append(filter);
-	parent.append('<span style="font-size: xx-small;"><strong>Hint:</strong> The filter searches through the innerHTML of the table rows. Use &quot;&gt;&quot; and &quot;&lt;&quot; to search for the beginning and end of a cell content(e.g. &quot;&gt;Test&lt;&quot; )</span>');
-	
+
 	//----------------------------------
 	// Create Table Header
-	headerRowString = '<thead><tr>';
-		headerRowString += '<th>&nbsp;</th>';
-		headerRowString += '<th>ID</th>';
-		headerRowString += '<th>Timestamp</th>';
-		if(data[0] != null && data[0].USER_ID != undefined){
-			headerRowString += '<th>User</th>';
-		}
-		headerRowString += '<th>Name</th>';
-		headerRowString += '<th>URL</th>';
-		headerRowString += '<th>&nbsp;</th>';
-		headerRowString += '<th>&nbsp;</th>';
-		headerRowString += '<th>&nbsp;</th>';
-		headerRowString += '<th>&nbsp;</th>';
-		headerRowString += '<th>&nbsp;</th>';
-		headerRowString += '<th>&nbsp;</th>';
-	headerRowString += '</tr></thead>';
 	
-	//----------------------------------
-	// Create Table
-	var responsiveDiv = $('<div class="table-responsive">');
-	var table = $('<table class="table table-striped table-hover">');
+	var cfwTable = CFW.ui.createTable();
+	
+	cfwTable.addHeaders(['&nbsp;', 'ID', 'Timestamp']);
+	if(data[0] != null && data[0].USER_ID != undefined){
+		cfwTable.addHeader('User');
+	}
+	
+	cfwTable.addHeaders(['Name', 'URL', '&nbsp;', '&nbsp;', '&nbsp;', '&nbsp;', '&nbsp;', '&nbsp;']);
+	
 	
 	//----------------------------------
 	// Create Rows
@@ -993,13 +964,10 @@ function printResultList(parent, data){
 		rowString += '<td><a target="_blank" alt="Delete Result" onclick="CFW.ui.confirmExecute(\'Do you want to delete the results?\', \'Delete\', \'deleteResults('+currentData.RESULT_ID+')\')"><i class="fa fa-trash text-danger"></i></a></td>';
 		rowString += "</tr>";
 		
-		table.append(rowString);
+		cfwTable.addRow(rowString);
 	}
-	parent.append(responsiveDiv);
-	responsiveDiv.append(table);
-	table.append(headerRowString);
-	filter.data("table", table);
 	
+	cfwTable.appendTo(parent);
 	
 	//----------------------------------
 	// Create Button
@@ -1324,25 +1292,12 @@ function printJSON(parent, data){
 function printTable(parent, data, title){
 	
 	parent.append("<h3>"+title+"</h3>");
-	//parent.append("<p>Click on the panel title to expand for more details.</p>");
 	
-	var filter = $('<input type="text" class="form-control" onkeyup="filterTable(this)" placeholder="Filter Table...">');
-	parent.append(filter);
-	parent.append('<span style="font-size: xx-small;"><strong>Hint:</strong> The filter searches through the innerHTML of the table rows. Use &quot;&gt;&quot; and &quot;&lt;&quot; to search for the beginning and end of a cell content(e.g. &quot;&gt;Test&lt;&quot; )</span>');
-	
-	var responsiveDiv = $('<div class="table-responsive">');
-	var table = $('<table class="table table-striped">');
-	var header = $('<thead>');
-	var headerRow = $('<tr>');
-	
-	header.append(headerRow);
-	table.append(header);
-	
-	parent.append(table);
-	filter.data("table", table);
+	var cfwTable = CFW.ui.createTable();
 
+	// add all keys from the first object in the array as headers
 	for(var key in data[0]){
-		headerRow.append('<th>'+key+'</th>');
+		cfwTable.addHeader(key);
 	}
 	
 	var ruleCount = data.length;
@@ -1370,10 +1325,10 @@ function printTable(parent, data, title){
 				row.append(cell);
 			}
 		}
-		table.append(row);
+		cfwTable.addRow(row);
 	}
-	responsiveDiv.append(table);
-	parent.append(responsiveDiv);
+	cfwTable.appendTo(parent);
+	
 }
 
 /******************************************************************

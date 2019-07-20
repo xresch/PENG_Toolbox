@@ -44,7 +44,7 @@ function cfw_filterTable(searchField){
  class CFWTable{
 	
 	 constructor(){
-		 this.table = $('<table class="table table-striped table-hover">');
+		 this.table = $('<table class="table">');
 		 
 		 this.thead = $('<thead>');
 		 this.table.append(this.thead);
@@ -54,6 +54,9 @@ function cfw_filterTable(searchField){
 		 
 		 this.tableFilter = true;
 		 this.isResponsive = true;
+		 this.isHover = true;
+		 this.isStriped = true;
+		 this.isNarrow = false;
 	 }
 	
 	 /********************************************
@@ -109,6 +112,10 @@ function cfw_filterTable(searchField){
 	  * @param parent JQuery object
 	  ********************************************/
 	 appendTo(parent){
+		  
+		 if(this.isStriped){		this.table.addClass('table-striped'); }
+		 if(this.isHover){			this.table.addClass('table-hover'); }
+		 if(this.isNarrow){			this.table.addClass('table-sm'); }
 		 
 		 if(this.tableFilter){
 			 var filter = $('<input type="text" class="form-control" onkeyup="cfw_filterTable(this)" placeholder="Filter Table...">');
@@ -123,7 +130,7 @@ function cfw_filterTable(searchField){
 			
 			parent.append(responsiveDiv);
 		 }else{
-			 parent.append(responsiveDiv);
+			 parent.append(this.table);
 		 }
 		 
 	 }
