@@ -110,7 +110,7 @@ public class FileDefinition {
 				
 			case JAR_RESOURCE: 	return "<script src=\"/cfw/jarresource?pkg="+path+"&file="+filename+"\"></script>";
 				
-			case STRING: 		return "<script>" + content + "<script>";
+			case STRING: 		return "<script>" + content + "</script>";
 				
 			default: 			return "";
 				
