@@ -187,6 +187,35 @@ public class CFWDBPermission {
 	}
 	
 	/***************************************************************
+	 * Return a list of all permissions
+	 * 
+	 * @return Returns a resultSet with all permissions or null.
+	 ****************************************************************/
+	public static ResultSet getPermissionList() {
+		
+		String sql = 
+				"SELECT "
+				  + PermissionDBFields.PK_ID +", "
+				  + PermissionDBFields.NAME +", "
+				  + PermissionDBFields.DESCRIPTION +", "
+				  + PermissionDBFields.IS_DELETABLE +" "
+				+" FROM "+TABLE_NAME;
+		
+		return CFWDB.preparedExecuteQuery(sql);
+
+	}
+	
+	/***************************************************************
+	 * Return a list of all users as json string.
+	 * 
+	 * @return Returns a result set with all users or null.
+	 ****************************************************************/
+	public static String getPermissionListAsJSON() {
+		ResultSet result = CFW.DB.Permissions.getPermissionList();
+		return CFWDB.resultSetToJSON(result);
+	}
+	
+	/***************************************************************
 	 * Retrieve the permissions for the specified user.
 	 * @param group
 	 * @return Hashmap with permissions(key=group name), or null on exception

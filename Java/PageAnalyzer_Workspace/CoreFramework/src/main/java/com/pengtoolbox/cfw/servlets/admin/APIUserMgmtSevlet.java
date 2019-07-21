@@ -10,9 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWConfig;
-import com.pengtoolbox.cfw._main.SessionData;
-import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
@@ -24,10 +21,10 @@ import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
  * 
  * Distributed under the MIT license
  *************************************************************************/
-public class APIUserSevlet extends HttpServlet {
+public class APIUserMgmtSevlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = LogManager.getLogManager().getLogger(APIUserSevlet.class.getName());
+	private static Logger logger = LogManager.getLogManager().getLogger(APIUserMgmtSevlet.class.getName());
        
 	/*****************************************************************
 	 *
@@ -42,6 +39,7 @@ public class APIUserSevlet extends HttpServlet {
 		log.info(request.getRequestURL().toString());
 		
 		String action = request.getParameter("action");
+		String item = request.getParameter("item");
 		
 		//-------------------------------------------
 		// Fetch Data
@@ -58,8 +56,22 @@ public class APIUserSevlet extends HttpServlet {
 			}else {
 	
 				switch(action.toLowerCase()) {
-					case "fetch": 			content.append(CFW.DB.Users.getUserListAsJSON());
-											break;
+					
+					case "fetch": 			
+						switch(item.toLowerCase()) {
+							case "users": 		content.append(CFW.DB.Users.getUserListAsJSON());
+										  		break;
+										  
+							case "groups": 		content.append(CFW.DB.Groups.getGroupListAsJSON());
+							  			   		break;
+							  			   		
+							case "permissions": content.append(CFW.DB.Permissions.getPermissionListAsJSON());
+		  			   							break;  
+		  			   							
+							default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
+												break;
+						}
+						break;
 				
 					default: 				CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of action '"+action+"' is not supported.");
 											break;

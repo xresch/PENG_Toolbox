@@ -179,6 +179,35 @@ public class CFWDBGroup {
 	}
 	
 	/***************************************************************
+	 * Return a list of all groups
+	 * 
+	 * @return Returns a resultSet with all groups or null.
+	 ****************************************************************/
+	public static ResultSet getGroupList() {
+		
+		String selectByName = 
+				"SELECT "
+				  + GroupDBFields.PK_ID +", "
+				  + GroupDBFields.NAME +", "
+				  + GroupDBFields.DESCRIPTION +", "
+				  + GroupDBFields.IS_DELETABLE +" "
+				+" FROM "+TABLE_NAME;
+		
+		return CFWDB.preparedExecuteQuery(selectByName);
+		
+	}
+	
+	/***************************************************************
+	 * Return a list of all users as json string.
+	 * 
+	 * @return Returns a result set with all users or null.
+	 ****************************************************************/
+	public static String getGroupListAsJSON() {
+		ResultSet result = CFW.DB.Groups.getGroupList();
+		return CFWDB.resultSetToJSON(result);
+	}
+	
+	/***************************************************************
 	 * Updates the object selecting by ID.
 	 * @param group
 	 * @return true or false
