@@ -1,6 +1,5 @@
 package com.pengtoolbox.cfw._main;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,8 +27,6 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
-import com.pengtoolbox.cfw.cli.ArgumentsException;
-import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
@@ -39,6 +36,8 @@ import com.pengtoolbox.cfw.servlets.AssemblyServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
+import com.pengtoolbox.cfw.servlets.admin.APIUserSevlet;
+import com.pengtoolbox.cfw.servlets.admin.UserManagementServlet;
 import com.pengtoolbox.cfw.servlets.userprofile.ChangePasswordServlet;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
@@ -237,8 +236,15 @@ public class CFWApp {
 	        servletContextHandler.addServlet(LogoutServlet.class,  "/logout");
 	    }
 	    
+		//-----------------------------------------
+		// User Profile Servlets
 	    servletContextHandler.addServlet(ChangePasswordServlet.class,  "/changepassword");
-                
+	    
+		//-----------------------------------------
+		// User Management Servlets
+	    servletContextHandler.addServlet(UserManagementServlet.class,  "/usermanagement");
+		servletContextHandler.addServlet(APIUserSevlet.class, "/usermanagement/data"); 
+	    
 	}
 	
 	/***********************************************************************
@@ -254,10 +260,11 @@ public class CFWApp {
 		
 		//-----------------------------------------
 		// Resource Servlets
-
 		servletContextHandler.addServlet(AssemblyServlet.class, "/assembly"); 
 		servletContextHandler.addServlet(JARResourceServlet.class, "/jarresource");
 		
+		//-----------------------------------------
+		// Handler Chain
         GzipHandler servletGzipHandler = new GzipHandler();
         RequestHandler requestHandler = new RequestHandler();
 

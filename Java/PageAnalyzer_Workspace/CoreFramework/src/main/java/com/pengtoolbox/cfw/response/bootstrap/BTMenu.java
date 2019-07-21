@@ -17,7 +17,7 @@ public class BTMenu extends HierarchicalHTMLItem {
 	 * Create the HTML representation of this item.
 	 * @return String html for this item. 
 	 ***********************************************************************************/
-	public void createHTML(StringBuilder html) {
+	protected void createHTML(StringBuilder html) {
 		
 		html.append("\n<div id=\"menubar\">");
 		

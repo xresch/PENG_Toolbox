@@ -6,9 +6,7 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFW.DB.UserGroupMap;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserGroupMap.UserGroupMapDBFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBUser {
@@ -210,7 +208,7 @@ public class CFWDBUser {
 	 ****************************************************************/
 	public static User selectByID(int id) {
 		
-		String selectByUsernameOrMail = 
+		String selectByID = 
 				"SELECT "
 				  + UserDBFields.PK_ID +", "
 				  + UserDBFields.USERNAME +", "
@@ -229,7 +227,7 @@ public class CFWDBUser {
 				+" WHERE "
 					+ UserDBFields.PK_ID	+ " = ?";
 		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectByUsernameOrMail, id);
+		ResultSet result = CFWDB.preparedExecuteQuery(selectByID, id);
 		
 		if(result == null) {
 			return null;
@@ -241,7 +239,7 @@ public class CFWDBUser {
 			}
 		} catch (SQLException e) {
 			new CFWLog(logger)
-			.method("selectByUsernameOrMail")
+			.method("selectByID")
 			.severe("Error reading user from database.", e);;
 			
 		}finally {
@@ -250,6 +248,41 @@ public class CFWDBUser {
 		
 		return null;
 		
+	}
+	
+	/***************************************************************
+	 * Return a list of all users
+	 * 
+	 * @return Returns a result set with all users or null.
+	 ****************************************************************/
+	public static ResultSet getUserList() {
+		
+		String selectAllUsers = 
+				"SELECT "
+				  + UserDBFields.PK_ID +", "
+				  + UserDBFields.USERNAME +", "
+				  + UserDBFields.EMAIL +", "
+				  + UserDBFields.FIRSTNAME +", "
+				  + UserDBFields.LASTNAME +", "
+				  + UserDBFields.DATE_CREATED +", "
+				  + UserDBFields.STATUS +", "
+				  + UserDBFields.IS_DELETABLE +", "
+				  + UserDBFields.IS_RENAMABLE + ", "
+				  + UserDBFields.IS_FOREIGN 
+				+" FROM "+TABLE_NAME;
+		
+		return CFWDB.preparedExecuteQuery(selectAllUsers);
+	
+	}
+	
+	/***************************************************************
+	 * Return a list of all users as json string.
+	 * 
+	 * @return Returns a result set with all users or null.
+	 ****************************************************************/
+	public static String getUserListAsJSON() {
+		ResultSet result = CFW.DB.Users.getUserList();
+		return CFWDB.resultSetToJSON(result);
 	}
 	
 	/***************************************************************

@@ -11,7 +11,7 @@ public class PAPermissions {
 		
 		Permission manageResults = 
 				new Permission(MANAGE_RESULTS)
-					.description("Manage results, even from other users.")
+					.description("Manage all PAge analyzer Results results in the DB, even from other users.")
 					.isDeletable(false);
 		
 		CFW.DB.Permissions.create(manageResults);

@@ -5,11 +5,14 @@ package com.pengtoolbox.cfw.response.bootstrap;
  * @author Reto Scheiwiller
  * 
  **********************************************************************************/
-public class BTFooter extends HierarchicalHTMLItem {
+public class BTInputText extends HierarchicalHTMLItem {
 	
 	private String label = "&nbsp;";
+	private String fieldID = "&nbsp;";
 	
-	public BTFooter() {
+	public BTInputText(String label, String fieldID) {
+		this.label = label;
+		this.fieldID = fieldID;
 	}
 	
 	/***********************************************************************************
@@ -18,7 +21,9 @@ public class BTFooter extends HierarchicalHTMLItem {
 	 ***********************************************************************************/
 	protected void createHTML(StringBuilder html) {
 
-		html.append("<div id=\"cfw-footer\" class=\"flex-default flex-column\">");
+		html.append("<div class=\"form-group\">");
+		html.append("<for=\""+fieldID+"\" >"+label+":</label> ");
+		html.append("<input type=\"text\" placeholder=\""+label+"\" class=\"form-control\" name=\""+fieldID+"\" id=\""+fieldID+"\" />");
 		
 		if(this.hasChildren()) {
 				
@@ -41,10 +46,10 @@ public class BTFooter extends HierarchicalHTMLItem {
 		return label;
 	}
 
-	public BTFooter setLabel(String label) {
+	public BTInputText setLabel(String label) {
 		fireChange();
 		this.label = label;
 		return this;
 	}
-
+	
 }

@@ -124,12 +124,13 @@ public class HTMLResponse extends AbstractHTMLResponse {
 				// Javascript
 				this.appendSectionTitle(buildedPage, "Javascript");
 				buildedPage.append("<div id=\"javascripts\">");
-				if(assemblyCSS.hasFiles()) {
+				
+				if(bottomjs.hasFiles()) {
 					buildedPage.append("<script src=\""+bottomjs.assemble().cache().getAssemblyServletPath()+"\"></script>");
 				}
 				
 				for(FileDefinition fileDef : singleJSBottom) {
-					buildedPage.append("\n").append(fileDef.getJavascriptTag());
+					buildedPage.append("\n").append(fileDef.getJavascriptTag()).append("\n");
 				}
 				
 				buildedPage.append(this.javascript);

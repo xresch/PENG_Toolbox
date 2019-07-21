@@ -485,7 +485,7 @@ function cfw_getJSON(url, params, callbackFunc){
 			  
 			  if(msgArray != undefined
 			  && msgArray != null
-			  && msgArray.length > 1){
+			  && msgArray.length > 0){
 				  for(var i = 0; i < msgArray.length; i++ ){
 					  CFW.ui.addAlert(msgArray[i].type, msgArray[i].message);
 				  }

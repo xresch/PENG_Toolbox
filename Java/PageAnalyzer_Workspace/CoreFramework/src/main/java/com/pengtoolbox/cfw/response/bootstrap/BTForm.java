@@ -5,11 +5,13 @@ package com.pengtoolbox.cfw.response.bootstrap;
  * @author Reto Scheiwiller
  * 
  **********************************************************************************/
-public class BTFooter extends HierarchicalHTMLItem {
+public class BTForm extends HierarchicalHTMLItem {
 	
-	private String label = "&nbsp;";
-	
-	public BTFooter() {
+	private String title = "";
+	private String submitLabel = "";
+	public BTForm(String title, String submitLabel) {
+		this.title = title;
+		this.submitLabel = submitLabel;
 	}
 	
 	/***********************************************************************************
@@ -18,32 +20,33 @@ public class BTFooter extends HierarchicalHTMLItem {
 	 ***********************************************************************************/
 	protected void createHTML(StringBuilder html) {
 
-		html.append("<div id=\"cfw-footer\" class=\"flex-default flex-column\">");
+		html.append("<form id=\"cfw-form\" class=\"form\" method=\"post\">");
 		
 		if(this.hasChildren()) {
 				
 			for(HierarchicalHTMLItem child : children) {
-				html.append("\t"+child.getHTML());
+				html.append("\n\t"+child.getHTML());
 			}
 		}
 		
 		if(this.hasOneTimeChildren()) {
 			
 			for(HierarchicalHTMLItem child : oneTimeChildren) {
-				html.append("\t"+child.getHTML());
+				html.append("\n\t"+child.getHTML());
 			}
 		}
 		
-		html.append("</div>");
+		html.append("<input type=\"submit\" class=\"form-control\" value=\"Sign In\">");
+		html.append("</form>");
 	}
 
 	public String getLabel() {
-		return label;
+		return title;
 	}
 
-	public BTFooter setLabel(String label) {
+	public BTForm setLabel(String label) {
 		fireChange();
-		this.label = label;
+		this.title = label;
 		return this;
 	}
 

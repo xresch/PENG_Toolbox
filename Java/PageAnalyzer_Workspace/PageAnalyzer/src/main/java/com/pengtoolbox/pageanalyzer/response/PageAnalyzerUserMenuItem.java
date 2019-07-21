@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFW.DB.Permissions;
 import com.pengtoolbox.cfw._main.SessionData;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
@@ -24,6 +25,10 @@ public class PageAnalyzerUserMenuItem extends UserMenuItem {
 		if(permissions.containsKey(PAPermissions.MANAGE_RESULTS)) {
 			this.addChild(new MenuItem("Manage Results").href("./manageresults"));
 		}
+		if(permissions.containsKey(CFWDBPermission.CFW_USER_MANAGEMENT)) {
+			this.addChild(new MenuItem("Manage Users").href("./usermanagement"));
+		}
+		
 		
 		if(!currentUser.isForeign()) {
 			this.addChild(new MenuItem("Change Password").href("./changepassword"));

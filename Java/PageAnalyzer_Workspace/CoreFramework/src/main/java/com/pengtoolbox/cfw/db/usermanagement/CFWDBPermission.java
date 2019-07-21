@@ -13,6 +13,8 @@ public class CFWDBPermission {
 
 	public static String TABLE_NAME = "CFW_PERMISSION";
 	
+	public static String CFW_USER_MANAGEMENT = "User Management";
+	
 	public static Logger logger = CFWLog.getLogger(CFWDBPermission.class.getName());
 	
 	enum PermissionDBFields{
@@ -54,6 +56,8 @@ public class CFWDBPermission {
 	}
 	/********************************************************************************************
 	 * Creates a new permission in the DB.
+	 * All newly created permissions are by default assigned to the Superuser Group.
+	 * 
 	 * @param permission with the values that should be inserted. ID will be set by the Database.
 	 * @return true if successful, false otherwise
 	 * 
@@ -96,7 +100,7 @@ public class CFWDBPermission {
 		//----------------------------------------
 		// Add new permission to superuser
 		Permission permissionFromDB = CFW.DB.Permissions.selectByName(permission.name());
-		Group superuser = CFW.DB.Groups.selectByName(CFW.DB.Groups.DEFAULT_GROUP_SUPERUSER);
+		Group superuser = CFW.DB.Groups.selectByName(CFW.DB.Groups.CFW_GROUP_SUPERUSER);
 		
 		return CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionFromDB, superuser);
 				
