@@ -280,6 +280,33 @@ public class CFWDBPermission {
 	}
 	
 	/****************************************************************
+	 * Deletes multiple users by id.
+	 * @param ids of the users separated by comma
+	 * @return true if successful, false otherwise.
+	 ****************************************************************/
+	public static boolean deleteMultipleByID(String resultIDs) {
+		
+		//----------------------------------
+		// Check input format
+		if(resultIDs == null ^ !resultIDs.matches("(\\d,?)+")) {
+			new CFWLog(logger)
+			.method("deleteMultipleByID")
+			.severe("The userID's '"+resultIDs+"' are not a comma separated list of strings.");
+			return false;
+		}
+
+		String deleteByID = 
+				"DELETE FROM "+TABLE_NAME
+				+" WHERE "
+					+ PermissionDBFields.PK_ID+" IN(?) "
+					+ "AND "
+					+ PermissionDBFields.IS_DELETABLE+" = TRUE ";
+		
+		return CFWDB.preparedExecute(deleteByID, resultIDs);
+			
+	}
+	
+	/****************************************************************
 	 * Deletes the permission by id.
 	 * @param id of the permission
 	 * @return true if successful, false otherwise.

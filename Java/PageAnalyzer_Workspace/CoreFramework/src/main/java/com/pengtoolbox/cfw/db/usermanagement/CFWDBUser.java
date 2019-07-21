@@ -405,6 +405,36 @@ public class CFWDBUser {
 	}
 	
 	/****************************************************************
+	 * Deletes multiple users by id.
+	 * @param ids of the users separated by comma
+	 * @return true if successful, false otherwise.
+	 ****************************************************************/
+	public static boolean deleteMultipleByID(String resultIDs) {
+		
+		//----------------------------------
+		// Check input format
+		if(resultIDs == null ^ !resultIDs.matches("(\\d,?)+")) {
+			new CFWLog(logger)
+			.method("deleteMultipleByID")
+			.severe("The userID's '"+resultIDs+"' are not a comma separated list of strings.");
+			return false;
+		}
+
+		String deleteByID = 
+				"DELETE FROM "+TABLE_NAME
+				+" WHERE "
+					+ UserDBFields.PK_ID+" IN(?) "
+					+ "AND "
+					+ UserDBFields.IS_DELETABLE+" = TRUE ";
+		
+		return CFWDB.preparedExecute(deleteByID, resultIDs);
+			
+	}
+	
+	
+	
+	
+	/****************************************************************
 	 * Check if the user exists by it's username.
 	 * 
 	 * @param group to check

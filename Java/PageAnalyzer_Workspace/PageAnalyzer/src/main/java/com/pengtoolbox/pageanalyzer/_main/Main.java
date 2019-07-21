@@ -54,6 +54,7 @@ public class Main extends Application {
     		//do not proceed if shutdown was registered
     		return;
     	}
+    	
         
     	CFW.App.setDefaultMenu(PageAnalyzerMenu.class);
     	CFW.App.setDefaultUserMenuItem(PageAnalyzerUserMenuItem.class);
@@ -68,6 +69,8 @@ public class Main extends Application {
 		// Initialize Database
     	PageAnalyzerDB.initialize();
     	PAPermissions.initializePermissions();
+    	
+    	CFW.DB.createTestData();
     	
         //###################################################################
         // Create API ServletContext, no login needed

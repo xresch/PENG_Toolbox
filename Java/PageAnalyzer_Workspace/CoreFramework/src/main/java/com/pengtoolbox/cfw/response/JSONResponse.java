@@ -47,6 +47,14 @@ public class JSONResponse extends AbstractTemplateJSON {
 		return size;
 	}
 	
+	public boolean isSuccess() {
+		return success;
+	}
+	
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+	
 	public void addAlert(MessageType type, String message) {
 		CFW.Context.Request.addAlertMessage(type, message);
 	}

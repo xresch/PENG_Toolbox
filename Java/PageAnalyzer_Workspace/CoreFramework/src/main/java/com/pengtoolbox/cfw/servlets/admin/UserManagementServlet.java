@@ -37,7 +37,7 @@ public class UserManagementServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 		
-		HTMLResponse html = new HTMLResponse("Manage Results");
+		HTMLResponse html = new HTMLResponse("User Management");
 		
 		StringBuffer content = html.getContent();
 		

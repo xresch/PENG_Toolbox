@@ -332,6 +332,47 @@ function cfw_showModal(modalTitle, modalBody){
 	defaultModal.modal('show');
 }
 
+/**************************************************************************************
+ * Create a model with content.
+ * @param modalTitle the title for the modal
+ * @param modalBody the body of the modal
+ * @return nothing
+ *************************************************************************************/
+function cfw_showSmallModal(modalTitle, modalBody){
+	
+	var body = $("body");
+	var modalID = 'cfw-small-modal';
+	
+	var defaultModal = $("#"+modalID);
+	if(defaultModal.length == 0){
+	
+		defaultModal = $(
+				'<div id="'+modalID+'" class="modal fade"  tabindex="-1" role="dialog">'
+				+ '  <div class="modal-dialog modal-sm" role="document">'
+				+ '    <div class="modal-content">'
+				+ '      <div class="modal-header p-2">'
+				+ '        <h4 class="modal-title">Title</h4>'
+				+ '        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times</span></button>'
+				+ '      </div>'
+				+ '      <div class="modal-body">'
+				+ '      </div>'
+				+ '      <div class="modal-footer  p-2">'
+				+ '         <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">Close</button>'
+				+ '      </div>'
+				+ '    </div>'
+				+ '  </div>'
+				+ '</div>');
+		
+		defaultModal.modal();
+		$('body').prepend(defaultModal);
+	}
+
+	defaultModal.find(".modal-title").html(modalTitle);
+	defaultModal.find('.modal-body').html("").append(modalBody);
+	
+	defaultModal.modal('show');
+}
+
 
 /**************************************************************************************
  * Create a confirmation modal panel that executes the function passed by the argument
@@ -537,6 +578,7 @@ var CFW = {
 		createTable: cfw_createTable,
 		toc: cfw_table_toc,
 		showModal: cfw_showModal,
+		showSmallModal: cfw_showSmallModal,
 		confirmExecute: cfw_confirmExecution,
 		toogleLoader: cfw_toogleLoader,
 		addAlert: cfw_addAlertMessage

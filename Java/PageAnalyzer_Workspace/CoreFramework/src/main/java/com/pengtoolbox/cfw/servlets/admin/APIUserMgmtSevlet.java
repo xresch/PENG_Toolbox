@@ -40,12 +40,13 @@ public class APIUserMgmtSevlet extends HttpServlet {
 		
 		String action = request.getParameter("action");
 		String item = request.getParameter("item");
+		String IDs = request.getParameter("ids");
 		
 		//-------------------------------------------
 		// Fetch Data
 		//-------------------------------------------
-		JSONResponse plain = new JSONResponse();
-		StringBuffer content = plain.getContent();
+		JSONResponse jsonResponse = new JSONResponse();
+		StringBuffer content = jsonResponse.getContent();
 
 		if(CFW.Context.Request.getUserPermissions() != null
 		&& CFW.Context.Request.getUserPermissions().containsKey(CFWDBPermission.CFW_USER_MANAGEMENT)) {
@@ -72,7 +73,22 @@ public class APIUserMgmtSevlet extends HttpServlet {
 												break;
 						}
 						break;
-				
+					
+					case "delete": 			
+						switch(item.toLowerCase()) {
+							case "users": 		jsonResponse.setSuccess(CFW.DB.Users.deleteMultipleByID(IDs));
+										  		break;
+										  
+							case "groups": 		jsonResponse.setSuccess(CFW.DB.Groups.deleteMultipleByID(IDs));
+												break;  
+												
+							case "permissions": jsonResponse.setSuccess(CFW.DB.Permissions.deleteMultipleByID(IDs));
+		  			   							break;  
+		  			   							
+							default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
+												break;
+						}
+						break;
 					default: 				CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of action '"+action+"' is not supported.");
 											break;
 											

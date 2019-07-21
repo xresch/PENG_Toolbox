@@ -184,9 +184,15 @@ public class CFWFiles {
 				return CFWFiles.permanentStringFileCache.get(resourcePath);
 			}else{
 				
-				InputStream in = CFWFiles.class.getClassLoader().getResourceAsStream(resourcePath);
-				fileContent = readContentsFromInputStream(in);
-				CFWFiles.permanentStringFileCache.put(resourcePath, fileContent);
+				try(InputStream in = CFWFiles.class.getClassLoader().getResourceAsStream(resourcePath)){
+					fileContent = readContentsFromInputStream(in);
+					CFWFiles.permanentStringFileCache.put(resourcePath, fileContent);
+				} catch (IOException e) {
+					new CFWLog(logger)
+					.method("readPackageResource")
+					.severe("Error while reading resource from package: "+resourcePath, e);
+				}
+
 			}
 		}else {
 			new CFWLog(logger).severe("Not allowed to read resource from package: "+packageName);

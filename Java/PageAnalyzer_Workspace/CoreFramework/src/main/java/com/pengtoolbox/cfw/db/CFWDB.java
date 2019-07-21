@@ -474,5 +474,83 @@ public class CFWDB {
 
 		return json.toString();
 	}
+	
+	/********************************************************************************************
+	 * Create Testdata for testing purposes
+	 ********************************************************************************************/
+	public static void createTestData() {
+		
+		Group testgroupA, testgroupB, testgroupC;
+		User testuserA, testuserB, testuserC;
+		
+		Permission  permissionA, permissionAA, permissionAAA, 
+					permissionB, permissionBB,
+					permissionC;
+		//------------------------------
+		// Groups
+		CFW.DB.Groups.create(new Group("TestgroupA").description("This is the testgroup A."));
+		testgroupA = CFW.DB.Groups.selectByName("TestgroupA");
+		
+		CFW.DB.Groups.create(new Group("TestgroupB").description("This is the testgroup B."));
+		testgroupB = CFW.DB.Groups.selectByName("TestgroupB");
+		
+		CFW.DB.Groups.create(new Group("TestgroupC").description("This is the testgroup C."));
+		testgroupC = CFW.DB.Groups.selectByName("TestgroupC");
+		
+		//------------------------------
+		// Users
+		CFW.DB.Users.create(new User("TestuserA")
+				.setInitialPassword("TestuserA", "TestuserA")
+				.email("testuserA@cfwtest.com")
+				.firstname("Testika")
+				.lastname("Testonia"));
+		testuserA = CFW.DB.Users.selectByUsernameOrMail("TestuserA");
+		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupA);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupB);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupC);
+		
+		CFW.DB.Users.create(new User("TestuserB")
+				.setInitialPassword("TestuserB", "TestuserB")
+				.email("testuserB@cfwtest.com")
+				.firstname("Jane")
+				.lastname("Doe"));
+		testuserB = CFW.DB.Users.selectByUsernameOrMail("TestuserB");
+		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupA);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupB);
+		
+		CFW.DB.Users.create(new User("TestuserC")
+				.setInitialPassword("TestuserC", "TestuserC")
+				.email("testuserC@cfwtest.com")
+				.firstname("Paola")
+				.lastname("Pernandez"));	
+		testuserC = CFW.DB.Users.selectByUsernameOrMail("TestuserC");
+		CFW.DB.UserGroupMap.addUserToGroup(testuserC, testgroupC);
+		
+		//------------------------------
+		// Permissions
+		CFW.DB.Permissions.create(new Permission("PermissionA").description("This is the permission A."));
+		permissionA = CFW.DB.Permissions.selectByName("PermissionA");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionA, testgroupA);
+		
+		CFW.DB.Permissions.create(new Permission("PermissionAA").description("This is the permission AA."));
+		permissionAA = CFW.DB.Permissions.selectByName("PermissionAA");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAA, testgroupA);
+		
+		CFW.DB.Permissions.create(new Permission("PermissionAAA").description("This is the permission AAA."));
+		permissionAAA = CFW.DB.Permissions.selectByName("PermissionAAA");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAAA, testgroupA);
+		
+		CFW.DB.Permissions.create(new Permission("PermissionB").description("This is the permission B."));
+		permissionB = CFW.DB.Permissions.selectByName("PermissionB");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionB, testgroupB);
+		
+		CFW.DB.Permissions.create(new Permission("PermissionBB").description("This is the permission BB."));
+		permissionBB = CFW.DB.Permissions.selectByName("PermissionBB");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionBB, testgroupB);
+		
+		CFW.DB.Permissions.create(new Permission("PermissionC").description("This is the permission C."));
+		permissionC = CFW.DB.Permissions.selectByName("PermissionC");
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionC, testgroupC);
+	}
 
 }
