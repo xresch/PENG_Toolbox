@@ -52,6 +52,7 @@ public class CFWDBUserGroupMap {
 	public static boolean addUserToGroup(User user, String groupname) {
 		return addUserToGroup(user, CFW.DB.Groups.selectByName(groupname));
 	}
+	
 	/********************************************************************************************
 	 * Adds the user to the specified group.
 	 * @param user
@@ -82,14 +83,25 @@ public class CFWDBUserGroupMap {
 			return false;
 		}
 		
+		return addUserToGroup(user.id(), group.id());
+	}
+	
+	/********************************************************************************************
+	 * Adds the user to the specified group.
+	 * @param user
+	 * @param group
+	 * @return return true if user was added, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static boolean addUserToGroup(int userid, int groupid) {
 		String insertGroupSQL = "INSERT INTO "+TABLE_NAME+" ("
 				  + UserGroupMapDBFields.FK_ID_USER +", "
 				  + UserGroupMapDBFields.FK_ID_GROUP +" "
 				  + ") VALUES (?,?);";
 		
 		return CFWDB.preparedExecute(insertGroupSQL, 
-				user.id(),
-				group.id()
+				userid,
+				groupid
 				);
 	}
 	
@@ -116,6 +128,17 @@ public class CFWDBUserGroupMap {
 			return false;
 		}
 		
+		return removeUserFromGroup(user.id(), group.id());
+	}
+
+	/********************************************************************************************
+	 * Remove a user from the group.
+	 * @param user
+	 * @param group
+	 * @return return true if user was removed, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static boolean removeUserFromGroup(int userID, int groupID) {
 		String removeUserFromGroupSQL = "DELETE FROM "+TABLE_NAME
 				+" WHERE "
 				  + UserGroupMapDBFields.FK_ID_USER +" = ? "
@@ -124,8 +147,8 @@ public class CFWDBUserGroupMap {
 				  + ";";
 		
 		return CFWDB.preparedExecute(removeUserFromGroupSQL, 
-				user.id(),
-				group.id()
+				userID,
+				groupID
 				);
 	}
 	
@@ -181,13 +204,13 @@ public class CFWDBUserGroupMap {
 		return false;
 	}
 	
+
 	/***************************************************************
-	 * Updates the object selecting by ID.
+	 * Select user groups by the user id.
 	 * @param group
 	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
 	 ****************************************************************/
 	public static HashMap<String, Group> selectGroupsForUser(User user) {
-		
 		if( user == null) {
 			new CFWLog(logger)
 				.method("create")
@@ -195,13 +218,23 @@ public class CFWDBUserGroupMap {
 			return null;
 		}
 		
+		return selectGroupsForUser(user.id());
+	}
+	/***************************************************************
+	 * Select user groups by the user id.
+	 * @param group
+	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
+	 ****************************************************************/
+	public static HashMap<String, Group> selectGroupsForUser(int userID) {
+		
+		
 		String selectGroupsForUser = "SELECT * FROM "+CFWDBGroup.TABLE_NAME+" G "
 				+ " INNER JOIN "+CFWDBUserGroupMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_GROUP = G.PK_ID "
 				+ " WHERE M.FK_ID_USER = ?";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectGroupsForUser, 
-				user.id());
+				userID);
 		
 		HashMap<String, Group> groupMap = new HashMap<String, Group>(); 
 		
@@ -213,7 +246,7 @@ public class CFWDBUserGroupMap {
 		} catch (SQLException e) {
 			new CFWLog(logger)
 			.method("selectGroupsForUser")
-			.severe("Error while selecting groups for the user '"+user.username()+"'.", e);
+			.severe("Error while selecting groups for the user with id '"+userID+"'.", e);
 			return null;
 		}finally {
 			CFWDB.close(result);
@@ -221,6 +254,77 @@ public class CFWDBUserGroupMap {
 		
 		return groupMap;
 	
+	}
+	
+	/***************************************************************
+	 * Returns a list of all groups and if the user is part of them 
+	 * as a json array.
+	 * @param group
+	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
+	 ****************************************************************/
+	public static String getGroupMapForUserAsJSON(String userID) {
+		
+		//----------------------------------
+		// Check input format
+		if(userID == null ^ !userID.matches("\\d+")) {
+			new CFWLog(logger)
+			.method("deleteMultipleByID")
+			.severe("The userID '"+userID+"' is not a number.");
+			return "[]";
+		}
+		
+		String selectGroupsForUser = "SELECT G.PK_ID, G.NAME, G.DESCRIPTION, FK_ID_USER FROM "+CFWDBGroup.TABLE_NAME+" G "
+				+ " LEFT JOIN "+CFWDBUserGroupMap.TABLE_NAME+" M "
+				+ " ON M.FK_ID_GROUP = G.PK_ID "
+				+ " AND M.FK_ID_USER = ?";
+		
+		ResultSet result = CFWDB.preparedExecuteQuery(selectGroupsForUser, 
+				userID);
+
+		return CFWDB.resultSetToJSON(result);
+	
+	}
+	
+	/***************************************************************
+	 * Remove the user from the group if it is a member of the group, 
+	 * add it otherwise.
+	 ****************************************************************/
+	public static boolean toogleUserInGroup(String userID, String groupID) {
+		
+		//----------------------------------
+		// Check input format
+		if(userID == null ^ !userID.matches("\\d+")) {
+			new CFWLog(logger)
+			.method("toogleUserInGroup")
+			.severe("The userID '"+userID+"' is not a number.");
+			return false;
+		}
+		
+		//----------------------------------
+		// Check input format
+		if(groupID == null ^ !groupID.matches("\\d+")) {
+			new CFWLog(logger)
+			.method("toogleUserInGroup")
+			.severe("The groupID '"+userID+"' is not a number.");
+			return false;
+		}
+		
+		return toogleUserInGroup(Integer.parseInt(userID), Integer.parseInt(groupID));
+		
+	}
+	
+	/***************************************************************
+	 * Remove the user from the group if it is a member of the group, 
+	 * add it otherwise.
+	 ****************************************************************/
+	public static boolean toogleUserInGroup(int userID, int groupID) {
+		
+		if(checkIsUserInGroup(userID, groupID)) {
+			return removeUserFromGroup(userID, groupID);
+		}else {
+			return addUserToGroup(userID, groupID);
+		}
+
 	}
 		
 }

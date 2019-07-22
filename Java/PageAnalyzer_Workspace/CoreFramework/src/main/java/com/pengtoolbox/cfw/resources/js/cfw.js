@@ -326,7 +326,7 @@ function cfw_showModal(modalTitle, modalBody){
 		$('body').prepend(defaultModal);
 	}
 
-	defaultModal.find(".modal-title").html(modalTitle);
+	defaultModal.find(".modal-title").html("").append(modalTitle);
 	defaultModal.find('.modal-body').html("").append(modalBody);
 	
 	defaultModal.modal('show');
@@ -367,7 +367,7 @@ function cfw_showSmallModal(modalTitle, modalBody){
 		$('body').prepend(defaultModal);
 	}
 
-	defaultModal.find(".modal-title").html(modalTitle);
+	defaultModal.find(".modal-title").html("").append(modalTitle);
 	defaultModal.find('.modal-body').html("").append(modalBody);
 	
 	defaultModal.modal('show');
@@ -535,6 +535,36 @@ function cfw_getJSON(url, params, callbackFunc){
 		  });
 }
 
+/******************************************************************
+ * Method to fetch data from the server with CFW.http.getJSON(). 
+ * The result is cached in the global variable CFW.cache.data[key].
+ *
+ * @param url
+ * @param params the query params as a json object e.g. {myparam: "value", otherkey: "value2"}
+ * @param key under which the data will be stored
+ * @param callback method which should be called when the data is available.
+ * @return nothing
+ *
+ ******************************************************************/
+function cfw_fetchAndCacheData(url, params, key, callback){
+	//---------------------------------------
+	// Fetch and Return Data
+	//---------------------------------------
+	if (CFW.cache.data[key] == undefined || CFW.cache.data[key] == null){
+		CFW.http.getJSON(url, params, 
+			function(data) {
+				CFW.cache.data[key] = data;	
+				if(callback != undefined && callback != null ){
+					callback(data);
+				}
+		});
+	}else{
+		if(callback != undefined && callback != null){
+			callback(CFW.cache.data[key]);
+		}
+	}
+}
+
 /**************************************************************************************
  * Select all the content of the given element.
  * For example to select everything inside a given DIV element using 
@@ -559,7 +589,11 @@ function cfw_selectElementContent(el) {
  * CFW FRAMEWORK STRUCTURE
  * -----------------------
  ********************************************************************/
+
 var CFW = {
+	cache: { 
+		data: {}
+	},
 	array: {
 		sortArrayByValueOfObject: cfw_sortArrayByValueOfObject
 	},
@@ -567,7 +601,8 @@ var CFW = {
 	http: {
 		getURLParams: cfw_getURLParams,
 		secureDecodeURI: cfw_secureDecodeURI,
-		getJSON: cfw_getJSON
+		getJSON: cfw_getJSON,
+		fetchAndCacheData: cfw_fetchAndCacheData
 	},
 	
 	selection: {

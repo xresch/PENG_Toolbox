@@ -40,8 +40,10 @@ public class APIUserMgmtSevlet extends HttpServlet {
 		
 		String action = request.getParameter("action");
 		String item = request.getParameter("item");
+		String ID = request.getParameter("id");
 		String IDs = request.getParameter("ids");
 		
+		String userID, groupID;
 		//-------------------------------------------
 		// Fetch Data
 		//-------------------------------------------
@@ -60,17 +62,23 @@ public class APIUserMgmtSevlet extends HttpServlet {
 					
 					case "fetch": 			
 						switch(item.toLowerCase()) {
-							case "users": 		content.append(CFW.DB.Users.getUserListAsJSON());
-										  		break;
-										  
-							case "groups": 		content.append(CFW.DB.Groups.getGroupListAsJSON());
-							  			   		break;
+							case "users": 			content.append(CFW.DB.Users.getUserListAsJSON());
+										  			break;
+										  		
+							case "user": 			content.append(CFW.DB.Users.getUserAsJSON(ID));
+					  								break;			
+					  							
+							case "usergroupmap": 	content.append(CFW.DB.UserGroupMap.getGroupMapForUserAsJSON(ID));
+					  								break;		
+					  							
+							case "groups": 			content.append(CFW.DB.Groups.getGroupListAsJSON());
+							  			   			break;
 							  			   		
-							case "permissions": content.append(CFW.DB.Permissions.getPermissionListAsJSON());
-		  			   							break;  
+							case "permissions":		content.append(CFW.DB.Permissions.getPermissionListAsJSON());
+		  			   								break;  
 		  			   							
-							default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
-												break;
+							default: 				CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
+													break;
 						}
 						break;
 					
@@ -85,6 +93,18 @@ public class APIUserMgmtSevlet extends HttpServlet {
 							case "permissions": jsonResponse.setSuccess(CFW.DB.Permissions.deleteMultipleByID(IDs));
 		  			   							break;  
 		  			   							
+							default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
+												break;
+						}
+						break;
+					
+					case "update": 			
+						switch(item.toLowerCase()) {
+							case "usergroupmap": 	userID = request.getParameter("userid");
+													groupID = request.getParameter("groupid");
+													jsonResponse.setSuccess(CFW.DB.UserGroupMap.toogleUserInGroup(userID, groupID));
+													break;
+			
 							default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 												break;
 						}

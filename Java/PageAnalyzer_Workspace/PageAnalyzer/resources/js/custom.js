@@ -939,13 +939,13 @@ function printResultList(parent, data){
 		rowString += '<td>'+url+'</td>';
 		
 		// View Result Icon
-		rowString += '<td><a class="btn btn-primary btn-sm" alt="View Result" href="./resultview?resultid='+currentData.RESULT_ID+'"><i class="fa fa-eye"></i></a></td>';
+		rowString += '<td><a class="btn btn-primary btn-sm" alt="View Result" title="View Result" href="./resultview?resultid='+currentData.RESULT_ID+'"><i class="fa fa-eye"></i></a></td>';
 		
 		// Gantt Chart Icon
-		rowString += '<td><a class="btn btn-primary btn-sm" alt="View Gantt Chart" href="./ganttchart?resultid='+currentData.RESULT_ID+'"><i class="fas fa-sliders-h"></i></a></td>';
+		rowString += '<td><a class="btn btn-primary btn-sm" alt="View Gantt Chart" title="View Gantt Chart" href="./ganttchart?resultid='+currentData.RESULT_ID+'"><i class="fas fa-sliders-h"></i></a></td>';
 		
 		// Link Icon
-		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Open URL" href="'+url+'"><i class="fa fa-link"></i></a></td>';
+		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Open URL" title="Open URL" href="'+url+'"><i class="fa fa-link"></i></a></td>';
 		
 		// Save Result
 		var regex = /.*?http.?:\/\/([^\/]*)/g;
@@ -957,12 +957,12 @@ function printResultList(parent, data){
 		}
 		
 
-		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Dowload Result" href=./data?type=yslowresult&resultid='+currentData.RESULT_ID+' download="'+resultName+'_yslow_results.json"><i class="fa fa-save"></i></a></td>';
+		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Download Result" title="Download Result" href=./data?type=yslowresult&resultid='+currentData.RESULT_ID+' download="'+resultName+'_yslow_results.json"><i class="fa fa-save"></i></a></td>';
 		
 		//Save HAR
-		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Dowload Result" href=./data?type=har&resultid='+currentData.RESULT_ID+' download="'+resultName+'.har"><i class="fa fa-download"> HAR</i></a></td>';
+		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Dowload HAR" title="Dowload HAR" href=./data?type=har&resultid='+currentData.RESULT_ID+' download="'+resultName+'.har"><i class="fa fa-download"> HAR</i></a></td>';
 
-		rowString += '<td><button class="btn btn-danger btn-sm" alt="Delete Result" onclick="CFW.ui.confirmExecute(\'Do you want to delete the results?\', \'Delete\', \'deleteResults('+currentData.RESULT_ID+')\')"><i class="fa fa-trash"></i></button></td>';
+		rowString += '<td><button class="btn btn-danger btn-sm" alt="Delete Result" title="Delete Result" onclick="CFW.ui.confirmExecute(\'Do you want to delete the results?\', \'Delete\', \'deleteResults('+currentData.RESULT_ID+')\')"><i class="fa fa-trash"></i></button></td>';
 		rowString += "</tr>";
 		
 		cfwTable.addRow(rowString);

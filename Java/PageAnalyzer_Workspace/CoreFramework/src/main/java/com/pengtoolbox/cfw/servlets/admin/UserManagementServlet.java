@@ -44,11 +44,12 @@ public class UserManagementServlet extends HttpServlet
 		if(CFW.Context.Request.getUserPermissions() != null
 		&& CFW.Context.Request.getUserPermissions().containsKey(CFWDBPermission.CFW_USER_MANAGEMENT)) {
 			
-			html.addJSFileBottomSingle(new FileDefinition(HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".js", "cfw_usermgmt.js"));
+			//html.addJSFileBottomSingle(new FileDefinition(HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".js", "cfw_usermgmt.js"));
+			html.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".js", "cfw_usermgmt.js");
 			
 			content.append(CFW.Files.readPackageResource(FileDefinition.CFW_JAR_RESOURCES_PATH + ".html", "cfw_usermgmt.html"));
 			
-			html.addJavascriptCode("CFW.usermgmt.draw({tab: 'users'});");
+			html.addJavascriptCode("cfw_usermgmt_draw({tab: 'users'});");
 			
 	        response.setContentType("text/html");
 	        response.setStatus(HttpServletResponse.SC_OK);

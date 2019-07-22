@@ -431,10 +431,13 @@ public class CFWDB {
 		
 		try {
 			
+			if(resultSet == null) {
+				return "[]";
+			}
 			//--------------------------------------
 			// Check has results
 			resultSet.beforeFirst();
-			if(resultSet == null || !resultSet.isBeforeFirst()) {
+			if(!resultSet.isBeforeFirst()) {
 				return "[]";
 			}
 			

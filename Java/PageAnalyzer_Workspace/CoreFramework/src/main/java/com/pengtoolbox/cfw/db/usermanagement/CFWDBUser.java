@@ -251,6 +251,45 @@ public class CFWDBUser {
 	}
 	
 	/***************************************************************
+	 * Select a user by it's ID and return it as a JSON string.
+	 * 
+	 * @param id of the User
+	 * @return Returns a user or null if not found or in case of exception.
+	 ****************************************************************/
+	public static String getUserAsJSON(String userID) {
+		
+		//----------------------------------
+		// Check input format
+		if(userID == null ^ !userID.matches("\\d+")) {
+			new CFWLog(logger)
+			.method("getUserAsJSON")
+			.severe("The userID '"+userID+"' is not a number.");
+			return "[]";
+		}
+		
+		String selectByID = 
+				"SELECT "
+				  + UserDBFields.PK_ID +", "
+				  + UserDBFields.USERNAME +", "
+				  + UserDBFields.EMAIL +", "
+				  + UserDBFields.FIRSTNAME +", "
+				  + UserDBFields.LASTNAME +", "
+				  + UserDBFields.AVATAR_IMAGE +", "
+				  + UserDBFields.DATE_CREATED +", "
+				  + UserDBFields.STATUS +", "
+				  + UserDBFields.IS_DELETABLE +", "
+				  + UserDBFields.IS_RENAMABLE + ", "
+				  + UserDBFields.IS_FOREIGN 
+				+" FROM "+TABLE_NAME
+				+" WHERE "
+					+ UserDBFields.PK_ID	+ " = ?";
+		
+		return CFW.DB.resultSetToJSON(CFWDB.preparedExecuteQuery(selectByID, userID));
+		
+		
+	}
+	
+	/***************************************************************
 	 * Return a list of all users
 	 * 
 	 * @return Returns a result set with all users or null.
@@ -285,6 +324,16 @@ public class CFWDBUser {
 		return CFWDB.resultSetToJSON(result);
 	}
 	
+	/***************************************************************
+	 * Retrieve the groups for the specified user.
+	 * @param group
+	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
+	 ****************************************************************/
+	public static HashMap<String, Group> selectGroupsForUser(int userID) {
+		
+		return CFW.DB.UserGroupMap.selectGroupsForUser(userID);
+	
+	}
 	/***************************************************************
 	 * Retrieve the groups for the specified user.
 	 * @param group
