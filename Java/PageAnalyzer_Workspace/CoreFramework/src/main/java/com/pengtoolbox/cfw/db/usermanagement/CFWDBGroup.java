@@ -179,6 +179,31 @@ public class CFWDBGroup {
 	}
 	
 	/***************************************************************
+	 * Select a group by it's ID and return it as JSON string.
+	 * @param id of the group
+	 * @return Returns a group or null if not found or in case of exception.
+	 ****************************************************************/
+	public static String getGroupAsJSON(String id) {
+		
+		String selectByName = 
+				"SELECT "
+				  + GroupDBFields.PK_ID +", "
+				  + GroupDBFields.NAME +", "
+				  + GroupDBFields.DESCRIPTION +", "
+				  + GroupDBFields.IS_DELETABLE +" "
+				+" FROM "+TABLE_NAME
+				+" WHERE "
+				+ GroupDBFields.PK_ID + " = ?";
+		
+		ResultSet result = CFWDB.preparedExecuteQuery(selectByName, id);
+		
+		String json = CFWDB.resultSetToJSON(result);
+		CFWDB.close(result);	
+		return json;
+		
+	}
+	
+	/***************************************************************
 	 * Return a list of all groups
 	 * 
 	 * @return Returns a resultSet with all groups or null.

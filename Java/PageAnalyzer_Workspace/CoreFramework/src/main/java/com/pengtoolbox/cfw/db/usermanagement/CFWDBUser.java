@@ -257,16 +257,7 @@ public class CFWDBUser {
 	 * @return Returns a user or null if not found or in case of exception.
 	 ****************************************************************/
 	public static String getUserAsJSON(String userID) {
-		
-		//----------------------------------
-		// Check input format
-		if(userID == null ^ !userID.matches("\\d+")) {
-			new CFWLog(logger)
-			.method("getUserAsJSON")
-			.severe("The userID '"+userID+"' is not a number.");
-			return "[]";
-		}
-		
+				
 		String selectByID = 
 				"SELECT "
 				  + UserDBFields.PK_ID +", "

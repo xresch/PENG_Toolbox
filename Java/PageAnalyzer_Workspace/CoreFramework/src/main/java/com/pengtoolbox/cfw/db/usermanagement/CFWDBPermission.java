@@ -102,7 +102,7 @@ public class CFWDBPermission {
 		Permission permissionFromDB = CFW.DB.Permissions.selectByName(permission.name());
 		Group superuser = CFW.DB.Groups.selectByName(CFW.DB.Groups.CFW_GROUP_SUPERUSER);
 		
-		return CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionFromDB, superuser);
+		return CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionFromDB, superuser, false);
 				
 	}
 	

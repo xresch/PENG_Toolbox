@@ -11,6 +11,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.h2.jdbcx.JdbcConnectionPool;
@@ -261,7 +262,16 @@ public class CFWDB {
 			.method("createDefaultUsers")
 			.severe("User 'admin' is not assigned to group 'Superuser'.");
 		}
-
+		
+		//-----------------------------------------
+		// Upgrade Step: Superuser permissions undeletable
+		//-----------------------------------------
+		HashMap<String, Permission> permissions = CFW.DB.GroupPermissionMap.selectPermissionsForGroup(superuserGroup);
+		
+		for(Permission p : permissions.values()) {
+			CFW.DB.GroupPermissionMap.updateIsDeletable(p.id(), superuserGroup.id(), false);
+		}
+		
 	}
 	
 	
@@ -452,7 +462,7 @@ public class CFWDB {
 			while(resultSet.next()) {
 				json.append("{");
 				for(int i = 1 ; i <= columnCount; i++) {
-					String column = metadata.getColumnName(i);
+					String column = metadata.getColumnLabel(i);
 					json.append("\"").append(column).append("\": ");
 					
 					String value = resultSet.getString(i);
@@ -535,27 +545,27 @@ public class CFWDB {
 		// Permissions
 		CFW.DB.Permissions.create(new Permission("PermissionA").description("This is the permission A."));
 		permissionA = CFW.DB.Permissions.selectByName("PermissionA");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionA, testgroupA);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionA, testgroupA, true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionAA").description("This is the permission AA."));
 		permissionAA = CFW.DB.Permissions.selectByName("PermissionAA");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAA, testgroupA);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAA, testgroupA, true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionAAA").description("This is the permission AAA."));
 		permissionAAA = CFW.DB.Permissions.selectByName("PermissionAAA");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAAA, testgroupA);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAAA, testgroupA, true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionB").description("This is the permission B."));
 		permissionB = CFW.DB.Permissions.selectByName("PermissionB");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionB, testgroupB);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionB, testgroupB, true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionBB").description("This is the permission BB."));
 		permissionBB = CFW.DB.Permissions.selectByName("PermissionBB");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionBB, testgroupB);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionBB, testgroupB, true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionC").description("This is the permission C."));
 		permissionC = CFW.DB.Permissions.selectByName("PermissionC");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionC, testgroupC);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionC, testgroupC, true);
 	}
 
 }

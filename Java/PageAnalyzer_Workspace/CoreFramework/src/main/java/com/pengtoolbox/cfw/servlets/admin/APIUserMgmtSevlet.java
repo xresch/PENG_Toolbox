@@ -43,7 +43,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 		String ID = request.getParameter("id");
 		String IDs = request.getParameter("ids");
 		
-		String userID, groupID;
+		String userID, groupID, permissionID;
 		//-------------------------------------------
 		// Fetch Data
 		//-------------------------------------------
@@ -73,7 +73,13 @@ public class APIUserMgmtSevlet extends HttpServlet {
 					  							
 							case "groups": 			content.append(CFW.DB.Groups.getGroupListAsJSON());
 							  			   			break;
-							  			   		
+							
+							case "group": 			content.append(CFW.DB.Groups.getGroupAsJSON(ID));
+													break;	
+													
+							case "grouppermissionmap": 	content.append(CFW.DB.GroupPermissionMap.getPermissionMapForGroupAsJSON(ID));
+														break;	
+								
 							case "permissions":		content.append(CFW.DB.Permissions.getPermissionListAsJSON());
 		  			   								break;  
 		  			   							
@@ -100,10 +106,15 @@ public class APIUserMgmtSevlet extends HttpServlet {
 					
 					case "update": 			
 						switch(item.toLowerCase()) {
-							case "usergroupmap": 	userID = request.getParameter("userid");
-													groupID = request.getParameter("groupid");
-													jsonResponse.setSuccess(CFW.DB.UserGroupMap.toogleUserInGroup(userID, groupID));
-													break;
+							case "usergroupmap": 		userID = request.getParameter("itemid");
+														groupID = request.getParameter("listitemid");
+														jsonResponse.setSuccess(CFW.DB.UserGroupMap.toogleUserInGroup(userID, groupID));
+														break;
+														
+							case "grouppermissionmap": 	groupID = request.getParameter("itemid");
+														permissionID = request.getParameter("listitemid");
+														jsonResponse.setSuccess(CFW.DB.GroupPermissionMap.tooglePermissionInGroup(permissionID, groupID));
+														break;
 			
 							default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 												break;

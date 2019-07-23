@@ -67,27 +67,27 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// Permissions
 		CFW.DB.Permissions.create(new Permission("PermissionA"));
 		permissionA = CFW.DB.Permissions.selectByName("PermissionA");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionA, testgroupA);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionA.id(), testgroupA.id(), true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionAA"));
 		permissionAA = CFW.DB.Permissions.selectByName("PermissionAA");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAA, testgroupA);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAA.id(), testgroupA.id(), true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionAAA"));
 		permissionAAA = CFW.DB.Permissions.selectByName("PermissionAAA");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAAA, testgroupA);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAAA.id(), testgroupA.id(), true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionB"));
 		permissionB = CFW.DB.Permissions.selectByName("PermissionB");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionB, testgroupB);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionB.id(), testgroupB.id(), true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionBB"));
 		permissionBB = CFW.DB.Permissions.selectByName("PermissionBB");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionBB, testgroupB);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionBB.id(), testgroupB.id(), true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionC"));
 		permissionC = CFW.DB.Permissions.selectByName("PermissionC");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionC, testgroupC);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionC.id(), testgroupC.id(), true);
 	}
 	
 	
@@ -514,7 +514,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// Preparation
 		Permission newPermission = new Permission("newPermission");
 		CFW.DB.Permissions.create(newPermission);
-		CFW.DB.GroupPermissionMap.removePermissionFromGroup(newPermission, testgroupA);
+		CFW.DB.GroupPermissionMap.removePermissionFromGroup(newPermission.id(), testgroupA.id());
 		
 		Assertions.assertFalse(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(newPermission, testgroupA), "Permission is not in the group to the group.");
 		
@@ -528,7 +528,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// Test  addPermissionToGroup()
 		System.out.println("================= Test addPermissionToGroup() =================");
 		Permission newPermissionFromDB = CFW.DB.Permissions.selectByName("newPermission");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(newPermissionFromDB, testgroupA);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(newPermissionFromDB, testgroupA, true);
 		
 		Assertions.assertTrue(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(newPermissionFromDB, testgroupA), "Permission was added to the group.");
 		
@@ -541,7 +541,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//--------------------------------------
 		// Test remove GroupPermissionMapping when permission is deleted
 		System.out.println("================= Test remove GroupPermissionMapping when permission is deleted =================");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(newPermissionFromDB, testgroupA);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(newPermissionFromDB, testgroupA, true);
 		Assertions.assertTrue(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(newPermissionFromDB, testgroupA), "Permission was added to the group.");
 		
 		CFW.DB.Permissions.deleteByID(newPermissionFromDB.id());
@@ -582,10 +582,10 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		CFW.DB.Groups.create(groupToDelete);
 		groupToDelete = CFW.DB.Groups.selectByName("TestGroupToDelete");
 		
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAA, groupToDelete);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAA, groupToDelete, true);
 		Assertions.assertTrue(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(permissionAA, groupToDelete), "Permission was added to the group.");
 		
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAAA, groupToDelete);
+		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAAA, groupToDelete, true);
 		Assertions.assertTrue(CFW.DB.GroupPermissionMap.checkIsPermissionInGroup(permissionAAA, groupToDelete), "Permission was added to the group.");
 		
 		CFW.DB.Groups.deleteByID(groupToDelete.id());

@@ -14,38 +14,89 @@ function cfw_usermgmt_reset(){
 }
 
 /******************************************************************
- * Edit user
+ * 
  ******************************************************************/
-function cfw_usermgmt_toogleUserInGroup(button, userID, groupID){
-	
-	var url = "./usermanagement/data";
-	var allDiv = $('<div id="cfw-usermgmt">');	
+//function cfw_usermgmt_toogleUserInGroup(button, userID, groupID){
+//	
+//	var url = "./usermanagement/data";
+//	var allDiv = $('<div id="cfw-usermgmt">');	
+//
+//	//-----------------------------------
+//	// User Details
+//	//-----------------------------------
+//	var params = {action: "update", item: "usergroupmap", userid: userID, groupid: groupID};
+//	
+//	var detailsDiv = $('<div id="cfw-usermgmt-details">');
+//	allDiv.append(detailsDiv);
+//	
+//	CFW.http.getJSON(url, params, 
+//		function(data) {
+//			if(data.success == true){
+//				
+//				btn = $(button);
+//				if(btn.hasClass('btn-success')){
+//					btn.removeClass('btn-success').addClass('btn-danger');
+//					btn.find('i').removeClass('fa-check').addClass('fa-ban');
+//				}else{
+//					btn.addClass('btn-success').removeClass('btn-danger');
+//					btn.find('i').addClass('fa-check').removeClass('fa-ban');
+//				}
+//				
+//			}else{
+//				CFW.ui.showSmallModal("Error!", '<span>The group settings could not be updated!</span>');
+//			}	
+//	});
+//}
 
+/******************************************************************
+ * 
+ ******************************************************************/
+function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 	//-----------------------------------
-	// User Details
+	// Groups
 	//-----------------------------------
-	var params = {action: "update", item: "usergroupmap", userid: userID, groupid: groupID};
-	
-	var detailsDiv = $('<div id="cfw-usermgmt-details">');
-	allDiv.append(detailsDiv);
-	
-	CFW.http.getJSON(url, params, 
+
+
+	CFW.http.getJSON(url, {action: "fetch", item: mapName, id: itemID}, 
 		function(data) {
-			if(data.success == true){
+			if(data.payload != null){
+				var htmlString = "";
+				htmlString += '';
+				var cfwTable = CFW.ui.createTable();
 				
-				btn = $(button);
-				if(btn.hasClass('btn-success')){
-					btn.removeClass('btn-success').addClass('btn-danger');
-					btn.find('i').removeClass('fa-check').addClass('fa-ban');
-				}else{
-					btn.addClass('btn-success').removeClass('btn-danger');
-					btn.find('i').addClass('fa-check').removeClass('fa-ban');
+				cfwTable.addHeaders(['Name','Description','&nbsp;']);
+				var resultCount = data.payload.length;
+				if(resultCount == 0){
+					CFW.ui.addAlert("info", "Hmm... seems there aren't any groups in the list.");
+				}
+
+				for(var i = 0; i < resultCount; i++){
+					var current = data.payload[i];
+					var row = $('<tr>');
+					row.append('<td>'+current.NAME+'</td>'
+							  +'<td>'+current.DESCRIPTION+'</td>');
+					
+					//Toggle Button
+					var params = {action: "update", item: mapName, itemid: itemID, listitemid: current.PK_ID};
+					var cfwToggleButton = CFW.ui.createToggleButton(CFW_USRMGMT_URL, params, (current.ITEM_ID == itemID));
+					
+					if(current.IS_DELETABLE == "FALSE"){
+						cfwToggleButton.setLocked();
+					}
+					var buttonCell = $("<td>");
+					cfwToggleButton.appendTo(buttonCell);
+					row.append(buttonCell);
+					cfwTable.addRow(row);
 				}
 				
+				
+				cfwTable.appendTo(parent);
+				
 			}else{
-				CFW.ui.showSmallModal("Error!", '<span>The group settings could not be updated!</span>');
+				CFW.ui.addAlert('error', '<span>The data for the userID '+userID+' could not be loaded.</span>');
 			}	
-	});
+		}
+	);
 }
 
 /******************************************************************
@@ -83,56 +134,55 @@ function cfw_usermgmt_editUser(userID){
 	//-----------------------------------
 	// Groups
 	//-----------------------------------
-	var groupFetchParams = {action: "fetch", item: "usergroupmap", id: userID};
-	
 	var groupDiv = $('<div id="cfw-usermgmt-groups">');
 	groupDiv.append('<h2>Groups</h2>');
 	allDiv.append(groupDiv);
 	
-	CFW.http.getJSON(url, groupFetchParams, 
-		function(data) {
-			if(data.payload != null){
-				var htmlString = "";
-				htmlString += '';
-				var cfwTable = CFW.ui.createTable();
-				
-				cfwTable.addHeaders(['Name','Description','&nbsp;']);
-				var resultCount = data.payload.length;
-				if(resultCount == 0){
-					CFW.ui.addAlert("info", "Hmm... seems there aren't any groups in the list.");
-				}
-
-				for(var i = 0; i < resultCount; i++){
-					var current = data.payload[i];
-					var row = $('<tr>');
-					row.append('<td>'+current.NAME+'</td>'
-							  +'<td>'+current.DESCRIPTION+'</td>');
-					
-					//Toggle Button
-					var params = {action: "update", item: "usergroupmap", userid: userID, groupid: current.PK_ID};
-					var cfwToggleButton = CFW.ui.createToggleButton(CFW_USRMGMT_URL, params, (current.FK_ID_USER == userID));
-					
-					if(current.IS_DELETABLE == "FALSE"){
-						cfwToggleButton.setLocked();
-					}
-					var buttonCell = $("<td>");
-					cfwToggleButton.appendTo(buttonCell);
-					row.append(buttonCell);
-					cfwTable.addRow(row);
-				}
-				
-				
-				
-				cfwTable.appendTo(groupDiv);
-				
-			}else{
-				CFW.ui.addAlert('error', '<span>The data for the userID '+userID+' could not be loaded.</span>');
-			}	
-		}
-	);
+	cfw_usermgmt_createToggleTable(groupDiv, "usergroupmap", userID)
 	
 	CFW.ui.showModal("Edit User", allDiv);
 	
+}
+
+/******************************************************************
+ * Edit Group
+ ******************************************************************/
+function cfw_usermgmt_editGroup(groupID){
+	
+	var allDiv = $('<div id="cfw-usermgmt">');	
+
+	//-----------------------------------
+	// Group Details
+	//-----------------------------------
+	var detailsDiv = $('<div id="cfw-usermgmt-details">');
+	allDiv.append(detailsDiv);
+	
+	CFW.http.getJSON(CFW_USRMGMT_URL, {action: "fetch", item: "group", id: groupID}, 
+		function(data) {
+			if(data.payload != null){
+				var htmlString = "";
+				htmlString += '<h2>Group Details</h2>';
+				htmlString += '<p><b>Group ID:</b> '+data.payload[0].EMAIL+'</p>';
+				htmlString += '<p><b>Name:</b> '+data.payload[0].NAME+'</p>';
+				htmlString += '<p><b>Description:</b> '+data.payload[0].DESCRIPTION+'</p>';
+				htmlString += '<p><b>Deletable:</b> '+data.payload[0].IS_DELETABLE+'</p>';
+				
+				detailsDiv.append(htmlString);
+			}else{
+				CFW.ui.addAlert('error', '<span>The data for the groupID '+groupID+' could not be loaded.</span>');
+			}	
+	});
+	
+	//-----------------------------------
+	// Groups
+	//-----------------------------------
+	var groupDiv = $('<div id="cfw-usermgmt-groups">');
+	groupDiv.append('<h2>Groups</h2>');
+	allDiv.append(groupDiv);
+	
+	cfw_usermgmt_createToggleTable(groupDiv, "grouppermissionmap", groupID)
+	
+	CFW.ui.showModal("Edit Group", allDiv);
 	
 }
 
@@ -243,6 +293,12 @@ function cfw_usermgmt_printGroupList(data){
 			htmlString += '<td>'+current.PK_ID+'</td>';
 			htmlString += '<td>'+current.NAME+'</td>';
 			htmlString += '<td>'+current.DESCRIPTION+'</td>';
+			
+			//Edit Button
+			htmlString += '<td><button class="btn btn-primary btn-sm" alt="Edit" title="Edit" '
+				+'onclick="cfw_usermgmt_editGroup('+current.PK_ID+');">'
+				+ '<i class="fa fa-pen"></i>'
+				+ '</button></td>';
 			
 			//Delete Button
 			if(current.IS_DELETABLE.toLowerCase() == "true"){

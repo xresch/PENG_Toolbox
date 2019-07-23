@@ -9,6 +9,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup.GroupDBFields;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission.PermissionDBFields;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserGroupMap.UserGroupMapDBFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBGroupPermissionMap {
@@ -49,22 +50,22 @@ public class CFWDBGroupPermissionMap {
 	 * Adds the permission to the specified group.
 	 * @param permission
 	 * @param group
-	 * @return return true if permission was added, false otherwise
+	 * @return return true if user was added, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean addPermissionToGroup(Permission permission, Group group) {
+	public static boolean addPermissionToGroup(Permission permission, Group group, boolean isDeletable) {
 		
 		if(permission == null || group == null ) {
 			new CFWLog(logger)
 				.method("addPermissionToGroup")
-				.warn("User and group cannot be null.");
+				.warn("Permission and group cannot be null.");
 			return false;
 		}
 		
 		if(permission.id() < 0 || group.id() < 0) {
 			new CFWLog(logger)
 				.method("addPermissionToGroup")
-				.warn("User-ID and group-ID are not set correctly.");
+				.warn("Permission-ID and group-ID are not set correctly.");
 			return false;
 		}
 		
@@ -75,18 +76,99 @@ public class CFWDBGroupPermissionMap {
 			return false;
 		}
 		
+		return addPermissionToGroup(permission.id(), group.id(), isDeletable);
+	}
+	/********************************************************************************************
+	 * Adds the permission to the specified group.
+	 * @param permissionID
+	 * @param groupID
+	 * @return return true if permission was added, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static boolean addPermissionToGroup(int permissionID, int groupID, boolean isDeletable) {
+		
+		
+		if(permissionID < 0 || groupID < 0) {
+			new CFWLog(logger)
+				.method("addPermissionToGroup")
+				.warn("Permission-ID or group-ID are not set correctly.");
+			return false;
+		}
+		
+		if(checkIsPermissionInGroup(permissionID, groupID)) {
+			new CFWLog(logger)
+				.method("addPermissionToGroup")
+				.warn("The permission '"+permissionID+"' is already part of the group '"+groupID+"'.");
+			return false;
+		}
+		
 		String insertPermissionSQL = "INSERT INTO "+TABLE_NAME+" ("
 				  + GroupPermissionMapDBFields.FK_ID_PERMISSION +", "
 				  + GroupPermissionMapDBFields.FK_ID_GROUP +", "
 				  + GroupPermissionMapDBFields.IS_DELETABLE +" "
-				  + ") VALUES (?,?, TRUE);";
+				  + ") VALUES (?,?,?);";
 		
 		return CFWDB.preparedExecute(insertPermissionSQL, 
-				permission.id(),
-				group.id()
+				permissionID,
+				groupID,
+				isDeletable
 				);
 	}
 	
+	/********************************************************************************************
+	 * Update if the permission can be deleted.
+	 * @param user
+	 * @param group
+	 * @return return true if user was removed, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static boolean updateIsDeletable(int permissionID, int groupID, boolean isDeletable) {
+		String removeUserFromGroupSQL = "UPDATE "+TABLE_NAME
+				+" SET "+ UserGroupMapDBFields.IS_DELETABLE +" = ? "
+				+" WHERE "
+				  + GroupPermissionMapDBFields.FK_ID_PERMISSION +" = ? "
+				  + " AND "
+				  + UserGroupMapDBFields.FK_ID_GROUP +" = ? "
+				  + ";";
+		
+		return CFWDB.preparedExecute(removeUserFromGroupSQL, 
+				isDeletable,
+				permissionID,
+				groupID
+				);
+	}
+	/********************************************************************************************
+	 * Adds the permission to the specified group.
+	 * @param permission
+	 * @param group
+	 * @return return true if user was added, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static boolean removePermissionFromGroup(Permission permission, Group group) {
+		
+		if(permission == null || group == null ) {
+			new CFWLog(logger)
+				.method("addPermissionToGroup")
+				.warn("Permission and group cannot be null.");
+			return false;
+		}
+		
+		if(permission.id() < 0 || group.id() < 0) {
+			new CFWLog(logger)
+				.method("addPermissionToGroup")
+				.warn("Permission-ID and group-ID are not set correctly.");
+			return false;
+		}
+		
+		if(!checkIsPermissionInGroup(permission, group)) {
+			new CFWLog(logger)
+				.method("addPermissionToGroup")
+				.warn("The permission '"+permission.name()+"' is not part of the group '"+group.name()+"' and cannot be removed.");
+			return false;
+		}
+		
+		return removePermissionFromGroup(permission.id(), group.id());
+	}
 	/********************************************************************************************
 	 * Remove a permission from the group.
 	 * @param permission
@@ -94,19 +176,12 @@ public class CFWDBGroupPermissionMap {
 	 * @return return true if permission was removed, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean removePermissionFromGroup(Permission permission, Group group) {
+	public static boolean removePermissionFromGroup(int permissionID, int groupID) {
 		
-		if(permission == null || group == null ) {
+		if(!checkIsPermissionInGroup(permissionID, groupID)) {
 			new CFWLog(logger)
 				.method("removePermissionFromGroup")
-				.warn("User and group cannot be null.");
-			return false;
-		}
-		
-		if(!checkIsPermissionInGroup(permission, group)) {
-			new CFWLog(logger)
-				.method("removePermissionFromGroup")
-				.warn("The user '"+permission.name()+"' is not part of the group '"+group.name()+"' and cannot be removed.");
+				.warn("The permission '"+permissionID+"' is not part of the group '"+ groupID+"' and cannot be removed.");
 			return false;
 		}
 		
@@ -120,8 +195,8 @@ public class CFWDBGroupPermissionMap {
 				  + ";";
 		
 		return CFWDB.preparedExecute(removePermissionFromGroupSQL, 
-				permission.id(),
-				group.id()
+				permissionID,
+				groupID
 				);
 	}
 	
@@ -263,7 +338,76 @@ public class CFWDBGroupPermissionMap {
 		return permissionMap;
 	
 	}
+	/***************************************************************
+	 * Returns a list of all groups and if the user is part of them 
+	 * as a json array.
+	 * @param group
+	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
+	 ****************************************************************/
+	public static String getPermissionMapForGroupAsJSON(String groupID) {
+		
+		//----------------------------------
+		// Check input format
+		if(groupID == null ^ !groupID.matches("\\d+")) {
+			new CFWLog(logger)
+			.method("getPermissionMapForGroupAsJSON")
+			.severe("The groupID '"+groupID+"' is not a number.");
+			return "[]";
+		}
+		
+		String sqlString = "SELECT P.PK_ID, P.NAME, P.DESCRIPTION, M.FK_ID_GROUP AS ITEM_ID, M.IS_DELETABLE FROM "+CFWDBPermission.TABLE_NAME+" P "
+				+ " LEFT JOIN "+CFWDBGroupPermissionMap.TABLE_NAME+" M "
+				+ " ON M.FK_ID_PERMISSION = P.PK_ID"
+				+ " AND M.FK_ID_GROUP = ?";
+		
+		ResultSet result = CFWDB.preparedExecuteQuery(sqlString, 
+				groupID);
+		
+		String json = CFWDB.resultSetToJSON(result);
+		CFWDB.close(result);	
+		return json;
+
+	}
+	/***************************************************************
+	 * Remove the user from the group if it is a member of the group, 
+	 * add it otherwise.
+	 ****************************************************************/
+	public static boolean tooglePermissionInGroup(String permissionID, String groupID) {
+		
+		//----------------------------------
+		// Check input format
+		if(permissionID == null ^ !permissionID.matches("\\d+")) {
+			new CFWLog(logger)
+			.method("toogleUserInGroup")
+			.severe("The userID '"+permissionID+"' is not a number.");
+			return false;
+		}
+		
+		//----------------------------------
+		// Check input format
+		if(groupID == null ^ !groupID.matches("\\d+")) {
+			new CFWLog(logger)
+			.method("toogleUserInGroup")
+			.severe("The groupID '"+permissionID+"' is not a number.");
+			return false;
+		}
+		
+		return tooglePermissionInGroup(Integer.parseInt(permissionID), Integer.parseInt(groupID));
+		
+	}
 	
-	
+	/***************************************************************
+	 * Remove the user from the group if it is a member of the group, 
+	 * add it otherwise.
+	 ****************************************************************/
+	public static boolean tooglePermissionInGroup(int userID, int groupID) {
+		
+		if(checkIsPermissionInGroup(userID, groupID)) {
+			return removePermissionFromGroup(userID, groupID);
+		}else {
+			return addPermissionToGroup(userID, groupID, true);
+		}
+
+	}
 		
 }
