@@ -284,18 +284,21 @@ public class CFWDBUser {
 				+" WHERE "
 					+ UserDBFields.PK_ID	+ " = ?";
 		
-		return CFW.DB.resultSetToJSON(CFWDB.preparedExecuteQuery(selectByID, userID));
 		
+		ResultSet result = CFWDB.preparedExecuteQuery(selectByID, userID);
+		String json = CFWDB.resultSetToJSON(result);
+		CFWDB.close(result);	
+		return json;
 		
 	}
 	
+	
 	/***************************************************************
-	 * Return a list of all users
+	 * Return a list of all users as json string.
 	 * 
 	 * @return Returns a result set with all users or null.
 	 ****************************************************************/
-	public static ResultSet getUserList() {
-		
+	public static String getUserListAsJSON() {
 		String selectAllUsers = 
 				"SELECT "
 				  + UserDBFields.PK_ID +", "
@@ -310,18 +313,10 @@ public class CFWDBUser {
 				  + UserDBFields.IS_FOREIGN 
 				+" FROM "+TABLE_NAME;
 		
-		return CFWDB.preparedExecuteQuery(selectAllUsers);
-	
-	}
-	
-	/***************************************************************
-	 * Return a list of all users as json string.
-	 * 
-	 * @return Returns a result set with all users or null.
-	 ****************************************************************/
-	public static String getUserListAsJSON() {
-		ResultSet result = CFW.DB.Users.getUserList();
-		return CFWDB.resultSetToJSON(result);
+		ResultSet result = CFWDB.preparedExecuteQuery(selectAllUsers);
+		String json = CFWDB.resultSetToJSON(result);
+		CFWDB.close(result);	
+		return json;
 	}
 	
 	/***************************************************************

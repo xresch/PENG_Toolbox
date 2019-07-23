@@ -51,7 +51,7 @@ public class CSVLoginProvider implements LoginProvider {
 				CFW.DB.Users.create(newUser);
 				User userFromDB = CFW.DB.Users.selectByUsernameOrMail(username);
 				
-				CFW.DB.UserGroupMap.addUserToGroup(userFromDB, CFW.DB.Groups.CFW_GROUP_FOREIGN_USER);
+				CFW.DB.UserGroupMap.addUserToGroup(userFromDB, CFW.DB.Groups.CFW_GROUP_FOREIGN_USER, true);
 				
 				return newUser;
 			}

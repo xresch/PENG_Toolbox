@@ -112,6 +112,9 @@ function cfw_usermgmt_editUser(userID){
 					var params = {action: "update", item: "usergroupmap", userid: userID, groupid: current.PK_ID};
 					var cfwToggleButton = CFW.ui.createToggleButton(CFW_USRMGMT_URL, params, (current.FK_ID_USER == userID));
 					
+					if(current.IS_DELETABLE == "FALSE"){
+						cfwToggleButton.setLocked();
+					}
 					var buttonCell = $("<td>");
 					cfwToggleButton.appendTo(buttonCell);
 					row.append(buttonCell);

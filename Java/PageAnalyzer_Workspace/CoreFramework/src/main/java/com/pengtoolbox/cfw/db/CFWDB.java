@@ -251,8 +251,10 @@ public class CFWDB {
 		Group superuserGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_SUPERUSER);
 		
 		if(!CFW.DB.UserGroupMap.checkIsUserInGroup(adminUser, superuserGroup)) {
-			CFW.DB.UserGroupMap.addUserToGroup(adminUser, superuserGroup);
+			CFW.DB.UserGroupMap.addUserToGroup(adminUser, superuserGroup, false);
 		}
+		//Needed for Upgrade
+		CFW.DB.UserGroupMap.updateIsDeletable(adminUser.id(), superuserGroup.id(), false);
 
 		if(!CFW.DB.UserGroupMap.checkIsUserInGroup(adminUser, superuserGroup)) {
 			new CFWLog(logger)
@@ -508,9 +510,9 @@ public class CFWDB {
 				.firstname("Testika")
 				.lastname("Testonia"));
 		testuserA = CFW.DB.Users.selectByUsernameOrMail("TestuserA");
-		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupA);
-		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupB);
-		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupC);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupA, true);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupB, true);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupC, true);
 		
 		CFW.DB.Users.create(new User("TestuserB")
 				.setInitialPassword("TestuserB", "TestuserB")
@@ -518,8 +520,8 @@ public class CFWDB {
 				.firstname("Jane")
 				.lastname("Doe"));
 		testuserB = CFW.DB.Users.selectByUsernameOrMail("TestuserB");
-		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupA);
-		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupB);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupA, true);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupB, true);
 		
 		CFW.DB.Users.create(new User("TestuserC")
 				.setInitialPassword("TestuserC", "TestuserC")
@@ -527,7 +529,7 @@ public class CFWDB {
 				.firstname("Paola")
 				.lastname("Pernandez"));	
 		testuserC = CFW.DB.Users.selectByUsernameOrMail("TestuserC");
-		CFW.DB.UserGroupMap.addUserToGroup(testuserC, testgroupC);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserC, testgroupC, true);
 		
 		//------------------------------
 		// Permissions

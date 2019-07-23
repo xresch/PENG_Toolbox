@@ -21,6 +21,7 @@ public class CFWDBGroupPermissionMap {
 		PK_ID, 
 		FK_ID_PERMISSION,
 		FK_ID_GROUP,
+		IS_DELETABLE,
 	}
 
 	/********************************************************************************************
@@ -40,6 +41,8 @@ public class CFWDBGroupPermissionMap {
 		
 		CFWDB.preparedExecute(createTableSQL);
 		
+		String addColumnSQL = "ALTER TABLE "+TABLE_NAME+" ADD COLUMN IF NOT EXISTS "+GroupPermissionMapDBFields.IS_DELETABLE+" BOOLEAN NOT NULL DEFAULT TRUE;";
+		CFWDB.preparedExecute(addColumnSQL);
 	}
 	
 	/********************************************************************************************
@@ -74,8 +77,9 @@ public class CFWDBGroupPermissionMap {
 		
 		String insertPermissionSQL = "INSERT INTO "+TABLE_NAME+" ("
 				  + GroupPermissionMapDBFields.FK_ID_PERMISSION +", "
-				  + GroupPermissionMapDBFields.FK_ID_GROUP +" "
-				  + ") VALUES (?,?);";
+				  + GroupPermissionMapDBFields.FK_ID_GROUP +", "
+				  + GroupPermissionMapDBFields.IS_DELETABLE +" "
+				  + ") VALUES (?,?, TRUE);";
 		
 		return CFWDB.preparedExecute(insertPermissionSQL, 
 				permission.id(),
@@ -111,6 +115,8 @@ public class CFWDBGroupPermissionMap {
 				  + GroupPermissionMapDBFields.FK_ID_PERMISSION +" = ? "
 				  + " AND "
 				  + GroupPermissionMapDBFields.FK_ID_GROUP +" = ? "
+				  + " AND "
+				  + GroupPermissionMapDBFields.IS_DELETABLE +" = TRUE "
 				  + ";";
 		
 		return CFWDB.preparedExecute(removePermissionFromGroupSQL, 

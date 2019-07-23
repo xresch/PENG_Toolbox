@@ -50,18 +50,18 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// Users
 		CFW.DB.Users.create(new User("TestuserA").setInitialPassword("TestuserA", "TestuserA"));
 		testuserA = CFW.DB.Users.selectByUsernameOrMail("TestuserA");
-		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupA);
-		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupB);
-		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupC);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupA, true);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupB, true);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupC, true);
 		
 		CFW.DB.Users.create(new User("TestuserB").setInitialPassword("TestuserB", "TestuserB"));
 		testuserB = CFW.DB.Users.selectByUsernameOrMail("TestuserB");
-		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupA);
-		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupB);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupA, true);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupB, true);
 		
 		CFW.DB.Users.create(new User("TestuserC").setInitialPassword("TestuserC", "TestuserC"));	
 		testuserC = CFW.DB.Users.selectByUsernameOrMail("TestuserC");
-		CFW.DB.UserGroupMap.addUserToGroup(testuserC, testgroupC);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserC, testgroupC, true);
 		
 		//------------------------------
 		// Permissions
@@ -373,7 +373,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// Test  addUserToGroup()
 		System.out.println("================= Test addUserToGroup() =================");
 		User newUserFromDB = CFW.DB.Users.selectByUsernameOrMail("newUser");
-		CFW.DB.UserGroupMap.addUserToGroup(newUserFromDB, testgroupA);
+		CFW.DB.UserGroupMap.addUserToGroup(newUserFromDB, testgroupA, true);
 		
 		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(newUserFromDB, testgroupA), "User was added to the group.");
 		
@@ -386,7 +386,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//--------------------------------------
 		// Test remove UserGroupMapping when user is deleted
 		System.out.println("================= Test remove UserGroupMapping when user is deleted =================");
-		CFW.DB.UserGroupMap.addUserToGroup(newUserFromDB, testgroupA);
+		CFW.DB.UserGroupMap.addUserToGroup(newUserFromDB, testgroupA, true);
 		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(newUserFromDB, testgroupA), "User was added to the group.");
 		
 		CFW.DB.Users.deleteByID(newUserFromDB.id());
@@ -413,10 +413,10 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		CFW.DB.Groups.create(groupToDelete);
 		groupToDelete = CFW.DB.Groups.selectByName("TestGroupToDelete");
 		
-		CFW.DB.UserGroupMap.addUserToGroup(testuserB, groupToDelete);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserB, groupToDelete, true);
 		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuserB, groupToDelete), "User was added to the group.");
 		
-		CFW.DB.UserGroupMap.addUserToGroup(testuserC, groupToDelete);
+		CFW.DB.UserGroupMap.addUserToGroup(testuserC, groupToDelete, true);
 		Assertions.assertTrue(CFW.DB.UserGroupMap.checkIsUserInGroup(testuserC, groupToDelete), "User was added to the group.");
 		
 		CFW.DB.Groups.deleteByID(groupToDelete.id());

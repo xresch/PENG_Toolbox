@@ -169,15 +169,27 @@ class CFWToogleButton{
 			this.setDisabled();
 		}
 	}
-		
+	
 	/********************************************
 	 * Change the display of the button to locked.
+	 ********************************************/
+	setLocked(){
+		this.isLocked = true;
+		this.button
+		.prop('disabled', this.isLocked)
+		.attr('title', "Cannot be changed")
+		.find('i')
+			.removeClass('fa-check')
+			.removeClass('fa-ban')
+			.addClass('fa-lock');
+	}
+	/********************************************
+	 * Change the display of the button to enabled.
 	 ********************************************/
 	setEnabled(){
 		this.isEnabled = true;
 		this.button.addClass("btn-success")
 			.removeClass("btn-danger")
-			.prop('disabled', this.isLocked)
 			.attr('title', "Click to Disable")
 			.find('i')
 				.addClass('fa-check')
@@ -191,7 +203,6 @@ class CFWToogleButton{
 		this.isEnabled = false;
 		this.button.removeClass("btn-success")
 			.addClass("btn-danger")
-			.prop('disabled', this.isLocked)
 			.attr('title', "Click to Enable")
 			.find('i')
 				.removeClass('fa-check')

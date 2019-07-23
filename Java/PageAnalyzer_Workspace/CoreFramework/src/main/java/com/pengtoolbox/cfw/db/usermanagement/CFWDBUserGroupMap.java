@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup.GroupDBFields;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroupPermissionMap.GroupPermissionMapDBFields;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserDBFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
@@ -21,6 +22,7 @@ public class CFWDBUserGroupMap {
 		PK_ID, 
 		FK_ID_USER,
 		FK_ID_GROUP,
+		IS_DELETABLE
 	}
 
 	/********************************************************************************************
@@ -39,6 +41,9 @@ public class CFWDBUserGroupMap {
 							  + ");";
 		
 		CFWDB.preparedExecute(createTableSQL);
+		
+		String addColumnSQL = "ALTER TABLE "+TABLE_NAME+" ADD COLUMN IF NOT EXISTS "+UserGroupMapDBFields.IS_DELETABLE+" BOOLEAN NOT NULL DEFAULT TRUE;";
+		CFWDB.preparedExecute(addColumnSQL);
 				
 	}
 	
@@ -49,8 +54,8 @@ public class CFWDBUserGroupMap {
 	 * @return return true if user was added, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean addUserToGroup(User user, String groupname) {
-		return addUserToGroup(user, CFW.DB.Groups.selectByName(groupname));
+	public static boolean addUserToGroup(User user, String groupname, boolean isDeletable) {
+		return addUserToGroup(user, CFW.DB.Groups.selectByName(groupname), isDeletable);
 	}
 	
 	/********************************************************************************************
@@ -60,7 +65,7 @@ public class CFWDBUserGroupMap {
 	 * @return return true if user was added, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean addUserToGroup(User user, Group group) {
+	public static boolean addUserToGroup(User user, Group group, boolean isDeletable) {
 		
 		if(user == null || group == null ) {
 			new CFWLog(logger)
@@ -83,25 +88,28 @@ public class CFWDBUserGroupMap {
 			return false;
 		}
 		
-		return addUserToGroup(user.id(), group.id());
+		return addUserToGroup(user.id(), group.id(), isDeletable);
 	}
 	
 	/********************************************************************************************
 	 * Adds the user to the specified group.
 	 * @param user
 	 * @param group
+	 * @param isdeletable, define if this association can be deleted
 	 * @return return true if user was added, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean addUserToGroup(int userid, int groupid) {
+	public static boolean addUserToGroup(int userid, int groupid, boolean isDeletable) {
 		String insertGroupSQL = "INSERT INTO "+TABLE_NAME+" ("
 				  + UserGroupMapDBFields.FK_ID_USER +", "
-				  + UserGroupMapDBFields.FK_ID_GROUP +" "
-				  + ") VALUES (?,?);";
+				  + UserGroupMapDBFields.FK_ID_GROUP +", "
+				  + UserGroupMapDBFields.IS_DELETABLE +" "
+				  + ") VALUES (?,?,?);";
 		
 		return CFWDB.preparedExecute(insertGroupSQL, 
 				userid,
-				groupid
+				groupid,
+				isDeletable
 				);
 	}
 	
@@ -144,9 +152,34 @@ public class CFWDBUserGroupMap {
 				  + UserGroupMapDBFields.FK_ID_USER +" = ? "
 				  + " AND "
 				  + UserGroupMapDBFields.FK_ID_GROUP +" = ? "
+				  + " AND "
+				  + UserGroupMapDBFields.IS_DELETABLE +" = TRUE "
 				  + ";";
 		
 		return CFWDB.preparedExecute(removeUserFromGroupSQL, 
+				userID,
+				groupID
+				);
+	}
+	
+	/********************************************************************************************
+	 * Update if the user can be deleted.
+	 * @param user
+	 * @param group
+	 * @return return true if user was removed, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static boolean updateIsDeletable(int userID, int groupID, boolean isDeletable) {
+		String removeUserFromGroupSQL = "UPDATE "+TABLE_NAME
+				+" SET "+ UserGroupMapDBFields.IS_DELETABLE +" = ? "
+				+" WHERE "
+				  + UserGroupMapDBFields.FK_ID_USER +" = ? "
+				  + " AND "
+				  + UserGroupMapDBFields.FK_ID_GROUP +" = ? "
+				  + ";";
+		
+		return CFWDB.preparedExecute(removeUserFromGroupSQL, 
+				isDeletable,
 				userID,
 				groupID
 				);
@@ -273,16 +306,17 @@ public class CFWDBUserGroupMap {
 			return "[]";
 		}
 		
-		String selectGroupsForUser = "SELECT G.PK_ID, G.NAME, G.DESCRIPTION, FK_ID_USER FROM "+CFWDBGroup.TABLE_NAME+" G "
+		String selectGroupsForUser = "SELECT G.PK_ID, G.NAME, G.DESCRIPTION, M.FK_ID_USER, M.IS_DELETABLE FROM "+CFWDBGroup.TABLE_NAME+" G "
 				+ " LEFT JOIN "+CFWDBUserGroupMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_GROUP = G.PK_ID "
 				+ " AND M.FK_ID_USER = ?";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectGroupsForUser, 
 				userID);
+		String json = CFWDB.resultSetToJSON(result);
+		CFWDB.close(result);	
+		return json;
 
-		return CFWDB.resultSetToJSON(result);
-	
 	}
 	
 	/***************************************************************
@@ -309,7 +343,7 @@ public class CFWDBUserGroupMap {
 			return false;
 		}
 		
-		return toogleUserInGroup(Integer.parseInt(userID), Integer.parseInt(groupID));
+		return toggleUserInGroup(Integer.parseInt(userID), Integer.parseInt(groupID));
 		
 	}
 	
@@ -317,12 +351,12 @@ public class CFWDBUserGroupMap {
 	 * Remove the user from the group if it is a member of the group, 
 	 * add it otherwise.
 	 ****************************************************************/
-	public static boolean toogleUserInGroup(int userID, int groupID) {
+	public static boolean toggleUserInGroup(int userID, int groupID) {
 		
 		if(checkIsUserInGroup(userID, groupID)) {
 			return removeUserFromGroup(userID, groupID);
 		}else {
-			return addUserToGroup(userID, groupID);
+			return addUserToGroup(userID, groupID, true);
 		}
 
 	}
