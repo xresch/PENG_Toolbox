@@ -3,8 +3,10 @@
  * Contains the functions for the user management
  ******************************************************************/
 
+var CFW_USRMGMT_URL = "./usermanagement/data";
+
 /******************************************************************
- * Reset the 
+ * Reset the view.
  ******************************************************************/
 function cfw_usermgmt_reset(){
 	
@@ -102,27 +104,21 @@ function cfw_usermgmt_editUser(userID){
 
 				for(var i = 0; i < resultCount; i++){
 					var current = data.payload[i];
-					htmlString += '<tr>';
-					htmlString += '<td>'+current.NAME+'</td>';
-					htmlString += '<td>'+current.DESCRIPTION+'</td>';
+					var row = $('<tr>');
+					row.append('<td>'+current.NAME+'</td>'
+							  +'<td>'+current.DESCRIPTION+'</td>');
 					
-					//Delete Button
-					if(current.FK_ID_USER == userID){
-						htmlString += '<td><button class="btn btn-success btn-sm" alt="Click to Disable" title="Click to Disable" '
-							+'onclick="cfw_usermgmt_toogleUserInGroup(this,'+userID+','+current.PK_ID+')">'
-							+ '<i class="fa fa-check"></i>'
-							+ '</button></td>';
-					}else{
-						htmlString += '<td><button class="btn btn-danger btn-sm" alt="Click to Enable" title="Click to Enable" '
-							+'onclick="cfw_usermgmt_toogleUserInGroup(this,'+userID+','+current.PK_ID+')">'
-							+ '<i class="fa fa-ban"></i>'
-							+ '</button></td>';
-					}
+					//Toggle Button
+					var params = {action: "update", item: "usergroupmap", userid: userID, groupid: current.PK_ID};
+					var cfwToggleButton = CFW.ui.createToggleButton(CFW_USRMGMT_URL, params, (current.FK_ID_USER == userID));
 					
-					htmlString += '</tr>';
+					var buttonCell = $("<td>");
+					cfwToggleButton.appendTo(buttonCell);
+					row.append(buttonCell);
+					cfwTable.addRow(row);
 				}
 				
-				cfwTable.addRows(htmlString);
+				
 				
 				cfwTable.appendTo(groupDiv);
 				

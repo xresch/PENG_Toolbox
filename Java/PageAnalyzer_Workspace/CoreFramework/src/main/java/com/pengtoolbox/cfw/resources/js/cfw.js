@@ -143,6 +143,109 @@ function cfw_createTable(){
 	return new CFWTable();
 }
 
+/******************************************************************
+ * Print the list of results found in the database.
+ * 
+ * @param parent JQuery object
+ * @param data object containing the list of results.
+ * 
+ ******************************************************************/
+class CFWToogleButton{
+	
+	constructor(url, params, isEnabled){
+		console.log(url);
+		console.log(params);
+		this.url = url;
+		this.params = params;
+		this.isLocked = false;
+		this.button = $('<button class="btn btn-sm">');
+		this.button.data('instance', this);
+		this.button.attr('onclick', 'cfw_toggleTheToggleButton(this)');
+		this.button.html($('<i class="fa"></i>'));
+		
+		if(isEnabled){
+			this.setEnabled();
+		}else{
+			this.setDisabled();
+		}
+	}
+		
+	/********************************************
+	 * Change the display of the button to locked.
+	 ********************************************/
+	setEnabled(){
+		this.isEnabled = true;
+		this.button.addClass("btn-success")
+			.removeClass("btn-danger")
+			.prop('disabled', this.isLocked)
+			.attr('title', "Click to Disable")
+			.find('i')
+				.addClass('fa-check')
+				.removeClass('fa-ban');
+	}
+	
+	/********************************************
+	 * Change the display of the button to locked.
+	 ********************************************/
+	setDisabled(){
+		this.isEnabled = false;
+		this.button.removeClass("btn-success")
+			.addClass("btn-danger")
+			.prop('disabled', this.isLocked)
+			.attr('title', "Click to Enable")
+			.find('i')
+				.removeClass('fa-check')
+				.addClass('fa-ban');
+	}
+
+	/********************************************
+	 * toggle the Button
+	 ********************************************/
+	toggleButton(){
+		if(this.isEnabled){
+			this.setDisabled();
+		}else{
+			this.setEnabled();
+		}
+	}
+	
+	/********************************************
+	 * Send the request and toggle the button if
+	 * successful.
+	 ********************************************/
+	onClick(){
+		var button = this.button;
+		console.log(this.url);
+		console.log(this.params);
+		CFW.http.getJSON(this.url, this.params, 
+			function(data){
+				if(data.success){
+					var instance = $(button).data('instance');
+					instance.toggleButton();
+				}else{
+					CFW.ui.addAlert('error', 'Error while triggering the button.');
+				}
+			}
+		);
+	}
+	
+	/********************************************
+	 * Toggle the table filter, default is true.
+	 ********************************************/
+	appendTo(parent){
+		parent.append(this.button);
+	}
+}
+
+function cfw_createToggleButton(url, params, isEnabled){
+	return new CFWToogleButton(url, params, isEnabled);
+}
+
+function cfw_toggleTheToggleButton(button){
+	var cfwToogleButton = $(button).data('instance');
+	cfwToogleButton.onClick();
+}
+
 /**************************************************************************************
  * Sort an object array by the values for the given key.
  * @param array the object array to be sorted
@@ -611,6 +714,7 @@ var CFW = {
 	
 	ui: {
 		createTable: cfw_createTable,
+		createToggleButton: cfw_createToggleButton,
 		toc: cfw_table_toc,
 		showModal: cfw_showModal,
 		showSmallModal: cfw_showSmallModal,
