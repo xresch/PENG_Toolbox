@@ -16,6 +16,7 @@ import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
+import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
@@ -35,15 +36,19 @@ public class HARUploadServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
+		
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
 		HTMLResponse html = new HTMLResponse("Analyze");
-		StringBuffer content = html.getContent();
-		content.append(CFWFiles.getFileContent(request, "./resources/html/harupload.html"));
 		
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
+		if(CFW.Context.Request.hasPermission(PAPermissions.ANALYZE_HAR)) {
+			StringBuffer content = html.getContent();
+			content.append(CFWFiles.getFileContent(request, "./resources/html/harupload.html"));
+			
+	        response.setContentType("text/html");
+	        response.setStatus(HttpServletResponse.SC_OK);
+		}
         
     }
 	
@@ -58,64 +63,67 @@ public class HARUploadServlet extends HttpServlet
 			
 		HTMLResponse html = new HTMLResponse("Analyze HAR");
 		StringBuffer content = html.getContent();
-		content.append(CFWFiles.getFileContent(request, "./resources/html/harupload.html"));
 		
-		content.append("<h1>Results</h1>");
-		content.append("<p>Use the links in the menu to change the view. </p>");
-		
-		//--------------------------------------
-		// Get Save Results Checkbox
-		Part resultNamePart = request.getPart("resultName");
-		String resultName = "";
-		
-		if(resultNamePart != null) {
-			resultName = CFWFiles.readContentsFromInputStream(resultNamePart.getInputStream()).trim();
-		}
-		
-		Part saveResults = request.getPart("saveResults");
-		String saveResultsString = "off";
-		
-		if(saveResults != null) {
-			saveResultsString =	CFWFiles.readContentsFromInputStream(saveResults.getInputStream());
-		}
-
-
-		//--------------------------------------
-		// Get HAR File
-		Part harFile = request.getPart("harFile");
-
-		if (harFile == null) {
-			CFWContextRequest.addAlertMessage(AlertMessage.MessageType.ERROR, "HAR File could not be loaded.");
-		}else {
-
-			log.start().method("doPost()-StreamHarFile");
-				String harContents = CFWFiles.readContentsFromInputStream(harFile.getInputStream());
-			log.end();
-						
-			String results = YSlow.instance().analyzeHarString(harContents);
+		if(CFW.Context.Request.hasPermission(PAPermissions.ANALYZE_HAR)) {
+			content.append(CFWFiles.getFileContent(request, "./resources/html/harupload.html"));
+			
+			content.append("<h1>Results</h1>");
+			content.append("<p>Use the links in the menu to change the view. </p>");
 			
 			//--------------------------------------
-			// Save Results to DB
-			if(saveResultsString.trim().toLowerCase().equals("on")) {
-				PageAnalyzerDB.saveResults(request, resultName, results, harContents);
+			// Get Save Results Checkbox
+			Part resultNamePart = request.getPart("resultName");
+			String resultName = "";
+			
+			if(resultNamePart != null) {
+				resultName = CFWFiles.readContentsFromInputStream(resultNamePart.getInputStream()).trim();
 			}
 			
-			//--------------------------------------
-			// Prepare Response
-			content.append("<div id=\"results\"></div>");
+			Part saveResults = request.getPart("saveResults");
+			String saveResultsString = "off";
 			
-			StringBuffer javascript = html.getJavascript();
-			javascript.append("<script defer>");
-			javascript.append("		YSLOW_RESULT = "+results+";\n");
-			javascript.append("		HAR_DATA = "+harContents.replaceAll("</script>", "&lt;/script>")+";\n");
-			javascript.append("		initialize();");
-			javascript.append("		prepareYSlowResults(YSLOW_RESULT);");
-			javascript.append("		prepareGanttData(HAR_DATA);");
-			javascript.append("		RULES = CFW.array.sortArrayByValueOfObject(RULES, \"score\");");
-			javascript.append("		$(\".result-view-tabs\").css(\"display\", \"block\");");
-			javascript.append("		draw({data: 'yslowresult', info: 'overview', view: ''})");
-			javascript.append("</script>");
+			if(saveResults != null) {
+				saveResultsString =	CFWFiles.readContentsFromInputStream(saveResults.getInputStream());
+			}
+	
+	
+			//--------------------------------------
+			// Get HAR File
+			Part harFile = request.getPart("harFile");
+	
+			if (harFile == null) {
+				CFWContextRequest.addAlertMessage(AlertMessage.MessageType.ERROR, "HAR File could not be loaded.");
+			}else {
+	
+				log.start().method("doPost()-StreamHarFile");
+					String harContents = CFWFiles.readContentsFromInputStream(harFile.getInputStream());
+				log.end();
+							
+				String results = YSlow.instance().analyzeHarString(harContents);
 				
+				//--------------------------------------
+				// Save Results to DB
+				if(saveResultsString.trim().toLowerCase().equals("on")) {
+					PageAnalyzerDB.saveResults(request, resultName, results, harContents);
+				}
+				
+				//--------------------------------------
+				// Prepare Response
+				content.append("<div id=\"results\"></div>");
+				
+				StringBuffer javascript = html.getJavascript();
+				javascript.append("<script defer>");
+				javascript.append("		YSLOW_RESULT = "+results+";\n");
+				javascript.append("		HAR_DATA = "+harContents.replaceAll("</script>", "&lt;/script>")+";\n");
+				javascript.append("		initialize();");
+				javascript.append("		prepareYSlowResults(YSLOW_RESULT);");
+				javascript.append("		prepareGanttData(HAR_DATA);");
+				javascript.append("		RULES = CFW.array.sortArrayByValueOfObject(RULES, \"score\");");
+				javascript.append("		$(\".result-view-tabs\").css(\"display\", \"block\");");
+				javascript.append("		draw({data: 'yslowresult', info: 'overview', view: ''})");
+				javascript.append("</script>");
+					
+			}
 		}
 	}
 }

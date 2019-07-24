@@ -4,6 +4,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
+import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 
 
 
@@ -16,11 +17,24 @@ public class PageAnalyzerMenu extends BTMenu {
 		SessionData session = CFW.Context.Request.getSessionData();
 		if( CFW.Config.AUTHENTICATION_ENABLED == false ||
 			( session != null && session.isLoggedIn()) ) {
-			this.addChild(new MenuItem("HAR Upload").href("./harupload"))
-			.addChild(new MenuItem("Analyze URL").href("./analyzeurl"))
-			.addChild(new MenuItem("History").href("./resultlist"))
-			.addChild(new MenuItem("Docu").href("./docu"))
-			.addChild(
+			
+			if(CFW.Context.Request.hasPermission(PAPermissions.ANALYZE_HAR)) {
+				this.addChild(new MenuItem("HAR Upload").href("./harupload"));
+			}
+			
+			if(CFW.Context.Request.hasPermission(PAPermissions.ANALYZE_URL)) {
+				this.addChild(new MenuItem("Analyze URL").href("./analyzeurl"));
+			}
+			
+			if(CFW.Context.Request.hasPermission(PAPermissions.VIEW_HISTORY)) {
+				this.addChild(new MenuItem("History").href("./resultlist"));
+			}
+			
+			if(CFW.Context.Request.hasPermission(PAPermissions.VIEW_DOCU)) {
+				this.addChild(new MenuItem("Docu").href("./docu"));
+			}
+			
+			this.addChild(
 				new MenuItem("Summary")
 					.cssClass("result-view-tabs")
 					.onclick("draw({data: 'yslowresult', info: 'overview', view: ''})")

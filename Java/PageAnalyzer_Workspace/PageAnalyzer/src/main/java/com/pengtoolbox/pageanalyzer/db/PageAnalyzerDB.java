@@ -43,30 +43,11 @@ public class PageAnalyzerDB {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	private static String getUsernameForDBAccess() {
-		//-------------------------------
-		// Get UserID
-		String username = "";
-		if(CFWConfig.AUTHENTICATION_ENABLED) {
-			SessionData data = CFW.Context.Request.getSessionData(); 
-			if(data.isLoggedIn()) {
-				username = data.getUser().username();
-			}
-		}else {
-			username = "anonymous";
-		}
-		
-		return username;
-	}
-	
-	/********************************************************************************************
-	 *
-	 ********************************************************************************************/
 	public static void saveResults(HttpServletRequest request, String resultName, String jsonResults, String harString) {
 		
 		//-------------------------------
 		// Get UserID
-		String username = getUsernameForDBAccess();
+		String username = CFW.Context.Request.getUser().username();
 		
 		//-------------------------------
 		// Extract URL
@@ -121,8 +102,7 @@ public class PageAnalyzerDB {
 	 ********************************************************************************************/
 	public static String getAllResults() {
 		
-		if(CFW.Context.Request.getUserPermissions() != null
-			&& CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)) {
+		if(CFW.Context.Request.hasPermission(PAPermissions.MANAGE_RESULTS)) {
 			String selectResults = "SELECT user_id, result_id, name, page_url, time FROM results ORDER BY time DESC";
 			
 			ResultSet resultSet = CFWDB.preparedExecuteQuery(selectResults);
@@ -146,7 +126,7 @@ public class PageAnalyzerDB {
 	 ********************************************************************************************/
 	public static String getResultListForComparison(String resultIDArray) {
 		
-		String userID = getUsernameForDBAccess();
+		String userID = CFW.Context.Request.getUser().username();
 		
 		//----------------------------------
 		// Check input format
@@ -187,7 +167,7 @@ public class PageAnalyzerDB {
 		//----------------------------------
 		// Initialize
 		String jsonResult = null;
-		String userID = getUsernameForDBAccess();
+		String userID = CFW.Context.Request.getUser().username();
 		
 		//----------------------------------
 		// Execute
@@ -237,7 +217,7 @@ public class PageAnalyzerDB {
 		//----------------------------------
 		// Initialize
 		String jsonResult = null;
-		String userID = getUsernameForDBAccess();
+		String userID = CFW.Context.Request.getUser().username();
 		
 		//----------------------------------
 		// Execute

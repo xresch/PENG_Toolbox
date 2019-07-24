@@ -31,6 +31,7 @@ import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 import com.pengtoolbox.pageanalyzer.yslow.YSlowExecutor;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -52,6 +53,8 @@ public class Main extends Application {
     		app = CFW.App.createApp(args);
     	}catch(ShutdownException e) {
     		//do not proceed if shutdown was registered
+    		Platform.exit();
+    		System.exit(0);
     		return;
     	}
     	
@@ -70,7 +73,8 @@ public class Main extends Application {
     	PageAnalyzerDB.initialize();
     	PAPermissions.initializePermissions();
     	
-    	CFW.DB.createTestData();
+    	// For Testing only
+    	//CFW.DB.createTestData();
     	
         //###################################################################
         // Create API ServletContext, no login needed

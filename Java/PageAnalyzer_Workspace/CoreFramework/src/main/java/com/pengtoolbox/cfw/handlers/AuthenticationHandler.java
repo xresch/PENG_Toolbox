@@ -1,7 +1,6 @@
 package com.pengtoolbox.cfw.handlers;
 
 import java.io.IOException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.logging.Logger;
 
@@ -55,6 +54,10 @@ public class AuthenticationHandler extends HandlerWrapper
         	}
 	
     	}else {
+    		if(CFW.Context.Request.getUser() == null) {
+    			CFW.Context.Request.getSessionData().setUser(CFW.DB.Users.selectByUsernameOrMail("anonymous"));
+    		}
+    		
     		this._handler.handle(target, baseRequest, request, response);
     	}
     	

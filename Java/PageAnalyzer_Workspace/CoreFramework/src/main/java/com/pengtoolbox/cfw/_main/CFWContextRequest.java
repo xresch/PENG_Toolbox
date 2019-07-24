@@ -85,6 +85,20 @@ public class CFWContextRequest {
 		}
 		return null;
 	}
+	
+	public static boolean hasPermission(String permissionName) {
+		
+		if(!CFW.Config.AUTHENTICATION_ENABLED) {
+			return true;
+		}
+		
+		if(getUserPermissions() != null && getUserPermissions().containsKey(permissionName)) {
+			return true;
+		}
+		
+		CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied!");
+		return false;
+	}
 
 	public static void setSessionData(SessionData sessionData) {
 		CFWContextRequest.sessionData.set(sessionData);

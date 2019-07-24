@@ -15,7 +15,7 @@ import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
-import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
+import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class ResultListServlet extends HttpServlet
@@ -39,35 +39,25 @@ public class ResultListServlet extends HttpServlet
 		HTMLResponse html = new HTMLResponse("View Result");
 		StringBuffer content = html.getContent();
 
-		String username = "";
 		
-		if(CFWConfig.AUTHENTICATION_ENABLED) {
-			SessionData data = CFW.Context.Request.getSessionData(); 
-			if(data.isLoggedIn()) {
-				username = data.getUser().username();
-			}
-		}else {
-			username = "anonymous";
-		}
-		String jsonResults = PageAnalyzerDB.getResultListForUser(username);
-		
-		//TODO: Check User
-		
-		if (jsonResults == null || jsonResults.isEmpty()) {
-			CFWContextRequest.addAlertMessage(AlertMessage.MessageType.ERROR, "Results could not be loaded.");
-		}else {
-									
-			content.append("<div id=\"results\"></div>");
+		if(CFW.Context.Request.hasPermission(PAPermissions.VIEW_HISTORY)) {
+			String jsonResults = PageAnalyzerDB.getResultListForUser(CFW.Context.Request.getUser().username());
 			
-			StringBuffer javascript = html.getJavascript();
-			javascript.append("<script defer>");
-				javascript.append("initialize();");
-				javascript.append("draw({data: 'resultlist', info: 'resultlist', view: ''})");
-			javascript.append("</script>");
+			//TODO: Check User
+			
+			if (jsonResults == null || jsonResults.isEmpty()) {
+				CFWContextRequest.addAlertMessage(AlertMessage.MessageType.ERROR, "Results could not be loaded.");
+			}else {
+										
+				content.append("<div id=\"results\"></div>");
 				
+				StringBuffer javascript = html.getJavascript();
+				javascript.append("<script defer>");
+					javascript.append("initialize();");
+					javascript.append("draw({data: 'resultlist', info: 'resultlist', view: ''})");
+				javascript.append("</script>");
+					
+			}
 		}
-        
     }
-	
-
 }

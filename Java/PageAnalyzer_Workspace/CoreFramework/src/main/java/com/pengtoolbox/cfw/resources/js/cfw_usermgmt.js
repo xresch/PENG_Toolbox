@@ -16,41 +16,6 @@ function cfw_usermgmt_reset(){
 /******************************************************************
  * 
  ******************************************************************/
-//function cfw_usermgmt_toogleUserInGroup(button, userID, groupID){
-//	
-//	var url = "./usermanagement/data";
-//	var allDiv = $('<div id="cfw-usermgmt">');	
-//
-//	//-----------------------------------
-//	// User Details
-//	//-----------------------------------
-//	var params = {action: "update", item: "usergroupmap", userid: userID, groupid: groupID};
-//	
-//	var detailsDiv = $('<div id="cfw-usermgmt-details">');
-//	allDiv.append(detailsDiv);
-//	
-//	CFW.http.getJSON(url, params, 
-//		function(data) {
-//			if(data.success == true){
-//				
-//				btn = $(button);
-//				if(btn.hasClass('btn-success')){
-//					btn.removeClass('btn-success').addClass('btn-danger');
-//					btn.find('i').removeClass('fa-check').addClass('fa-ban');
-//				}else{
-//					btn.addClass('btn-success').removeClass('btn-danger');
-//					btn.find('i').addClass('fa-check').removeClass('fa-ban');
-//				}
-//				
-//			}else{
-//				CFW.ui.showSmallModal("Error!", '<span>The group settings could not be updated!</span>');
-//			}	
-//	});
-//}
-
-/******************************************************************
- * 
- ******************************************************************/
 function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 	//-----------------------------------
 	// Groups
@@ -162,7 +127,7 @@ function cfw_usermgmt_editGroup(groupID){
 			if(data.payload != null){
 				var htmlString = "";
 				htmlString += '<h2>Group Details</h2>';
-				htmlString += '<p><b>Group ID:</b> '+data.payload[0].EMAIL+'</p>';
+				htmlString += '<p><b>Group ID:</b> '+data.payload[0].PK_ID+'</p>';
 				htmlString += '<p><b>Name:</b> '+data.payload[0].NAME+'</p>';
 				htmlString += '<p><b>Description:</b> '+data.payload[0].DESCRIPTION+'</p>';
 				htmlString += '<p><b>Deletable:</b> '+data.payload[0].IS_DELETABLE+'</p>';

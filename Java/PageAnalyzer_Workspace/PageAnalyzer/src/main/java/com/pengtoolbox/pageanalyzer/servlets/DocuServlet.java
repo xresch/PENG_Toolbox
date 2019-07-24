@@ -12,11 +12,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.utils.CFWFiles;
+import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 
 /*************************************************************************
  * 
@@ -42,25 +44,28 @@ public class DocuServlet extends HttpServlet {
 			
 		HTMLResponse html = new HTMLResponse("Documentation");
 		StringBuffer content = html.getContent();
-		content.append(CFWFiles.getFileContent(request, "./resources/html/docu.html"));
 		
-		String supportDetails = CFWConfig.configAsString("pa_support_details", "");
-		if(supportDetails != null) {
-			content.append("<h1>Support Contact</h1>");
-	
-			content.append("<ul>");
-			String[] supportDetailsArray = supportDetails.split(";");
-			for(String detail : supportDetailsArray) {
-				content.append("<li>"+detail+"</li>");
+		if(CFW.Context.Request.hasPermission(PAPermissions.VIEW_DOCU)) {
+			content.append(CFWFiles.getFileContent(request, "./resources/html/docu.html"));
+			
+			String supportDetails = CFWConfig.configAsString("pa_support_details", "");
+			if(supportDetails != null) {
+				content.append("<h1>Support Contact</h1>");
+		
+				content.append("<ul>");
+				String[] supportDetailsArray = supportDetails.split(";");
+				for(String detail : supportDetailsArray) {
+					content.append("<li>"+detail+"</li>");
+				}
+				content.append("</ul>");
 			}
-			content.append("</ul>");
+			
+			html.getJavascript().append("<script>CFW.ui.toc(\"#tocContent\", \"#toc\");</script>");
+			
 		}
-		
-		html.getJavascript().append("<script>CFW.ui.toc(\"#tocContent\", \"#toc\");</script>");
-		
+       
        response.setContentType("text/html");
        response.setStatus(HttpServletResponse.SC_OK);
-       
    }
 
 }

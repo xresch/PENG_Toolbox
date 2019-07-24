@@ -157,6 +157,24 @@ public class CFWDB {
 		}
 		
 		//-----------------------------------------
+		// Create Group Admin
+		//-----------------------------------------
+		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.CFW_GROUP_ADMIN)) {
+			CFW.DB.Groups.create(new Group(CFWDBGroup.CFW_GROUP_ADMIN)
+				.description("Administrators have the privileges to manage the application.")
+				.isDeletable(false)
+			);
+		}
+		
+		Group adminGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_ADMIN);
+		
+		if(adminGroup == null) {
+			new CFWLog(logger)
+			.method("createDefaultGroups")
+			.severe("User group '"+CFWDBGroup.CFW_GROUP_ADMIN+"' was not found in the database.");
+		}
+		
+		//-----------------------------------------
 		// Create Group Foreign
 		//-----------------------------------------
 		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.CFW_GROUP_USER)) {
@@ -222,6 +240,29 @@ public class CFWDB {
 	 * 
 	 ********************************************************************************************/
 	private static void createDefaultUsers() {
+		
+		//-----------------------------------------
+		// Create anonymous user 
+		//-----------------------------------------
+		if(!CFW.Config.AUTHENTICATION_ENABLED) {
+			if(!CFW.DB.Users.checkUsernameExists("anonymous")) {
+			    CFW.DB.Users.create(
+					new User("anonymous")
+					.isDeletable(true)
+					.isRenamable(false)
+					.status("ACTIVE")
+					.isForeign(false)
+				);
+			}
+		
+			User anonUser = CFW.DB.Users.selectByUsernameOrMail("anonymous");
+			
+			if(anonUser == null) {
+				new CFWLog(logger)
+				.method("createDefaultUsers")
+				.severe("User 'anonymous' was not found in the database.");
+			}
+		}
 		//-----------------------------------------
 		// Create default admin user
 		//-----------------------------------------
@@ -245,6 +286,8 @@ public class CFWDB {
 			.method("createDefaultUsers")
 			.severe("User 'admin' was not found in the database.");
 		}
+		
+		
 		
 		//-----------------------------------------
 		// Add Admin to group Superuser

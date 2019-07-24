@@ -50,8 +50,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 		JSONResponse jsonResponse = new JSONResponse();
 		StringBuffer content = jsonResponse.getContent();
 
-		if(CFW.Context.Request.getUserPermissions() != null
-		&& CFW.Context.Request.getUserPermissions().containsKey(CFWDBPermission.CFW_USER_MANAGEMENT)) {
+		if(CFW.Context.Request.hasPermission(CFWDBPermission.CFW_USER_MANAGEMENT)) {
 			
 			if (action == null) {
 				CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Parameter 'data' was not specified.");

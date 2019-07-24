@@ -38,8 +38,7 @@ public class ManageResultsServlet extends HttpServlet
 		HTMLResponse html = new HTMLResponse("Manage Results");
 		StringBuffer content = html.getContent();
 		
-		if(CFW.Context.Request.getUserPermissions() != null
-		&& CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)) {
+		if(CFW.Context.Request.hasPermission(PAPermissions.MANAGE_RESULTS)) {
 					
 			String jsonResults = PageAnalyzerDB.getAllResults();
 			
