@@ -84,7 +84,7 @@ function fetchData(args){
 								break;
 								
 		case "compareyslow":	if(COMPARE_YSLOW != null) return;
-								params.resultids = URL_PARAMETERS.resultid;
+								params.resultids = URL_PARAMETERS.resultids;
 								break;						
 								
 	}
