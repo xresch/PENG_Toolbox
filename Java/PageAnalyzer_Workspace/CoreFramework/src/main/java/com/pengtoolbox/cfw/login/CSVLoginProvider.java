@@ -53,7 +53,7 @@ public class CSVLoginProvider implements LoginProvider {
 				
 				CFW.DB.UserGroupMap.addUserToGroup(userFromDB, CFW.DB.Groups.CFW_GROUP_FOREIGN_USER, true);
 				
-				return newUser;
+				return userFromDB;
 			}
 		}
 		

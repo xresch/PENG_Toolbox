@@ -6,6 +6,7 @@
 # Page Analyzer v 1.7
 ########################################
 - GROUNDBREAKING: User Management Interface!
+- Themes: Added multiple themes and a setting in the properties file
 - fixed gantt chart breaking because of wrong percentage calculation
 - Footer is now created dynamically
 - alerts made unique by message
@@ -15,7 +16,7 @@
 - username/email case insensitive handling
 - no menu items on login page
 - upgrade to Bootstrap 4 and JQuery 3.4.1
-- added multiple themes and a setting in the properties file
+
 - enhanced JSON Response
 - Changed result list to display buttons instead of links
 - cfw.js: Created class CFWTable and CTWToogleButton 

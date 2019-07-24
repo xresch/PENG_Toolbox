@@ -87,6 +87,7 @@ public class LoginServlet extends HttpServlet
 			if(user != null) {
 				//Login success
 				SessionData data = CFW.Context.Request.getSessionData(); 
+				data.resetUser();
 				data.setUser(user);
 				data.triggerLogin();
 				

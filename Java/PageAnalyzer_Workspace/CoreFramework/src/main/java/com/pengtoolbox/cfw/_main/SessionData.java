@@ -55,6 +55,10 @@ public class SessionData {
 		}
 	}
 	
+	public void resetUser() {
+		user = null;
+	}
+	
 	
 	
 	public HashMap<String, Group> getUserGroups() {
