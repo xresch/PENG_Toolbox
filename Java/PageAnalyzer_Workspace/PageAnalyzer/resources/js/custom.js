@@ -904,6 +904,7 @@ function printResultList(parent, data){
 	// Create Table Header
 	
 	var cfwTable = CFW.ui.createTable();
+	cfwTable.isSticky = true;
 	
 	cfwTable.addHeaders(['&nbsp;', 'ID', 'Timestamp']);
 	if(data[0] != null && data[0].USER_ID != undefined){

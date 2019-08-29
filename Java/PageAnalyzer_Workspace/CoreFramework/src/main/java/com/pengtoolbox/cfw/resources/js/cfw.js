@@ -57,6 +57,7 @@ function cfw_filterTable(searchField){
 		 this.isHover = true;
 		 this.isStriped = true;
 		 this.isNarrow = false;
+		 this.isSticky = false;
 	 }
 	
 	 /********************************************
@@ -124,6 +125,12 @@ function cfw_filterTable(searchField){
 			 filter.data("table", this.table);
 		 }
 		 
+		 if(this.isSticky){
+			 this.thead.find("th").addClass("cfw-sticky-th bg-dark text-light");
+			 this.isResponsive = false;
+			 this.table.css("width", "100%");
+		 }
+		 
 		 if(this.isResponsive){
 			var responsiveDiv = $('<div class="table-responsive">');
 			responsiveDiv.append(this.table);
@@ -132,6 +139,8 @@ function cfw_filterTable(searchField){
 		 }else{
 			 parent.append(this.table);
 		 }
+		 
+
 		 
 	 }
 	 

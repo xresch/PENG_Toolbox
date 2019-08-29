@@ -183,6 +183,7 @@ function cfw_usermgmt_printUserList(data){
 	parent = $("#tab-content");
 	
 	var cfwTable = CFW.ui.createTable();
+	
 	cfwTable.addHeaders(['ID', 'Username', "eMail", "Firstname", "Lastname", "Status", "Date Created", "&nbsp;", "&nbsp;"]);
 	
 	if(data.payload != undefined){
