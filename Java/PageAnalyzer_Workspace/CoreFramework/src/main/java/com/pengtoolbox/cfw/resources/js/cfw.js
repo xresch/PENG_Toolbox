@@ -413,6 +413,57 @@ function cfw_toogleLoader(isVisible){
 	
 }
 
+/**************************************************************************************
+ * Create a new Toast.
+ * @param modalTitle the title for the modal
+ * @param modalBody the body of the modal
+ * @return nothing
+ *************************************************************************************/
+function cfw_addToast(toastTitle, toastBody){
+	
+	var body = $("body");
+	var toastsID = 'cfw-toasts';
+	
+	//--------------------------------------------
+	// Create Toast Wrapper if not exists
+	//--------------------------------------------
+	var toastDiv = $("#"+toastsID);
+	if(toastDiv.length == 0){
+	
+		var toastWrapper = $(
+				'<div id="cfw-toasts-wrapper" aria-live="polite" aria-atomic="true">'
+			  + '  <div id="cfw-toasts"></div>'
+			  + '</div>');
+		
+		toastWrapper;
+		
+		body.prepend(toastWrapper);
+		toastDiv = $("#"+toastsID);
+	}
+
+	//--------------------------------------------
+	// Create Toast Wrapper if not exists
+	//--------------------------------------------
+	
+	var toast = $(
+			'<div class="toast bg-success text-light" role="alert" aria-live="assertive" aria-atomic="true" data-animation="true" data-autohide="false">'
+			+ '  <div class="toast-header bg-success text-light">'
+			+ '	<img class="rounded mr-2" alt="...">'
+			+ '	<strong class="mr-auto">'+toastTitle+'</strong>'
+			+ '	<small class="text-muted">just now</small>'
+			+ '	<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">'
+			+ '	  <span aria-hidden="true">&times;</span>'
+			+ '	</button>'
+			+ '  </div>'
+			+ '  <div class="toast-body">'
+			+ toastBody
+			+ '  </div>'
+			+ '</div>'
+			);
+	
+	toastDiv.append(toast);
+	toast.toast('show');
+}
 
 /**************************************************************************************
  * Create a model with content.
@@ -436,6 +487,7 @@ function cfw_showModal(modalTitle, modalBody){
 				+ '        <h3 class="modal-title">Title</h3>'
 				+ '        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times</span></button>'
 				+ '      </div>'
+				+ '<div id="cfw-messages"><div class="alert alert-dismissible alert-info" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>Hmm... seems you don\'t have any results. Try to upload a HAR file oe analyze a URL.</div></div>'
 				+ '      <div class="modal-body" >'
 				+ '      </div>'
 				+ '      <div class="modal-footer">'
