@@ -11,10 +11,9 @@ public class TestMenu extends BTMenu {
 		this.addChild(
 			new MenuItem("Dropdown")
 				.cssClass("some-class")
-				.addChild(new MenuItem("TestPage").href("./test/testpage")
-			)
-		);
-		
+				.addChild(new MenuItem("General Tests").href("./general"))
+				.addChild(new MenuItem("Form Tests").href("./form"))
+			);
 	}
 
 }

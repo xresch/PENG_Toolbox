@@ -7,7 +7,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.tests.assets.mockups.TestMenu;
-import com.pengtoolbox.cfw.tests.assets.servlets.TestServlet;
+import com.pengtoolbox.cfw.tests.assets.servlets.FormTestServlet;
+import com.pengtoolbox.cfw.tests.assets.servlets.GeneralTestServlet;
 
 public class _MainForTesting {
 		
@@ -38,8 +39,8 @@ public class _MainForTesting {
         //################################################################### 
     	ServletContextHandler testContext = app.createUnsecureContext("/test");
     	
-        testContext.addServlet(TestServlet.class, "/general");
-        
+        testContext.addServlet(GeneralTestServlet.class, "/general");
+        testContext.addServlet(FormTestServlet.class, "/form");
         //###################################################################
         // Startup
         //###################################################################

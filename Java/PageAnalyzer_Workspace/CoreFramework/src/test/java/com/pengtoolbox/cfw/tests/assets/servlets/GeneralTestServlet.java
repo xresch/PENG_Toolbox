@@ -15,15 +15,18 @@ import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
+import com.pengtoolbox.cfw.response.bootstrap.BTForm;
+import com.pengtoolbox.cfw.response.bootstrap.BTInput;
+import com.pengtoolbox.cfw.response.bootstrap.BTInput.BTInputType;
 
-public class TestServlet extends HttpServlet
+public class GeneralTestServlet extends HttpServlet
 {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = CFWLog.getLogger(TestServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(GeneralTestServlet.class.getName());
 
 	@Override
     protected void doGet( HttpServletRequest request,
@@ -78,6 +81,13 @@ public class TestServlet extends HttpServlet
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
+        
+		//------------------------------
+		// Test Form
+		//------------------------------
+        BTForm form = new BTForm("My Form", "Save");
+        form.addChild(new BTInput(BTInputType.TEXT, "Firstname", "firstname"));
+        form.addChild(new BTInput(BTInputType.TEXT, "Lastname", "lastname"));
         
 //        List<String> fileContent = Files.readAllLines(Paths.get("./resources/html/"+htmlfile), Charset.forName("UTF-8"));
 //        

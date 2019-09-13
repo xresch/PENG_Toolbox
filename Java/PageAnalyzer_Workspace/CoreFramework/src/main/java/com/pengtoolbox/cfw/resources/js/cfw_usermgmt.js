@@ -92,7 +92,7 @@ function cfw_usermgmt_editUser(userID){
 				
 				detailsDiv.append(htmlString);
 			}else{
-				CFW.ui.addAlert('error', '<span>The data for the userID '+userID+' could not be loaded.</span>');
+				CFW.ui.addToastDanger('The data for the userID '+userID+' could not be loaded.</span>');
 			}	
 	});
 	
@@ -134,7 +134,7 @@ function cfw_usermgmt_editGroup(groupID){
 				
 				detailsDiv.append(htmlString);
 			}else{
-				CFW.ui.addAlert('error', '<span>The data for the groupID '+groupID+' could not be loaded.</span>');
+				CFW.ui.addToastDanger('The data for the groupID '+groupID+' could not be loaded.</span>');
 			}	
 	});
 	
@@ -228,7 +228,8 @@ function cfw_usermgmt_printUserList(data){
 		
 		cfwTable.appendTo(parent);
 	}else{
-		CFW.ui.addAlert('error', 'Something went wrong and no users can be displayed.');
+		CFW.ui.addToastDanger('Something went wrong and no users can be displayed.');
+		
 	}
 }
 
@@ -366,7 +367,7 @@ function cfw_usermgmt_draw(options){
 			case "permissions":		CFW.http.fetchAndCacheData(url, {action: "fetch", item: "permissions"}, "permissions", cfw_usermgmt_printPermissionList);
 									break;	
 									
-			default:				CFW.ui.addAlert("error", "Some error occured, be patient while nobody is looking into it.");
+			default:				CFW.ui.addToastDanger('This tab is unknown: '+options.tab);
 		}
 		
 		CFW.ui.toogleLoader(false);

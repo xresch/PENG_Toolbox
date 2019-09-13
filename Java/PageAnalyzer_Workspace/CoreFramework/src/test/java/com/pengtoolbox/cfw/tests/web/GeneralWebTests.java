@@ -6,14 +6,14 @@ import org.junit.jupiter.api.Assertions;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.tests._master.WebTestMaster;
-import com.pengtoolbox.cfw.tests.assets.servlets.TestServlet;
+import com.pengtoolbox.cfw.tests.assets.servlets.GeneralTestServlet;
 
 public class GeneralWebTests extends WebTestMaster {
 
 	@Test
 	public void testLocalization(){
 		
-		addServlet(TestServlet.class, "/general");
+		addServlet(GeneralTestServlet.class, "/general");
 		String response = CFW.HTTP.sendGETRequest(TEST_URL+"/general");
 		
 		
@@ -30,7 +30,7 @@ public class GeneralWebTests extends WebTestMaster {
 	@Test
 	public void testAlertMessages(){
 		
-		addServlet(TestServlet.class, "/general");
+		addServlet(GeneralTestServlet.class, "/general");
 		String response = CFW.HTTP.sendGETRequest(TEST_URL+"/general");
 		
 		Assertions.assertTrue(response.contains("<div class=\"alert alert-dismissible alert-info\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>this is an info.</div>"),
@@ -57,7 +57,7 @@ public class GeneralWebTests extends WebTestMaster {
 	@Test
 	public void testAssembly(){
 		
-		addServlet(TestServlet.class, "/general");
+		addServlet(GeneralTestServlet.class, "/general");
 		String response = CFW.HTTP.sendGETRequest(TEST_URL+"/general");
 		
 		Assertions.assertTrue(response.contains("<link rel=\"stylesheet\" href=\"/cfw/assembly?name=css_assembly_"),
@@ -72,7 +72,7 @@ public class GeneralWebTests extends WebTestMaster {
 	@Test
 	public void testAddSingleJS(){
 		
-		addServlet(TestServlet.class, "/general");
+		addServlet(GeneralTestServlet.class, "/general");
 		String response = CFW.HTTP.sendGETRequest(TEST_URL+"/general");
 		
 		Assertions.assertTrue(response.contains("/*Test*/Math.random();"),

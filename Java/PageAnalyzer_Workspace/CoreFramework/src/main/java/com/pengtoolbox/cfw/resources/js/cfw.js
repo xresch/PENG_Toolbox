@@ -242,7 +242,7 @@ class CFWToogleButton{
 				if(data.success){
 					var instance = $(button).data('instance');
 					instance.toggleButton();
-					CFW.ui.addToast("Saved!", null, "success", 3000);
+					CFW.ui.addToast("Saved!", null, "success", CFW.config.toastDelay);
 				}
 			}
 		);
@@ -717,7 +717,7 @@ function cfw_getJSON(url, params, callbackFunc){
 		  })
 		  .fail(function(response) {
 			  console.error("Request failed: "+url);
-			  CFW.ui.addToast("Request failed", "URL: "+url, "danger", 5000)
+			  CFW.ui.addToast("Request failed", "URL: "+url, "danger", CFW.config.toastErrorDelay)
 			  //callbackFunc(response);
 		  })
 		  .always(function(response) {
@@ -727,7 +727,7 @@ function cfw_getJSON(url, params, callbackFunc){
 			  && msgArray != null
 			  && msgArray.length > 0){
 				  for(var i = 0; i < msgArray.length; i++ ){
-					  CFW.ui.addToast(msgArray[i].message, null, msgArray[i].type, 10000);
+					  CFW.ui.addToast(msgArray[i].message, null, msgArray[i].type, CFW.config.toastErrorDelay);
 				  }
 			  }
 			  
@@ -790,6 +790,10 @@ function cfw_selectElementContent(el) {
  ********************************************************************/
 
 var CFW = {
+	config: {
+		toastDelay: 	 3000,
+		toastErrorDelay: 10000
+	},
 	cache: { 
 		data: {}
 	},
@@ -813,6 +817,8 @@ var CFW = {
 		createToggleButton: cfw_createToggleButton,
 		toc: cfw_table_toc,
 		addToast: cfw_addToast,
+		addToastSuccess: function(text){cfw_addToast(text, null, "success", CFW.config.toastDelay);},
+		addToastDanger: function(text){cfw_addToast(text, null, "danger", CFW.config.toastErrorDelay);},
 		showModal: cfw_showModal,
 		showSmallModal: cfw_showSmallModal,
 		confirmExecute: cfw_confirmExecution,

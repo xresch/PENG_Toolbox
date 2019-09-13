@@ -5,12 +5,16 @@ package com.pengtoolbox.cfw.response.bootstrap;
  * @author Reto Scheiwiller
  * 
  **********************************************************************************/
-public class BTInputText extends HierarchicalHTMLItem {
+public class BTInput extends HierarchicalHTMLItem {
 	
+	private BTInputType type = BTInputType.TEXT;
 	private String label = "&nbsp;";
 	private String fieldID = "&nbsp;";
 	
-	public BTInputText(String label, String fieldID) {
+	public enum BTInputType{
+		TEXT, TEXTAREA
+	}
+	public BTInput(BTInputType type, String label, String fieldID) {
 		this.label = label;
 		this.fieldID = fieldID;
 	}
@@ -46,7 +50,7 @@ public class BTInputText extends HierarchicalHTMLItem {
 		return label;
 	}
 
-	public BTInputText setLabel(String label) {
+	public BTInput setLabel(String label) {
 		fireChange();
 		this.label = label;
 		return this;

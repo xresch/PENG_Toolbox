@@ -36,7 +36,7 @@ public class BTForm extends HierarchicalHTMLItem {
 			}
 		}
 		
-		html.append("<input type=\"submit\" class=\"form-control\" value=\"Sign In\">");
+		html.append("<input type=\"submit\" class=\"form-control btn-primary\" value=\""+submitLabel+"\">");
 		html.append("</form>");
 	}
 
