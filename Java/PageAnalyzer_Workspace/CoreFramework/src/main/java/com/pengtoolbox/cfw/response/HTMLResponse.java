@@ -87,11 +87,6 @@ public class HTMLResponse extends AbstractHTMLResponse {
 				
 				buildedPage.append("</div>");
 				
-				buildedPage.append("<div id=\"cfw-toasts-wrapper\" aria-live=\"polite\" aria-atomic=\"true\">");
-					buildedPage.append("<div id=\"cfw-toasts\" style=\"position: absolute; top: 10; right: 10;\"></div>");
-				buildedPage.append("</div>");
-
-				
 				//--------------------------
 				// Content
 				this.appendSectionTitle(buildedPage, "Content");

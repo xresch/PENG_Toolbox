@@ -37,15 +37,18 @@
 	padding-top: 56px;
 }
 
-#cfw-toasts-wrapper{
-	position: relative; 
-	height: 0px;
+#cfw-toasts-wrapper {
+    position: absolute;
+    height: 0px;
+    top: 0px;
+    right: 0px;
 }
 
-#cfw-toasts{
-	position: absolute; 
-	top: 10px; 
-	right: 10px;
+#cfw-toasts {
+    z-index: 2048;
+    position: fixed;
+    top: 70px;
+    right: 20px;
 }
 
 

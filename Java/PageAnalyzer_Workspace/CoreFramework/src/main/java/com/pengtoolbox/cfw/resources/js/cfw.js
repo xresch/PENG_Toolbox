@@ -242,8 +242,7 @@ class CFWToogleButton{
 				if(data.success){
 					var instance = $(button).data('instance');
 					instance.toggleButton();
-				}else{
-					CFW.ui.addAlert('error', 'Error while triggering the button.');
+					CFW.ui.addToast("Saved!", null, "success", 3000);
 				}
 			}
 		);
@@ -415,11 +414,13 @@ function cfw_toogleLoader(isVisible){
 
 /**************************************************************************************
  * Create a new Toast.
- * @param modalTitle the title for the modal
- * @param modalBody the body of the modal
+ * @param toastTitle the title for the toast
+ * @param toastBody the body of the toast (can be null)
+ * @param style bootstrap style like 'info', 'success', 'warning', 'danger'
+ * @param delay in milliseconds for autohide
  * @return nothing
  *************************************************************************************/
-function cfw_addToast(toastTitle, toastBody){
+function cfw_addToast(toastTitle, toastBody, style, delay){
 	
 	var body = $("body");
 	var toastsID = 'cfw-toasts';
@@ -442,24 +443,50 @@ function cfw_addToast(toastTitle, toastBody){
 	}
 
 	//--------------------------------------------
-	// Create Toast Wrapper if not exists
+	// Prepare arguments
 	//--------------------------------------------
 	
-	var toast = $(
-			'<div class="toast bg-success text-light" role="alert" aria-live="assertive" aria-atomic="true" data-animation="true" data-autohide="false">'
-			+ '  <div class="toast-header bg-success text-light">'
-			+ '	<img class="rounded mr-2" alt="...">'
+	if(style == null){
+		style = "primary";
+	}
+	
+	var clazz = style;
+	switch(style.toLowerCase()){
+	
+		case "success": clazz = "success"; break;
+		case "info": 	clazz = "info"; break;
+		case "warning": clazz = "warning"; break;
+		case "error": 	clazz = "danger"; break;
+		case "severe": 	clazz = "danger"; break;
+		case "danger": 	clazz = "danger"; break;
+		default:	 	clazz = style; break;
+		
+	}
+	
+	var autohide = 'data-autohide="false"';
+	if(delay != null){
+		autohide = 'data-autohide="true" data-delay="'+delay+'"';
+	}
+	//--------------------------------------------
+	// Create Toast 
+	//--------------------------------------------
+		
+	var toastHTML = '<div class="toast bg-'+clazz+' text-light" role="alert" aria-live="assertive" aria-atomic="true" data-animation="true" '+autohide+'>'
+			+ '  <div class="toast-header bg-'+clazz+' text-light">'
+			//+ '	<img class="rounded mr-2" alt="...">'
 			+ '	<strong class="mr-auto">'+toastTitle+'</strong>'
-			+ '	<small class="text-muted">just now</small>'
-			+ '	<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">'
+			//+ '	<small class="text-muted">just now</small>'
+			+ '	<button type="button" class="ml-2 mb-auto close" data-dismiss="toast" aria-label="Close">'
 			+ '	  <span aria-hidden="true">&times;</span>'
 			+ '	</button>'
-			+ '  </div>'
-			+ '  <div class="toast-body">'
-			+ toastBody
-			+ '  </div>'
-			+ '</div>'
-			);
+			+ '  </div>';
+	
+	if(toastBody != null){
+		toastHTML += '  <div class="toast-body">'+ toastBody+'</div>';	
+	}
+	toastHTML += '</div>';
+	
+	var toast = $(toastHTML);
 	
 	toastDiv.append(toast);
 	toast.toast('show');
@@ -487,7 +514,6 @@ function cfw_showModal(modalTitle, modalBody){
 				+ '        <h3 class="modal-title">Title</h3>'
 				+ '        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times</span></button>'
 				+ '      </div>'
-				+ '<div id="cfw-messages"><div class="alert alert-dismissible alert-info" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>Hmm... seems you don\'t have any results. Try to upload a HAR file oe analyze a URL.</div></div>'
 				+ '      <div class="modal-body" >'
 				+ '      </div>'
 				+ '      <div class="modal-footer">'
@@ -691,9 +717,7 @@ function cfw_getJSON(url, params, callbackFunc){
 		  })
 		  .fail(function(response) {
 			  console.error("Request failed: "+url);
-			  
-			  CFW.ui.addAlert("error", "Request to URL failed: "+url);
-			  
+			  CFW.ui.addToast("Request failed", "URL: "+url, "danger", 5000)
 			  //callbackFunc(response);
 		  })
 		  .always(function(response) {
@@ -703,7 +727,7 @@ function cfw_getJSON(url, params, callbackFunc){
 			  && msgArray != null
 			  && msgArray.length > 0){
 				  for(var i = 0; i < msgArray.length; i++ ){
-					  CFW.ui.addAlert(msgArray[i].type, msgArray[i].message);
+					  CFW.ui.addToast(msgArray[i].message, null, msgArray[i].type, 10000);
 				  }
 			  }
 			  
@@ -788,6 +812,7 @@ var CFW = {
 		createTable: cfw_createTable,
 		createToggleButton: cfw_createToggleButton,
 		toc: cfw_table_toc,
+		addToast: cfw_addToast,
 		showModal: cfw_showModal,
 		showSmallModal: cfw_showSmallModal,
 		confirmExecute: cfw_confirmExecution,
