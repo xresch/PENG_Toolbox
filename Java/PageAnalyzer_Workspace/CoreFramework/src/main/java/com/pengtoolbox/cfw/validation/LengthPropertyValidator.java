@@ -1,7 +1,5 @@
 package com.pengtoolbox.cfw.validation;
 
-import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.cli.ArgumentDefinition;
 import com.pengtoolbox.cfw.utils.Ternary;
 
 /**************************************************************************************
@@ -20,11 +18,24 @@ public class LengthPropertyValidator extends AbstractPropertyValidator {
 		super(validatable);
 		this.minLength = minLength;
 		this.maxLength = maxLength;
+		
+		if(minLength > 0) {
+			this.setNullAllowed(false);
+		}
+	}
+	
+	public LengthPropertyValidator(int minLength, int maxLength) {
+		this.minLength = minLength;
+		this.maxLength = maxLength;
+		
+		if(minLength > 0) {
+			this.setNullAllowed(false);
+		}
 	}
 	
 	@Override
 	public boolean validate(Object value) {
-		
+
 		Ternary result = validateNullEmptyAllowed(value);
 		if(result != Ternary.DONTCARE ) return result.toBoolean();
 		
@@ -36,7 +47,7 @@ public class LengthPropertyValidator extends AbstractPropertyValidator {
 		}
 		
 		if(   (string.length() >= minLength || minLength == -1) 
-		   && (string.length() >= maxLength || maxLength == -1) ){
+		   && (string.length() <= maxLength || maxLength == -1) ){
 			return true;
 		}else{
 			if(minLength == -1){

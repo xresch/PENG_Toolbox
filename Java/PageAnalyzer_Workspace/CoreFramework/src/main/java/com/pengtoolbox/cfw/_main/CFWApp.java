@@ -33,6 +33,7 @@ import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.response.bootstrap.UserMenuItem;
 import com.pengtoolbox.cfw.servlets.AssemblyServlet;
+import com.pengtoolbox.cfw.servlets.FormServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
@@ -258,6 +259,10 @@ public class CFWApp {
 		ContextHandler contextHandler = new ContextHandler("/cfw");
 		ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 		
+	    //-----------------------------------------
+	    // Form Servlet
+	    servletContextHandler.addServlet(FormServlet.class,  "/formhandler");
+	    
 		//-----------------------------------------
 		// Resource Servlets
 		servletContextHandler.addServlet(AssemblyServlet.class, "/assembly"); 

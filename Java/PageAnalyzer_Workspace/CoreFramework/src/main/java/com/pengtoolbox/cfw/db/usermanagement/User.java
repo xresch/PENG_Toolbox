@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserDBFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.utils.CFWEncryption;
 
 public class User {
 	

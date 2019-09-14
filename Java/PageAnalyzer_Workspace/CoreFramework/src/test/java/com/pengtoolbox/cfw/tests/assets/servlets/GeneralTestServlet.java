@@ -16,8 +16,8 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.response.bootstrap.BTForm;
-import com.pengtoolbox.cfw.response.bootstrap.BTInput;
-import com.pengtoolbox.cfw.response.bootstrap.BTInput.BTInputType;
+import com.pengtoolbox.cfw.response.bootstrap.CFWField;
+import com.pengtoolbox.cfw.response.bootstrap.CFWField.FormFieldType;
 
 public class GeneralTestServlet extends HttpServlet
 {
@@ -86,8 +86,8 @@ public class GeneralTestServlet extends HttpServlet
 		// Test Form
 		//------------------------------
         BTForm form = new BTForm("My Form", "Save");
-        form.addChild(new BTInput(BTInputType.TEXT, "Firstname", "firstname"));
-        form.addChild(new BTInput(BTInputType.TEXT, "Lastname", "lastname"));
+        form.addChild(new CFWField(FormFieldType.TEXT, "Firstname", "firstname"));
+        form.addChild(new CFWField(FormFieldType.TEXT, "Lastname", "lastname"));
         
 //        List<String> fileContent = Files.readAllLines(Paths.get("./resources/html/"+htmlfile), Charset.forName("UTF-8"));
 //        

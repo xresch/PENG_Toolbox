@@ -734,6 +734,53 @@ function cfw_getJSON(url, params, callbackFunc){
 		  });
 }
 
+/**************************************************************************************
+ * Executes a post request with JQuery and retrieves a standard JSON format of the CFW
+ * framework. Handles alert messages if there are any.
+ * 
+ * The structure of the response has to adhere to the following structure:
+ * {
+ * 		success: true|false,
+ * 		messages: [
+ * 			{
+ * 				type: info | success | warning | danger
+ * 				message: "string",
+ * 				stacktrace: null | "stacketrace string"
+ * 			},
+ * 			{...}
+ * 		],
+ * 		payload: {...}|[...] object or array
+ * }
+ * 
+ * @param uri to decode
+ * @return decoded URI or the same URI in case of errors.
+ *************************************************************************************/
+function cfw_postJSON(url, params, callbackFunc){
+
+	$.post(url, params)
+		  .done(function(response) {
+		    //alert( "done" );
+			  if(callbackFunc != null) callbackFunc(response);
+		  })
+		  .fail(function(response) {
+			  console.error("Request failed: "+url);
+			  CFW.ui.addToast("Request failed", "URL: "+url, "danger", CFW.config.toastErrorDelay)
+			  //callbackFunc(response);
+		  })
+		  .always(function(response) {
+			  var msgArray = response.messages;
+			  
+			  if(msgArray != undefined
+			  && msgArray != null
+			  && msgArray.length > 0){
+				  for(var i = 0; i < msgArray.length; i++ ){
+					  CFW.ui.addToast(msgArray[i].message, null, msgArray[i].type, CFW.config.toastErrorDelay);
+				  }
+			  }
+			  
+		  });
+}
+
 /******************************************************************
  * Method to fetch data from the server with CFW.http.getJSON(). 
  * The result is cached in the global variable CFW.cache.data[key].

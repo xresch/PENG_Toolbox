@@ -24,6 +24,7 @@ public class CFW {
 	public class Config extends CFWConfig {}
 	public static class Context {
 		public static class Request extends CFWContextRequest{};
+		public static class Session extends CFWContextSession{};
 	}
 	public static class DB extends CFWDB {
 		public static class Users extends CFWDBUser{};
@@ -40,6 +41,7 @@ public class CFW {
 	public class Validation extends CFWValidation {}
 	public class CLI extends CFWCommandLineInterface {}
 	public class JSON extends CFWJson {}
+	
 	//##############################################################################
 	// GLOBAL
 	//##############################################################################

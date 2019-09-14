@@ -1,11 +1,13 @@
 package com.pengtoolbox.cfw._main;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
+import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 
 public class SessionData {
@@ -14,6 +16,8 @@ public class SessionData {
 	private User user = null;
 	private HashMap<String, Group> userGroups = new HashMap<String, Group>();
 	private HashMap<String, Permission> userPermissions = new HashMap<String, Permission>();
+	private static HashMap<String,BTForm> formArray = new HashMap<String,BTForm>();
+	
 	private BTMenu menu;
 	private BTFooter footer;
 	
@@ -77,7 +81,15 @@ public class SessionData {
 		return footer;
 	}
 	
+	public void addForm(BTForm form){
+		formArray.put(form.getFormID(), form);	
+	}
 	
-
+	public BTForm getForm(String formID) {
+		return formArray.get(formID);
+	}
 	
+	public Collection<BTForm> getForms() {
+		return formArray.values();
+	}
 }

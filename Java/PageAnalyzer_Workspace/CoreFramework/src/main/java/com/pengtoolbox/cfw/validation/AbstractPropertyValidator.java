@@ -1,7 +1,5 @@
 package com.pengtoolbox.cfw.validation;
 
-import java.io.File;
-
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.utils.Ternary;
 

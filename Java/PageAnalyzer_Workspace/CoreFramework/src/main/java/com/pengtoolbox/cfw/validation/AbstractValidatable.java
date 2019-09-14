@@ -12,7 +12,29 @@ public abstract class AbstractValidatable<T> implements IValidatable<T> {
 	private ArrayList<String> invalidMessages;
 	
 	/*************************************************************************
-	 * Executes all validators added to the argument.
+	 * Executes all validators added to this instance and validates the current
+	 * value.
+	 * 
+	 * @return true if all validators returned true, false otherwise
+	 *************************************************************************/ 
+	public boolean validate(){
+		
+		boolean isValid = true;
+		invalidMessages = new ArrayList<String>();
+		
+		for(IValidator validator : validatorArray){
+			
+			if(!validator.validate(value)){
+				invalidMessages.add(validator.getInvalidMessage());
+				isValid=false;
+			}
+		}
+		
+		return isValid;
+	}
+	
+	/*************************************************************************
+	 * Executes all validators added to the instance of this class.
 	 * 
 	 * @return true if all validators returned true, false otherwise
 	 *************************************************************************/ 
@@ -40,12 +62,12 @@ public abstract class AbstractValidatable<T> implements IValidatable<T> {
 		return invalidMessages;
 	}
 	
-	public boolean addValidator(IValidator validator) {
+	public IValidatable<T> addValidator(IValidator validator) {
 		if(!validatorArray.contains(validator)) {
-			return validatorArray.add(validator);
+			validatorArray.add(validator);
 		}
 		
-		return false;
+		return this;
 	}
 
 	public boolean removeValidator(IValidator o) {
