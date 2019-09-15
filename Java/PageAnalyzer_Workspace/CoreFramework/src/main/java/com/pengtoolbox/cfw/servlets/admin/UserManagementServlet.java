@@ -12,10 +12,15 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
+import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
+import com.pengtoolbox.cfw.response.bootstrap.BTForm;
+import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
+import com.pengtoolbox.cfw.response.bootstrap.CFWField;
+import com.pengtoolbox.cfw.response.bootstrap.CFWField.FormFieldType;
 
 public class UserManagementServlet extends HttpServlet
 {
@@ -35,7 +40,10 @@ public class UserManagementServlet extends HttpServlet
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
 		CFWLog log = new CFWLog(logger).method("doGet");
+		
 		log.info(request.getRequestURL().toString());
+		
+		createForms();
 		
 		HTMLResponse html = new HTMLResponse("User Management");
 		
@@ -58,5 +66,62 @@ public class UserManagementServlet extends HttpServlet
 		}
         
     }
+	
+	private void createForms() {
+		
+		//--------------------------------------
+		// Create User Form
+		BTForm createUserForm = new BTForm("cfw-createUserForm", "Create User");
+		
+		createUserForm.addChild(new CFWField<String>(FormFieldType.TEXT, "Username"));
+		createUserForm.addChild(new CFWField<String>(FormFieldType.PASSWORD, "Password"));
+		createUserForm.addChild(new CFWField<String>(FormFieldType.PASSWORD, "Repeat Password"));
+		createUserForm.setFormHandler(new BTFormHandler() {
+			
+			@Override
+			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form) {
+				
+				String username = request.getParameter("Username");
+				String password = request.getParameter("Password");
+				String repeatedPassword = request.getParameter("Repeat Password");
+				
+				User newUser = new User(username).setInitialPassword(password, repeatedPassword);
+				
+				if(newUser != null) {
+					if(CFW.DB.Users.create(newUser)) {
+						CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "User created successfully!");
+					}
+				}
+				
+			}
+		});
+		
+		//--------------------------------------
+		// Create Group Form
+		
+		BTForm createGroupForm = new BTForm("cfw-createGroupForm", "Create Group");
+		
+		createGroupForm.addChild(new CFWField<String>(FormFieldType.TEXT, "Name"));
+		createGroupForm.addChild(new CFWField<String>(FormFieldType.TEXTAREA, "Description"));
+		
+		createGroupForm.setFormHandler(new BTFormHandler() {
+			
+			@Override
+			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form) {
+				
+				String name = request.getParameter("Name");
+				String description = request.getParameter("Description");
+				
+				Group newGroup = new Group(name).description(description);
+				
+				if(newGroup != null) {
+					if(CFW.DB.Groups.create(newGroup)) {
+						CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Group created successfully!");
+					}
+				}
+				
+			}
+		});
+	}
 	
 }

@@ -25,7 +25,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private ArrayList<String> invalidMessages;
 	
 	public enum FormFieldType{
-		TEXT, TEXTAREA, HIDDEN
+		TEXT, TEXTAREA, PASSWORD, HIDDEN
 	}
 	
 	public CFWField(FormFieldType type, String fieldID) {
@@ -70,7 +70,11 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 								break;
 								
 			case HIDDEN:  		html.append("<input type=\"hidden\" "+this.getAttributesString()+"/>");
-			break;
+								break;
+								
+			case PASSWORD:  	html.append("<input type=\"password\" class=\"form-control\" "+this.getAttributesString()+"/>");
+								break;
+			
 		}
 		
 		//---------------------------------------------
@@ -183,7 +187,6 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	}
 	
 	public CFWField<T> setValue(T value) {
-		System.out.println("######### VALUE: "+value);
 		if(this.validateValue(value)) {
 			this.value = value;
 		}else {

@@ -65,6 +65,19 @@ function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 }
 
 /******************************************************************
+ * Create user
+ ******************************************************************/
+function cfw_usermgmt_createUser(){
+	
+	var html = $('<div id="cfw-usermgmt-createUser">');	
+
+	CFW.http.getForm('cfw-createUserForm', html);
+	
+	CFW.ui.showModal("Create User", html);
+	
+}
+
+/******************************************************************
  * Edit user
  ******************************************************************/
 function cfw_usermgmt_editUser(userID){
@@ -109,6 +122,18 @@ function cfw_usermgmt_editUser(userID){
 	
 }
 
+/******************************************************************
+ * Create Group
+ ******************************************************************/
+function cfw_usermgmt_createGroup(){
+	
+	var html = $('<div id="cfw-usermgmt-createGroup">');	
+
+	CFW.http.getForm('cfw-createGroupForm', html);
+	
+	CFW.ui.showModal("Create User", html);
+	
+}
 /******************************************************************
  * Edit Group
  ******************************************************************/
@@ -184,6 +209,16 @@ function cfw_usermgmt_printUserList(data){
 	
 	var cfwTable = CFW.ui.createTable();
 	
+	//--------------------------------
+	// Button
+	var createButton = $('<button class="btn btn-success mb-2" alt="Create" title="Delete" onclick="cfw_usermgmt_createUser()">'
+							+ '<i class="fas fa-plus-circle"></i> Create User'
+					   + '</button>');
+	
+	parent.append(createButton);
+	
+	//--------------------------------
+	// Table
 	cfwTable.addHeaders(['ID', 'Username', "eMail", "Firstname", "Lastname", "Status", "Date Created", "&nbsp;", "&nbsp;"]);
 	
 	if(data.payload != undefined){
@@ -193,6 +228,7 @@ function cfw_usermgmt_printUserList(data){
 			CFW.ui.addAlert("info", "Hmm... seems there aren't any users in the list.");
 		}
 
+		
 		htmlString = "";
 		for(var i = 0; i < resultCount; i++){
 			var current = data.payload[i];
@@ -242,6 +278,17 @@ function cfw_usermgmt_printUserList(data){
 function cfw_usermgmt_printGroupList(data){
 	
 	parent = $("#tab-content");
+	
+	//--------------------------------
+	// Button
+	var createButton = $('<button class="btn btn-success mb-2" alt="Create" title="Delete" onclick="cfw_usermgmt_createGroup()">'
+							+ '<i class="fas fa-plus-circle"></i> Create Group'
+					   + '</button>');
+	
+	parent.append(createButton);
+	
+	//--------------------------------
+	// Table
 	
 	var cfwTable = CFW.ui.createTable();
 	cfwTable.addHeaders(['ID', "Name", "Description"]);

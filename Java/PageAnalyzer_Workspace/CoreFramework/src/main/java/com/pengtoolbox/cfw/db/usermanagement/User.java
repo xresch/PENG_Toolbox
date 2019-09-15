@@ -32,7 +32,7 @@ public class User {
 	private static Logger logger = CFWLog.getLogger(User.class.getName());
 	
 	//Username and password is managed in another source, like LDAP or CSV
-	private boolean isForeign;
+	private boolean isForeign = false;
 	
 	public User(String username) {
 		this.username = username;

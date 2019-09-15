@@ -15,7 +15,7 @@ public class CFWDBUser {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBUser.class.getName());
 	
-	enum UserDBFields{
+	public enum UserDBFields{
 		PK_ID, 
 		USERNAME,
 		EMAIL, 

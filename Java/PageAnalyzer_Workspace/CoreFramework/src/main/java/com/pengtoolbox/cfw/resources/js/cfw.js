@@ -781,6 +781,53 @@ function cfw_postJSON(url, params, callbackFunc){
 		  });
 }
 
+/**************************************************************************************
+ * Executes a get request with JQuery and retrieves a standard JSON format of the CFW
+ * framework. Handles alert messages if there are any.
+ * 
+ * The structure of the response has to adhere to the following structure:
+ * {
+ * 		success: true|false,
+ * 		messages: [
+ * 			{
+ * 				type: info | success | warning | danger
+ * 				message: "string",
+ * 				stacktrace: null | "stacketrace string"
+ * 			},
+ * 			{...}
+ * 		],
+ * 		payload: {html: "the html form"}
+ * }
+ * 
+ * @param formid the id of the form
+ * @param targetElement the element in which the form should be placed
+ *************************************************************************************/
+function cfw_getForm(formid, targetElement){
+
+	$.get('/cfw/formhandler', {id: formid})
+		  .done(function(response) {
+		      $(targetElement).html(response.payload.html)
+			  callbackFunc(response);
+		  })
+		  .fail(function(response) {
+			  console.error("Request failed: "+url);
+			  CFW.ui.addToast("Request failed", "URL: "+url, "danger", CFW.config.toastErrorDelay)
+
+		  })
+		  .always(function(response) {
+			  var msgArray = response.messages;
+			  
+			  if(msgArray != undefined
+			  && msgArray != null
+			  && msgArray.length > 0){
+				  for(var i = 0; i < msgArray.length; i++ ){
+					  CFW.ui.addToast(msgArray[i].message, null, msgArray[i].type, CFW.config.toastErrorDelay);
+				  }
+			  }
+			  
+		  });
+}
+
 /******************************************************************
  * Method to fetch data from the server with CFW.http.getJSON(). 
  * The result is cached in the global variable CFW.cache.data[key].
@@ -852,6 +899,8 @@ var CFW = {
 		getURLParams: cfw_getURLParams,
 		secureDecodeURI: cfw_secureDecodeURI,
 		getJSON: cfw_getJSON,
+		postJSON: cfw_postJSON,
+		getForm: cfw_getForm,
 		fetchAndCacheData: cfw_fetchAndCacheData
 	},
 	
