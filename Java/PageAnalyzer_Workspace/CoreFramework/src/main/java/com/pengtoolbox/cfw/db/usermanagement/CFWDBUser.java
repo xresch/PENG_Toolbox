@@ -302,7 +302,8 @@ public class CFWDBUser {
 				  + UserDBFields.IS_DELETABLE +", "
 				  + UserDBFields.IS_RENAMABLE + ", "
 				  + UserDBFields.IS_FOREIGN 
-				+" FROM "+TABLE_NAME;
+				+" FROM "+TABLE_NAME
+				+" ORDER BY LOWER("+UserDBFields.USERNAME +") ASC";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectAllUsers);
 		String json = CFWDB.resultSetToJSON(result);

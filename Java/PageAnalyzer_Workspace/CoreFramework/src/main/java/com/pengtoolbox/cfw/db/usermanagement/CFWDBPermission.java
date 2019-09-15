@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup.GroupDBFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBPermission {
@@ -199,7 +200,8 @@ public class CFWDBPermission {
 				  + PermissionDBFields.NAME +", "
 				  + PermissionDBFields.DESCRIPTION +", "
 				  + PermissionDBFields.IS_DELETABLE +" "
-				+" FROM "+TABLE_NAME;
+				+" FROM "+TABLE_NAME
+				+" ORDER BY LOWER("+PermissionDBFields.NAME+")";;
 		
 		return CFWDB.preparedExecuteQuery(sql);
 

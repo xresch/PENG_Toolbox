@@ -217,7 +217,8 @@ public class CFWDBGroup {
 				  + GroupDBFields.NAME +", "
 				  + GroupDBFields.DESCRIPTION +", "
 				  + GroupDBFields.IS_DELETABLE +" "
-				+" FROM "+TABLE_NAME;
+				+" FROM "+TABLE_NAME
+				+" ORDER BY LOWER("+GroupDBFields.NAME+")";
 		
 		return CFWDB.preparedExecuteQuery(selectByName);
 		
