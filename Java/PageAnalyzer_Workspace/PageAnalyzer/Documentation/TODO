@@ -1,5 +1,11 @@
 TODO
 ====
+- Add Support info for async calls
+- Add validation to forms
+- Add CFWObject.toForm(chooseFields[]);
+- Add Validation MEthod to BTForm
+- add Callback to showModal Close buttons
+
 - Support Info: Use default Modal, make exceptions unique.
 - Custom Error page CFW.App.createErrorHandler();
 - Check is user active
