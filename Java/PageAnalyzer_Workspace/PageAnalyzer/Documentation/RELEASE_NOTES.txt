@@ -3,6 +3,18 @@
 ########################################
 
 ########################################
+# Page Analyzer v 1.8
+########################################
+- fixed first time login issue
+- fixed compare view
+- added sticky header support for tables
+- added toast messages
+- added create user feature
+- added create group feature
+- changed sort order for users/groups/permissions to alphabetically
+- created config item for max upload size
+
+########################################
 # Page Analyzer v 1.7
 ########################################
 - GROUNDBREAKING: User Management Interface!
