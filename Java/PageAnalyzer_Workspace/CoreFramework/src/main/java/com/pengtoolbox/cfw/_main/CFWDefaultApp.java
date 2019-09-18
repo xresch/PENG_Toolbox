@@ -83,8 +83,8 @@ public class CFWDefaultApp {
     	CFW.DB.initialize();
     	
     	//---------------------------------------
-    	// Default Multipart Config max 100MB
-        int maxSize = 1024*1024*100;
+    	// Default Multipart Config
+        int maxSize = 1024*1024*CFW.Config.APPLICATION_MAX_UPLOADSIZE;
         globalMultipartConfig = new MultipartConfigElement(null, maxSize, maxSize, maxSize);
          
 	}

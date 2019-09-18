@@ -19,6 +19,9 @@ public class CFWConfig {
 	/** Bootstrap Theme for the application. (Property=cfw_application_theme, Default="superhero") */
 	public static String APPLICATION_THEME = "slate";
 	
+	/** Default maximum upload size for files in megabyte. (Property=cfw_application_max_uploadsize, Default=200) */
+	public static int APPLICATION_MAX_UPLOADSIZE = 200;
+	
 	/** Reset the admin password on the next restart. (Property=cfw_reset_admin_pw, Default=false) */
 	public static boolean RESET_ADMIN_PW = false;
 	
@@ -116,8 +119,9 @@ public class CFWConfig {
 		APPLICATION_ID					= CFWConfig.configAsString("cfw_application_id", APPLICATION_ID);
 		APPLICATION_NAME				= CFWConfig.configAsString("cfw_application_name", APPLICATION_NAME);
 		APPLICATION_THEME				= CFWConfig.configAsString("cfw_application_theme", APPLICATION_THEME);
+		APPLICATION_MAX_UPLOADSIZE		= CFWConfig.configAsInt("cfw_application_max_uploadsize", APPLICATION_MAX_UPLOADSIZE);
 		RESET_ADMIN_PW 					= CFWConfig.configAsBoolean("cfw_reset_admin_pw", RESET_ADMIN_PW);
-		
+				
 		BASE_URL 						= "/"+APPLICATION_NAME;
 		
 		HTTP_ENABLED 					= CFWConfig.configAsBoolean("cfw_http_enabled", HTTP_ENABLED);
