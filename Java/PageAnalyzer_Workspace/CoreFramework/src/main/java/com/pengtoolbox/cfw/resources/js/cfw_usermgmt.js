@@ -131,7 +131,7 @@ function cfw_usermgmt_createGroup(){
 
 	CFW.http.getForm('cfw-createGroupForm', html);
 	
-	CFW.ui.showModal("Create User", html);
+	CFW.ui.showModal("Create Group", html);
 	
 }
 /******************************************************************
