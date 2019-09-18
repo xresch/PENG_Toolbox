@@ -1,6 +1,12 @@
 package com.pengtoolbox.cfw.response.bootstrap;
 
+import java.util.LinkedHashMap;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWObject;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.response.bootstrap.CFWField.FormFieldType;
 
 /**********************************************************************************
@@ -15,6 +21,8 @@ public class BTForm extends HierarchicalHTMLItem {
 	private String submitLabel = "";
 	private String postURL;
 	
+	public LinkedHashMap<String, CFWField> fields = new LinkedHashMap<String, CFWField>();
+	
 	private BTFormHandler formHandler = null;
 	
 	public BTForm(String formID, String submitLabel) {
@@ -27,6 +35,11 @@ public class BTForm extends HierarchicalHTMLItem {
 		postURL = CFW.Context.Request.getRequest().getRequestURI();
 		
 		CFW.Context.Session.addForm(this);
+	}
+	
+	public BTForm(String formID, String submitLabel, CFWObject origin) {
+		this(formID, submitLabel);
+		this.addFields(origin.getFields().values().toArray(new CFWField[]{}));
 	}
 	
 	/***********************************************************************************
@@ -61,6 +74,23 @@ public class BTForm extends HierarchicalHTMLItem {
 	}
 
 	
+	public void addField(CFWField field) {
+		
+		if(!fields.containsKey(field.getPropertyName())) {
+			fields.put(field.getPropertyName(), field);
+		}else {
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The field with name '"+field.getPropertyName()+"' was already added to the object.");
+		}
+		
+		this.addChild(field);
+	}
+	
+	public void addFields(CFWField[] fields) {
+		for(CFWField field : fields) {
+			this.addField(field);
+		}
+	}
+	
 	public String getFormID() {
 		return formID;
 	}
@@ -82,6 +112,9 @@ public class BTForm extends HierarchicalHTMLItem {
 		return formHandler;
 	}
 	
-	
+	public boolean mapRequestParameters(HttpServletRequest request) {
+		
+		return CFW.HTTP.mapRequestParamsToFields(request, fields);
+	}
 
 }

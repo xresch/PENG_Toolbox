@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.BTForm;
+import com.pengtoolbox.cfw.response.bootstrap.CFWField;
 
 public class CFWHttp {
 	
@@ -112,6 +115,37 @@ public class CFWHttp {
 		return null;
 		
 	}
+	
+	
+	/******************************************************************************************************
+	 * Map the values of request parameters to CFWFields.
+	 * @param url used for the request.
+	 * @return true if successful, false otherwise
+	 ******************************************************************************************************/
+	public static boolean mapRequestParamsToFields(HttpServletRequest request, HashMap<String,CFWField> fields) {
+		
+		Enumeration<String> parameters = request.getParameterNames();
+		boolean result = true;
+		
+		while(parameters.hasMoreElements()) {
+			String key = parameters.nextElement();
+			
+			if(!key.equals(BTForm.FORM_ID)) {
+				if (fields.containsKey(key)) {
+					CFWField field = fields.get(key);
+					
+					field.setValue(request.getParameter(key));
+				}else {
+					new CFWLog(logger)
+						.method("CFWObject<init>")
+						.severe("The field with name '"+key+"' is unknown for this type.");
+				}
+			}
+		}
+		
+		return result;
+	}
+	
 	
 	
 }

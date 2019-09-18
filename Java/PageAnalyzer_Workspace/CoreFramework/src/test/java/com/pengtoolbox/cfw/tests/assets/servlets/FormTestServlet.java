@@ -89,12 +89,10 @@ public class FormTestServlet extends HttpServlet
 				JSONResponse json = new JSONResponse();
 		    	json.addAlert(MessageType.SUCCESS, "BTFormHandler: Post recieved from "+formID+"!!!");
 		    	
-		    	CFWObjectMockup mockup = (CFWObjectMockup)new CFWObjectMockup().mapRequestParameters(request);
+		    	form.mapRequestParameters(request);
 			}
 		});
         content.append(handledForm2.getHTML());
-        
-
     }
 	
 	
@@ -104,8 +102,6 @@ public class FormTestServlet extends HttpServlet
     	
     	JSONResponse json = new JSONResponse();
     	json.addAlert(MessageType.SUCCESS, "Post recieved from "+formID+"!!!");
-    	
-    	
     	
     }
 	

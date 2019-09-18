@@ -15,40 +15,22 @@ public class CFWObject {
 	
 	private static Logger logger = CFWLog.getLogger(CFWObject.class.getName());
 	
-	public LinkedHashMap<String, CFWField> properties = new LinkedHashMap<String, CFWField>();
+	public LinkedHashMap<String, CFWField> fields = new LinkedHashMap<String, CFWField>();
 	
 	public CFWObject() {
 		
 	}
 	
-	public CFWObject mapRequestParameters(HttpServletRequest request) {
+	public boolean mapRequestParameters(HttpServletRequest request) {
 		
-		Enumeration<String> parameters = request.getParameterNames();
-		
-		while(parameters.hasMoreElements()) {
-			String key = parameters.nextElement();
-			
-			if(!key.equals(BTForm.FORM_ID)) {
-				if (properties.containsKey(key)) {
-					CFWField field = properties.get(key);
-					
-					field.setValue(request.getParameter(key));
-				}else {
-					new CFWLog(logger)
-						.method("CFWObject<init>")
-						.severe("The field with name '"+key+"' is unknown for this type.");
-				}
-			}
-		}
-		
-		return this;
+		return CFW.HTTP.mapRequestParamsToFields(request, fields);
 	}
 	
 	public BTForm toForm(String formID, String submitLabel) {
 		
 		BTForm form = new BTForm(formID, submitLabel);
 		
-		for(CFWField field : properties.values()) {
+		for(CFWField field : fields.values()) {
 			form.addChild(field);
 		}
 		
@@ -58,11 +40,21 @@ public class CFWObject {
 	
 	public void addField(CFWField field) {
 		
-		if(!properties.containsKey(field.getPropertyName())) {
-			properties.put(field.getPropertyName(), field);
+		if(!fields.containsKey(field.getPropertyName())) {
+			fields.put(field.getPropertyName(), field);
 		}else {
 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The field with name '"+field.getPropertyName()+"' was already added to the object.");
 		}
+	}
+	
+	public void addFields(CFWField[] fields) {
+		for(CFWField field : fields) {
+			this.addField(field);
+		}
+	}
+	
+	public LinkedHashMap<String, CFWField> getFields(){
+		return fields;
 	}
 	
 	
