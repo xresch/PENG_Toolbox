@@ -1,5 +1,7 @@
 package com.pengtoolbox.cfw.logging;
 
+import java.util.LinkedHashMap;
+
 import javax.servlet.http.HttpServletRequest;
 
 /************************************************************
@@ -30,6 +32,8 @@ public class LogMessage {
 	
 	protected String exception;
 	
+	protected LinkedHashMap<String,String> customEntries = null;
+	
 	protected LogMessage(CFWLog log) {
 		
 		this.tempStartNanos = log.tempStartNanos;
@@ -51,6 +55,8 @@ public class LogMessage {
 		this.sourceMethod = log.sourceMethod; 
 		
 		this.exception = log.exception; 
+		
+		this.customEntries = log.customEntries;
 	}
 
 }

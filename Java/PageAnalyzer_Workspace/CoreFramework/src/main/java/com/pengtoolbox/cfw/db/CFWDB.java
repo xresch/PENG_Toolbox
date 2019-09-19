@@ -447,7 +447,7 @@ public class CFWDB {
 			log.severe("Issue executing prepared statement: "+sql, e);
 		} finally {
 			try {
-				if(conn != null && transactionConnection == null) { conn.close(); }
+				if(conn != null && transactionConnection.get() == null) { conn.close(); }
 				if(prepared != null) { prepared.close(); }
 			} catch (SQLException e) {
 				log.severe("Issue closing resources.", e);
@@ -455,7 +455,7 @@ public class CFWDB {
 			
 		}
 		
-		log.end("Duration SQL Statement: "+sql);
+		log.custom("sql", sql).end();
 		return result;
 	}
 	
@@ -496,7 +496,7 @@ public class CFWDB {
 			log.severe("Issue executing prepared statement: "+sql, e);
 		} finally {
 			try {
-				if(conn != null && transactionConnection == null) { conn.close(); }
+				if(conn != null && transactionConnection.get() == null) { conn.close(); }
 				if(prepared != null) { prepared.close(); }
 			} catch (SQLException e) {
 				log.severe("Issue closing resources.", e);
@@ -504,7 +504,7 @@ public class CFWDB {
 			
 		}
 		
-		log.end("Duration SQL Statement: "+sql);
+		log.custom("sql", sql).end();
 		return generatedID;
 	}
 	
@@ -549,7 +549,7 @@ public class CFWDB {
 			}
 		} 
 		
-		log.end("Duration SQL Statement: "+sql);
+		log.custom("sql", sql).end();
 		return result;
 	}
 	

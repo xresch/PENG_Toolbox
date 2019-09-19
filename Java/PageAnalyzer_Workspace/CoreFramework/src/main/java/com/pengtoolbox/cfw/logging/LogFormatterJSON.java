@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw.logging;
 
 import java.util.Date;
+import java.util.Map.Entry;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
@@ -11,7 +12,7 @@ public class LogFormatterJSON extends Formatter {
 	@Override
 	public String format(LogRecord rec) {
 		
-		StringBuffer buf = new StringBuffer(1000);
+		StringBuilder buf = new StringBuilder(1000);
 		LogMessage log = (LogMessage)rec.getParameters()[0];
 		buf.append("{");
 		
@@ -98,10 +99,24 @@ public class LogFormatterJSON extends Formatter {
 			}
 			
 			//-------------------------
+			// Duration Millisecond
+			
+			if(log.customEntries != null && log.customEntries.size() > 0) {
+				for(Entry<String, String> entry : log.customEntries.entrySet()) {
+					
+					if(log.durationMillis != -1){
+						buf.append(", \""+entry.getKey()+"\":\"");
+						buf.append(CFW.JSON.escapeString(entry.getValue()));
+						buf.append("\"");
+					}
+				}
+			}
+						
+			//-------------------------
 			// Exception
 			if(log.exception != null){
 				buf.append(", \"exception\":\"");
-				buf.append(log.exception);
+				buf.append(CFW.JSON.escapeString(log.exception));
 				buf.append("\"");
 			}
 			

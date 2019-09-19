@@ -2,6 +2,7 @@ package com.pengtoolbox.cfw.logging;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -10,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
-import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.response.AbstractHTMLResponse;
 import com.pengtoolbox.cfw.response.AbstractResponse;
@@ -41,6 +41,8 @@ public class CFWLog {
 	protected String sourceMethod;
 	
 	protected String exception;
+	
+	protected LinkedHashMap<String,String> customEntries = null;
 
 	public CFWLog(Logger logger){
 		this.logger = logger;
@@ -51,6 +53,18 @@ public class CFWLog {
 		this.sourceMethod = method;
 		
 		return this;
+	}
+	
+	public CFWLog custom(String key, String value) {
+		
+		if(customEntries == null) {
+			customEntries = new LinkedHashMap<String,String>();
+		}
+		
+		customEntries.put(key, value);
+		
+		return this;
+		
 	}
 
 	/***********************************************************************
@@ -263,11 +277,15 @@ public class CFWLog {
 		//-------------------------
 		// Reset
 		//-------------------------
+		reset();
+	}
+	
+	protected void reset() {
 		this.exception = null;
 		this.starttimeNanos = -1;
 		this.durationMillis = -1;
 		this.deltaStartMillis = -1;
-		
+		this.customEntries = null;
 	}
 	
 	
