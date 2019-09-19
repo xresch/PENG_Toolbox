@@ -62,6 +62,7 @@ public class HARUploadServlet extends HttpServlet
 			
 		HTMLResponse html = new HTMLResponse("Analyze HAR");
 		StringBuffer content = html.getContent();
+		StringBuffer javascript = html.getJavascript();
 		
 		if(CFW.Context.Request.hasPermission(PAPermissions.ANALYZE_HAR)) {
 			content.append(CFWFiles.getFileContent(request, "./resources/html/harupload.html"));
@@ -110,13 +111,11 @@ public class HARUploadServlet extends HttpServlet
 				// Prepare Response
 				content.append("<div id=\"results\"></div>");
 				
-				StringBuffer javascript = html.getJavascript();
+				
 				javascript.append("<script defer>");
 				javascript.append("		YSLOW_RESULT = "+results+";\n");
-				javascript.append("		HAR_DATA = "+harContents.replaceAll("</script>", "&lt;/script>")+";\n");
 				javascript.append("		initialize();");
 				javascript.append("		prepareYSlowResults(YSLOW_RESULT);");
-				javascript.append("		prepareGanttData(HAR_DATA);");
 				javascript.append("		RULES = CFW.array.sortArrayByValueOfObject(RULES, \"score\");");
 				javascript.append("		$(\".result-view-tabs\").css(\"display\", \"block\");");
 				javascript.append("		draw({data: 'yslowresult', info: 'overview', view: ''})");

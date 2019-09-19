@@ -36,6 +36,9 @@ public class CFWDB {
 	private static boolean isInitialized = false;
 
 	private static Logger logger = CFWLog.getLogger(CFWDB.class.getName());
+	
+	private static InheritableThreadLocal<Connection> transactionConnection = new InheritableThreadLocal<Connection>();
+
 
 		
 	/********************************************************************************************
@@ -319,6 +322,8 @@ public class CFWDB {
 	
 	
 	/********************************************************************************************
+	 * Get a connection from the connection pool or returns the current connection used for the 
+	 * transaction.
 	 * 
 	 * @throws SQLException 
 	 ********************************************************************************************/
@@ -327,10 +332,82 @@ public class CFWDB {
 			CFWLog log = new CFWLog(logger).method("getConnection");
 			log.finer("DB Connections Active: "+connectionPool.getActiveConnections());
 			
-			return connectionPool.getConnection();
+			if(transactionConnection.get() != null) {
+				return transactionConnection.get();
+			}else {
+				return connectionPool.getConnection();
+			}
 		}else {
 			throw new SQLException("DB not initialized, call CFWDB.initialize() first.");
 		}
+	}
+	
+	/********************************************************************************************
+	 * Starts a new transaction.
+	 * 
+	 * @throws SQLException 
+	 ********************************************************************************************/
+	public static void beginTransaction() {	
+		
+		if(transactionConnection.get() != null) {
+			new CFWLog(logger)
+				.method("beginTransaction")
+				.severe("A transaction was already started. Use commitTransaction() before starting another one.");
+			return;
+		}
+		
+		try {
+			Connection con = CFWDB.getConnection();
+			con.setAutoCommit(false);
+			transactionConnection.set(con);
+		} catch (SQLException e) {
+			new CFWLog(logger)
+				.method("beginTransaction")
+				.severe("Error while retrieving DB connection.", e);
+		}
+		
+	}
+	
+	/********************************************************************************************
+	 * Starts a new transaction.
+	 * 
+	 * @throws SQLException 
+	 ********************************************************************************************/
+	public static void commitTransaction() {	
+		
+		
+		if(transactionConnection.get() == null) {
+			new CFWLog(logger)
+				.method("commitTransaction")
+				.severe("There is no running transaction. Use beginTransaction() before using commit.");
+			return;
+		}
+		
+		Connection con = null;
+		
+		try {
+			con = transactionConnection.get();
+			con.commit();
+
+		} catch (SQLException e) {
+			new CFWLog(logger)
+				.method("commitTransaction")
+				.severe("Error occured on commit transaction.", e);
+		} finally {
+			transactionConnection.set(null);
+			if(con != null) { 
+				try {
+					con.setAutoCommit(true);
+					con.close();
+				} catch (SQLException e) {
+					new CFWLog(logger)
+						.method("commitTransaction")
+						.severe("Error occured closing DB resources.", e);
+				}
+				
+			}
+		}
+		
 	}
 	
 	/********************************************************************************************
@@ -370,7 +447,7 @@ public class CFWDB {
 			log.severe("Issue executing prepared statement: "+sql, e);
 		} finally {
 			try {
-				if(conn != null) { conn.close(); }
+				if(conn != null && transactionConnection == null) { conn.close(); }
 				if(prepared != null) { prepared.close(); }
 			} catch (SQLException e) {
 				log.severe("Issue closing resources.", e);
@@ -380,6 +457,55 @@ public class CFWDB {
 		
 		log.end("Duration SQL Statement: "+sql);
 		return result;
+	}
+	
+	/********************************************************************************************
+	 * Returns a ResultSet includin generated keys.
+	 * 
+	 * @param sql string with placeholders
+	 * @param values the values to be placed in the prepared statement
+	 * @return int first generated key, -1 otherwise
+	 ********************************************************************************************/
+	public static int preparedInsert(String sql, Object... values){	
+        
+		CFWLog log = new CFWLog(logger).method("preparedInsert").start();
+		Connection conn = null;
+		PreparedStatement prepared = null;
+
+		int generatedID = -1;
+		try {
+			//-----------------------------------------
+			// Initialize Variables
+			conn = CFWDB.getConnection();
+			prepared = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+			
+			//-----------------------------------------
+			// Prepare Statement
+			CFWDB.prepareStatement(prepared, values);
+			
+			//-----------------------------------------
+			// Execute
+			int affectedRows = prepared.executeUpdate();
+
+			if(affectedRows > 0) {
+				ResultSet result = prepared.getGeneratedKeys();
+				result.next();
+				generatedID = result.getInt(1);
+			}
+		} catch (SQLException e) {
+			log.severe("Issue executing prepared statement: "+sql, e);
+		} finally {
+			try {
+				if(conn != null && transactionConnection == null) { conn.close(); }
+				if(prepared != null) { prepared.close(); }
+			} catch (SQLException e) {
+				log.severe("Issue closing resources.", e);
+			}
+			
+		}
+		
+		log.end("Duration SQL Statement: "+sql);
+		return generatedID;
 	}
 	
 	/********************************************************************************************
@@ -416,7 +542,7 @@ public class CFWDB {
 		} catch (SQLException e) {
 			log.severe("Issue executing prepared statement.", e);
 			try {
-				if(conn != null) { conn.close(); }
+				if(conn != null && transactionConnection == null) { conn.close(); }
 				if(prepared != null) { prepared.close(); }
 			} catch (SQLException e2) {
 				log.severe("Issue closing resources.", e2);

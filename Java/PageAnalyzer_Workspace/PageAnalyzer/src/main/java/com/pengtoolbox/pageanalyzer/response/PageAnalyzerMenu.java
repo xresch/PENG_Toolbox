@@ -57,12 +57,12 @@ public class PageAnalyzerMenu extends BTMenu {
 						.addChild(new MenuItem("Table: Statistics by Type with primed Cache")	.onclick("draw({data: 'yslowresult', info: 'stats', view: 'table', stats: 'type_cached'})"))
 						.addChild(new MenuItem("Table: Components")								.onclick("draw({data: 'yslowresult', info: 'stats', view: 'table', stats: 'components'})"))
 	
-					)
-			.addChild(
-					new MenuItem("Chart")
-						.cssClass("result-view-tabs")
-						.addChild(new MenuItem("Gantt Chart").onclick("draw({data: 'har', info: 'ganttchart', view: ''})"))
-			);
+					);
+//			.addChild(
+//					new MenuItem("Chart")
+//						.cssClass("result-view-tabs")
+//						.addChild(new MenuItem("Gantt Chart").onclick("draw({data: 'har', info: 'ganttchart', view: ''})"))
+//			);
 		}
 	}
 

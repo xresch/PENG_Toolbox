@@ -12,6 +12,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWConfig;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.db.CFWDB;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserDBFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
@@ -43,7 +44,7 @@ public class PageAnalyzerDB {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	public static void saveResults(HttpServletRequest request, String resultName, String jsonResults, String harString) {
+	public static int saveResults(HttpServletRequest request, String resultName, String jsonResults, String harString) {
 		
 		//-------------------------------
 		// Get UserID
@@ -68,13 +69,14 @@ public class PageAnalyzerDB {
 		// Insert into DB
 		String saveResult = "INSERT INTO results(user_id, page_url, name, json_result,har_file, time) values(?, ?, ?, ?, ?, CURRENT_TIMESTAMP() );";
 		
-		CFWDB.preparedExecute(saveResult, 
+		int resultID = CFWDB.preparedInsert(saveResult, 
 				username,
 				page_url,
 				resultName,
 				jsonResults,
 				harString);
-						
+		
+		return resultID;				
 	}
 	
 	/********************************************************************************************
