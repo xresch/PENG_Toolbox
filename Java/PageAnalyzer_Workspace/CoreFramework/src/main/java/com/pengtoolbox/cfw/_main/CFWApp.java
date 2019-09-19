@@ -121,6 +121,7 @@ public class CFWApp {
 				}
 			} catch (Exception e) {
 				new CFWLog(logger).severe("Issue creating instance for Class '"+defaultUserMenuItemClass.getSimpleName()+"': "+e.getMessage(), e);
+				e.getCause().printStackTrace();
 			}
 		}
 		

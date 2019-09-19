@@ -248,9 +248,11 @@ public class CFWDB {
 		// Create anonymous user 
 		//-----------------------------------------
 		if(!CFW.Config.AUTHENTICATION_ENABLED) {
+			String initialPassword = CFW.Encryption.createPasswordSalt(32);
 			if(!CFW.DB.Users.checkUsernameExists("anonymous")) {
 			    CFW.DB.Users.create(
 					new User("anonymous")
+					.setInitialPassword(initialPassword, initialPassword)
 					.isDeletable(true)
 					.isRenamable(false)
 					.status("ACTIVE")

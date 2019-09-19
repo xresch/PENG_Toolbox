@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
@@ -33,9 +32,9 @@ public class AuthenticationHandler extends HandlerWrapper
     		//##################################
         	// Get Session
         	//##################################
-        	HttpSession session = request.getSession();
-        	
+
         	SessionData data = CFW.Context.Request.getSessionData(); 
+        	
         	if(data.isLoggedIn()) {
 
 	        	//##################################
@@ -56,6 +55,7 @@ public class AuthenticationHandler extends HandlerWrapper
     	}else {
     		if(CFW.Context.Request.getUser() == null) {
     			CFW.Context.Request.getSessionData().setUser(CFW.DB.Users.selectByUsernameOrMail("anonymous"));
+    			CFW.Context.Session.getSessionData().triggerLogin();
     		}
     		
     		this._handler.handle(target, baseRequest, request, response);
