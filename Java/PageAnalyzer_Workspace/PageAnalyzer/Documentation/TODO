@@ -4,7 +4,9 @@ TODO
 - Add validation to forms
 - Add CFWObject.toForm(chooseFields[]);
 - Add Validation Method to BTForm
-- add Callback to showModal Close buttons
+- add Callback to showModal Close buttons for refreshing user and group list
+
+
 
 - Support Info: Use default Modal, make exceptions unique.
 - Custom Error page CFW.App.createErrorHandler();

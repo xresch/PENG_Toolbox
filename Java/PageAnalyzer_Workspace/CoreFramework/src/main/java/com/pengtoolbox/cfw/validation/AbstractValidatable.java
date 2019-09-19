@@ -6,7 +6,7 @@ public abstract class AbstractValidatable<T> implements IValidatable<T> {
 	
 	
 	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
-	private String propertyName = "";
+	private String name = "";
 	protected T value;
 	
 	private ArrayList<String> invalidMessages;
@@ -75,20 +75,24 @@ public abstract class AbstractValidatable<T> implements IValidatable<T> {
 	}
 	
 	public IValidatable<T> setName(String propertyName) {
-		this.propertyName = propertyName;
+		this.name = propertyName;
 		return this;
 	}
 	
 	public String getName() {
-		return propertyName;
+		return name;
 	}
 	
 	public boolean setValue(T value) {
-		if(this.validate()) {
+		if(this.validateValue(value)) {
 			this.value = value;
 			return true;
 		}
 		return false;
+	}
+	
+	public void setValueNoValidation(T value) {
+		this.value = value;
 	}
 	
 	public T getValue() {

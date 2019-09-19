@@ -44,7 +44,7 @@ public class PageAnalyzerDB {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	public static int saveResults(HttpServletRequest request, String resultName, String jsonResults, String harString) {
+	public static void saveResults(HttpServletRequest request, String resultName, String jsonResults, String harString) {
 		
 		//-------------------------------
 		// Get UserID
@@ -69,14 +69,13 @@ public class PageAnalyzerDB {
 		// Insert into DB
 		String saveResult = "INSERT INTO results(user_id, page_url, name, json_result,har_file, time) values(?, ?, ?, ?, ?, CURRENT_TIMESTAMP() );";
 		
-		int resultID = CFWDB.preparedInsert(saveResult, 
+		CFWDB.preparedExecute(saveResult, 
 				username,
 				page_url,
 				resultName,
 				jsonResults,
 				harString);
-		
-		return resultID;				
+			
 	}
 	
 	/********************************************************************************************

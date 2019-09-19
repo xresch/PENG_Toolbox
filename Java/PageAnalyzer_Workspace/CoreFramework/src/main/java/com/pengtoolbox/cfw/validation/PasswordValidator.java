@@ -18,9 +18,15 @@ public class PasswordValidator extends AbstractValidator {
 	@Override
 	public boolean validate(Object value) {
 		
+		if( !(value.toString().length() >= 8) ) {
+			this.setInvalidMessage("The value of "+validateable.getName()+
+					" must at least be 8 characters long.");
+			return false;
+		}
+		
 		if(   value.toString().matches(".*[A-Z]+.*")
-		   && value.toString().matches(".*[a-z]+")
-		   && value.toString().matches(".*[0-9]+.*") ){
+		   && value.toString().matches(".*[a-z]+.*")
+		   && value.toString().matches(".*[^A-Za-z]+.*") ){
 			return true;
 		}else{
 			this.setInvalidMessage("The value of "+validateable.getName()+
