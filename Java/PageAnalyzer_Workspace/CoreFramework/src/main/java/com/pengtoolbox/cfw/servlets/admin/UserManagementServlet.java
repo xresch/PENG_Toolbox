@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWObject;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
@@ -21,6 +22,7 @@ import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 import com.pengtoolbox.cfw.response.bootstrap.CFWField;
 import com.pengtoolbox.cfw.response.bootstrap.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.validation.LengthValidator;
 
 public class UserManagementServlet extends HttpServlet
 {
@@ -71,28 +73,25 @@ public class UserManagementServlet extends HttpServlet
 		
 		//--------------------------------------
 		// Create User Form
-		BTForm createUserForm = new BTForm("cfw-createUserForm", "Create User");
+		CreateUserForm createUserForm = new CreateUserForm("cfw-createUserForm", "Create User");
 		
-		createUserForm.addChild(new CFWField<String>(FormFieldType.TEXT, "Username"));
-		createUserForm.addChild(new CFWField<String>(FormFieldType.PASSWORD, "Password"));
-		createUserForm.addChild(new CFWField<String>(FormFieldType.PASSWORD, "Repeat Password"));
 		createUserForm.setFormHandler(new BTFormHandler() {
 			
 			@Override
-			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form) {
+			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
 				
-				String username = request.getParameter("Username");
-				String password = request.getParameter("Password");
-				String repeatedPassword = request.getParameter("Repeat Password");
-				
-				User newUser = new User(username).setInitialPassword(password, repeatedPassword);
-				
-				if(newUser != null) {
-					if(CFW.DB.Users.create(newUser)) {
-						CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "User created successfully!");
+				if(form.mapRequestParameters(request)) {
+					CreateUserForm casted = (CreateUserForm)form;
+					User newUser = new User(casted.getUsername())
+							.setInitialPassword(casted.getPassword(), casted.getRepeatedPassword());
+					
+					if(newUser != null) {
+						if(CFW.DB.Users.create(newUser)) {
+							CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "User created successfully!");
+						}
 					}
 				}
-				
+
 			}
 		});
 		
@@ -107,7 +106,7 @@ public class UserManagementServlet extends HttpServlet
 		createGroupForm.setFormHandler(new BTFormHandler() {
 			
 			@Override
-			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form) {
+			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
 				
 				String name = request.getParameter("Name");
 				String description = request.getParameter("Description");
@@ -124,4 +123,26 @@ public class UserManagementServlet extends HttpServlet
 		});
 	}
 	
+	class CreateUserForm extends BTForm{
+				
+		protected CFWField<String> username = new CFWField<String>(FormFieldType.TEXT, "Username")
+				.addValidator(new LengthValidator(1, 255));
+		
+		protected CFWField<String> password = new CFWField<String>(FormFieldType.PASSWORD, "Password")
+				.addValidator(new LengthValidator(8, 255));
+		
+		protected CFWField<String> repeatedPassword = new CFWField<String>(FormFieldType.PASSWORD, "Repeat Password")
+				.addValidator(new LengthValidator(8, 255));
+		
+		public CreateUserForm(String formID, String submitLabel) {
+			super(formID, submitLabel);
+			this.addField(username);
+			this.addField(password);
+			this.addField(repeatedPassword);
+		}
+		
+		public String getUsername() { return username.getValue(); }
+		public String getPassword() { return password.getValue(); }
+		public String getRepeatedPassword() { return repeatedPassword.getValue(); }
+	}
 }

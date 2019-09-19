@@ -19,7 +19,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private String formLabel = "&nbsp;";
 	
 	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
-	private String propertyName = "";
+	private String name = "";
 	protected T value;
 	
 	private ArrayList<String> invalidMessages;
@@ -30,12 +30,12 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	
 	public CFWField(FormFieldType type, String fieldID) {
 		this.type = type;
-		this.propertyName = fieldID;
+		this.name = fieldID;
 		this.formLabel = TextUtils.fieldNameToLabel(fieldID);
 	}
 	public CFWField(FormFieldType type, String fieldID, String fieldLabel) {
 		this.type = type;
-		this.propertyName = fieldID;
+		this.name = fieldID;
 		this.formLabel = fieldLabel;
 	}
 	
@@ -50,7 +50,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		//---------------------------------------------
 		if(type != FormFieldType.HIDDEN) {
 			html.append("<div class=\"form-group row\">");
-			html.append("  <label class=\"col-sm-3 col-form-label\" for=\""+propertyName+"\" >"+formLabel+":</label> ");
+			html.append("  <label class=\"col-sm-3 col-form-label\" for=\""+name+"\" >"+formLabel+":</label> ");
 			html.append("  <div class=\"col-sm-9\">");
 		}
 		
@@ -58,7 +58,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		// Create Field
 		//---------------------------------------------
 		this.addAttribute("placeholder", formLabel);
-		this.addAttribute("name", propertyName);
+		this.addAttribute("name", name);
 		
 		if(value != null) {	this.addAttribute("value", value.toString()); };
 		
@@ -164,7 +164,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return invalidMessages;
 	}
 	
-	public IValidatable<T> addValidator(IValidator validator) {
+	public CFWField<T> addValidator(IValidator validator) {
 		if(!validatorArray.contains(validator)) {
 			validatorArray.add(validator);
 			validator.setValidateable(this);
@@ -177,19 +177,22 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return validatorArray.remove(o);
 	}
 	
-	public IValidatable<T> setPropertyName(String propertyName) {
-		this.propertyName = propertyName;
+	public IValidatable<T> setName(String propertyName) {
+		this.name = propertyName;
 		return this;
 	}
 	
-	public String getPropertyName() {
-		return propertyName;
+	public String getName() {
+		return name;
 	}
 	
-	public CFWField<T> setValue(T value) {
+	public boolean setValue(T value) {
+		
+		boolean result = true;
 		if(this.validateValue(value)) {
 			this.value = value;
 		}else {
+			result = false;
 			StringBuilder errorMessage = new StringBuilder("The field '"+formLabel+"' cannot be set to the value '"+value+"': <ul>");
 			for(String message : invalidMessages) {
 				errorMessage.append("<li>"+message+"</li>");
@@ -197,7 +200,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			}
 			errorMessage.append("</ul>");
 		}
-		return this;
+		return result;
 	}
 	
 	public T getValue() {

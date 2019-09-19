@@ -44,7 +44,7 @@ public abstract class CFWCommandLineInterface {
 										"The path to a config-file. The config-file can include all the arguments defined in this list delimited by newline. Also lines starting with �#� are considered as comments, as well blank lines are allowed.");
 		
 		valengine.addValidator(new FileCanReadValidator(configFile));
-		addSupportedArgument(configFile.getPropertyName(), configFile);
+		addSupportedArgument(configFile.getName(), configFile);
 		
 		ArgumentDefinition stop = 
 				new ArgumentDefinition(	STOP, 
@@ -52,7 +52,7 @@ public abstract class CFWCommandLineInterface {
 										"",
 										"Stop command for shutting down the running server.");
 		
-		addSupportedArgument(stop.getPropertyName(), stop);
+		addSupportedArgument(stop.getName(), stop);
 	}
 
 	
@@ -205,7 +205,7 @@ public abstract class CFWCommandLineInterface {
 	public static void printUsage(){
 		for(ArgumentDefinition currentArgument : supportedArgumentsMap.values()){
 			System.out.println("");
-			System.out.print(currentArgument.getPropertyName());
+			System.out.print(currentArgument.getName());
 			System.out.println("\n\t\tSyntax: "+currentArgument.getSyntax());
 			
 			if(currentArgument.getDefaultValue() != null && !currentArgument.getDefaultValue().trim().isEmpty()){

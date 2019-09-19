@@ -80,7 +80,7 @@ public abstract class AbstractPropertyValidator implements IValidator {
 		if(this.isNullAllowed() && !CFW.Validation.isNotNullNotEmptyString(value)) {
 			return Ternary.TRUE;
 		}else if(!CFW.Validation.isNotNullNotEmptyString(value)) {
-			this.setInvalidMessage("The value of the property '"+validateable.getPropertyName()+"should not be null or empty string.");
+			this.setInvalidMessage("The value of "+validateable.getName()+" should not be null or empty string.");
 			return Ternary.FALSE;
 		}
 		return Ternary.DONTCARE;

@@ -8,10 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWContextRequest;
-import com.pengtoolbox.cfw.caching.FileDefinition;
-import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
+import com.pengtoolbox.cfw._main.CFWObject;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
@@ -64,7 +61,7 @@ public class FormTestServlet extends HttpServlet
         
         handledForm.setFormHandler(new BTFormHandler() {
 			@Override
-			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form) {
+			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject object) {
 				// TODO Auto-generated method stub
 				String formID = request.getParameter(BTForm.FORM_ID);
 				
@@ -82,7 +79,7 @@ public class FormTestServlet extends HttpServlet
         
         handledForm2.setFormHandler(new BTFormHandler() {
 			@Override
-			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form) {
+			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject object) {
 				// TODO Auto-generated method stub
 				String formID = request.getParameter(BTForm.FORM_ID);
 				

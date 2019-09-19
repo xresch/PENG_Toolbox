@@ -22,7 +22,7 @@ public class NotNullValidator extends AbstractPropertyValidator {
 		if(value != null){
 			return true;
 		}else{
-			this.setInvalidMessage("The value of the argument "+validateable.getPropertyName()+" cannot be null, please specify the argument.");
+			this.setInvalidMessage("The value of the argument "+validateable.getName()+" cannot be null, please specify the argument.");
 			return false;
 		}
 		

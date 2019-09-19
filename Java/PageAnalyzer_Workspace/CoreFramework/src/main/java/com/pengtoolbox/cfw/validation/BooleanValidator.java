@@ -31,11 +31,11 @@ public class BooleanValidator extends AbstractPropertyValidator {
 			if(((String)value).toLowerCase().matches("true|false")){
 				return true;
 			}else{
-				this.setInvalidMessage("The value of "+validateable.getPropertyName()+" is not a boolean value.(value='"+value+"')");
+				this.setInvalidMessage("The value of "+validateable.getName()+" is not a boolean value.(value='"+value+"')");
 				return false;
 			}
 		}
-		this.setInvalidMessage("The value of "+validateable.getPropertyName()+" is not a boolean value.(value='"+value+"')");
+		this.setInvalidMessage("The value of "+validateable.getName()+" is not a boolean value.(value='"+value+"')");
 		return false;
 	}
 	

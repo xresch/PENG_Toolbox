@@ -20,6 +20,7 @@ public class BTForm extends HierarchicalHTMLItem {
 	private String formID = "";
 	private String submitLabel = "";
 	private String postURL;
+	private CFWObject origin;
 	
 	public LinkedHashMap<String, CFWField> fields = new LinkedHashMap<String, CFWField>();
 	
@@ -29,7 +30,9 @@ public class BTForm extends HierarchicalHTMLItem {
 		this.formID = formID;
 		this.submitLabel = submitLabel;
 		
-		this.addChild(new CFWField(FormFieldType.HIDDEN, BTForm.FORM_ID).setValue(formID));
+		CFWField<String> formIDField = new CFWField(FormFieldType.HIDDEN, BTForm.FORM_ID);
+		formIDField.setValue(formID);
+		this.addChild(formIDField);
 		
 		// Default post to servlet creating the form
 		postURL = CFW.Context.Request.getRequest().getRequestURI();
@@ -40,6 +43,7 @@ public class BTForm extends HierarchicalHTMLItem {
 	public BTForm(String formID, String submitLabel, CFWObject origin) {
 		this(formID, submitLabel);
 		this.addFields(origin.getFields().values().toArray(new CFWField[]{}));
+		this.origin = origin;
 	}
 	
 	/***********************************************************************************
@@ -76,10 +80,10 @@ public class BTForm extends HierarchicalHTMLItem {
 	
 	public void addField(CFWField field) {
 		
-		if(!fields.containsKey(field.getPropertyName())) {
-			fields.put(field.getPropertyName(), field);
+		if(!fields.containsKey(field.getName())) {
+			fields.put(field.getName(), field);
 		}else {
-			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The field with name '"+field.getPropertyName()+"' was already added to the object.");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The field with name '"+field.getName()+"' was already added to the object.");
 		}
 		
 		this.addChild(field);
@@ -112,9 +116,20 @@ public class BTForm extends HierarchicalHTMLItem {
 		return formHandler;
 	}
 	
+	public CFWField getField(String name) {
+		return fields.get(name);
+	}
+	
+	public CFWObject getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(CFWObject origin) {
+		this.origin = origin;
+	}
+
 	public boolean mapRequestParameters(HttpServletRequest request) {
-		
-		return CFW.HTTP.mapRequestParamsToFields(request, fields);
+		return CFW.HTTP.mapAndValidateParamsToFields(request, fields);
 	}
 
 }

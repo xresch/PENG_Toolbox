@@ -23,7 +23,7 @@ public class CFWObject {
 	
 	public boolean mapRequestParameters(HttpServletRequest request) {
 		
-		return CFW.HTTP.mapRequestParamsToFields(request, fields);
+		return CFW.HTTP.mapAndValidateParamsToFields(request, fields);
 	}
 	
 	public BTForm toForm(String formID, String submitLabel) {
@@ -40,10 +40,10 @@ public class CFWObject {
 	
 	public void addField(CFWField field) {
 		
-		if(!fields.containsKey(field.getPropertyName())) {
-			fields.put(field.getPropertyName(), field);
+		if(!fields.containsKey(field.getName())) {
+			fields.put(field.getName(), field);
 		}else {
-			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The field with name '"+field.getPropertyName()+"' was already added to the object.");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The field with name '"+field.getName()+"' was already added to the object.");
 		}
 	}
 	
@@ -51,6 +51,10 @@ public class CFWObject {
 		for(CFWField field : fields) {
 			this.addField(field);
 		}
+	}
+	
+	public CFWField getField(String name) {
+		return fields.get(name);
 	}
 	
 	public LinkedHashMap<String, CFWField> getFields(){

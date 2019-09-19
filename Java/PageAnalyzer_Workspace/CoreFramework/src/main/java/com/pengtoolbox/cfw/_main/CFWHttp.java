@@ -122,7 +122,7 @@ public class CFWHttp {
 	 * @param url used for the request.
 	 * @return true if successful, false otherwise
 	 ******************************************************************************************************/
-	public static boolean mapRequestParamsToFields(HttpServletRequest request, HashMap<String,CFWField> fields) {
+	public static boolean mapAndValidateParamsToFields(HttpServletRequest request, HashMap<String,CFWField> fields) {
 		
 		Enumeration<String> parameters = request.getParameterNames();
 		boolean result = true;
@@ -134,7 +134,9 @@ public class CFWHttp {
 				if (fields.containsKey(key)) {
 					CFWField field = fields.get(key);
 					
-					field.setValue(request.getParameter(key));
+					if(!field.setValue(request.getParameter(key)) ){
+						result = false;
+					}
 				}else {
 					new CFWLog(logger)
 						.method("CFWObject<init>")

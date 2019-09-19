@@ -74,18 +74,21 @@ public abstract class AbstractValidatable<T> implements IValidatable<T> {
 		return validatorArray.remove(o);
 	}
 	
-	public IValidatable<T> setPropertyName(String propertyName) {
+	public IValidatable<T> setName(String propertyName) {
 		this.propertyName = propertyName;
 		return this;
 	}
 	
-	public String getPropertyName() {
+	public String getName() {
 		return propertyName;
 	}
 	
-	public IValidatable<T> setValue(T value) {
-		this.value = value;
-		return this;
+	public boolean setValue(T value) {
+		if(this.validate()) {
+			this.value = value;
+			return true;
+		}
+		return false;
 	}
 	
 	public T getValue() {

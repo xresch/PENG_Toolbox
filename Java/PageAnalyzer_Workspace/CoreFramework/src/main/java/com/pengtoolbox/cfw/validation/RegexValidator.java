@@ -24,7 +24,7 @@ public class RegexValidator extends AbstractPropertyValidator {
 		}else{
 			StringBuffer sb = new StringBuffer();
 			sb.append("The value of the argument ");
-			sb.append(this.getValidatable().getPropertyName());
+			sb.append(this.getValidatable().getName());
 			sb.append(" did not match the pattern '");
 			sb.append(pattern);
 			sb.append("'.(value='");

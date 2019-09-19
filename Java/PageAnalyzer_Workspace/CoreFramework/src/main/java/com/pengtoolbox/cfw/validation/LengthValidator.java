@@ -9,12 +9,12 @@ import com.pengtoolbox.cfw.utils.Ternary;
  * @author Reto Scheiwiller, 2015
  *
  **************************************************************************************/
-public class LengthPropertyValidator extends AbstractPropertyValidator {
+public class LengthValidator extends AbstractPropertyValidator {
 
 	private int minLength;
 	private int maxLength;
 
-	public LengthPropertyValidator(IValidatable validatable, int minLength, int maxLength) {
+	public LengthValidator(IValidatable validatable, int minLength, int maxLength) {
 		super(validatable);
 		this.minLength = minLength;
 		this.maxLength = maxLength;
@@ -24,7 +24,7 @@ public class LengthPropertyValidator extends AbstractPropertyValidator {
 		}
 	}
 	
-	public LengthPropertyValidator(int minLength, int maxLength) {
+	public LengthValidator(int minLength, int maxLength) {
 		this.minLength = minLength;
 		this.maxLength = maxLength;
 		
@@ -46,19 +46,20 @@ public class LengthPropertyValidator extends AbstractPropertyValidator {
 			string = ((Number)value).toString();
 		}
 		
+		int length = string.length();
 		if(   (string.length() >= minLength || minLength == -1) 
 		   && (string.length() <= maxLength || maxLength == -1) ){
 			return true;
 		}else{
 			if(minLength == -1){
-				this.setInvalidMessage("The value of the argument "+validateable.getPropertyName()+
-						" should be at maximum "+maxLength+" characters long.(value='"+value+"')");
+				this.setInvalidMessage("The value of "+validateable.getName()+
+						" should be at maximum "+maxLength+" characters long.(length='"+length+"')");
 			}else if(maxLength == -1){
-				this.setInvalidMessage("The value of the argument "+validateable.getPropertyName()+
-						" should be at least "+minLength+" characters long.(value='"+value+"')");
+				this.setInvalidMessage("The value of "+validateable.getName()+
+						" should be at least "+minLength+" characters long.(length='"+length+"')");
 			}else {
-				this.setInvalidMessage("The value of the argument "+validateable.getPropertyName()+
-						" should be between "+minLength+" and "+maxLength+" characters long.(value='"+value+"')");
+				this.setInvalidMessage("The value of "+validateable.getName()+
+						" should be between "+minLength+" and "+maxLength+" characters long.(length='"+length+"')");
 			}
 			
 			return false;

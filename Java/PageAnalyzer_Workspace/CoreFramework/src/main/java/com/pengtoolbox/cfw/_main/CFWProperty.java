@@ -10,12 +10,12 @@ public class CFWProperty<T> extends AbstractValidatable<T> {
 	// CONSTRUCTORS
 	//#############################################################
 	public CFWProperty(String propertyName, String formLabel) {
-		this.setPropertyName(propertyName);
+		this.setName(propertyName);
 		this.formLabel = formLabel;
 	}
 	
 	public CFWProperty(String propertyName, String formLabel, T value) {
-		this.setPropertyName(propertyName);
+		this.setName(propertyName);
 		this.formLabel = formLabel;
 		this.value = value;
 	}
