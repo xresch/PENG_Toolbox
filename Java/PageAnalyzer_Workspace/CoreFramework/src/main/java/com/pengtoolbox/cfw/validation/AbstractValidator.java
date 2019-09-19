@@ -10,19 +10,19 @@ import com.pengtoolbox.cfw.utils.Ternary;
  * @author Reto Scheiwiller, 2015
  *
  **************************************************************************************/
-public abstract class AbstractPropertyValidator implements IValidator {
+public abstract class AbstractValidator implements IValidator {
 
 	protected IValidatable validateable;
 	private String invalidMessage="";
 	private String tag="";
 	private boolean isNullAllowed = true;
 	
-	public AbstractPropertyValidator(IValidatable validatable){
+	public AbstractValidator(IValidatable validatable){
 		this.validateable = validatable;
 		validatable.addValidator(this);
 	}
 	
-	public AbstractPropertyValidator(){
+	public AbstractValidator(){
 	}
 	
 	

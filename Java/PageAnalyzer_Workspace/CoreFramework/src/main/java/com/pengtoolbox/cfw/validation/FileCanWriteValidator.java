@@ -14,7 +14,7 @@ import com.pengtoolbox.cfw.utils.Ternary;
  * @author Reto Scheiwiller, 2015
  *
  **************************************************************************************/
-public class FileCanWriteValidator extends AbstractPropertyValidator {
+public class FileCanWriteValidator extends AbstractValidator {
 
 	public FileCanWriteValidator(IValidatable validatable) {
 		super(validatable);

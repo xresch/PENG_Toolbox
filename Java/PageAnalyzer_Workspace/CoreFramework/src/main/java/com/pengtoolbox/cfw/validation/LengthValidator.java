@@ -9,7 +9,7 @@ import com.pengtoolbox.cfw.utils.Ternary;
  * @author Reto Scheiwiller, 2015
  *
  **************************************************************************************/
-public class LengthValidator extends AbstractPropertyValidator {
+public class LengthValidator extends AbstractValidator {
 
 	private int minLength;
 	private int maxLength;

@@ -7,7 +7,7 @@ package com.pengtoolbox.cfw.validation;
  * @author Reto Scheiwiller, 2015
  *
  **************************************************************************************/
-public class RegexValidator extends AbstractPropertyValidator {
+public class RegexValidator extends AbstractValidator {
 
 	private String pattern="";
 	

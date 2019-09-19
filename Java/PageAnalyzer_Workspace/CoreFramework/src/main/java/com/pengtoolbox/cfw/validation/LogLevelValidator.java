@@ -9,7 +9,7 @@ import com.pengtoolbox.cfw.cli.ArgumentDefinition;
  * @author Reto Scheiwiller, 2015
  *
  **************************************************************************************/
-public class LogLevelValidator extends AbstractPropertyValidator {
+public class LogLevelValidator extends AbstractValidator {
 
 	
 	public LogLevelValidator(IValidatable validatable) {

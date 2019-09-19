@@ -9,7 +9,7 @@ import com.pengtoolbox.cfw.utils.Ternary;
  * @author Reto Scheiwiller, 2015
  *
  **************************************************************************************/
-public class BooleanValidator extends AbstractPropertyValidator {
+public class BooleanValidator extends AbstractValidator {
 
 	
 	public BooleanValidator(IValidatable validateable) {

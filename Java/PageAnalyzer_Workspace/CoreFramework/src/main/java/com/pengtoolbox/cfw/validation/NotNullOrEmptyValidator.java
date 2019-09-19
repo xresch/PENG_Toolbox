@@ -9,20 +9,23 @@ import com.pengtoolbox.cfw.cli.ArgumentDefinition;
  * @author Reto Scheiwiller, 2015
  *
  **************************************************************************************/
-public class NotNullValidator extends AbstractPropertyValidator {
+public class NotNullOrEmptyValidator extends AbstractValidator {
 
-	public NotNullValidator(IValidatable validatable) {
+	public NotNullOrEmptyValidator(IValidatable validatable) {
 		super(validatable);
 		// TODO Auto-generated constructor stub
+	}
+	
+	public NotNullOrEmptyValidator() {
 	}
 
 	@Override
 	public boolean validate(Object value) {
 		
-		if(value != null){
+		if(value != null && !value.equals("")){
 			return true;
 		}else{
-			this.setInvalidMessage("The value of the argument "+validateable.getName()+" cannot be null, please specify the argument.");
+			this.setInvalidMessage("The field "+validateable.getName()+" cannot be empty.");
 			return false;
 		}
 		

@@ -23,6 +23,8 @@ import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 import com.pengtoolbox.cfw.response.bootstrap.CFWField;
 import com.pengtoolbox.cfw.response.bootstrap.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.validation.LengthValidator;
+import com.pengtoolbox.cfw.validation.NotNullOrEmptyValidator;
+import com.pengtoolbox.cfw.validation.PasswordValidator;
 
 public class UserManagementServlet extends HttpServlet
 {
@@ -129,10 +131,11 @@ public class UserManagementServlet extends HttpServlet
 				.addValidator(new LengthValidator(1, 255));
 		
 		protected CFWField<String> password = new CFWField<String>(FormFieldType.PASSWORD, "Password")
-				.addValidator(new LengthValidator(8, 255));
+				.addValidator(new LengthValidator(8, 255))
+				.addValidator(new PasswordValidator());
 		
 		protected CFWField<String> repeatedPassword = new CFWField<String>(FormFieldType.PASSWORD, "Repeat Password")
-				.addValidator(new LengthValidator(8, 255));
+				.addValidator(new NotNullOrEmptyValidator());
 		
 		public CreateUserForm(String formID, String submitLabel) {
 			super(formID, submitLabel);

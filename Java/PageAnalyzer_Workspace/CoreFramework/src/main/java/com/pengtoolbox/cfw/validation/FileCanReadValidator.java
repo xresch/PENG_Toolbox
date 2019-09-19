@@ -12,7 +12,7 @@ import com.pengtoolbox.cfw.utils.Ternary;
  * @author Reto Scheiwiller, 2015
  *
  **************************************************************************************/
-public class FileCanReadValidator extends AbstractPropertyValidator {
+public class FileCanReadValidator extends AbstractValidator {
 
 	
 	public FileCanReadValidator(IValidatable validatable) {
