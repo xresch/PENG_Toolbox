@@ -100,23 +100,17 @@ public class UserManagementServlet extends HttpServlet
 		//--------------------------------------
 		// Create Group Form
 		
-		BTForm createGroupForm = new BTForm("cfw-createGroupForm", "Create Group");
-		
-		createGroupForm.addChild(new CFWField<String>(FormFieldType.TEXT, "Name"));
-		createGroupForm.addChild(new CFWField<String>(FormFieldType.TEXTAREA, "Description"));
+		BTForm createGroupForm = new Group("").toForm("cfw-createGroupForm", "Create Group");
 		
 		createGroupForm.setFormHandler(new BTFormHandler() {
 			
 			@Override
 			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
 				
-				String name = request.getParameter("Name");
-				String description = request.getParameter("Description");
+				origin.mapRequestParameters(request);
 				
-				Group newGroup = new Group(name).description(description);
-				
-				if(newGroup != null) {
-					if(CFW.DB.Groups.create(newGroup)) {
+				if(origin != null) {
+					if(CFW.DB.Groups.create((Group)origin)) {
 						CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Group created successfully!");
 					}
 				}
@@ -127,14 +121,14 @@ public class UserManagementServlet extends HttpServlet
 	
 	class CreateUserForm extends BTForm{
 				
-		protected CFWField<String> username = new CFWField<String>(FormFieldType.TEXT, "Username")
+		protected CFWField<String> username = CFWField.newString(FormFieldType.TEXT, "Username")
 				.addValidator(new LengthValidator(1, 255));
 		
-		protected CFWField<String> password = new CFWField<String>(FormFieldType.PASSWORD, "Password")
+		protected CFWField<String> password = CFWField.newString(FormFieldType.PASSWORD, "Password")
 				.addValidator(new LengthValidator(-1, 255))
 				.addValidator(new PasswordValidator());
 		
-		protected CFWField<String> repeatedPassword = new CFWField<String>(FormFieldType.PASSWORD, "Repeat Password")
+		protected CFWField<String> repeatedPassword = CFWField.newString(FormFieldType.PASSWORD, "Repeat Password")
 				.addValidator(new NotNullOrEmptyValidator());
 		
 		public CreateUserForm(String formID, String submitLabel) {

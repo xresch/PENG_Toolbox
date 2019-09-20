@@ -1,6 +1,8 @@
 package com.pengtoolbox.cfw._main;
 
-import java.util.Enumeration;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
@@ -18,17 +20,23 @@ public class CFWObject {
 	public LinkedHashMap<String, CFWField> fields = new LinkedHashMap<String, CFWField>();
 	
 	public CFWObject() {
-		
+
 	}
 	
 	public boolean mapRequestParameters(HttpServletRequest request) {
 		
-		return CFW.HTTP.mapAndValidateParamsToFields(request, fields);
+		return CFWField.mapAndValidateParamsToFields(request, fields);
+	}
+	
+	public boolean mapResultSet(ResultSet result) {
+
+		return CFWField.mapResultSetColumnsToFields(result, fields);
 	}
 	
 	public BTForm toForm(String formID, String submitLabel) {
 		
 		BTForm form = new BTForm(formID, submitLabel);
+		form.setOrigin(this);
 		
 		for(CFWField field : fields.values()) {
 			form.addChild(field);
@@ -47,7 +55,13 @@ public class CFWObject {
 		}
 	}
 	
-	public void addFields(CFWField[] fields) {
+	public void addAllFields(CFWField[] fields) {
+		for(CFWField field : fields) {
+			this.addField(field);
+		}
+	}
+	
+	public void addFields(CFWField ...fields) {
 		for(CFWField field : fields) {
 			this.addField(field);
 		}

@@ -82,13 +82,7 @@ public class GeneralTestServlet extends HttpServlet
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
         
-		//------------------------------
-		// Test Form
-		//------------------------------
-        BTForm form = new BTForm("My Form", "Save");
-        form.addChild(new CFWField(FormFieldType.TEXT, "Firstname", "firstname"));
-        form.addChild(new CFWField(FormFieldType.TEXT, "Lastname", "lastname"));
-        
+       
 //        List<String> fileContent = Files.readAllLines(Paths.get("./resources/html/"+htmlfile), Charset.forName("UTF-8"));
 //        
 //        StringBuffer content = html.getContent();

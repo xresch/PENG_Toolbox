@@ -39,8 +39,6 @@ public class CFWDB {
 	
 	private static InheritableThreadLocal<Connection> transactionConnection = new InheritableThreadLocal<Connection>();
 
-
-		
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/

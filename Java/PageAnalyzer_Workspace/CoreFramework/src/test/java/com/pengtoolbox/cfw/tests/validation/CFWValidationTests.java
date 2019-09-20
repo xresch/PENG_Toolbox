@@ -20,19 +20,19 @@ public class CFWValidationTests {
 		BooleanValidator bv = new BooleanValidator(validateThis);
 		
 		
-		Assertions.assertTrue(validateThis.setValue(true),
+		Assertions.assertTrue(validateThis.setValueValidated(true),
 				" Boolean value 'true' is recognized as boolean.");
 		
-		Assertions.assertTrue(validateThis.setValue(false),
+		Assertions.assertTrue(validateThis.setValueValidated(false),
 				" Boolean value 'true' is recognized as boolean.");
 		
-		Assertions.assertTrue(validateThis.setValue("true"),
+		Assertions.assertTrue(validateThis.setValueValidated("true"),
 				"String value 'true' is recognized as boolean.");
 		
-		Assertions.assertTrue(validateThis.setValue("FALSE"),
+		Assertions.assertTrue(validateThis.setValueValidated("FALSE"),
 				"String value 'FALSE' is recognized as boolean.");
 		
-		Assertions.assertFalse(validateThis.setValue("NotABoolean"),
+		Assertions.assertFalse(validateThis.setValueValidated("NotABoolean"),
 				"String value 'NotABoolean' is not a boolean.");
 		
 	}
@@ -43,10 +43,10 @@ public class CFWValidationTests {
 		IValidatable validateThis = new AbstractValidatable() {};
 		LengthValidator lv = new LengthValidator(validateThis, 5, 10);
 		
-		Assertions.assertFalse(validateThis.setValue("4444"), "Value is invalid below min length.");
-		Assertions.assertTrue(validateThis.setValue("55555"), "Value is valid at min length.");	
-		Assertions.assertTrue(validateThis.setValue("1010101010"), "Value is valid at max length.");
-		Assertions.assertFalse(validateThis.setValue("11111111111"), "Value is invalid above max length.");
+		Assertions.assertFalse(validateThis.setValueValidated("4444"), "Value is invalid below min length.");
+		Assertions.assertTrue(validateThis.setValueValidated("55555"), "Value is valid at min length.");	
+		Assertions.assertTrue(validateThis.setValueValidated("1010101010"), "Value is valid at max length.");
+		Assertions.assertFalse(validateThis.setValueValidated("11111111111"), "Value is invalid above max length.");
 	}
 	
 	@Test
@@ -55,15 +55,15 @@ public class CFWValidationTests {
 		IValidatable validateThis = new AbstractValidatable() {};
 		PasswordValidator pv = new PasswordValidator(validateThis);
 		
-		Assertions.assertTrue( validateThis.setValue("Aa123456"), "Is a valid password");
-		Assertions.assertTrue( validateThis.setValue("Aa------"), "Is a valid password");
-		Assertions.assertTrue( validateThis.setValue("A-aaaaaa"), "Is a valid password");
-		Assertions.assertTrue( validateThis.setValue("-aaaaaaA"), "Is a valid password");
+		Assertions.assertTrue( validateThis.setValueValidated("Aa123456"), "Is a valid password");
+		Assertions.assertTrue( validateThis.setValueValidated("Aa------"), "Is a valid password");
+		Assertions.assertTrue( validateThis.setValueValidated("A-aaaaaa"), "Is a valid password");
+		Assertions.assertTrue( validateThis.setValueValidated("-aaaaaaA"), "Is a valid password");
 		
-		Assertions.assertFalse(validateThis.setValue("Aa12345"), "Password is invalid below min length.");
-		Assertions.assertFalse(validateThis.setValue("Aaaaaaaa"), "Password is invalid when missing non-letter character.");
-		Assertions.assertFalse(validateThis.setValue("A1234567"), "Password is invalid when missing small letter character.");
-		Assertions.assertFalse(validateThis.setValue("a1234567"), "Password is invalid when missing capital letter character.");
+		Assertions.assertFalse(validateThis.setValueValidated("Aa12345"), "Password is invalid below min length.");
+		Assertions.assertFalse(validateThis.setValueValidated("Aaaaaaaa"), "Password is invalid when missing non-letter character.");
+		Assertions.assertFalse(validateThis.setValueValidated("A1234567"), "Password is invalid when missing small letter character.");
+		Assertions.assertFalse(validateThis.setValueValidated("a1234567"), "Password is invalid when missing capital letter character.");
 	}
 	
 	

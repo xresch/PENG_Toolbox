@@ -30,8 +30,8 @@ public class BTForm extends HierarchicalHTMLItem {
 		this.formID = formID;
 		this.submitLabel = submitLabel;
 		
-		CFWField<String> formIDField = new CFWField(FormFieldType.HIDDEN, BTForm.FORM_ID);
-		formIDField.setValue(formID);
+		CFWField<String> formIDField = CFWField.newString(FormFieldType.HIDDEN, BTForm.FORM_ID);
+		formIDField.setValueValidated(formID);
 		this.addChild(formIDField);
 		
 		// Default post to servlet creating the form
@@ -129,7 +129,7 @@ public class BTForm extends HierarchicalHTMLItem {
 	}
 
 	public boolean mapRequestParameters(HttpServletRequest request) {
-		return CFW.HTTP.mapAndValidateParamsToFields(request, fields);
+		return CFWField.mapAndValidateParamsToFields(request, fields);
 	}
 
 }

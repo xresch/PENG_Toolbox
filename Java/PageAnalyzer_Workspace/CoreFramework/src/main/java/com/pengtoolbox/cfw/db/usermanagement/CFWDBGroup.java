@@ -20,7 +20,7 @@ public class CFWDBGroup {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBGroup.class.getName());
 	
-	enum GroupDBFields{
+	public enum GroupDBFields{
 		PK_ID, 
 		NAME,
 		DESCRIPTION,

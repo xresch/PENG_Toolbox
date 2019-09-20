@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.tests.db.user;
+package com.pengtoolbox.cfw.tests.db;
 
 import java.util.HashMap;
 
@@ -282,12 +282,11 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		if(groupToDelete != null) {
 			CFW.DB.Groups.deleteByID(groupToDelete.id());
 		}
-		
+
 		groupToDelete = CFW.DB.Groups.selectByName(groupnameUpdated);
 		if(groupToDelete != null) {
 			CFW.DB.Groups.deleteByID(groupToDelete.id());
 		}
-		
 		Assertions.assertFalse(CFW.DB.Groups.checkGroupExists(groupname), "Group doesn't exists, checkGroupExists(String) works.");
 		Assertions.assertFalse(CFW.DB.Groups.checkGroupExists(groupToDelete), "Group doesn't exist, checkGroupExists(Group) works.");
 		

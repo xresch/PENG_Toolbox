@@ -3,7 +3,7 @@ package com.pengtoolbox.cfw.tests._master;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import com.pengtoolbox.cfw.tests.db.user.TestCFWDBUserManagement;
+import com.pengtoolbox.cfw.tests.db.TestCFWDBUserManagement;
 import com.pengtoolbox.cfw.tests.validation.CFWValidationTests;
 import com.pengtoolbox.cfw.tests.various.CFWCommandLineTests;
 import com.pengtoolbox.cfw.tests.various.CFWLocalizationTests;

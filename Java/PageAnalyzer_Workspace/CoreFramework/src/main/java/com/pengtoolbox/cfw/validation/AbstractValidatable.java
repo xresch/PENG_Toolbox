@@ -83,7 +83,7 @@ public abstract class AbstractValidatable<T> implements IValidatable<T> {
 		return name;
 	}
 	
-	public boolean setValue(T value) {
+	public boolean setValueValidated(T value) {
 		if(this.validateValue(value)) {
 			this.value = value;
 			return true;

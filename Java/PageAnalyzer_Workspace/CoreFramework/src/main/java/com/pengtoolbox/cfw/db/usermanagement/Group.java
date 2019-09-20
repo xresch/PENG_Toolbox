@@ -3,73 +3,85 @@ package com.pengtoolbox.cfw.db.usermanagement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.pengtoolbox.cfw._main.CFWObject;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup.GroupDBFields;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission.PermissionDBFields;
+import com.pengtoolbox.cfw.response.bootstrap.CFWField;
+import com.pengtoolbox.cfw.response.bootstrap.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.validation.LengthValidator;
 
-public class Group {
+public class Group extends CFWObject {
 	
-	private int id = -999;
-	private String name;
-	private String description;
-	private boolean isDeletable = true;
+	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, GroupDBFields.PK_ID.toString())
+									.setValueNotValidated(-999);
+	
+	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, GroupDBFields.NAME.toString())
+									.addValidator(new LengthValidator(1, 2000000000));
+	
+	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, GroupDBFields.DESCRIPTION.toString())
+											.addValidator(new LengthValidator(-1, 2000000000));
+	
+	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, GroupDBFields.IS_DELETABLE.toString())
+											.setValueNotValidated(true);
 	
 	public Group(String name) {
-		this.name = name;
+		initializeFields();
+		this.name.setValueNotValidated(name);
 	}
 	
 	public Group(ResultSet result) throws SQLException {
+		initializeFields();
+		this.mapResultSet(result);	
+	}
+	
+	private void initializeFields() {
 		
-		this.id = result.getInt(PermissionDBFields.PK_ID.toString());
-		this.name = result.getString(PermissionDBFields.NAME.toString());
-		this.description = result.getString(PermissionDBFields.DESCRIPTION.toString());
-		this.isDeletable = result.getBoolean(PermissionDBFields.IS_DELETABLE.toString());
-		
+		this.addFields(id, name, description, isDeletable);
 	}
 
 	public int id() {
-		return id;
+		return id.getValue();
 	}
 	
 	public Group id(int id) {
-		this.id = id;
+		this.id.setValueNotValidated(id);
 		return this;
 	}
 	
 	public String name() {
-		return name;
+		return name.getValue();
 	}
 	
-	public Group name(String username) {
-		this.name = username;
+	public Group name(String name) {
+		this.name.setValueNotValidated(name);
 		return this;
 	}
 	
-	
-	
 	public String description() {
-		return description;
+		return description.getValue();
 	}
 
 	public Group description(String description) {
-		this.description = description;
+		this.description.setValueNotValidated(description);
 		return this;
 	}
 
 	public boolean isDeletable() {
-		return isDeletable;
+		return isDeletable.getValue();
 	}
 	
 	public Group isDeletable(boolean isDeletable) {
-		this.isDeletable = isDeletable;
+		this.isDeletable.setValueNotValidated(isDeletable);
 		return this;
 	}	
 
 	public String getKeyValueString() {
 		
 		StringBuilder builder = new StringBuilder();
-		builder.append("\nid: "+id);
-		builder.append("\nname: "+name);
-		builder.append("\ndescription: "+description);
-		builder.append("\nisDeletable: "+isDeletable);
+		builder.append("\nid: "+id.getValue());
+		builder.append("\nname: "+name.getValue());
+		builder.append("\ndescription: "+description.getValue());
+		builder.append("\nisDeletable: "+isDeletable.getValue());
 		
 		return builder.toString();
 	}

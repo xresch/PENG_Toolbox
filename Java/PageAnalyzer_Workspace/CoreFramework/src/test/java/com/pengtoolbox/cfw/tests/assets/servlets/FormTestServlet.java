@@ -40,8 +40,8 @@ public class FormTestServlet extends HttpServlet
 		// Test Form
 		//------------------------------
         BTForm form = new BTForm("directForm", "Save");
-        form.addChild(new CFWField(FormFieldType.TEXT, "Firstname", "firstname"));
-        form.addChild(new CFWField(FormFieldType.TEXT, "Lastname", "lastname"));
+        form.addChild(CFWField.newString(FormFieldType.TEXT, "Firstname"));
+        form.addChild(CFWField.newString(FormFieldType.TEXT, "Lastname"));
         
         content.append("<h2>Direct use of BTForm</h2>");
         content.append(form.getHTML());
