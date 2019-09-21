@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import com.pengtoolbox.cfw.validation.AbstractValidatable;
 import com.pengtoolbox.cfw.validation.BooleanValidator;
 import com.pengtoolbox.cfw.validation.IValidatable;
+import com.pengtoolbox.cfw.validation.IntegerValidator;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 import com.pengtoolbox.cfw.validation.PasswordValidator;
 
@@ -38,6 +39,40 @@ public class CFWValidationTests {
 	}
 	
 	@Test
+	public void testIntegerValidator() {
+		
+		IValidatable validateThis = new AbstractValidatable() {};
+		IntegerValidator bv = new IntegerValidator(validateThis);
+		
+		Assertions.assertTrue(validateThis.setValueValidated(1),
+				" Integer value '1' is recognized as Integer.");
+		
+		Assertions.assertTrue(validateThis.setValueValidated(-1),
+				" Integer value '-1' is recognized as Integer.");
+		
+		Assertions.assertTrue(validateThis.setValueValidated("123456"),
+				" String value '123456' is recognized as Integer.");
+		
+		Assertions.assertTrue(validateThis.setValueValidated("-123456"),
+				" String value '-123456' is recognized as Integer.");
+		
+		Assertions.assertTrue(validateThis.setValueValidated("+123456"),
+				" String value '+123456' is recognized as Integer.");
+		
+		Assertions.assertTrue(validateThis.setValueValidated("0"),
+				" String value '0' is recognized as Integer.");
+		
+		Assertions.assertFalse(validateThis.setValueValidated("1.23456"),
+				" String value '1.23456' is not recognized as Integer.");
+		
+		Assertions.assertFalse(validateThis.setValueValidated("1,23456"),
+				" String value '1,23456' is not recognized as Integer.");
+		
+		Assertions.assertFalse(validateThis.setValueValidated("a1"),
+				" String value 'a1' is not recognized as Integer.");
+	}
+	
+	@Test
 	public void testLengthValidator() {
 		
 		IValidatable validateThis = new AbstractValidatable() {};
@@ -50,7 +85,7 @@ public class CFWValidationTests {
 	}
 	
 	@Test
-	public void testPassowordValidator() {
+	public void testPasswordValidator() {
 		
 		IValidatable validateThis = new AbstractValidatable() {};
 		PasswordValidator pv = new PasswordValidator(validateThis);

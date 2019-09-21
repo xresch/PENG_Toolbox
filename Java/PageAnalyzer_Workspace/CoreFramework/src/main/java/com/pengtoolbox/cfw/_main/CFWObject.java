@@ -45,6 +45,24 @@ public class CFWObject {
 		return form;
 	}
 	
+	public BTForm toForm(String formID, String submitLabel, String ...fieldNames) {
+		
+		BTForm form = new BTForm(formID, submitLabel);
+		form.setOrigin(this);
+		
+		for(String fieldName : fieldNames) {
+			if(fields.containsKey(fieldName)) {
+				form.addChild(fields.get(fieldName));
+			}else {
+				new CFWLog(logger)
+				.method("toForm")
+				.severe("The field '"+fieldName+"' is not known for this CFWObject.");
+			}
+		}
+		
+		return form;
+	}
+	
 	
 	public void addField(CFWField field) {
 		
@@ -75,6 +93,18 @@ public class CFWObject {
 		return fields;
 	}
 	
-	
+	public String getFieldsAsKeyValueString() {
+		
+		StringBuilder builder = new StringBuilder();
+		
+		for(CFWField field : fields.values()) {
+			builder.append("\n")
+			.append(field.getName())
+			.append(": ")
+			.append(field.getValue());
+		}
+
+		return builder.toString();
+	}
 
 }

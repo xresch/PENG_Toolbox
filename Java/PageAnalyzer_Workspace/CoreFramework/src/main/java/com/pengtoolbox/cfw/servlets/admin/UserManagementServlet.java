@@ -15,6 +15,7 @@ import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.User;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserDBFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
@@ -85,7 +86,8 @@ public class UserManagementServlet extends HttpServlet
 				if(form.mapRequestParameters(request)) {
 					CreateUserForm casted = (CreateUserForm)form;
 					User newUser = new User(casted.getUsername())
-							.setInitialPassword(casted.getPassword(), casted.getRepeatedPassword());
+							.setInitialPassword(casted.getPassword(), casted.getRepeatedPassword())
+							.isForeign(casted.getIsForeign());
 					
 					if(newUser != null) {
 						if(CFW.DB.Users.create(newUser)) {
@@ -131,15 +133,20 @@ public class UserManagementServlet extends HttpServlet
 		protected CFWField<String> repeatedPassword = CFWField.newString(FormFieldType.PASSWORD, "Repeat Password")
 				.addValidator(new NotNullOrEmptyValidator());
 		
+		private CFWField<Boolean> isForeign = CFWField.newBoolean(FormFieldType.BOOLEAN, UserDBFields.IS_FOREIGN.toString())
+											 .setValue(false);
+		
 		public CreateUserForm(String formID, String submitLabel) {
 			super(formID, submitLabel);
 			this.addField(username);
 			this.addField(password);
 			this.addField(repeatedPassword);
+			this.addField(isForeign);
 		}
 		
 		public String getUsername() { return username.getValue(); }
 		public String getPassword() { return password.getValue(); }
 		public String getRepeatedPassword() { return repeatedPassword.getValue(); }
+		public boolean getIsForeign() { return isForeign.getValue(); }
 	}
 }

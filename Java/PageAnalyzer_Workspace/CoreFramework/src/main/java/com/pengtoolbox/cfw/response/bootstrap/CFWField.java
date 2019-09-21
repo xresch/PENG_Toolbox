@@ -14,8 +14,10 @@ import com.pengtoolbox.cfw._main.CFWHttp;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.TextUtils;
+import com.pengtoolbox.cfw.validation.BooleanValidator;
 import com.pengtoolbox.cfw.validation.IValidatable;
 import com.pengtoolbox.cfw.validation.IValidator;
+import com.pengtoolbox.cfw.validation.IntegerValidator;
 
 /**********************************************************************************
  * Class for creating a menu for the web application.
@@ -35,12 +37,12 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	
 	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
 	private String name = "";
-	private T value;
+	private Object value;
 	
 	private ArrayList<String> invalidMessages;
 	
 	public enum FormFieldType{
-		TEXT, TEXTAREA, PASSWORD, HIDDEN, NONE,
+		TEXT, TEXTAREA, PASSWORD, HIDDEN, BOOLEAN, NONE,
 	}
 	
 	//###################################################################################
@@ -61,11 +63,13 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	}
 	
 	public static CFWField<Integer> newInteger(FormFieldType type, String fieldID){
-		return new CFWField<Integer>(Integer.class, type, fieldID);
+		return new CFWField<Integer>(Integer.class, type, fieldID)
+				.addValidator(new IntegerValidator());
 	}
 	
 	public static CFWField<Boolean> newBoolean(FormFieldType type, String fieldID){
-		return new CFWField<Boolean>(Boolean.class, type, fieldID);
+		return new CFWField<Boolean>(Boolean.class, type, fieldID)
+				.addValidator(new BooleanValidator());
 	}
 		
 	//###################################################################################
@@ -103,6 +107,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 								
 			case HIDDEN:  		html.append("<input type=\"hidden\" "+this.getAttributesString()+"/>");
 								break;
+			
+			case BOOLEAN:  		createBooleanRadiobuttons(html);
+								break;					
 								
 			case PASSWORD:  	html.append("<input type=\"password\" class=\"form-control\" "+this.getAttributesString()+"/>");
 								break;
@@ -119,6 +126,28 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			html.append("</div>");
 			html.append("</div>");
 		}
+	}
+
+	private void createBooleanRadiobuttons(StringBuilder html) {
+		
+		String falseChecked = "";
+		String trueChecked = "";
+		
+		if(value.toString().trim().toLowerCase().equals("true")) {
+			trueChecked = "checked";
+		}else {
+			falseChecked = "checked";
+		}
+		
+		html.append("<div class=\"form-check\">" + 
+			"  <input class=\"form-check-input\" type=\"radio\" value=\"true\" name="+name+" "+trueChecked+"/>" + 
+			"  <label class=\"form-check-label\" for=\"inlineRadio1\">true</label>" + 
+			"</div>");
+		
+		html.append("<div class=\"form-check\">" + 
+				"  <input class=\"form-check-input\" type=\"radio\" value=\"false\" name="+name+" "+falseChecked+"/>" + 
+				"  <label class=\"form-check-label\" for=\"inlineRadio1\">false</label>" + 
+				"</div>");
 	}
 
 	public String getLabel() {
@@ -226,11 +255,32 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return name;
 	}
 	
+	private boolean setValueConvert(T value) {
+		boolean success = true;
+		
+		if(value == null) {
+			this.value = value;
+			return true;
+		}
+		if(value.getClass() == this.fieldClass) {
+			this.value = value;
+			return true;
+		}
+		
+		if(value.getClass() == String.class) {
+			if     (fieldClass == Integer.class) 	 { this.value = Integer.parseInt((String)value); return true;}
+			else if(fieldClass == Boolean.class) { this.value = Boolean.parseBoolean(((String)value).trim()); return true;}
+			else {return false;}
+		}
+		
+		return success;
+	}
+	
 	public boolean setValueValidated(T value) {
 		
 		boolean result = true;
 		if(this.validateValue(value)) {
-			this.value = value;
+			this.setValueConvert(value);
 		}else {
 			result = false;
 			StringBuilder errorMessage = new StringBuilder("The field '"+formLabel+"' cannot be set to the value '"+value+"': <ul>");
@@ -243,16 +293,16 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return result;
 	}
 	
-	public CFWField<T> setValueNotValidated(T value) {
+	public CFWField<T> setValue(T value) {
 		this.value = value;
 		return this;
 	}
 	
 	public T getValue() {
-		return value;
+		return (T)value;
 	}
 	
-	public Class<T> getFieldClass() {
+	private Class<T> getFieldClass() {
 		return fieldClass;
 	}
 
@@ -278,7 +328,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					}
 				}else {
 					new CFWLog(CFWHttp.logger)
-						.method("CFWObject<init>")
+						.method("mapAndValidateParamsToFields")
 						.severe("The field with name '"+key+"' is unknown for this type.");
 				}
 			}
@@ -318,21 +368,20 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					if      (current.getFieldClass() == String.class)  { current.setValueValidated(result.getString(colName)); }
 					else if(current.getFieldClass() == Integer.class)  { current.setValueValidated(result.getInt(colName)); }
 					else if(current.getFieldClass() == Boolean.class)  { current.setValueValidated(result.getBoolean(colName)); }
+				}else {
+					success = false;
+					new CFWLog(CFWHttp.logger)
+						.method("mapResultSetColumnsToFields")
+						.severe("The object doesn't cointain a field with name '"+colName+"'.");
 				}
 			}
 		
 		} catch (SQLException e) {
 			success = false;
-			e.printStackTrace();
+			new CFWLog(CFWHttp.logger)
+				.method("mapResultSetColumnsToFields")
+				.severe("SQL Exception occured while trying to map ResultSet to fields. Check Cursor position.", e);
 		}
-		
-		
-//		for(CFWField field : fields.values()) {
-//			this.id = result.getInt(PermissionDBFields.PK_ID.toString());
-//			this.name = result.getString(PermissionDBFields.NAME.toString());
-//			this.description = result.getString(PermissionDBFields.DESCRIPTION.toString());
-//			this.isDeletable = result.getBoolean(PermissionDBFields.IS_DELETABLE.toString());
-//		}
 		
 		return success;
 	}

@@ -9,15 +9,15 @@ import com.pengtoolbox.cfw.utils.Ternary;
  * @author Reto Scheiwiller, 2015
  *
  **************************************************************************************/
-public class BooleanValidator extends AbstractValidator {
+public class IntegerValidator extends AbstractValidator {
 
 	
-	public BooleanValidator(IValidatable validateable) {
+	public IntegerValidator(IValidatable validateable) {
 		super(validateable);
 		// TODO Auto-generated constructor stub
 	}
 	
-	public BooleanValidator() {}
+	public IntegerValidator() {}
 
 	@Override
 	public boolean validate(Object value) {
@@ -25,19 +25,21 @@ public class BooleanValidator extends AbstractValidator {
 		Ternary result = validateNullEmptyAllowed(value);
 		if(result != Ternary.DONTCARE ) return result.toBoolean();
 		
-		if(value instanceof Boolean) {
+		if(value instanceof Integer) {
 			return true;
 		}
 		if(value instanceof String) {
 
-			if(((String)value).trim().toLowerCase().matches("true|false")){
+			try {
+				Integer.parseInt((String)value);
 				return true;
-			}else{
-				this.setInvalidMessage("The value of "+validateable.getName()+" is not a boolean value.(value='"+value+"')");
+			}catch(NumberFormatException e){
+				this.setInvalidMessage("The value of "+validateable.getName()+" is not an Integer value.(value='"+value+"')");
 				return false;
 			}
+
 		}
-		this.setInvalidMessage("The value of "+validateable.getName()+" is not a boolean value.(value='"+value+"')");
+		this.setInvalidMessage("The value of "+validateable.getName()+" is not an Integer value.(value='"+value+"')");
 		return false;
 	}
 	

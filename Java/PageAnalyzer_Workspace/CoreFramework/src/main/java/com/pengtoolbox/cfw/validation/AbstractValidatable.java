@@ -91,10 +91,6 @@ public abstract class AbstractValidatable<T> implements IValidatable<T> {
 		return false;
 	}
 	
-	public void setValueNoValidation(T value) {
-		this.value = value;
-	}
-	
 	public T getValue() {
 		return value;
 	}
