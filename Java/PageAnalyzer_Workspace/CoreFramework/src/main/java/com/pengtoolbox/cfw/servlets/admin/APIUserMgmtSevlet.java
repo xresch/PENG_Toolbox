@@ -10,10 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWObject;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
+import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
+import com.pengtoolbox.cfw.response.bootstrap.BTForm;
+import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 
 /*************************************************************************
  * 
@@ -119,6 +123,17 @@ public class APIUserMgmtSevlet extends HttpServlet {
 												break;
 						}
 						break;
+					
+					case "getform": 			
+						switch(item.toLowerCase()) {
+							case "edituser": 	createEditUserForm(jsonResponse, ID);
+												break;
+														
+							default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
+												break;
+						}
+						break;
+						
 					default: 				CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of action '"+action+"' is not supported.");
 											break;
 											
@@ -129,5 +144,36 @@ public class APIUserMgmtSevlet extends HttpServlet {
 		}else {
 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied!!!");
 		}
+	}
+	
+	private void createEditUserForm(JSONResponse json, String ID) {
+		
+		User user = CFW.DB.Users.selectByID(Integer.parseInt(ID));
+		
+		if(user != null) {
+			
+			BTForm editUserForm = user.toForm("cfw-editUserForm-"+ID, "Update User");
+			
+			editUserForm.setFormHandler(new BTFormHandler() {
+				
+				@Override
+				public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
+					
+					if(origin.mapRequestParameters(request)) {
+						
+						if(CFW.DB.Users.update((User)origin)) {
+							CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Updated!");
+						}
+							
+					}
+					
+				}
+			});
+			
+			editUserForm.appendToPayload(json);
+			json.setSuccess(true);
+			
+		}
+		
 	}
 }

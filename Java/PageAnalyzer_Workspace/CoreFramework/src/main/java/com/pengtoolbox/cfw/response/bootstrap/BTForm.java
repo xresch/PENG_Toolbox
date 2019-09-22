@@ -4,8 +4,10 @@ import java.util.LinkedHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWObject;
+import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.response.bootstrap.CFWField.FormFieldType;
 
@@ -130,6 +132,13 @@ public class BTForm extends HierarchicalHTMLItem {
 
 	public boolean mapRequestParameters(HttpServletRequest request) {
 		return CFWField.mapAndValidateParamsToFields(request, fields);
+	}
+	
+	public void appendToPayload(JSONResponse json) {
+    	JsonObject payload = new JsonObject();
+    	payload.addProperty("html", this.getHTML());
+    	
+    	json.getContent().append(payload.toString());
 	}
 
 }

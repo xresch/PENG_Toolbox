@@ -34,6 +34,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private Class<T> fieldClass;
 	private FormFieldType type;
 	private String formLabel = "&nbsp;";
+	private boolean isDisabled = false;
+	
+	private CFWFieldChangeHandler changeHandler = null;
 	
 	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
 	private String name = "";
@@ -44,7 +47,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public enum FormFieldType{
 		TEXT, TEXTAREA, PASSWORD, HIDDEN, BOOLEAN, NONE,
 	}
-	
+		
 	//###################################################################################
 	// CONSTRUCTORS
 	//###################################################################################
@@ -96,6 +99,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		this.addAttribute("placeholder", formLabel);
 		this.addAttribute("name", name);
 		
+		if(isDisabled) {	this.addAttribute("disabled", "disabled");};
 		if(value != null) {	this.addAttribute("value", value.toString()); };
 		
 		switch(type) {
@@ -139,25 +143,18 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			falseChecked = "checked";
 		}
 		
+		String disabled = "";
+		if(isDisabled) {	disabled = "disabled=\"disabled\""; };
+		
 		html.append("<div class=\"form-check\">" + 
-			"  <input class=\"form-check-input\" type=\"radio\" value=\"true\" name="+name+" "+trueChecked+"/>" + 
+			"  <input class=\"form-check-input\" type=\"radio\" value=\"true\" name="+name+" "+disabled+" "+trueChecked+"/>" + 
 			"  <label class=\"form-check-label\" for=\"inlineRadio1\">true</label>" + 
 			"</div>");
 		
 		html.append("<div class=\"form-check\">" + 
-				"  <input class=\"form-check-input\" type=\"radio\" value=\"false\" name="+name+" "+falseChecked+"/>" + 
+				"  <input class=\"form-check-input\" type=\"radio\" value=\"false\" name="+name+" "+disabled+" "+falseChecked+"/>" + 
 				"  <label class=\"form-check-label\" for=\"inlineRadio1\">false</label>" + 
 				"</div>");
-	}
-
-	public String getLabel() {
-		return formLabel;
-	}
-
-	public CFWField<T> setLabel(String label) {
-		fireChange();
-		this.formLabel = label;
-		return this;
 	}
 	
 	/***********************************************************************************
@@ -241,6 +238,11 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public CFWField<T> addAttribute(String name, String value) {
 		return (CFWField<T>)super.addAttribute(name, value);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public CFWField<T> removeAttribute(String name) {
+		return (CFWField<T>)super.removeAttribute(name);
+	}
 
 	public boolean removeValidator(IValidator o) {
 		return validatorArray.remove(o);
@@ -255,21 +257,61 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return name;
 	}
 	
+	public String getLabel() {
+		return formLabel;
+	}
+
+	public CFWField<T> setLabel(String label) {
+		fireChange();
+		this.formLabel = label;
+		return this;
+	}
+	
+	
+	public boolean isDisabled() {
+		return isDisabled;
+	}
+
+	/******************************************************************************************************
+	 * Change if this field should be enabled or disabled when represented as a form field.
+	 * 
+	 ******************************************************************************************************/
+	public CFWField<T> isDisabled(boolean isDisabled) {
+		this.isDisabled = isDisabled;
+		return this;
+	}
+
+	/******************************************************************************************************
+	 * Change the value and trigger the change handler if specified.
+	 * @param value to apply.
+	 * 
+	 ******************************************************************************************************/
+	private void changeValue(Object value) {
+		
+		if(changeHandler != null) {
+			if(changeHandler.handle(this.value, value)) {
+				this.value = value;
+			}
+		}else {
+			this.value = value;
+		}
+	}
+	
 	private boolean setValueConvert(T value) {
 		boolean success = true;
 		
 		if(value == null) {
-			this.value = value;
+			this.changeValue(value);
 			return true;
 		}
 		if(value.getClass() == this.fieldClass) {
-			this.value = value;
+			this.changeValue(value);
 			return true;
 		}
 		
 		if(value.getClass() == String.class) {
-			if     (fieldClass == Integer.class) 	 { this.value = Integer.parseInt((String)value); return true;}
-			else if(fieldClass == Boolean.class) { this.value = Boolean.parseBoolean(((String)value).trim()); return true;}
+			if     (fieldClass == Integer.class) 	 { this.changeValue(Integer.parseInt((String)value)); return true;}
+			else if(fieldClass == Boolean.class) 	 { this.changeValue(Boolean.parseBoolean(((String)value).trim())); return true;}
 			else {return false;}
 		}
 		
@@ -294,7 +336,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	}
 	
 	public CFWField<T> setValue(T value) {
-		this.value = value;
+		this.changeValue(value);
 		return this;
 	}
 	
@@ -304,6 +346,15 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	
 	private Class<T> getFieldClass() {
 		return fieldClass;
+	}
+
+	public CFWFieldChangeHandler getChangeHandler() {
+		return changeHandler;
+	}
+
+	public CFWField<T> setChangeHandler(CFWFieldChangeHandler changeHandler) {
+		this.changeHandler = changeHandler;
+		return this;
 	}
 
 	/******************************************************************************************************
@@ -372,7 +423,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					success = false;
 					new CFWLog(CFWHttp.logger)
 						.method("mapResultSetColumnsToFields")
-						.severe("The object doesn't cointain a field with name '"+colName+"'.");
+						.silent()
+						.warn("The object doesn't contain a field with name '"+colName+"'.");
 				}
 			}
 		

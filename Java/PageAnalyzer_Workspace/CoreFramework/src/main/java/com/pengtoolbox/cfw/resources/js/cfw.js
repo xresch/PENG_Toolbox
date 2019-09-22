@@ -688,6 +688,36 @@ function cfw_secureDecodeURI(uri){
 }
 
 /**************************************************************************************
+ * Handle messages of a standard JSON response.
+ * 
+ * The structure of the response has to contain a array with messages:
+ * {
+ * 		messages: [
+ * 			{
+ * 				type: info | success | warning | danger
+ * 				message: "string",
+ * 				stacktrace: null | "stacketrace string"
+ * 			},
+ * 			{...}
+ * 		],
+ * }
+ * 
+ * @param response the response with messages
+ **************************************************************************************/
+function cfw_handleMessages(response){
+	
+	var msgArray = response.messages;
+	  
+	  if(msgArray != undefined
+	  && msgArray != null
+	  && msgArray.length > 0){
+		  for(var i = 0; i < msgArray.length; i++ ){
+			  CFW.ui.addToast(msgArray[i].message, null, msgArray[i].type, CFW.config.toastErrorDelay);
+		  }
+	  }
+}
+
+/**************************************************************************************
  * Executes a get request with JQuery and retrieves a standard JSON format of the CFW
  * framework. Handles alert messages if there are any.
  * 
@@ -721,16 +751,7 @@ function cfw_getJSON(url, params, callbackFunc){
 			  //callbackFunc(response);
 		  })
 		  .always(function(response) {
-			  var msgArray = response.messages;
-			  
-			  if(msgArray != undefined
-			  && msgArray != null
-			  && msgArray.length > 0){
-				  for(var i = 0; i < msgArray.length; i++ ){
-					  CFW.ui.addToast(msgArray[i].message, null, msgArray[i].type, CFW.config.toastErrorDelay);
-				  }
-			  }
-			  
+			  cfw_handleMessages(response);
 		  });
 }
 
@@ -768,22 +789,12 @@ function cfw_postJSON(url, params, callbackFunc){
 			  //callbackFunc(response);
 		  })
 		  .always(function(response) {
-			  var msgArray = response.messages;
-			  
-			  if(msgArray != undefined
-			  && msgArray != null
-			  && msgArray.length > 0){
-				  for(var i = 0; i < msgArray.length; i++ ){
-					  CFW.ui.addToast(msgArray[i].message, null, msgArray[i].type, CFW.config.toastErrorDelay);
-				  }
-			  }
-			  
+			  cfw_handleMessages(response);
 		  });
 }
 
 /**************************************************************************************
- * Executes a get request with JQuery and retrieves a standard JSON format of the CFW
- * framework. Handles alert messages if there are any.
+ * Get a form created with the class BTForm on server side using the formid.
  * 
  * The structure of the response has to adhere to the following structure:
  * {
@@ -807,7 +818,6 @@ function cfw_getForm(formid, targetElement){
 	$.get('/cfw/formhandler', {id: formid})
 		  .done(function(response) {
 		      $(targetElement).html(response.payload.html)
-			  callbackFunc(response);
 		  })
 		  .fail(function(response) {
 			  console.error("Request failed: "+url);
@@ -815,16 +825,45 @@ function cfw_getForm(formid, targetElement){
 
 		  })
 		  .always(function(response) {
-			  var msgArray = response.messages;
-			  
-			  if(msgArray != undefined
-			  && msgArray != null
-			  && msgArray.length > 0){
-				  for(var i = 0; i < msgArray.length; i++ ){
-					  CFW.ui.addToast(msgArray[i].message, null, msgArray[i].type, CFW.config.toastErrorDelay);
-				  }
-			  }
-			  
+			  cfw_handleMessages(response);			  
+		  });
+}
+
+/**************************************************************************************
+ * Calls a rest service that creates a form and returns a standard json format,
+ * containing the html of the form in the payload.
+ * 
+ * The structure of the response has to adhere to the following structure:
+ * {
+ * 		success: true|false,
+ * 		messages: [
+ * 			{
+ * 				type: info | success | warning | danger
+ * 				message: "string",
+ * 				stacktrace: null | "stacketrace string"
+ * 			},
+ * 			{...}
+ * 		],
+ * 		payload: {html: "the html form"}
+ * }
+ * 
+ * @param url to call
+ * @param params to pass
+ * @param targetElement the element in which the form should be placed
+ *************************************************************************************/
+function cfw_createForm(url, params, targetElement){
+
+	$.get(url, params)
+		  .done(function(response) {
+		      $(targetElement).html(response.payload.html)
+		  })
+		  .fail(function(response) {
+			  console.error("Request failed: "+url);
+			  CFW.ui.addToast("Request failed", "URL: "+url, "danger", CFW.config.toastErrorDelay)
+
+		  })
+		  .always(function(response) {
+			  cfw_handleMessages(response);			  
 		  });
 }
 
@@ -901,6 +940,7 @@ var CFW = {
 		getJSON: cfw_getJSON,
 		postJSON: cfw_postJSON,
 		getForm: cfw_getForm,
+		createForm: cfw_createForm,
 		fetchAndCacheData: cfw_fetchAndCacheData
 	},
 	

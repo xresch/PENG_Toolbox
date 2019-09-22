@@ -13,15 +13,25 @@ import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserDBFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.CFWField;
 import com.pengtoolbox.cfw.response.bootstrap.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.response.bootstrap.CFWFieldChangeHandler;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
 public class User extends CFWObject {
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, UserDBFields.PK_ID.toString())
-											.setValue(-999);
+								   .setValue(-999);
 	
 	private CFWField<String> username = CFWField.newString(FormFieldType.TEXT, UserDBFields.USERNAME.toString())
-			.addValidator(new LengthValidator(1, 255));
+			.addValidator(new LengthValidator(1, 255))
+			.setChangeHandler(new CFWFieldChangeHandler<String>() {
+				public boolean handle(String oldValue, String newValue) {
+					if	   (oldValue == null)          { return true; } 
+					else if(oldValue.equals(newValue)) { return true; } 
+					else if(!oldValue.equals(newValue) && isRenamable()) {hasUsernameChanged = true; return true;}
+					
+					return false;
+				}
+			});
 	
 	private CFWField<String> email = CFWField.newString(FormFieldType.TEXT, UserDBFields.EMAIL.toString())
 			.addValidator(new LengthValidator(-1, 255));
@@ -45,11 +55,25 @@ public class User extends CFWObject {
 	
 	private Timestamp dateCreated = new Timestamp(new Date().getTime());
 	
-	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.BOOLEAN, UserDBFields.IS_DELETABLE.toString())
-												.setValue(true);
+	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, UserDBFields.IS_DELETABLE.toString())
+			.setValue(true);
+												
 
-	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.BOOLEAN, UserDBFields.IS_RENAMABLE.toString())
-												.setValue(true);
+	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, UserDBFields.IS_RENAMABLE.toString())
+			.setValue(true)
+			.setChangeHandler(new CFWFieldChangeHandler<Boolean>() {
+				
+				@Override
+				public boolean handle(Boolean oldValue, Boolean newValue) {
+					if(!newValue) {
+						username.isDisabled(true);
+					}else {
+						username.isDisabled(false);
+					}
+					
+					return true;
+				}
+			});;
 	
 	//Username and password is managed in another source, like LDAP or CSV
 	private CFWField<Boolean> isForeign = CFWField.newBoolean(FormFieldType.BOOLEAN, UserDBFields.IS_FOREIGN.toString())
@@ -59,9 +83,6 @@ public class User extends CFWObject {
 
 	private static Logger logger = CFWLog.getLogger(User.class.getName());
 	
-
-
-	
 	public User(String username) {
 		initializeFields();
 		this.username.setValue(username);
@@ -70,13 +91,12 @@ public class User extends CFWObject {
 	public User(ResultSet result) throws SQLException {
 		initializeFields();
 		CFWField.mapResultSetColumnsToFields(result, fields);
-		
+
 		this.avatarImage 	= result.getBlob(UserDBFields.AVATAR_IMAGE.toString());
 		this.dateCreated 	= result.getTimestamp(UserDBFields.DATE_CREATED.toString());
 
-		
 	}
-	
+		
 	private void initializeFields() {
 		this.addFields(id, 
 				username, 

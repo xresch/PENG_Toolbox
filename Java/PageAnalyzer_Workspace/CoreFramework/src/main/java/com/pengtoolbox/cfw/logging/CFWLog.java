@@ -43,6 +43,7 @@ public class CFWLog {
 	protected String exception;
 	
 	protected LinkedHashMap<String,String> customEntries = null;
+	protected boolean silent = false;
 
 	public CFWLog(Logger logger){
 		this.logger = logger;
@@ -66,6 +67,15 @@ public class CFWLog {
 		return this;
 		
 	}
+
+	/***********************************************************************
+	 * Make the next log silent. No messages will be propagated to the UI.
+	 ***********************************************************************/
+	public CFWLog silent() {
+		this.silent = true;
+		return this;
+	}
+	
 
 	/***********************************************************************
 	 * Initializes the logging.
@@ -253,7 +263,8 @@ public class CFWLog {
 				
 				//----------------------------------------
 				// Handle alert messages
-				if(level.equals(Level.SEVERE) || level.equals(Level.WARNING) ){
+				if(!silent 
+				&& (level.equals(Level.SEVERE) || level.equals(Level.WARNING)) ){
 					
 					MessageType alertType = ( level == Level.SEVERE ? MessageType.ERROR : MessageType.WARNING );
 					CFW.Context.Request.addAlertMessage(alertType, message);

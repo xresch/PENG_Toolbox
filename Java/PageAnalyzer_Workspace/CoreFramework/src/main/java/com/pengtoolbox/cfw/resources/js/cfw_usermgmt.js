@@ -17,12 +17,8 @@ function cfw_usermgmt_reset(){
  * 
  ******************************************************************/
 function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
-	//-----------------------------------
-	// Groups
-	//-----------------------------------
 
-
-	CFW.http.getJSON(url, {action: "fetch", item: mapName, id: itemID}, 
+	CFW.http.getJSON(CFW_USRMGMT_URL, {action: "fetch", item: mapName, id: itemID}, 
 		function(data) {
 			if(data.payload != null){
 				var htmlString = "";
@@ -91,23 +87,8 @@ function cfw_usermgmt_editUser(userID){
 	var userFetchParams = {action: "fetch", item: "user", id: userID};
 	
 	var detailsDiv = $('<div id="cfw-usermgmt-details">');
+	detailsDiv.append('<h2>User Details</h2>');
 	allDiv.append(detailsDiv);
-	
-	CFW.http.getJSON(url, userFetchParams, 
-		function(data) {
-			if(data.payload != null){
-				var htmlString = "";
-				htmlString += '<h2>User Details</h2>';
-				htmlString += '<p><b>Username:</b> '+data.payload[0].USERNAME+'</p>';
-				htmlString += '<p><b>Firstname:</b> '+data.payload[0].FIRSTNAME+'</p>';
-				htmlString += '<p><b>Lastname:</b> '+data.payload[0].LASTNAME+'</p>';
-				htmlString += '<p><b>Email:</b> '+data.payload[0].EMAIL+'</p>';
-				
-				detailsDiv.append(htmlString);
-			}else{
-				CFW.ui.addToastDanger('The data for the userID '+userID+' could not be loaded.</span>');
-			}	
-	});
 	
 	//-----------------------------------
 	// Groups
@@ -119,6 +100,12 @@ function cfw_usermgmt_editUser(userID){
 	cfw_usermgmt_createToggleTable(groupDiv, "usergroupmap", userID)
 	
 	CFW.ui.showModal("Edit User", allDiv);
+	
+	//-----------------------------------
+	// Load Form
+	//-----------------------------------
+	CFW.http.createForm(CFW_USRMGMT_URL, {action: "getform", item: "edituser", id: userID}, detailsDiv);
+	
 	
 }
 

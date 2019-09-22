@@ -137,6 +137,18 @@ public abstract class HierarchicalHTMLItem {
 		this.attributes.put(name, value);
 		return this;
 	}
+	
+	/***********************************************************************************
+	 * Remove an attribute from the html tag.
+	 * Adding a value for the same attribute multiple times will overwrite preceeding values.
+	 * @param name the name of the attribute.
+	 * @param key the key of the attribute.
+	 ***********************************************************************************/
+	public HierarchicalHTMLItem removeAttribute(String name) {
+		fireChange();
+		this.attributes.remove(name);
+		return this;
+	}
 
 	/***********************************************************************************
 	 * Return the attributes.
