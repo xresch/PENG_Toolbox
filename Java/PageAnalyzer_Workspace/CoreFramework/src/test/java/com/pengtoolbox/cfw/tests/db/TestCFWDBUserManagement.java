@@ -134,7 +134,6 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 	
 	@Test
 	public void testCRUDUser() {
-		
 		String username = "T.Testonia";
 		String usernameUpdated = "T.Testonia2";
 		
@@ -206,11 +205,12 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//--------------------------------------
 		// CHECK NOT RENAMABME
 		user.username("notRenamable");
-		Assertions.assertFalse(CFW.DB.Users.update(user), "The user is not renamed, returns false.");
+		Assertions.assertFalse(user.username().equals("notRenamable"), "The user is not renamed, returns false.");
 		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(username), "The user still exists.");
 		
 		//--------------------------------------
 		// UPDATE
+		user.isRenamable(true);
 		user.username(usernameUpdated)
 			.email("t.testonia2@cfw.com")
 			.firstname("Testika2")
@@ -228,8 +228,8 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// SELECT UPDATED USER
 		User updatedUser = CFW.DB.Users.selectByUsernameOrMail(usernameUpdated);
 		
-		//System.out.println("===== UPDATED USER =====");
-		//System.out.println(updatedUser.getKeyValueString());
+//		System.out.println("===== UPDATED USER =====");
+//		System.out.println(updatedUser.getFieldsAsKeyValueString());
 		
 		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(updatedUser), "User exists, checkUsernameExists(user) works.");
 		Assertions.assertTrue(updatedUser != null);
@@ -267,7 +267,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		CFW.DB.Users.deleteByID(userbyMail.id());
 		
 		Assertions.assertFalse(CFW.DB.Users.checkUsernameExists(username));
-		
+
 	}
 	
 	@Test

@@ -25,6 +25,7 @@ public class CFWDBGroup {
 		NAME,
 		DESCRIPTION,
 		IS_DELETABLE,
+		IS_RENAMABLE,
 	}
 
 	/********************************************************************************************
@@ -42,6 +43,11 @@ public class CFWDBGroup {
 							  + ");";
 		
 		CFWDB.preparedExecute(createTableSQL);
+		
+		String addColumnIsRenamable = "ALTER TABLE "+TABLE_NAME
+									 +" ADD COLUMN IF NOT EXISTS "+GroupDBFields.IS_RENAMABLE+" BOOLEAN DEFAULT TRUE;";
+		
+		CFWDB.preparedExecute(addColumnIsRenamable);
 		
 	}
 	
@@ -89,13 +95,15 @@ public class CFWDBGroup {
 		String insertGroupSQL = "INSERT INTO "+TABLE_NAME+" ("
 				  + GroupDBFields.NAME +", "
 				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +" "
-				  + ") VALUES (?,?,?);";
+				  + GroupDBFields.IS_DELETABLE +", "
+				  + GroupDBFields.IS_RENAMABLE +" "
+				  + ") VALUES (?,?,?,?);";
 		
 		return CFWDB.preparedExecute(insertGroupSQL, 
 				group.name(),
 				group.description(),
-				group.isDeletable()
+				group.isDeletable(),
+				group.isRenamable()
 				);
 	}
 	
@@ -107,11 +115,7 @@ public class CFWDBGroup {
 	public static Group selectByName(String name ) {
 		
 		String selectByName = 
-				"SELECT "
-				  + GroupDBFields.PK_ID +", "
-				  + GroupDBFields.NAME +", "
-				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +" "
+				"SELECT * "
 				+" FROM "+TABLE_NAME
 				+" WHERE "
 				+ GroupDBFields.NAME + " = ?";
@@ -147,11 +151,7 @@ public class CFWDBGroup {
 	public static Group selectByID(int id ) {
 		
 		String selectByName = 
-				"SELECT "
-				  + GroupDBFields.PK_ID +", "
-				  + GroupDBFields.NAME +", "
-				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +" "
+				"SELECT * "
 				+" FROM "+TABLE_NAME
 				+" WHERE "
 				+ GroupDBFields.PK_ID + " = ?";
@@ -191,7 +191,8 @@ public class CFWDBGroup {
 				  + GroupDBFields.PK_ID +", "
 				  + GroupDBFields.NAME +", "
 				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +" "
+				  + GroupDBFields.IS_DELETABLE +", "
+				  + GroupDBFields.IS_RENAMABLE +" "
 				+" FROM "+TABLE_NAME
 				+" WHERE "
 				+ GroupDBFields.PK_ID + " = ?";
@@ -216,7 +217,8 @@ public class CFWDBGroup {
 				  + GroupDBFields.PK_ID +", "
 				  + GroupDBFields.NAME +", "
 				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +" "
+				  + GroupDBFields.IS_DELETABLE +", "
+				  + GroupDBFields.IS_RENAMABLE +" "
 				+" FROM "+TABLE_NAME
 				+" ORDER BY LOWER("+GroupDBFields.NAME+")";
 		
@@ -246,8 +248,9 @@ public class CFWDBGroup {
 				+" SET ("
 				  + GroupDBFields.NAME +", "
 				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +" "
-				  + ") = (?,?,?) "
+				  + GroupDBFields.IS_DELETABLE +", "
+				  + GroupDBFields.IS_RENAMABLE +" "
+				  + ") = (?,?,?,?) "
 				+" WHERE "
 					+ GroupDBFields.PK_ID+" = ?";
 		
@@ -255,6 +258,7 @@ public class CFWDBGroup {
 				group.name(),
 				group.description(),
 				group.isDeletable(),
+				group.isRenamable(),
 				group.id());
 		
 		

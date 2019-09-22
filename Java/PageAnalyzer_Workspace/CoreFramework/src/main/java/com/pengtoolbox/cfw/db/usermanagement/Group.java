@@ -23,6 +23,9 @@ public class Group extends CFWObject {
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, GroupDBFields.IS_DELETABLE.toString())
 											.setValue(true);
 	
+	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, GroupDBFields.IS_DELETABLE.toString())
+			.setValue(true);
+	
 	public Group(String name) {
 		initializeFields();
 		this.name.setValue(name);
@@ -71,6 +74,15 @@ public class Group extends CFWObject {
 	
 	public Group isDeletable(boolean isDeletable) {
 		this.isDeletable.setValue(isDeletable);
+		return this;
+	}	
+	
+	public boolean isRenamable() {
+		return isRenamable.getValue();
+	}
+	
+	public Group isRenamable(boolean isRenamable) {
+		this.isRenamable.setValue(isRenamable);
 		return this;
 	}	
 

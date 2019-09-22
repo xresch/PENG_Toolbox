@@ -125,10 +125,7 @@ public class User extends CFWObject {
 	}
 	
 	public User username(String username) {
-		if(!this.username.equals(username)) {
-			this.username.setValue(username);
-			hasUsernameChanged = true;
-		}
+		this.username.setValue(username);
 		return this;
 	}
 	

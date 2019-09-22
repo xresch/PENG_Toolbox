@@ -501,7 +501,7 @@ public class CFWDBUser {
 		} catch (SQLException e) {
 			new CFWLog(logger)
 			.method("checkUsernameExists")
-			.severe("Error while checking the if the user exists.", e);
+			.severe("Error while checking if the user exists.", e);
 			
 			return false;
 		}finally {

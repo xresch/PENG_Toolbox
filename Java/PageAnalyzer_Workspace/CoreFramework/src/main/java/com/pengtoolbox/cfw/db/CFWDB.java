@@ -157,6 +157,9 @@ public class CFWDB {
 			.severe("User group '"+CFWDBGroup.CFW_GROUP_SUPERUSER+"' was not found in the database.");
 		}
 		
+		superuserGroup.isRenamable(false);
+		CFW.DB.Groups.update(superuserGroup);
+		
 		//-----------------------------------------
 		// Create Group Admin
 		//-----------------------------------------
@@ -175,6 +178,8 @@ public class CFWDB {
 			.severe("User group '"+CFWDBGroup.CFW_GROUP_ADMIN+"' was not found in the database.");
 		}
 		
+		adminGroup.isRenamable(false);
+		CFW.DB.Groups.update(adminGroup);
 		//-----------------------------------------
 		// Create Group Foreign
 		//-----------------------------------------
@@ -193,6 +198,9 @@ public class CFWDB {
 			.severe("User group '"+CFWDBGroup.CFW_GROUP_USER+"' was not found in the database.");
 		}
 		
+		userGroup.isRenamable(false);
+		CFW.DB.Groups.update(userGroup);
+		
 		//-----------------------------------------
 		// Create Group Foreign
 		//-----------------------------------------
@@ -210,6 +218,10 @@ public class CFWDB {
 			.method("createDefaultGroups")
 			.severe("User group '"+CFWDBGroup.CFW_GROUP_FOREIGN_USER+"' was not found in the database.");
 		}
+
+		foreignuserGroup.isRenamable(false);
+		CFW.DB.Groups.update(foreignuserGroup);
+		
 		return superuserGroup;
 	}
 	
@@ -411,6 +423,48 @@ public class CFWDB {
 	}
 	
 	/********************************************************************************************
+	 * Rollbacks the transaction.
+	 * 
+	 * @throws SQLException 
+	 ********************************************************************************************/
+	public static void rollbackTransaction() {	
+		
+		
+		if(transactionConnection.get() == null) {
+			new CFWLog(logger)
+				.method("rollbackTransaction")
+				.severe("There is no running transaction. Use beginTransaction() before using commit.");
+			return;
+		}
+		
+		Connection con = null;
+		
+		try {
+			con = transactionConnection.get();
+			con.rollback();
+
+		} catch (SQLException e) {
+			new CFWLog(logger)
+				.method("rollbackTransaction")
+				.severe("Error occured on rollback transaction.", e);
+		} finally {
+			transactionConnection.set(null);
+			if(con != null) { 
+				try {
+					con.setAutoCommit(true);
+					con.close();
+				} catch (SQLException e) {
+					new CFWLog(logger)
+						.method("rollbackTransaction")
+						.severe("Error occured closing DB resources.", e);
+				}
+				
+			}
+		}
+		
+	}
+	
+	/********************************************************************************************
 	 * 
 	 * @param request HttpServletRequest containing session data used for logging information(null allowed).
 	 * @param sql string with placeholders
@@ -590,7 +644,7 @@ public class CFWDB {
 	public static void close(ResultSet resultSet){
 		
 		try {
-			if(resultSet != null) {
+			if(resultSet != null && transactionConnection.get() == null) {
 				resultSet.getStatement().getConnection().close();
 				resultSet.close();
 			}
