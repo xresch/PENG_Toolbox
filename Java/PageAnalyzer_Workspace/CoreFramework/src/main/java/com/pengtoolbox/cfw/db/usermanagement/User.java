@@ -25,11 +25,13 @@ public class User extends CFWObject {
 			.addValidator(new LengthValidator(1, 255))
 			.setChangeHandler(new CFWFieldChangeHandler<String>() {
 				public boolean handle(String oldValue, String newValue) {
-					if	   (oldValue == null)          { return true; } 
-					else if(oldValue.equals(newValue)) { return true; } 
-					else if(!oldValue.equals(newValue) && isRenamable()) {hasUsernameChanged = true; return true;}
-					
-					return false;
+					if(username.isDisabled()) { 
+						new CFWLog(logger)
+						.method("handle")
+						.severe("The username cannot be changed as the field is disabled.");
+						return false; 
+					}
+					return true;
 				}
 			});
 	

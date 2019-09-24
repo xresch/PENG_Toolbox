@@ -84,8 +84,6 @@ function cfw_usermgmt_editUser(userID){
 	//-----------------------------------
 	// User Details
 	//-----------------------------------
-	var userFetchParams = {action: "fetch", item: "user", id: userID};
-	
 	var detailsDiv = $('<div id="cfw-usermgmt-details">');
 	detailsDiv.append('<h2>User Details</h2>');
 	allDiv.append(detailsDiv);
@@ -132,23 +130,8 @@ function cfw_usermgmt_editGroup(groupID){
 	// Group Details
 	//-----------------------------------
 	var detailsDiv = $('<div id="cfw-usermgmt-details">');
+	detailsDiv.append('<h2>Group Details</h2>');
 	allDiv.append(detailsDiv);
-	
-	CFW.http.getJSON(CFW_USRMGMT_URL, {action: "fetch", item: "group", id: groupID}, 
-		function(data) {
-			if(data.payload != null){
-				var htmlString = "";
-				htmlString += '<h2>Group Details</h2>';
-				htmlString += '<p><b>Group ID:</b> '+data.payload[0].PK_ID+'</p>';
-				htmlString += '<p><b>Name:</b> '+data.payload[0].NAME+'</p>';
-				htmlString += '<p><b>Description:</b> '+data.payload[0].DESCRIPTION+'</p>';
-				htmlString += '<p><b>Deletable:</b> '+data.payload[0].IS_DELETABLE+'</p>';
-				
-				detailsDiv.append(htmlString);
-			}else{
-				CFW.ui.addToastDanger('The data for the groupID '+groupID+' could not be loaded.</span>');
-			}	
-	});
 	
 	//-----------------------------------
 	// Groups
@@ -160,6 +143,11 @@ function cfw_usermgmt_editGroup(groupID){
 	cfw_usermgmt_createToggleTable(groupDiv, "grouppermissionmap", groupID)
 	
 	CFW.ui.showModal("Edit Group", allDiv);
+	
+	//-----------------------------------
+	// Load Form
+	//-----------------------------------
+	CFW.http.createForm(CFW_USRMGMT_URL, {action: "getform", item: "editgroup", id: groupID}, detailsDiv);
 	
 }
 

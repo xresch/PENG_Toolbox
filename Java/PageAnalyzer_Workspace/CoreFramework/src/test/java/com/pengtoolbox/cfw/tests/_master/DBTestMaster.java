@@ -16,7 +16,7 @@ public class DBTestMaster {
 	private static Logger logger = CFWLog.getLogger(DBTestMaster.class.getName());
 	
 	@BeforeClass
-	public static void startDefaultApplication() throws Exception {
+	public static void a_startDefaultApplication() throws Exception {
 		
 		CFW.initialize("./config/cfw.properties");
 		CFWDB.initialize();

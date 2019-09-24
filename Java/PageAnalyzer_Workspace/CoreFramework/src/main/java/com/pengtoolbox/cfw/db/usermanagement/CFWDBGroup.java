@@ -44,11 +44,13 @@ public class CFWDBGroup {
 		
 		CFWDB.preparedExecute(createTableSQL);
 		
+		//--------------------------------------
+		// Add Column IS_RENAMABLE
 		String addColumnIsRenamable = "ALTER TABLE "+TABLE_NAME
 									 +" ADD COLUMN IF NOT EXISTS "+GroupDBFields.IS_RENAMABLE+" BOOLEAN DEFAULT TRUE;";
 		
 		CFWDB.preparedExecute(addColumnIsRenamable);
-		
+				
 	}
 	
 	/********************************************************************************************
@@ -63,6 +65,7 @@ public class CFWDBGroup {
 			create(group);
 		}
 	}
+	
 	/********************************************************************************************
 	 * Creates a new group in the DB.
 	 * @param Group with the values that should be inserted. ID will be set by the Database.
@@ -92,19 +95,7 @@ public class CFWDBGroup {
 			return false;
 		}
 		
-		String insertGroupSQL = "INSERT INTO "+TABLE_NAME+" ("
-				  + GroupDBFields.NAME +", "
-				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +", "
-				  + GroupDBFields.IS_RENAMABLE +" "
-				  + ") VALUES (?,?,?,?);";
-		
-		return CFWDB.preparedExecute(insertGroupSQL, 
-				group.name(),
-				group.description(),
-				group.isDeletable(),
-				group.isRenamable()
-				);
+		return group.create();
 	}
 	
 	/***************************************************************
@@ -114,33 +105,9 @@ public class CFWDBGroup {
 	 ****************************************************************/
 	public static Group selectByName(String name ) {
 		
-		String selectByName = 
-				"SELECT * "
-				+" FROM "+TABLE_NAME
-				+" WHERE "
-				+ GroupDBFields.NAME + " = ?";
-		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectByName, name);
-		
-		if(result == null) {
-			return null;
-		}
-		
-		try {
-			if(result.next()) {
-				return new Group(result);
-			}
-		} catch (SQLException e) {
-			new CFWLog(logger)
-			.method("selectByName")
-			.severe("Error reading group from database.", e);;
-			
-		}finally {
-			CFWDB.close(result);
-		}
-		
-		return null;
-		
+		Group group = new Group(name);
+		return (Group)group.selectFirstBy(GroupDBFields.NAME.toString());
+
 	}
 	
 	/***************************************************************
@@ -149,33 +116,9 @@ public class CFWDBGroup {
 	 * @return Returns a group or null if not found or in case of exception.
 	 ****************************************************************/
 	public static Group selectByID(int id ) {
-		
-		String selectByName = 
-				"SELECT * "
-				+" FROM "+TABLE_NAME
-				+" WHERE "
-				+ GroupDBFields.PK_ID + " = ?";
-		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectByName, id);
-		
-		if(result == null) {
-			return null;
-		}
-		
-		try {
-			if(result.next()) {
-				return new Group(result);
-			}
-		} catch (SQLException e) {
-			new CFWLog(logger)
-			.method("selectByID")
-			.severe("Error reading group from database.", e);;
-			
-		}finally {
-			CFWDB.close(result);
-		}
-		
-		return null;
+
+		Group group = new Group("").id(id);
+		return (Group)group.selectFirstBy(GroupDBFields.PK_ID.toString());
 		
 	}
 	
@@ -243,26 +186,21 @@ public class CFWDBGroup {
 	 ****************************************************************/
 	public static boolean update(Group group) {
 		
-		String updateByID = 
-				"UPDATE "+TABLE_NAME
-				+" SET ("
-				  + GroupDBFields.NAME +", "
-				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +", "
-				  + GroupDBFields.IS_RENAMABLE +" "
-				  + ") = (?,?,?,?) "
-				+" WHERE "
-					+ GroupDBFields.PK_ID+" = ?";
+		if(group == null) {
+			new CFWLog(logger)
+				.method("update")
+				.warn("The group cannot be null");
+			return false;
+		}
 		
-		boolean result = CFWDB.preparedExecute(updateByID, 
-				group.name(),
-				group.description(),
-				group.isDeletable(),
-				group.isRenamable(),
-				group.id());
-		
-		
-		return result;
+		if(group.name() == null || group.name().isEmpty()) {
+			new CFWLog(logger)
+				.method("update")
+				.warn("Please specify a name for the group to create.");
+			return false;
+		}
+				
+		return group.update();
 		
 	}
 	

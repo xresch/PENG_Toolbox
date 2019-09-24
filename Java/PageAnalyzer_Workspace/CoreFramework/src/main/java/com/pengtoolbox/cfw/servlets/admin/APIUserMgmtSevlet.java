@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWObject;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
+import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
@@ -128,7 +129,10 @@ public class APIUserMgmtSevlet extends HttpServlet {
 						switch(item.toLowerCase()) {
 							case "edituser": 	createEditUserForm(jsonResponse, ID);
 												break;
-														
+							
+							case "editgroup": 	createEditGroupForm(jsonResponse, ID);
+							break;
+							
 							default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 												break;
 						}
@@ -171,6 +175,37 @@ public class APIUserMgmtSevlet extends HttpServlet {
 			});
 			
 			editUserForm.appendToPayload(json);
+			json.setSuccess(true);
+			
+		}
+		
+	}
+	
+	private void createEditGroupForm(JSONResponse json, String ID) {
+		
+		Group group = CFW.DB.Groups.selectByID(Integer.parseInt(ID));
+		
+		if(group != null) {
+			
+			BTForm editGroupForm = group.toForm("cfw-editGroupForm-"+ID, "Update Group");
+			
+			editGroupForm.setFormHandler(new BTFormHandler() {
+				
+				@Override
+				public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
+					
+					if(origin.mapRequestParameters(request)) {
+						
+						if(CFW.DB.Groups.update((Group)origin)) {
+							CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Updated!");
+						}
+							
+					}
+					
+				}
+			});
+			
+			editGroupForm.appendToPayload(json);
 			json.setSuccess(true);
 			
 		}

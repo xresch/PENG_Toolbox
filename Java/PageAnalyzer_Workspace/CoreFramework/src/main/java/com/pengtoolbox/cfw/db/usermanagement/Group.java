@@ -2,20 +2,36 @@ package com.pengtoolbox.cfw.db.usermanagement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFWObject;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup.GroupDBFields;
+import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.CFWField;
 import com.pengtoolbox.cfw.response.bootstrap.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.response.bootstrap.CFWFieldChangeHandler;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
 public class Group extends CFWObject {
+	
+	private static Logger logger = CFWLog.getLogger(Group.class.getName());
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, GroupDBFields.PK_ID.toString())
 									.setValue(-999);
 	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, GroupDBFields.NAME.toString())
-									.addValidator(new LengthValidator(1, 2000000000));
+									.addValidator(new LengthValidator(1, 255))
+									.setChangeHandler(new CFWFieldChangeHandler<String>() {
+										public boolean handle(String oldValue, String newValue) {
+											if(name.isDisabled()) { 
+												new CFWLog(logger)
+												.method("handle")
+												.severe("The name cannot be changed as the field is disabled.");
+												return false; 
+											}
+											return true;
+										}
+									});
 	
 	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, GroupDBFields.DESCRIPTION.toString())
 											.addValidator(new LengthValidator(-1, 2000000000));
@@ -23,8 +39,25 @@ public class Group extends CFWObject {
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, GroupDBFields.IS_DELETABLE.toString())
 											.setValue(true);
 	
-	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, GroupDBFields.IS_DELETABLE.toString())
-			.setValue(true);
+	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, GroupDBFields.IS_RENAMABLE.toString())
+			.setValue(true)
+			.setChangeHandler(new CFWFieldChangeHandler<Boolean>() {
+							
+							@Override
+							public boolean handle(Boolean oldValue, Boolean newValue) {
+								if(!newValue) {
+									name.isDisabled(true);
+								}else {
+									name.isDisabled(false);
+								}
+								
+								return true;
+							}
+						});;
+	
+	public Group() {
+		initializeFields();
+	}
 	
 	public Group(String name) {
 		initializeFields();
@@ -37,8 +70,9 @@ public class Group extends CFWObject {
 	}
 	
 	private void initializeFields() {
-		
-		this.addFields(id, name, description, isDeletable);
+		this.setTableName(CFWDBGroup.TABLE_NAME);
+		this.setPrimaryField(id);
+		this.addFields(id, name, description, isDeletable, isRenamable);
 	}
 
 	public int id() {

@@ -165,7 +165,12 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		if(!this.attributes.containsKey("rows")) {
 			this.addAttribute("rows", "5");
 		}
-		html.append("<textarea class=\"form-control\" "+this.getAttributesString()+"></textarea>");
+		this.removeAttribute("value");
+		String value = "";
+		if(this.value != null) {
+			value = this.value.toString();
+		}
+		html.append("<textarea class=\"form-control\" "+this.getAttributesString()+">"+value+"</textarea>");
 	}
 	
 	
@@ -286,23 +291,25 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @param value to apply.
 	 * 
 	 ******************************************************************************************************/
-	private void changeValue(Object value) {
+	private boolean changeValue(Object value) {
 		
 		if(changeHandler != null) {
 			if(changeHandler.handle(this.value, value)) {
 				this.value = value;
+			}else {
+				return false;
 			}
 		}else {
 			this.value = value;
 		}
+		return true;
 	}
 	
 	private boolean setValueConvert(T value) {
 		boolean success = true;
 		
 		if(value == null) {
-			this.changeValue(value);
-			return true;
+			return this.changeValue(value);
 		}
 		if(value.getClass() == this.fieldClass) {
 			this.changeValue(value);
@@ -322,7 +329,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		
 		boolean result = true;
 		if(this.validateValue(value)) {
-			this.setValueConvert(value);
+			result = this.setValueConvert(value);
 		}else {
 			result = false;
 			StringBuilder errorMessage = new StringBuilder("The field '"+formLabel+"' cannot be set to the value '"+value+"': <ul>");
