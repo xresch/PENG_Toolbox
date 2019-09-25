@@ -1,8 +1,11 @@
 package com.pengtoolbox.cfw.datahandling;
 
+import java.sql.Clob;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -12,9 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWHttp;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.HierarchicalHTMLItem;
-import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.TextUtils;
 import com.pengtoolbox.cfw.validation.BooleanValidator;
 import com.pengtoolbox.cfw.validation.IValidatable;
@@ -74,6 +77,11 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	
 	public static CFWField<Boolean> newBoolean(FormFieldType type, String fieldID){
 		return new CFWField<Boolean>(Boolean.class, type, fieldID)
+				.addValidator(new BooleanValidator());
+	}
+	
+	public static CFWField<Boolean> newTimestamp(FormFieldType type, String fieldID){
+		return new CFWField<Boolean>(Timestamp.class, type, fieldID)
 				.addValidator(new BooleanValidator());
 	}
 		
@@ -148,12 +156,12 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		String disabled = "";
 		if(isDisabled) {	disabled = "disabled=\"disabled\""; };
 		
-		html.append("<div class=\"form-check\">" + 
+		html.append("<div class=\"form-check form-check-inline col-form-labelmt-5\">" + 
 			"  <input class=\"form-check-input\" type=\"radio\" value=\"true\" name="+name+" "+disabled+" "+trueChecked+"/>" + 
 			"  <label class=\"form-check-label\" for=\"inlineRadio1\">true</label>" + 
 			"</div>");
 		
-		html.append("<div class=\"form-check\">" + 
+		html.append("<div class=\"form-check form-check-inline col-form-label\">" + 
 				"  <input class=\"form-check-input\" type=\"radio\" value=\"false\" name="+name+" "+disabled+" "+falseChecked+"/>" + 
 				"  <label class=\"form-check-label\" for=\"inlineRadio1\">false</label>" + 
 				"</div>");
@@ -319,8 +327,10 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		}
 		
 		if(value.getClass() == String.class) {
-			if     (valueClass == Integer.class) 	 { this.changeValue(Integer.parseInt((String)value)); return true;}
-			else if(valueClass == Boolean.class) 	 { this.changeValue(Boolean.parseBoolean(((String)value).trim())); return true;}
+			if     (valueClass == Integer.class) 	{ this.changeValue(Integer.parseInt((String)value)); return true;}
+			else if(valueClass == Boolean.class) 	{ this.changeValue(Boolean.parseBoolean( ((String)value).trim()) ); return true;}
+			else if(valueClass == Timestamp.class)  { this.changeValue(new Timestamp(Long.parseLong( ((String)value).trim()) )); return true; }
+			else if(valueClass == Date.class)  		{ this.changeValue(new Date(Long.parseLong( ((String)value).trim()) )); return true; }
 			else {return false;}
 		}
 		
@@ -402,6 +412,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @param url used for the request.
 	 * @return true if successful, false otherwise
 	 ******************************************************************************************************/
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static boolean mapResultSetColumnsToFields(ResultSet result, HashMap<String,CFWField> fields) {
 		
 		ResultSetMetaData metadata;
@@ -428,6 +439,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					if      (current.getValueClass() == String.class)  { current.setValueValidated(result.getString(colName)); }
 					else if(current.getValueClass() == Integer.class)  { current.setValueValidated(result.getInt(colName)); }
 					else if(current.getValueClass() == Boolean.class)  { current.setValueValidated(result.getBoolean(colName)); }
+					else if(current.getValueClass() == Timestamp.class)  { current.setValueValidated(result.getTimestamp(colName)); }
+					else if(current.getValueClass() == Date.class)  { current.setValueValidated(result.getDate(colName)); }
 				}else {
 					success = false;
 					new CFWLog(CFWHttp.logger)
