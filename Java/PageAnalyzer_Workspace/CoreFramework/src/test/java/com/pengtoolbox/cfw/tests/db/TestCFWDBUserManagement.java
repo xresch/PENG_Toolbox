@@ -222,14 +222,17 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 			.isRenamable(true)
 			.isForeign(false);
 		
-		CFW.DB.Users.update(user);
+		Assertions.assertTrue(CFW.DB.Users.update(user),"The update with rename is successful.");
 		
 		//--------------------------------------
 		// SELECT UPDATED USER
 		User updatedUser = CFW.DB.Users.selectByUsernameOrMail(usernameUpdated);
 		
-//		System.out.println("===== UPDATED USER =====");
-//		System.out.println(updatedUser.getFieldsAsKeyValueString());
+		System.out.println("===== USER =====");
+		System.out.println(user.getFieldsAsKeyValueString());
+		
+		System.out.println("===== UPDATED USER =====");
+		System.out.println(updatedUser.getFieldsAsKeyValueString());
 		
 		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(updatedUser), "User exists, checkUsernameExists(user) works.");
 		Assertions.assertTrue(updatedUser != null);

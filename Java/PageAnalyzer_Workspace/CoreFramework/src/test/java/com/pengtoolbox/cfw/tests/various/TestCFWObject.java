@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Assertions;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup.GroupDBFields;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
 import com.pengtoolbox.cfw.tests._master.DBTestMaster;
 
 public class TestCFWObject extends DBTestMaster{
@@ -35,13 +35,13 @@ public class TestCFWObject extends DBTestMaster{
 
 		String selectByName = 
 				"SELECT "
-				  + GroupDBFields.PK_ID +", "
-				  + GroupDBFields.NAME +", "
-				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +" "
+				  + Group.GroupFields.PK_ID +", "
+				  + Group.GroupFields.NAME +", "
+				  + Group.GroupFields.DESCRIPTION +", "
+				  + Group.GroupFields.IS_DELETABLE +" "
 				+" FROM "+CFWDBGroup.TABLE_NAME
 				+" WHERE "
-				+ GroupDBFields.NAME + " = ?";
+				+ Group.GroupFields.NAME + " = ?";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectByName, "TestgroupA");
 		

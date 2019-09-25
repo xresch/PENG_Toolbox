@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.response.bootstrap;
+package com.pengtoolbox.cfw.datahandling;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWHttp;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.BTForm;
+import com.pengtoolbox.cfw.response.bootstrap.HierarchicalHTMLItem;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.TextUtils;
 import com.pengtoolbox.cfw.validation.BooleanValidator;
@@ -31,7 +33,7 @@ import com.pengtoolbox.cfw.validation.IntegerValidator;
  **********************************************************************************/
 public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T> {
 	
-	private Class<T> fieldClass;
+	private Class<T> valueClass;
 	private FormFieldType type;
 	private String formLabel = "&nbsp;";
 	private boolean isDisabled = false;
@@ -52,7 +54,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	// CONSTRUCTORS
 	//###################################################################################
 	private CFWField(Class clazz, FormFieldType type, String fieldID) {
-		this.fieldClass = clazz;
+		this.valueClass = clazz;
 		this.type = type;
 		this.name = fieldID;
 		this.formLabel = TextUtils.fieldNameToLabel(fieldID);
@@ -311,14 +313,14 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		if(value == null) {
 			return this.changeValue(value);
 		}
-		if(value.getClass() == this.fieldClass) {
+		if(value.getClass() == this.valueClass) {
 			this.changeValue(value);
 			return true;
 		}
 		
 		if(value.getClass() == String.class) {
-			if     (fieldClass == Integer.class) 	 { this.changeValue(Integer.parseInt((String)value)); return true;}
-			else if(fieldClass == Boolean.class) 	 { this.changeValue(Boolean.parseBoolean(((String)value).trim())); return true;}
+			if     (valueClass == Integer.class) 	 { this.changeValue(Integer.parseInt((String)value)); return true;}
+			else if(valueClass == Boolean.class) 	 { this.changeValue(Boolean.parseBoolean(((String)value).trim())); return true;}
 			else {return false;}
 		}
 		
@@ -351,8 +353,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return (T)value;
 	}
 	
-	private Class<T> getFieldClass() {
-		return fieldClass;
+	protected Class<T> getValueClass() {
+		return valueClass;
 	}
 
 	public CFWFieldChangeHandler getChangeHandler() {
@@ -423,9 +425,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				if(fields.containsKey(colName)) {
 					CFWField current = fields.get(colName);
 					
-					if      (current.getFieldClass() == String.class)  { current.setValueValidated(result.getString(colName)); }
-					else if(current.getFieldClass() == Integer.class)  { current.setValueValidated(result.getInt(colName)); }
-					else if(current.getFieldClass() == Boolean.class)  { current.setValueValidated(result.getBoolean(colName)); }
+					if      (current.getValueClass() == String.class)  { current.setValueValidated(result.getString(colName)); }
+					else if(current.getValueClass() == Integer.class)  { current.setValueValidated(result.getInt(colName)); }
+					else if(current.getValueClass() == Boolean.class)  { current.setValueValidated(result.getBoolean(colName)); }
 				}else {
 					success = false;
 					new CFWLog(CFWHttp.logger)

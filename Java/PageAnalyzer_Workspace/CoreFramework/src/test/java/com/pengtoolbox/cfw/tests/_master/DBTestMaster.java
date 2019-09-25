@@ -20,12 +20,12 @@ public class DBTestMaster {
 		
 		CFW.initialize("./config/cfw.properties");
 		CFWDB.initialize();
+		
+		CFWDB.beginTransaction();
 	}
-	
-
 	
 	@AfterClass
 	public static void stopDefaultApplication() throws Exception {
-
+		CFWDB.rollbackTransaction();
 	}
 }

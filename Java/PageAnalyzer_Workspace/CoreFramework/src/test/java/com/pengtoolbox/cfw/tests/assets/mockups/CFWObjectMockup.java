@@ -1,8 +1,8 @@
 package com.pengtoolbox.cfw.tests.assets.mockups;
 
-import com.pengtoolbox.cfw._main.CFWObject;
-import com.pengtoolbox.cfw.response.bootstrap.CFWField;
-import com.pengtoolbox.cfw.response.bootstrap.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.datahandling.CFWField;
+import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
 public class CFWObjectMockup extends CFWObject{

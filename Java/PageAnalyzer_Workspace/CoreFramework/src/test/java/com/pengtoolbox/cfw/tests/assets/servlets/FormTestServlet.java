@@ -8,15 +8,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.cfw._main.CFWObject;
+import com.pengtoolbox.cfw.datahandling.CFWField;
+import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
-import com.pengtoolbox.cfw.response.bootstrap.CFWField;
-import com.pengtoolbox.cfw.response.bootstrap.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.tests.assets.mockups.CFWObjectMockup;
 
 public class FormTestServlet extends HttpServlet

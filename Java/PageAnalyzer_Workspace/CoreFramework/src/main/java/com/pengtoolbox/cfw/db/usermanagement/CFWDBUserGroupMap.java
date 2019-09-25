@@ -7,9 +7,9 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup.GroupDBFields;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroupPermissionMap.GroupPermissionMapDBFields;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserDBFields;
+import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBUserGroupMap {
@@ -37,7 +37,7 @@ public class CFWDBUserGroupMap {
 							  + UserGroupMapDBFields.FK_ID_USER + " INT, "
 							  + UserGroupMapDBFields.FK_ID_GROUP + " INT, "
 							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_USER+") REFERENCES "+CFWDBUser.TABLE_NAME+"("+UserDBFields.PK_ID+") ON DELETE CASCADE, "
-							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_GROUP+") REFERENCES "+CFWDBGroup.TABLE_NAME+"("+GroupDBFields.PK_ID+") ON DELETE CASCADE"
+							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_GROUP+") REFERENCES "+CFWDBGroup.TABLE_NAME+"("+Group.GroupFields.PK_ID+") ON DELETE CASCADE"
 							  + ");";
 		
 		CFWDB.preparedExecute(createTableSQL);

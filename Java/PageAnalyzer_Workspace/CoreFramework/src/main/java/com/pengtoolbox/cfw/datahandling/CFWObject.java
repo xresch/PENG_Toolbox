@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw._main;
+package com.pengtoolbox.cfw.datahandling;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,11 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup.GroupDBFields;
+import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.response.bootstrap.BTForm;
-import com.pengtoolbox.cfw.response.bootstrap.CFWField;
 
 public class CFWObject {
 	
@@ -137,114 +136,63 @@ public class CFWObject {
 	// DATABASE
 	//##############################################################################
 	
-	/***************************************************************
-	 * Select a an object by the specified field and it's current value.
-	 * @param String name of the field
-	 * @return Returns a CFWObject or null if not found or in case of exception.
+	/****************************************************************
+	 * Begins a SELECT * statement.
+	 * @return CFWQuery for method chaining
 	 ****************************************************************/
-	public CFWObject selectFirstBy(String fieldName) {
-		
-		if(!fields.containsKey(fieldName)) {
-			new CFWLog(logger)
-			.method("selectFirstBy")
-			.severe("Unknown field: "+fieldName);
-			return null;
-		}
-		String selectByName = 
-				"SELECT * "
-				+" FROM "+tableName
-				+" WHERE "
-				+ fieldName + " = ?";
-		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectByName, fields.get(fieldName).getValue());
-		
-		if(result == null) {
-			return null;
-		}
-		
-		try {
-			if(result.next()) {
-				CFWObject object = this.getClass().newInstance();
-				object.mapResultSet(result);
-				return object;
-			}
-		} catch (SQLException | InstantiationException | IllegalAccessException e) {
-			new CFWLog(logger)
-			.method("selectFirstBy")
-			.severe("Error reading object from database.", e);
-			
-		}finally {
-			CFWDB.close(result);
-		}
-		
-		return null;
-		
+	public CFWStatement select() {
+		return new CFWStatement(this).select();
 	}
 	
-	/********************************************************************************************
-	 * Creates a new entry in the DB with the values of the fields associated with this object. 
-	 * Ignores the primaryField.
-	 * 
-	 ********************************************************************************************/
-	public boolean create() {
-		
-		StringBuilder columnNames = new StringBuilder("(");
-		StringBuilder placeholders = new StringBuilder("(");
-		ArrayList<Object> values = new ArrayList<Object>();
-		
-		for(CFWField field : fields.values()) {
-			if(field != primaryField) {
-				columnNames.append(field.getName()).append(",");
-				placeholders.append("?,");
-				values.add(field.getValue());
-			}
-		}
-		
-		//Replace last comma with closing brace
-		columnNames.deleteCharAt(columnNames.length()-1).append(")");
-		placeholders.deleteCharAt(placeholders.length()-1).append(")");
-		
-		String createSQL = "INSERT INTO "+this.getTableName()+" "+columnNames
-				  + " VALUES "+placeholders+";";
-		
-		return CFWDB.preparedExecute(createSQL, 
-				values.toArray()
-				);
+	/****************************************************************
+	 * Begins a SELECT statement including the specified fields.
+	 * @param field names
+	 * @return CFWQuery for method chaining
+	 ****************************************************************/
+	public CFWStatement select(String ...fieldnames) {
+		return new CFWStatement(this).select(fieldnames);
 	}
 	
-	/***************************************************************
-	 * Updates the object selected by the primaryField.
-	 * @return true or false
+	/****************************************************************
+	 * Creates an insert statement including all fields and executes
+	 * the statement with the values assigned to the fields of the
+	 * object.
+	 * @return CFWQuery for method chaining
+	 ****************************************************************/
+	public boolean insert() {
+		return new CFWStatement(this).insert();
+	}
+	
+	/****************************************************************
+	 * Creates an insert statement including the specified fields
+	 * and executes it with the values assigned to the fields of the
+	 * object.
+	 * @param fieldnames
+	 * @return CFWQuery for method chaining
+	 ****************************************************************/
+	public boolean insert(String ...fieldnames) {
+		return new CFWStatement(this).insert(fieldnames);
+	}
+	
+	/****************************************************************
+	 * Creates an update statement including all fields and executes
+	 * the statement with the values assigned to the fields of the
+	 * object.
+	 * @return CFWQuery for method chaining
 	 ****************************************************************/
 	public boolean update() {
-		
-		StringBuilder columnNames = new StringBuilder();
-		StringBuilder placeholders = new StringBuilder();
-		ArrayList<Object> values = new ArrayList<Object>();
-		
-		for(CFWField field : fields.values()) {
-			if(!field.equals(primaryField)) {
-				columnNames.append(field.getName()).append(",");
-				placeholders.append("?,");
-				values.add(field.getValue());
-			}
-		}
-		
-		//Replace last comma with closing brace
-		columnNames.deleteCharAt(columnNames.length()-1);
-		placeholders.deleteCharAt(placeholders.length()-1);
-		
-		String createSQL = "UPDATE "+this.getTableName()+" SET ("+columnNames
-				  + ") = ("+placeholders+")"
-				  +" WHERE "
-					+ primaryField.getName()+" = ?";
-
-		values.add(primaryField.getValue());
-		return CFWDB.preparedExecute(createSQL, 
-				values.toArray()
-				);
-		
+		return new CFWStatement(this).update();
 	}
 	
+	/****************************************************************
+	 * Creates an update statement including the specified fields
+	 * and executes it with the values assigned to the fields of the
+	 * object.
+	 * @param fieldnames
+	 * @return CFWQuery for method chaining
+	 ****************************************************************/
+	public boolean update(String ...fieldnames) {
+		return new CFWStatement(this).update(fieldnames);
+	}
 
 }

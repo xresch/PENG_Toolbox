@@ -4,22 +4,29 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-import com.pengtoolbox.cfw._main.CFWObject;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup.GroupDBFields;
+import com.pengtoolbox.cfw.datahandling.CFWField;
+import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
+import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.bootstrap.CFWField;
-import com.pengtoolbox.cfw.response.bootstrap.CFWField.FormFieldType;
-import com.pengtoolbox.cfw.response.bootstrap.CFWFieldChangeHandler;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
 public class Group extends CFWObject {
 	
+	public enum GroupFields{
+		PK_ID,
+		NAME,
+		DESCRIPTION,
+		IS_DELETABLE,
+		IS_RENAMABLE,
+	}
+
 	private static Logger logger = CFWLog.getLogger(Group.class.getName());
 	
-	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, GroupDBFields.PK_ID.toString())
+	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, GroupFields.PK_ID.toString())
 									.setValue(-999);
 	
-	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, GroupDBFields.NAME.toString())
+	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, GroupFields.NAME.toString())
 									.addValidator(new LengthValidator(1, 255))
 									.setChangeHandler(new CFWFieldChangeHandler<String>() {
 										public boolean handle(String oldValue, String newValue) {
@@ -33,13 +40,13 @@ public class Group extends CFWObject {
 										}
 									});
 	
-	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, GroupDBFields.DESCRIPTION.toString())
+	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, GroupFields.DESCRIPTION.toString())
 											.addValidator(new LengthValidator(-1, 2000000000));
 	
-	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, GroupDBFields.IS_DELETABLE.toString())
+	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, GroupFields.IS_DELETABLE.toString())
 											.setValue(true);
 	
-	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, GroupDBFields.IS_RENAMABLE.toString())
+	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, GroupFields.IS_RENAMABLE.toString())
 			.setValue(true)
 			.setChangeHandler(new CFWFieldChangeHandler<Boolean>() {
 							

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission.PermissionDBFields;
+import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBGroup {
@@ -20,14 +21,6 @@ public class CFWDBGroup {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBGroup.class.getName());
 	
-	public enum GroupDBFields{
-		PK_ID, 
-		NAME,
-		DESCRIPTION,
-		IS_DELETABLE,
-		IS_RENAMABLE,
-	}
-
 	/********************************************************************************************
 	 * Creates the table and default admin user if not already exists.
 	 * This method is executed by CFW.DB.initialize().
@@ -36,10 +29,10 @@ public class CFWDBGroup {
 	public static void initializeTable() {
 			
 		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+"("
-							  + GroupDBFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
-							  + GroupDBFields.NAME + " VARCHAR(255) UNIQUE,"
-							  + GroupDBFields.DESCRIPTION + " CLOB,"
-							  + GroupDBFields.IS_DELETABLE + " BOOLEAN"
+							  + GroupFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
+							  + GroupFields.NAME + " VARCHAR(255) UNIQUE,"
+							  + GroupFields.DESCRIPTION + " CLOB,"
+							  + GroupFields.IS_DELETABLE + " BOOLEAN"
 							  + ");";
 		
 		CFWDB.preparedExecute(createTableSQL);
@@ -47,7 +40,7 @@ public class CFWDBGroup {
 		//--------------------------------------
 		// Add Column IS_RENAMABLE
 		String addColumnIsRenamable = "ALTER TABLE "+TABLE_NAME
-									 +" ADD COLUMN IF NOT EXISTS "+GroupDBFields.IS_RENAMABLE+" BOOLEAN DEFAULT TRUE;";
+									 +" ADD COLUMN IF NOT EXISTS "+GroupFields.IS_RENAMABLE+" BOOLEAN DEFAULT TRUE;";
 		
 		CFWDB.preparedExecute(addColumnIsRenamable);
 				
@@ -95,7 +88,7 @@ public class CFWDBGroup {
 			return false;
 		}
 		
-		return group.create();
+		return group.insert();
 	}
 	
 	/***************************************************************
@@ -105,8 +98,10 @@ public class CFWDBGroup {
 	 ****************************************************************/
 	public static Group selectByName(String name ) {
 		
-		Group group = new Group(name);
-		return (Group)group.selectFirstBy(GroupDBFields.NAME.toString());
+		return (Group)new Group()
+				.select()
+				.where(GroupFields.NAME.toString(), name)
+				.getFirstObject();
 
 	}
 	
@@ -117,8 +112,10 @@ public class CFWDBGroup {
 	 ****************************************************************/
 	public static Group selectByID(int id ) {
 
-		Group group = new Group("").id(id);
-		return (Group)group.selectFirstBy(GroupDBFields.PK_ID.toString());
+		return (Group)new Group()
+				.select()
+				.where(GroupFields.PK_ID.toString(), id)
+				.getFirstObject();
 		
 	}
 	
@@ -129,22 +126,10 @@ public class CFWDBGroup {
 	 ****************************************************************/
 	public static String getGroupAsJSON(String id) {
 		
-		String selectByName = 
-				"SELECT "
-				  + GroupDBFields.PK_ID +", "
-				  + GroupDBFields.NAME +", "
-				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +", "
-				  + GroupDBFields.IS_RENAMABLE +" "
-				+" FROM "+TABLE_NAME
-				+" WHERE "
-				+ GroupDBFields.PK_ID + " = ?";
-		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectByName, id);
-		
-		String json = CFWDB.resultSetToJSON(result);
-		CFWDB.close(result);	
-		return json;
+		return new Group()
+				.select()
+				.where(GroupFields.PK_ID.toString(), Integer.parseInt(id))
+				.getAsJSON();
 		
 	}
 	
@@ -155,17 +140,10 @@ public class CFWDBGroup {
 	 ****************************************************************/
 	public static ResultSet getGroupList() {
 		
-		String selectByName = 
-				"SELECT "
-				  + GroupDBFields.PK_ID +", "
-				  + GroupDBFields.NAME +", "
-				  + GroupDBFields.DESCRIPTION +", "
-				  + GroupDBFields.IS_DELETABLE +", "
-				  + GroupDBFields.IS_RENAMABLE +" "
-				+" FROM "+TABLE_NAME
-				+" ORDER BY LOWER("+GroupDBFields.NAME+")";
-		
-		return CFWDB.preparedExecuteQuery(selectByName);
+		return new Group()
+				.select()
+				.orderby(GroupFields.NAME.toString())
+				.getResultSet();
 		
 	}
 	
@@ -175,8 +153,10 @@ public class CFWDBGroup {
 	 * @return Returns a result set with all users or null.
 	 ****************************************************************/
 	public static String getGroupListAsJSON() {
-		ResultSet result = CFW.DB.Groups.getGroupList();
-		return CFWDB.resultSetToJSON(result);
+		return new Group("")
+				.select()
+				.orderby(GroupFields.NAME.toString())
+				.getAsJSON();
 	}
 	
 	/***************************************************************
@@ -231,7 +211,7 @@ public class CFWDBGroup {
 		String deleteByID = 
 				"DELETE FROM "+TABLE_NAME
 				+" WHERE "
-					+ GroupDBFields.PK_ID+" = ? "
+					+ GroupFields.PK_ID+" = ? "
 					+ "AND "
 					+ PermissionDBFields.IS_DELETABLE+" = TRUE ";
 		
@@ -258,9 +238,9 @@ public class CFWDBGroup {
 		String deleteByID = 
 				"DELETE FROM "+TABLE_NAME
 				+" WHERE "
-					+ GroupDBFields.PK_ID+" IN(?) "
+					+ GroupFields.PK_ID+" IN(?) "
 					+ "AND "
-					+ GroupDBFields.IS_DELETABLE+" = TRUE ";
+					+ GroupFields.IS_DELETABLE+" = TRUE ";
 		
 		return CFWDB.preparedExecute(deleteByID, resultIDs);
 			
@@ -284,7 +264,7 @@ public class CFWDBGroup {
 		String deleteByID = 
 				"DELETE FROM "+TABLE_NAME
 				+" WHERE "
-					+ GroupDBFields.NAME+" = ? "
+					+ GroupFields.NAME+" = ? "
 					+ "AND "
 					+ PermissionDBFields.IS_DELETABLE+" = TRUE ";
 		
@@ -313,7 +293,7 @@ public class CFWDBGroup {
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkGroupExists(String groupName) {
-		String checkExistsSQL = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE "+GroupDBFields.NAME+" = ?";
+		String checkExistsSQL = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE "+GroupFields.NAME+" = ?";
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkExistsSQL, groupName);
 		
 		try {

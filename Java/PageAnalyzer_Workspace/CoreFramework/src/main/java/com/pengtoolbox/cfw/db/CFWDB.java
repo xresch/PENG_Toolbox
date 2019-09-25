@@ -372,6 +372,8 @@ public class CFWDB {
 			Connection con = CFWDB.getConnection();
 			con.setAutoCommit(false);
 			transactionConnection.set(con);
+			new CFWLog(logger).method("beginTransaction").finer("DB transaction started.");
+			
 		} catch (SQLException e) {
 			new CFWLog(logger)
 				.method("beginTransaction")
@@ -400,7 +402,7 @@ public class CFWDB {
 		try {
 			con = transactionConnection.get();
 			con.commit();
-
+			new CFWLog(logger).method("commitTransaction").finer("DB transaction committed.");
 		} catch (SQLException e) {
 			new CFWLog(logger)
 				.method("commitTransaction")
@@ -442,7 +444,7 @@ public class CFWDB {
 		try {
 			con = transactionConnection.get();
 			con.rollback();
-
+			new CFWLog(logger).method("rollbackTransaction").finer("DB transaction rolled back.");
 		} catch (SQLException e) {
 			new CFWLog(logger)
 				.method("rollbackTransaction")
