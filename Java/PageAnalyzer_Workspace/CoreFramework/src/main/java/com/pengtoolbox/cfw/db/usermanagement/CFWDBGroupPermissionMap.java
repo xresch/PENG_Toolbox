@@ -358,7 +358,8 @@ public class CFWDBGroupPermissionMap {
 		String sqlString = "SELECT P.PK_ID, P.NAME, P.DESCRIPTION, M.FK_ID_GROUP AS ITEM_ID, M.IS_DELETABLE FROM "+CFWDBPermission.TABLE_NAME+" P "
 				+ " LEFT JOIN "+CFWDBGroupPermissionMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_PERMISSION = P.PK_ID"
-				+ " AND M.FK_ID_GROUP = ?";
+				+ " AND M.FK_ID_GROUP = ?"
+				+ " ORDER BY LOWER(P.NAME)";;
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(sqlString, 
 				groupID);

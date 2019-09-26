@@ -309,7 +309,8 @@ public class CFWDBUserGroupMap {
 		String selectGroupsForUser = "SELECT G.PK_ID, G.NAME, G.DESCRIPTION, M.FK_ID_USER AS ITEM_ID, M.IS_DELETABLE FROM "+CFWDBGroup.TABLE_NAME+" G "
 				+ " LEFT JOIN "+CFWDBUserGroupMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_GROUP = G.PK_ID "
-				+ " AND M.FK_ID_USER = ?";
+				+ " AND M.FK_ID_USER = ?"
+				+ " ORDER BY LOWER(G.NAME)";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectGroupsForUser, 
 				userID);

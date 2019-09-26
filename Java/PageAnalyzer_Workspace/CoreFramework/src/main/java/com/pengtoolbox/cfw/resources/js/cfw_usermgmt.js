@@ -25,7 +25,7 @@ function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 				htmlString += '';
 				var cfwTable = CFW.ui.createTable();
 				
-				cfwTable.addHeaders(['Name','Description','&nbsp;']);
+				cfwTable.addHeaders(['&nbsp;','Name','Description']);
 				var resultCount = data.payload.length;
 				if(resultCount == 0){
 					CFW.ui.addAlert("info", "Hmm... seems there aren't any groups in the list.");
@@ -34,8 +34,6 @@ function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 				for(var i = 0; i < resultCount; i++){
 					var current = data.payload[i];
 					var row = $('<tr>');
-					row.append('<td>'+current.NAME+'</td>'
-							  +'<td>'+current.DESCRIPTION+'</td>');
 					
 					//Toggle Button
 					var params = {action: "update", item: mapName, itemid: itemID, listitemid: current.PK_ID};
@@ -47,6 +45,10 @@ function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 					var buttonCell = $("<td>");
 					cfwToggleButton.appendTo(buttonCell);
 					row.append(buttonCell);
+					
+					row.append('<td>'+current.NAME+'</td>'
+							  +'<td>'+current.DESCRIPTION+'</td>');
+					
 					cfwTable.addRow(row);
 				}
 				
