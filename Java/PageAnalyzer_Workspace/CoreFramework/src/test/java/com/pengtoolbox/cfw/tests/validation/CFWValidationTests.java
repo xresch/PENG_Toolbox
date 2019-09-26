@@ -5,15 +5,15 @@ import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw.validation.AbstractValidatable;
 import com.pengtoolbox.cfw.validation.BooleanValidator;
+import com.pengtoolbox.cfw.validation.EmailValidator;
 import com.pengtoolbox.cfw.validation.IValidatable;
 import com.pengtoolbox.cfw.validation.IntegerValidator;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 import com.pengtoolbox.cfw.validation.PasswordValidator;
 
+@SuppressWarnings({ "rawtypes", "unused", "unchecked" })
 public class CFWValidationTests {
 
-
-	
 	@Test
 	public void testBooleanValidator() {
 		
@@ -99,6 +99,44 @@ public class CFWValidationTests {
 		Assertions.assertFalse(validateThis.setValueValidated("Aaaaaaaa"), "Password is invalid when missing non-letter character.");
 		Assertions.assertFalse(validateThis.setValueValidated("A1234567"), "Password is invalid when missing small letter character.");
 		Assertions.assertFalse(validateThis.setValueValidated("a1234567"), "Password is invalid when missing capital letter character.");
+	}
+	
+
+	@Test
+	public void testEmailValidator() {
+		
+		IValidatable validateThis = new AbstractValidatable() {};
+		EmailValidator pv = new EmailValidator(validateThis);
+		
+		Assertions.assertTrue( validateThis.setValueValidated("testika@testonia.com"), "Is a valid email address");
+		Assertions.assertTrue( validateThis.setValueValidated("a@a.c"), "Is a valid email address");
+		Assertions.assertTrue( validateThis.setValueValidated("a.b.c@c.d.com"), "Is a valid email address");
+		Assertions.assertTrue( validateThis.setValueValidated("dash-dash@test-dash.com"), "Is a valid email address");
+		Assertions.assertTrue( validateThis.setValueValidated("____underscore___@test.com"), "Is a valid email address");
+		Assertions.assertTrue( validateThis.setValueValidated("email@123.123.123.123"), "Is a valid email address");
+		Assertions.assertTrue( validateThis.setValueValidated("email@[123.123.123.123]"), "Is a valid email address");
+		Assertions.assertTrue( validateThis.setValueValidated("\"email\"@domain.com"), "Is a valid email address");
+		Assertions.assertTrue( validateThis.setValueValidated("1234567890@domain.com"), "Is a valid email address");
+		//Assertions.assertTrue( validateThis.setValueValidated("UPPERCASE@TEST.COM"), "Is a valid email address");
+		
+		Assertions.assertFalse(validateThis.setValueValidated("plaintext"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("#@%^%#$@#$@#.com"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("@domain.com"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("Joe Smith <email@domain.com>"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("email.domain.com"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("email@domain@domain.com"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated(".email@domain.com"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("email.@domain.com"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("email..email@domain.com"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("あいうえお@domain.com"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("email@domain.com (Joe Smith)"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("email@domain"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("email@-domain.com"), "Is an invalid email address");
+		//Assertions.assertFalse(validateThis.setValueValidated("email@111.222.333.44444"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("email@domain"), "Is an invalid email address");
+		Assertions.assertFalse(validateThis.setValueValidated("email@domain..com"), "Is an invalid email address");
+		
+		
 	}
 	
 	

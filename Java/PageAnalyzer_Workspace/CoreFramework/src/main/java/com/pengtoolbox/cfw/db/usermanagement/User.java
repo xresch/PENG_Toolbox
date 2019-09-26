@@ -9,11 +9,12 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWField;
+import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserDBFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.validation.EmailValidator;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
 public class User extends CFWObject {
@@ -40,7 +41,8 @@ public class User extends CFWObject {
 			});
 	
 	private CFWField<String> email = CFWField.newString(FormFieldType.TEXT, UserDBFields.EMAIL.toString())
-			.addValidator(new LengthValidator(-1, 255));
+			.addValidator(new LengthValidator(-1, 255))
+			.addValidator(new EmailValidator());
 
 	private CFWField<String> firstname = CFWField.newString(FormFieldType.TEXT, UserDBFields.FIRSTNAME.toString())
 			.addValidator(new LengthValidator(-1, 255));
