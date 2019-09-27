@@ -139,6 +139,16 @@ public class CFWObject {
 	}
 	
 	/****************************************************************
+	 * Caches the query with the specified name for lower performance
+	 * impact.
+	 * @param Class of the class using the query.
+	 * @param name of the query
+	 ****************************************************************/
+	public CFWStatement queryCache(Class<?> clazz, String name) {
+		return new CFWStatement(this).queryCache(clazz, name);
+	}
+	
+	/****************************************************************
 	 * Begins a SELECT * statement.
 	 * @return CFWQuery for method chaining
 	 ****************************************************************/
@@ -195,6 +205,14 @@ public class CFWObject {
 	 ****************************************************************/
 	public boolean update(String ...fieldnames) {
 		return new CFWStatement(this).update(fieldnames);
+	}
+	
+	/****************************************************************
+	 * Begins a DELETE statement.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement delete() {
+		return new CFWStatement(this).delete();
 	}
 
 }

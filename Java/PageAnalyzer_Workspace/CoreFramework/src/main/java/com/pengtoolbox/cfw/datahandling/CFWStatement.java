@@ -3,16 +3,18 @@ package com.pengtoolbox.cfw.datahandling;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWStatement {
 	
 	private static Logger logger = CFWLog.getLogger(CFWStatement.class.getName());
+	private static HashMap<String, String> queryCache = new HashMap<String, String>();
+	private String queryName = null;
 	
 	private CFWObject object;
 	private LinkedHashMap<String, CFWField> fields;
@@ -22,15 +24,49 @@ public class CFWStatement {
 	
 	private ResultSet result = null;
 	
-	
 	public CFWStatement(CFWObject object) {
 		this.object = object;
 		this.fields = object.getFields();
 	} 
 	
 	/****************************************************************
+	 * Reset this object and make it ready for another execution.
+	 ****************************************************************/
+	public CFWStatement reset() {
+		query = new StringBuilder();
+		values = new ArrayList<Object>();
+		queryName = null;
+		return this;
+	}
+	
+	/****************************************************************
+	 * Caches the query with the specified name for lower performance
+	 * impact.
+	 * @param Class of the class using the query.
+	 * @param name of the query
+	 ****************************************************************/
+	public CFWStatement queryCache(Class<?> clazz, String name) {
+		this.queryName = clazz.getName()+"."+name;
+		return this;
+	}
+	
+	/****************************************************************
+	 * Check if the fieldname is valid.
+	 * @return true if valid, false otherwise
+	 ****************************************************************/
+	private boolean isQueryCached() {
+		
+		if(queryName != null && queryCache.containsKey(queryName)) {
+			return true;
+		}
+		
+		return false;
+	}
+		
+	
+	/****************************************************************
 	 * 
-	 * @return CFWQuery for method chaining
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public boolean createTable() {
 		
@@ -54,47 +90,32 @@ public class CFWStatement {
 		return success;
 		
 	}
-	
-	/****************************************************************
-	 * Check if the fieldname is valid.
-	 * @return true if valid, false otherwise
-	 ****************************************************************/
-	private boolean isFieldnameValid(String fieldname) {
 		
-		if(!fields.containsKey(fieldname)) {
-			new CFWLog(logger)
-			.method("selectBy")
-			.severe("Field is not available: "+fieldname);
-			return false;
-		}
-		
-		return true;
-	}
-	
 	/****************************************************************
 	 * Begins a SELECT * statement.
-	 * @return CFWQuery for method chaining
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public CFWStatement select() {
-		query.append("SELECT * FROM "+object.getTableName());
+		if(!isQueryCached()) {
+			query.append("SELECT * FROM "+object.getTableName());
+		}
 		return this;
 	}
 	
 	/****************************************************************
 	 * Begins a SELECT statement including the specified fields.
 	 * @param field names
-	 * @return CFWQuery for method chaining
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public CFWStatement select(String ...fieldnames) {
-		
-		query.append("SELECT");
-		for(String fieldname : fieldnames) {
-			if(isFieldnameValid(fieldname)) {
-				query.append(" ").append(fieldname).append(",");
+		if(!isQueryCached()) {
+			query.append("SELECT");
+			for(String fieldname : fieldnames) {
+					query.append(" ").append(fieldname).append(",");
 			}
+			query.deleteCharAt(query.length()-1);
+			query.append(" FROM "+object.getTableName());
 		}
-		query.deleteCharAt(query.length()-1);
-		query.append(" FROM "+object.getTableName());
 		return this;
 	}
 	
@@ -102,9 +123,10 @@ public class CFWStatement {
 	 * Creates an insert statement including all fields and executes
 	 * the statement with the values assigned to the fields of the
 	 * object.
-	 * @return CFWQuery for method chaining
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public boolean insert() {
+
 		return insert(fields.keySet().toArray(new String[] {}));
 	}
 	
@@ -113,28 +135,31 @@ public class CFWStatement {
 	 * and executes it with the values assigned to the fields of the
 	 * object.
 	 * @param fieldnames
-	 * @return CFWQuery for method chaining
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public boolean insert(String ...fieldnames) {
 		
-		StringBuilder columnNames = new StringBuilder("(");
-		StringBuilder placeholders = new StringBuilder("(");
-		
-		for(CFWField field : fields.values()) {
-			if(field != object.getPrimaryField()) {
-				columnNames.append(field.getName()).append(",");
-				placeholders.append("?,");
-				values.add(field.getValue());
+			StringBuilder columnNames = new StringBuilder("(");
+			StringBuilder placeholders = new StringBuilder("(");
+			
+			for(CFWField field : fields.values()) {
+				if(field != object.getPrimaryField()) {
+					if(!isQueryCached()) {
+						columnNames.append(field.getName()).append(",");
+						placeholders.append("?,");
+					}
+					values.add(field.getValue());
+				}
 			}
-		}
-		
-		//Replace last comma with closing brace
-		columnNames.deleteCharAt(columnNames.length()-1).append(")");
-		placeholders.deleteCharAt(placeholders.length()-1).append(")");
-		
-		query.append("INSERT INTO "+object.getTableName()+" "+columnNames
-				  + " VALUES "+placeholders+";");
-		
+			
+			//Replace last comma with closing brace
+			columnNames.deleteCharAt(columnNames.length()-1).append(")");
+			placeholders.deleteCharAt(placeholders.length()-1).append(")");
+			if(!isQueryCached()) {	
+				query.append("INSERT INTO "+object.getTableName()+" "+columnNames
+					  + " VALUES "+placeholders+";");
+			}
+
 		return this.execute();
 	}
 	
@@ -142,7 +167,7 @@ public class CFWStatement {
 	 * Creates an update statement including all fields and executes
 	 * the statement with the values assigned to the fields of the
 	 * object.
-	 * @return CFWQuery for method chaining
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public boolean update() {
 		return update(fields.keySet().toArray(new String[] {}));
@@ -153,7 +178,7 @@ public class CFWStatement {
 	 * and executes it with the values assigned to the fields of the
 	 * object.
 	 * @param fieldnames
-	 * @return CFWQuery for method chaining
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public boolean update(String ...fieldnames) {
 		
@@ -162,72 +187,131 @@ public class CFWStatement {
 		
 		for(CFWField field : fields.values()) {
 			if(!field.equals(object.getPrimaryField())) {
-				columnNames.append(field.getName()).append(",");
-				placeholders.append("?,");
+				if(!isQueryCached()) {
+					columnNames.append(field.getName()).append(",");
+					placeholders.append("?,");
+				}
 				values.add(field.getValue());
 			}
 		}
 		
-		//Replace last comma with closing brace
-		columnNames.deleteCharAt(columnNames.length()-1);
-		placeholders.deleteCharAt(placeholders.length()-1);
+		if(!isQueryCached()) {
+			//Replace last comma with closing brace
+			columnNames.deleteCharAt(columnNames.length()-1);
+			placeholders.deleteCharAt(placeholders.length()-1);
+		}
 		
 		values.add(object.getPrimaryField().getValue());
-		query.append("UPDATE "+object.getTableName()+" SET ("+columnNames
-				  + ") = ("+placeholders+")"
-				  +" WHERE "
-					+ object.getPrimaryField().getName()+" = ?");
 		
+		if(!isQueryCached()) {
+			query.append("UPDATE "+object.getTableName()+" SET ("+columnNames
+					  + ") = ("+placeholders+")"
+					  +" WHERE "
+					  + object.getPrimaryField().getName()+" = ?");
+		}
 		return this.execute();
 	}
 	
 	/****************************************************************
+	 * Begins a DELETE statement.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement delete() {
+		if(!isQueryCached()) {		
+			query.append("DELETE FROM "+object.getTableName());
+		}
+		return this;
+	}
+	
+	/****************************************************************
 	 * Adds a WHERE clause to the query.
-	 * @return CFWQuery for method chaining
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public CFWStatement where(String fieldname, Object value) {
+		if(!isQueryCached()) {
+			query.append(" WHERE "+fieldname).append(" = ?");	
+		}
+		values.add(value);
+		return this;
+	}
+	
+	/****************************************************************
+	 * Adds a WHERE <fieldname> IN(?) clause to the query.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement whereIn(String fieldname, Object value) {
+		if(!isQueryCached()) {
+			query.append(" WHERE "+fieldname).append(" IN(?)");
+		}
+		values.add(value);
+		return this;
+	}
+
+	/****************************************************************
+	 * Adds a WHERE <fieldname> IN(?,?...) clause to the query.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement whereIn(String fieldname, Object ...values) {
+			
+		StringBuilder placeholders = new StringBuilder();
+		for(Object value : values) {
+			placeholders.append("?,");
+			this.values.add(value);
+		}
+		placeholders.deleteCharAt(placeholders.length()-1);
 		
-		if(isFieldnameValid(fieldname)) {
-			query.append(" WHERE "+fieldname).append(" = ?");
-			values.add(value);
+		if(!isQueryCached()) {
+			query.append(" WHERE "+fieldname).append(" IN(").append(placeholders).append(")");
+		}
+		
+		return this;
+	}
+	
+	/****************************************************************
+	 * Begins a SELECT COUNT(*) statement.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement selectCount() {
+		if(!isQueryCached()) {
+			query.append("SELECT COUNT(*) FROM "+object.getTableName());
 		}
 		return this;
 	}
 	
 	/****************************************************************
 	 * Adds an AND clause to the query.
-	 * @return CFWQuery for method chaining
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public CFWStatement and(String fieldname, Object value) {
 		
-		if(isFieldnameValid(fieldname)) {
+		if(!isQueryCached()) {
 			query.append(" AND "+fieldname).append(" = ?");
-			values.add(value);
 		}
+		values.add(value);
+		
 		return this;
 	}
 	
 	/****************************************************************
 	 * Adds an OR clause to the query.
-	 * @return CFWQuery for method chaining
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public CFWStatement or(String fieldname, Object value) {
-		
-		if(isFieldnameValid(fieldname)) {
+		if(!isQueryCached()) {
 			query.append(" OR "+fieldname).append(" = ?");
-			values.add(value);
 		}
+		values.add(value);
+		
 		return this;
 	}
 	
 	/****************************************************************
-	 * Adds an ORDER BY clause to the query.
-	 * @return CFWQuery for method chaining
+	 * Adds an ORDER BY clause to the query. Is case sensitive for
+	 * strings.
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public CFWStatement orderby(String fieldname) {
-		
-		if(isFieldnameValid(fieldname)) {
-			
+		if(!isQueryCached()) {
 			if(fields.get(fieldname).getValueClass() == String.class) {
 				query.append(" ORDER BY LOWER("+fieldname+")");
 			}else {
@@ -238,13 +322,12 @@ public class CFWStatement {
 	}
 	
 	/****************************************************************
-	 * 
-	 * @return CFWQuery for method chaining
+	 * Adds an ORDER BY clause to the query. Is case sensitive for
+	 * strings. Sort order is descending.
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public CFWStatement orderbyDesc(String fieldname) {
-		
-		if(isFieldnameValid(fieldname)) {
-			
+		if(!isQueryCached()) {				
 			if(fields.get(fieldname).getValueClass() == String.class) {
 				query.append(" ORDER BY LOWER("+fieldname+") DESC");
 			}else {
@@ -256,33 +339,111 @@ public class CFWStatement {
 	
 	
 	/****************************************************************
+	 * Adds a custom part to the query and values for the binding.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement custom(String queryPart, Object value) {
+		if(!isQueryCached()) {
+			query.append(queryPart);
+		}
+		values.add(value);
+		return this;
+	}
+	
+	/****************************************************************
+	 * Adds a custom part to the query.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement custom(String queryPart) {
+		if(!isQueryCached()) {
+			query.append(queryPart);
+		}
+		return this;
+	}
+	
+	
+	/****************************************************************
 	 * Executes the query and saves the results in the global 
 	 * variable.
 	 * 
-	 * @return CFWQuery for method chaining
+	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	private boolean execute() {
 		
-		if(result == null) {
-			String statement = query.toString();
-			
-			if(statement.startsWith("SELECT")) {
-				result = CFWDB.preparedExecuteQuery(statement, values.toArray());
-				if(result != null) {
-					return true;
-				}else {
-					return false;
-				}
-			}else {
-				return CFWDB.preparedExecute(statement, values.toArray());
-			}
+		//----------------------------
+		// Handle Caching
+		String statement;
+		
+		if(isQueryCached()) {
+			statement = queryCache.get(queryName);
+		}else {
+			statement = query.toString();
+			queryCache.put(queryName, statement);
 		}
 		
-		return true;
+		//----------------------------
+		// Execute Statement 
+		if(statement.startsWith("SELECT")) {
+			result = CFWDB.preparedExecuteQuery(statement, values.toArray());
+			if(result != null) {
+				return true;
+			}else {
+				return false;
+			}
+		}else {
+			return CFWDB.preparedExecute(statement, values.toArray());
+		}
+		
+	}
+	
+	/****************************************************************
+	 * Executes the query and saves the results in the global 
+	 * variable.
+	 * 
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public boolean executeDelete() {
+		
+		boolean success = this.execute();
+		CFWDB.close(result);
+		
+		return success;
+	}
+	
+	/****************************************************************
+	 * Executes the query and saves the results in the global 
+	 * variable.
+	 * 
+	 * @return int count or -1 on error
+	 ****************************************************************/
+	public int getCount() {
+		
+		try {
+			this.execute();
+			if(result != null) {	
+				if(query.toString().startsWith("SELECT COUNT(*)")) {
+					
+						if(result.next()) {
+							return result.getInt(1);
+						}
+					
+				}else {
+					  result.last();    // moves cursor to the last row
+					  return result.getRow();
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			CFWDB.close(result);
+		}
+		return -1;
 	}
 	
 	/****************************************************************
 	 * Executes the query and returns the result set.
+	 * Don't forget to close the connection using CFW.DB.close();
 	 * @return ResultSet or null 
 	 ****************************************************************/
 	public ResultSet getResultSet() {
@@ -300,23 +461,23 @@ public class CFWStatement {
 	 ****************************************************************/
 	public CFWObject getFirstObject() {
 		
-		if(this.execute()) {
-
-			try {
+		try {
+			if(this.execute()) {
 				if(result.next()) {
 					CFWObject object = this.object.getClass().newInstance();
 					object.mapResultSet(result);
 					return object;
 				}
-			} catch (SQLException | InstantiationException | IllegalAccessException e) {
-				new CFWLog(logger)
-				.method("getFirstObject")
-				.severe("Error reading object from database.", e);
-				
-			}finally {
-				CFWDB.close(result);
 			}
+		}catch (SQLException | InstantiationException | IllegalAccessException e) {
+			new CFWLog(logger)
+			.method("getFirstObject")
+			.severe("Error reading object from database.", e);
+			
+		}finally {
+			CFWDB.close(result);
 		}
+
 		
 		return null;
 	}
@@ -363,6 +524,7 @@ public class CFWStatement {
 		if(this.execute()) {
 			return CFWDB.resultSetToJSON(result);
 		}
+		CFWDB.close(result);
 		
 		return "[]";
 		

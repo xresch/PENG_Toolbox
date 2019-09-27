@@ -72,7 +72,9 @@ public class CFWDBGroup {
 			return false;
 		}
 		
-		return group.insert();
+		return group
+				.queryCache(CFWDBGroup.class, "create")
+				.insert();
 	}
 	
 	/***************************************************************
@@ -80,9 +82,10 @@ public class CFWDBGroup {
 	 * @param id of the group
 	 * @return Returns a group or null if not found or in case of exception.
 	 ****************************************************************/
-	public static Group selectByName(String name ) {
+	public static Group selectByName(String name) {
 		
 		return (Group)new Group()
+				.queryCache(CFWDBGroup.class, "selectByName")
 				.select()
 				.where(GroupFields.NAME.toString(), name)
 				.getFirstObject();
@@ -97,6 +100,7 @@ public class CFWDBGroup {
 	public static Group selectByID(int id ) {
 
 		return (Group)new Group()
+				.queryCache(CFWDBGroup.class, "selectByID")
 				.select()
 				.where(GroupFields.PK_ID.toString(), id)
 				.getFirstObject();
@@ -111,6 +115,7 @@ public class CFWDBGroup {
 	public static String getGroupAsJSON(String id) {
 		
 		return new Group()
+				.queryCache(CFWDBGroup.class, "getGroupAsJSON")
 				.select()
 				.where(GroupFields.PK_ID.toString(), Integer.parseInt(id))
 				.getAsJSON();
@@ -125,6 +130,7 @@ public class CFWDBGroup {
 	public static ResultSet getGroupList() {
 		
 		return new Group()
+				.queryCache(CFWDBGroup.class, "getGroupList")
 				.select()
 				.orderby(GroupFields.NAME.toString())
 				.getResultSet();
@@ -137,7 +143,8 @@ public class CFWDBGroup {
 	 * @return Returns a result set with all users or null.
 	 ****************************************************************/
 	public static String getGroupListAsJSON() {
-		return new Group("")
+		return new Group()
+				.queryCache(CFWDBGroup.class, "getGroupListAsJSON")
 				.select()
 				.orderby(GroupFields.NAME.toString())
 				.getAsJSON();
@@ -164,7 +171,9 @@ public class CFWDBGroup {
 			return false;
 		}
 				
-		return group.update();
+		return group
+				.queryCache(CFWDBGroup.class, "update")
+				.update();
 		
 	}
 	
@@ -192,15 +201,13 @@ public class CFWDBGroup {
 			return false;
 		}
 		
-		String deleteByID = 
-				"DELETE FROM "+TABLE_NAME
-				+" WHERE "
-					+ GroupFields.PK_ID+" = ? "
-					+ "AND "
-					+ PermissionDBFields.IS_DELETABLE+" = TRUE ";
-		
-		return CFWDB.preparedExecute(deleteByID, id);
-			
+		return new Group()
+				.queryCache(CFWDBGroup.class, "deleteByID")
+				.delete()
+				.where(GroupFields.PK_ID.toString(), id)
+				.and(PermissionDBFields.IS_DELETABLE.toString(), true)
+				.executeDelete();
+					
 	}
 	
 	/****************************************************************
@@ -219,15 +226,13 @@ public class CFWDBGroup {
 			return false;
 		}
 
-		String deleteByID = 
-				"DELETE FROM "+TABLE_NAME
-				+" WHERE "
-					+ GroupFields.PK_ID+" IN(?) "
-					+ "AND "
-					+ GroupFields.IS_DELETABLE+" = TRUE ";
-		
-		return CFWDB.preparedExecute(deleteByID, resultIDs);
-			
+		return new Group()
+				.queryCache(CFWDBGroup.class, "deleteMultipleByID")
+				.delete()
+				.whereIn(GroupFields.PK_ID.toString(), resultIDs)
+				.and(PermissionDBFields.IS_DELETABLE.toString(), true)
+				.executeDelete();
+					
 	}
 	
 	/****************************************************************
@@ -245,15 +250,13 @@ public class CFWDBGroup {
 			return false;
 		}
 		
-		String deleteByID = 
-				"DELETE FROM "+TABLE_NAME
-				+" WHERE "
-					+ GroupFields.NAME+" = ? "
-					+ "AND "
-					+ PermissionDBFields.IS_DELETABLE+" = TRUE ";
-		
-		return CFWDB.preparedExecute(deleteByID, name);
-			
+		return new Group()
+				.queryCache(CFWDBGroup.class, "deleteByName")
+				.delete()
+				.where(GroupFields.NAME.toString(), name)
+				.and(PermissionDBFields.IS_DELETABLE.toString(), true)
+				.executeDelete();
+					
 	}
 	
 	
