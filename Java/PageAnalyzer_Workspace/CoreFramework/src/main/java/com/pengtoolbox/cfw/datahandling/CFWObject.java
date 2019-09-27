@@ -1,18 +1,12 @@
 package com.pengtoolbox.cfw.datahandling;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.Group;
-import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 
 public class CFWObject {
@@ -135,6 +129,14 @@ public class CFWObject {
 	//##############################################################################
 	// DATABASE
 	//##############################################################################
+	
+	/****************************************************************
+	 * Create the table for this Object.
+	 * @return CFWQuery for method chaining
+	 ****************************************************************/
+	public boolean createTable() {
+		return new CFWStatement(this).createTable();
+	}
 	
 	/****************************************************************
 	 * Begins a SELECT * statement.

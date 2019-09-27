@@ -39,6 +39,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private Class<T> valueClass;
 	private FormFieldType type;
 	private String formLabel = "&nbsp;";
+	private String columnDefinition = null;
 	private boolean isDisabled = false;
 	
 	private CFWFieldChangeHandler changeHandler = null;
@@ -283,6 +284,23 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	}
 	
 	
+	
+	public String getColumnDefinition() {
+		return columnDefinition;
+	}
+
+	public CFWField<T> setColumnDefinition(String columnDefinition) {
+		this.columnDefinition = columnDefinition;
+		return this;
+	}
+	
+	public CFWField<T> setPrimaryKeyAutoIncrement() {
+		this.columnDefinition = "INT PRIMARY KEY AUTO_INCREMENT";
+		return this;
+	}
+	
+	
+
 	public boolean isDisabled() {
 		return isDisabled;
 	}

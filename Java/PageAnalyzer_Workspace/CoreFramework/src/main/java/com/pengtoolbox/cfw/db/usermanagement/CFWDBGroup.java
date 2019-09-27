@@ -27,23 +27,7 @@ public class CFWDBGroup {
 	 * 
 	 ********************************************************************************************/
 	public static void initializeTable() {
-			
-		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+"("
-							  + GroupFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
-							  + GroupFields.NAME + " VARCHAR(255) UNIQUE,"
-							  + GroupFields.DESCRIPTION + " CLOB,"
-							  + GroupFields.IS_DELETABLE + " BOOLEAN"
-							  + ");";
-		
-		CFWDB.preparedExecute(createTableSQL);
-		
-		//--------------------------------------
-		// Add Column IS_RENAMABLE
-		String addColumnIsRenamable = "ALTER TABLE "+TABLE_NAME
-									 +" ADD COLUMN IF NOT EXISTS "+GroupFields.IS_RENAMABLE+" BOOLEAN DEFAULT TRUE;";
-		
-		CFWDB.preparedExecute(addColumnIsRenamable);
-				
+		new Group().createTable();
 	}
 	
 	/********************************************************************************************

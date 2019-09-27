@@ -24,9 +24,11 @@ public class Group extends CFWObject {
 	private static Logger logger = CFWLog.getLogger(Group.class.getName());
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, GroupFields.PK_ID.toString())
+									.setPrimaryKeyAutoIncrement()
 									.setValue(-999);
 	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, GroupFields.NAME.toString())
+									.setColumnDefinition("VARCHAR(255) UNIQUE")
 									.addValidator(new LengthValidator(1, 255))
 									.setChangeHandler(new CFWFieldChangeHandler<String>() {
 										public boolean handle(String oldValue, String newValue) {
@@ -41,12 +43,15 @@ public class Group extends CFWObject {
 									});
 	
 	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, GroupFields.DESCRIPTION.toString())
+											.setColumnDefinition("CLOB")
 											.addValidator(new LengthValidator(-1, 2000000000));
 	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, GroupFields.IS_DELETABLE.toString())
+											.setColumnDefinition("BOOLEAN")
 											.setValue(true);
 	
 	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, GroupFields.IS_RENAMABLE.toString())
+			.setColumnDefinition("BOOLEAN DEFAULT TRUE")
 			.setValue(true)
 			.setChangeHandler(new CFWFieldChangeHandler<Boolean>() {
 							

@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.db.CFWDB;
+import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWStatement {
@@ -14,7 +15,7 @@ public class CFWStatement {
 	private static Logger logger = CFWLog.getLogger(CFWStatement.class.getName());
 	
 	private CFWObject object;
-	private LinkedHashMap<String, CFWField> fields; 
+	private LinkedHashMap<String, CFWField> fields;
 	
 	private StringBuilder query = new StringBuilder();
 	private ArrayList<Object> values = new ArrayList<Object>();
@@ -26,6 +27,33 @@ public class CFWStatement {
 		this.object = object;
 		this.fields = object.getFields();
 	} 
+	
+	/****************************************************************
+	 * 
+	 * @return CFWQuery for method chaining
+	 ****************************************************************/
+	public boolean createTable() {
+		
+		boolean success = true;
+		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+object.getTableName();
+		success &= CFWDB.preparedExecute(createTableSQL);
+		
+		for(CFWField field : fields.values()) {
+			if(field.getColumnDefinition() != null) {
+				String addColumnIsRenamable = "ALTER TABLE "+object.getTableName()
+				 +" ADD COLUMN IF NOT EXISTS "+field.getName()+" "+field.getColumnDefinition();
+				success &= CFWDB.preparedExecute(addColumnIsRenamable);
+			}else {
+				new CFWLog(logger)
+					.method("createTable")
+					.severe("The field "+field.getName()+" is missing a columnDefinition. Use CFWField.setColumnDefinition(). ");
+				success &= false;
+			}
+		}
+		
+		return success;
+		
+	}
 	
 	/****************************************************************
 	 * Check if the fieldname is valid.
