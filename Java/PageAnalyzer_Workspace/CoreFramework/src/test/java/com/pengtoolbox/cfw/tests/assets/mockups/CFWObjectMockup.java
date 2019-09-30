@@ -15,17 +15,16 @@ public class CFWObjectMockup extends CFWObject{
 	
 	private CFWField<String> textarea = CFWField.newString(FormFieldType.TEXTAREA, "10ROW_TEXTAREA").setLabel("10 Row Textarea")
 			.addAttribute("rows", "10");
+	
+	private CFWField<String> date = CFWField.newString(FormFieldType.DATEPICKER, "DATE");
+	
 	public CFWObjectMockup() {
 		withValue.setValueValidated("This is the Value");
 		addFields();
 	}
 		
 	public void addFields() {
-		this.addField(firstname);
-		this.addField(lastname);
-		this.addField(withValue);
-		this.addField(description);
-		this.addField(textarea);
+		this.addFields(firstname, lastname, withValue, description, textarea, date);
 	}
 
 }

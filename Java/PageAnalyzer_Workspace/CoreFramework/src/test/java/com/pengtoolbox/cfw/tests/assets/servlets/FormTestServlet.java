@@ -49,27 +49,27 @@ public class FormTestServlet extends HttpServlet
 		//------------------------------
 		// Test Form
 		//------------------------------
-        content.append("<h2>Form Created Through CFWObject</h2>");
-        content.append(new CFWObjectMockup().toForm("myForm", "Submit!!!").getHTML());
-        
-		//------------------------------
-		// Form with Handler
-		//------------------------------
-        
-        content.append("<h2>Form with BTFormHandler</h2>");
-        BTForm handledForm = new CFWObjectMockup().toForm("handlerForm", "Handle!!!");
-        
-        handledForm.setFormHandler(new BTFormHandler() {
-			@Override
-			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject object) {
-				// TODO Auto-generated method stub
-				String formID = request.getParameter(BTForm.FORM_ID);
-				
-				JSONResponse json = new JSONResponse();
-		    	json.addAlert(MessageType.SUCCESS, "BTFormHandler: Post recieved from "+formID+"!!!");
-			}
-		});
-        content.append(handledForm.getHTML());
+//        content.append("<h2>Form Created Through CFWObject</h2>");
+//        content.append(new CFWObjectMockup().toForm("myForm", "Submit!!!").getHTML());
+//        
+//		//------------------------------
+//		// Form with Handler
+//		//------------------------------
+//        
+//        content.append("<h2>Form with BTFormHandler</h2>");
+//        BTForm handledForm = new CFWObjectMockup().toForm("handlerForm", "Handle!!!");
+//        
+//        handledForm.setFormHandler(new BTFormHandler() {
+//			@Override
+//			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject object) {
+//				// TODO Auto-generated method stub
+//				String formID = request.getParameter(BTForm.FORM_ID);
+//				
+//				JSONResponse json = new JSONResponse();
+//		    	json.addAlert(MessageType.SUCCESS, "BTFormHandler: Post recieved from "+formID+"!!!");
+//			}
+//		});
+//        content.append(handledForm.getHTML());
         
 		//------------------------------
 		// Form with Handler
@@ -82,10 +82,10 @@ public class FormTestServlet extends HttpServlet
 			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject object) {
 				// TODO Auto-generated method stub
 				String formID = request.getParameter(BTForm.FORM_ID);
-				
+				object.mapRequestParameters(request);
 				JSONResponse json = new JSONResponse();
 		    	json.addAlert(MessageType.SUCCESS, "BTFormHandler: Post recieved from "+formID+"!!!");
-		    	
+		    	json.addAlert(MessageType.SUCCESS, object.getFieldsAsKeyValueString());
 		    	form.mapRequestParameters(request);
 			}
 		});

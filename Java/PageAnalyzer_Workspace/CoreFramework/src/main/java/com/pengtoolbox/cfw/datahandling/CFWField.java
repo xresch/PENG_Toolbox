@@ -51,7 +51,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private ArrayList<String> invalidMessages;
 	
 	public enum FormFieldType{
-		TEXT, TEXTAREA, PASSWORD, HIDDEN, BOOLEAN, NONE,
+		TEXT, TEXTAREA, PASSWORD, HIDDEN, BOOLEAN, DATEPICKER, NONE
 	}
 		
 	//###################################################################################
@@ -124,7 +124,10 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 								break;
 			
 			case BOOLEAN:  		createBooleanRadiobuttons(html);
-								break;					
+								break;		
+								
+			case DATEPICKER:  	createDatePicker(html);
+								break;
 								
 			case PASSWORD:  	html.append("<input type=\"password\" class=\"form-control\" "+this.getAttributesString()+"/>");
 								break;
@@ -166,6 +169,29 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				"  <input class=\"form-check-input\" type=\"radio\" value=\"false\" name="+name+" "+disabled+" "+falseChecked+"/>" + 
 				"  <label class=\"form-check-label\" for=\"inlineRadio1\">false</label>" + 
 				"</div>");
+	}
+	
+	/***********************************************************************************
+	 * Create DatePicker
+	 ***********************************************************************************/
+	private void createDatePicker(StringBuilder html) {
+		
+		html.append("<input id=\""+name+"-datepicker\" type=\"text\" class=\"form-control\" placeholder=\"Date\" >\r\n" + 
+				"	<input id=\""+name+"\" type=\"hidden\" class=\"form-control\" "+this.getAttributesString()+">\r\n" + 
+				"</div>\r\n" + 
+				"	<script>\r\n" + 
+				"		window.addEventListener('DOMContentLoaded', function() {\r\n" + 
+				"				$('#"+name+"-datepicker').datepicker({\r\n" + 
+				"			  	dateFormat: 'dd.mm.yy',\r\n" + 
+				"				altField: '#"+name+"',\r\n" + 
+				"			  	altFormat: '@',\r\n" + 
+				"			  	beforeShow: function(input, inst) {\r\n" + 
+				"				        $('#ui-datepicker-div').addClass('bg-dark');\r\n" + 
+				"			  		}\r\n" + 
+				"				});\r\n" + 
+				"			}\r\n" + 
+				"		);\r\n" + 
+				"	</script>");
 	}
 	
 	/***********************************************************************************

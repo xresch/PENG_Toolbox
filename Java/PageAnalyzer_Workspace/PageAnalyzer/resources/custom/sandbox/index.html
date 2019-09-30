@@ -1,0 +1,30 @@
+
+<h1>Datepicker Test</h1>
+<ul>
+	<form id="cfw-createGroupForm" class="form" method="post">
+	<input type="hidden" placeholder="Cfw Formid" name="cfw-formID" value="cfw-createGroupForm">
+	<input type="hidden" placeholder="Pk Id" name="PK_ID" value="-999">
+	
+	<div class="form-group row">  
+		<label class="col-sm-3 col-form-label" for="DATE">Date:</label>   
+		<div class="col-sm-9">
+			<input id="DATE-datepicker" type="text" class="form-control" placeholder="Date" name="DATE" value="">
+			<input id="DATE" type="hidden" class="form-control" placeholder="Date" name="DATE" value="">
+		</div>
+	</div>
+	<script>
+		window.addEventListener('DOMContentLoaded', function() {
+				$('#DATE-datepicker').datepicker({
+			  	dateFormat: 'dd.mm.yy',
+				altField: '#DATE',
+			  	altFormat: '@',
+			  	beforeShow: function(input, inst) {
+				        $('#ui-datepicker-div').addClass('bg-dark');
+			  		}
+				});
+			}
+		);
+	</script>
+
+	<input type="button" onclick="cfw_postJSON('/cfw/formhandler', $('#cfw-createGroupForm').serialize())" class="form-control btn-primary" value="Create Group"></form>
+</ul>
