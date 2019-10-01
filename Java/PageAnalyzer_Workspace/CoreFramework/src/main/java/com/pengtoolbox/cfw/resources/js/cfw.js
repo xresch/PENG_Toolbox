@@ -266,6 +266,30 @@ function cfw_toggleTheToggleButton(button){
 }
 
 /**************************************************************************************
+ * Initialize a DatePicker created with the Java object CFWField.
+ * @param name the name of the field
+ * @param epochInitial the initial date in epoch time
+ * @return nothing
+ *************************************************************************************/
+function cfw_initializeDatePicker(name, epochInitial) {
+	
+	$('#'+name+'-datepicker').datepicker({
+	  	dateFormat: 'dd.mm.yy',
+		altField: '#'+name,
+	  	altFormat: '@',
+		showOptions: { direction: 'up' },
+	  	beforeShow: function(input, inst) {
+		        $('#ui-datepicker-div').addClass('bg-dark');
+	  		}
+	});
+	
+	if(epochInitial != null){
+		$('#'+name+'-datepicker').datepicker( 'setDate', new Date(epochInitial) );	
+	}
+
+}
+
+/**************************************************************************************
  * Sort an object array by the values for the given key.
  * @param array the object array to be sorted
  * @param key the name of the field that should be used for sorting

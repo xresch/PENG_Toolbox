@@ -176,22 +176,37 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 ***********************************************************************************/
 	private void createDatePicker(StringBuilder html) {
 		
+		//---------------------------------
+		// Set initial value
+		String epochTime = null;
+		if(this.value != null) {
+			
+			if(value instanceof Date) {
+				epochTime = ""+((Date)value).getTime();
+				this.addAttribute("value", ""+epochTime);
+			}else if(value instanceof Timestamp) {
+				epochTime = ""+((Timestamp)value).getTime();
+				this.addAttribute("value", ""+epochTime);
+			}else {
+				epochTime = value.toString();
+				this.addAttribute("value", ""+value.toString());
+			}
+
+		}
+		
+		//---------------------------------
+		// Create Field
 		html.append("<input id=\""+name+"-datepicker\" type=\"text\" class=\"form-control\" placeholder=\"Date\" >\r\n" + 
 				"	<input id=\""+name+"\" type=\"hidden\" class=\"form-control\" "+this.getAttributesString()+">\r\n" + 
-				"</div>\r\n" + 
 				"	<script>\r\n" + 
 				"		window.addEventListener('DOMContentLoaded', function() {\r\n" + 
-				"				$('#"+name+"-datepicker').datepicker({\r\n" + 
-				"			  	dateFormat: 'dd.mm.yy',\r\n" + 
-				"				altField: '#"+name+"',\r\n" + 
-				"			  	altFormat: '@',\r\n" + 
-				"			  	beforeShow: function(input, inst) {\r\n" + 
-				"				        $('#ui-datepicker-div').addClass('bg-dark');\r\n" + 
-				"			  		}\r\n" + 
-				"				});\r\n" + 
+				"			cfw_initializeDatePicker('"+name+"', "+epochTime+")"+
 				"			}\r\n" + 
-				"		);\r\n" + 
-				"	</script>");
+				"		);\r\n" 
+				);
+		
+		html.append("</script>");
+		
 	}
 	
 	/***********************************************************************************
