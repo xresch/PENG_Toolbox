@@ -1,16 +1,15 @@
 TODO
 ====
-- Change Gantt Bar design
+- More Permissions
+  - Delete Results
+  - View Gantt Chart
+  - Download HAR
+  - Download Results
 - Add Rule for HTTP2
   - Num requests Http 1.1
   - Num requests > 200
 - Add Support info for async calls
-- Add validation to forms
-- Add CFWObject.toForm(chooseFields[]);
-- Add Validation Method to BTForm
 - add Callback to showModal Close buttons for refreshing user and group list
-
-
 
 - Support Info: Use default Modal, make exceptions unique.
 - Custom Error page CFW.App.createErrorHandler();
@@ -39,4 +38,7 @@ DONE
 - create admin dashboard
   - manage all results
   - delete results of other users
-  
+  - Add validation to forms
+- Add CFWObject.toForm(chooseFields[]);
+- Add Validation Method to BTForm
+- Change Gantt Bar design
