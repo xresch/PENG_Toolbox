@@ -1,5 +1,8 @@
 TODO
 ====
+
+- Form errors add to field.
+- Add UserStatus Table
 - More Permissions
   - Delete Results
   - View Gantt Chart
@@ -26,6 +29,7 @@ TODO
 
 DONE
 ====
+- Form Cache limit.
 - user exists compare lowercase.
 - Forward login url
 - Create Footer

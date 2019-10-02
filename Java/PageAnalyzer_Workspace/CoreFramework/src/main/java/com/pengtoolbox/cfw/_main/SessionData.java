@@ -2,6 +2,7 @@ package com.pengtoolbox.cfw._main;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
@@ -16,7 +17,7 @@ public class SessionData {
 	private User user = null;
 	private HashMap<String, Group> userGroups = new HashMap<String, Group>();
 	private HashMap<String, Permission> userPermissions = new HashMap<String, Permission>();
-	private static HashMap<String,BTForm> formArray = new HashMap<String,BTForm>();
+	private static LinkedHashMap<String,BTForm> formMap = new LinkedHashMap<String,BTForm>();
 	
 	private BTMenu menu;
 	private BTFooter footer;
@@ -82,14 +83,24 @@ public class SessionData {
 	}
 	
 	public void addForm(BTForm form){
-		formArray.put(form.getFormID(), form);	
+		
+		//keep cached forms below 5 to prevent memory leaks
+		while(formMap.size() > 5) {
+			formMap.remove(formMap.keySet().toArray()[0]);
+		}
+		
+		formMap.put(form.getFormID(), form);	
+	}
+	
+	public void removeForm(BTForm form){
+		formMap.remove(form.getFormID(), form);	
 	}
 	
 	public BTForm getForm(String formID) {
-		return formArray.get(formID);
+		return formMap.get(formID);
 	}
 	
 	public Collection<BTForm> getForms() {
-		return formArray.values();
+		return formMap.values();
 	}
 }

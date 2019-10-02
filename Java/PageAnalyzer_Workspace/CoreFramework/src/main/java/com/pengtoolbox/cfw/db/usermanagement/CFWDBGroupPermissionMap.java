@@ -9,7 +9,6 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission.PermissionDBFields;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserGroupMap.UserGroupMapDBFields;
-import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBGroupPermissionMap {
