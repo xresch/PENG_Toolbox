@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.logging.Logger;
 
+import javax.sql.rowset.serial.SerialClob;
+
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;

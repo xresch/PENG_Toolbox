@@ -419,14 +419,26 @@ public class CFWStatement {
 	public int getCount() {
 		
 		try {
+			
 			this.execute();
 			if(result != null) {	
-				if(query.toString().startsWith("SELECT COUNT(*)")) {
-					
-						if(result.next()) {
-							return result.getInt(1);
-						}
-					
+				//----------------------------
+				//Get Query
+				String statement;
+				
+				if(isQueryCached()) {
+					statement = queryCache.get(queryName);
+				}else {
+					statement = query.toString();
+					queryCache.put(queryName, statement);
+				}
+				
+				//----------------------------
+				//Get Count
+				if(statement.toString().trim().contains("SELECT COUNT(*)")) {
+					if(result.next()) {
+						return result.getInt(1);
+					}
 				}else {
 					  result.last();    // moves cursor to the last row
 					  return result.getRow();

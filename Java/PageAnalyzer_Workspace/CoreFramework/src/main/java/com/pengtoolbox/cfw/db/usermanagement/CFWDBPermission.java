@@ -1,13 +1,11 @@
 package com.pengtoolbox.cfw.db.usermanagement;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
+import com.pengtoolbox.cfw.db.usermanagement.Permission.PermissionFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBPermission {
@@ -18,12 +16,7 @@ public class CFWDBPermission {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBPermission.class.getName());
 	
-	enum PermissionDBFields{
-		PK_ID, 
-		NAME,
-		DESCRIPTION,
-		IS_DELETABLE,
-	}
+
 
 	/********************************************************************************************
 	 * Creates the table if not already exists.
@@ -31,15 +24,8 @@ public class CFWDBPermission {
 	 * 
 	 ********************************************************************************************/
 	public static void initializeTable() {
-			
-		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+"("
-							  + PermissionDBFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
-							  + PermissionDBFields.NAME + " VARCHAR(255) UNIQUE,"
-							  + PermissionDBFields.DESCRIPTION + " CLOB,"
-							  + PermissionDBFields.IS_DELETABLE + " BOOLEAN"
-							  + ");";
-		
-		CFWDB.preparedExecute(createTableSQL);
+				
+		new Permission().createTable();
 		
 	}
 	
@@ -86,17 +72,9 @@ public class CFWDBPermission {
 			return false;
 		}
 		
-		String insertGroupSQL = "INSERT INTO "+TABLE_NAME+" ("
-				  + PermissionDBFields.NAME +", "
-				  + PermissionDBFields.DESCRIPTION +", "
-				  + PermissionDBFields.IS_DELETABLE +" "
-				  + ") VALUES (?,?,?);";
-		
-		CFWDB.preparedExecute(insertGroupSQL, 
-				permission.name(),
-				permission.description(),
-				permission.isDeletable()
-				);
+		permission
+			.queryCache(CFWDBPermission.class, "create")
+				.insert();
 		
 		//----------------------------------------
 		// Add new permission to superuser
@@ -114,36 +92,11 @@ public class CFWDBPermission {
 	 ****************************************************************/
 	public static Permission selectByName(String name ) {
 		
-		String selectByName = 
-				"SELECT "
-				  + PermissionDBFields.PK_ID +", "
-				  + PermissionDBFields.NAME +", "
-				  + PermissionDBFields.DESCRIPTION +", "
-				  + PermissionDBFields.IS_DELETABLE +" "
-				+" FROM "+TABLE_NAME
-				+" WHERE "
-				+ PermissionDBFields.NAME + " = ?";
-		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectByName, name);
-		
-		if(result == null) {
-			return null;
-		}
-		
-		try {
-			if(result.next()) {
-				return new Permission(result);
-			}
-		} catch (SQLException e) {
-			new CFWLog(logger)
-			.method("selectByName")
-			.severe("Error reading permission from database.", e);;
-			
-		}finally {
-			CFWDB.close(result);
-		}
-		
-		return null;
+		return (Permission)new Permission()
+				.queryCache(CFWDBPermission.class, "selectByName")
+				.select()
+				.where(PermissionFields.NAME.toString(), name)
+				.getFirstObject();
 		
 	}
 	
@@ -154,36 +107,11 @@ public class CFWDBPermission {
 	 ****************************************************************/
 	public static Permission selectByID(int id ) {
 		
-		String selectByName = 
-				"SELECT "
-				  + PermissionDBFields.PK_ID +", "
-				  + PermissionDBFields.NAME +", "
-				  + PermissionDBFields.DESCRIPTION +", "
-				  + PermissionDBFields.IS_DELETABLE +" "
-				+" FROM "+TABLE_NAME
-				+" WHERE "
-				+ PermissionDBFields.PK_ID + " = ?";
-		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectByName, id);
-		
-		if(result == null) {
-			return null;
-		}
-		
-		try {
-			if(result.next()) {
-				return new Permission(result);
-			}
-		} catch (SQLException e) {
-			new CFWLog(logger)
-			.method("selectByID")
-			.severe("Error reading permission from database.", e);;
-			
-		}finally {
-			CFWDB.close(result);
-		}
-		
-		return null;
+		return (Permission)new Permission()
+				.queryCache(CFWDBPermission.class, "selectByID")
+				.select()
+				.where(PermissionFields.PK_ID.toString(), id)
+				.getFirstObject();
 		
 	}
 	
@@ -194,17 +122,12 @@ public class CFWDBPermission {
 	 ****************************************************************/
 	public static ResultSet getPermissionList() {
 		
-		String sql = 
-				"SELECT "
-				  + PermissionDBFields.PK_ID +", "
-				  + PermissionDBFields.NAME +", "
-				  + PermissionDBFields.DESCRIPTION +", "
-				  + PermissionDBFields.IS_DELETABLE +" "
-				+" FROM "+TABLE_NAME
-				+" ORDER BY LOWER("+PermissionDBFields.NAME+")";;
+		return new Permission()
+				.queryCache(CFWDBPermission.class, "getPermissionList")
+				.select()
+				.orderby(PermissionFields.NAME.toString())
+				.getResultSet();
 		
-		return CFWDB.preparedExecuteQuery(sql);
-
 	}
 	
 	/***************************************************************
@@ -213,8 +136,11 @@ public class CFWDBPermission {
 	 * @return Returns a result set with all users or null.
 	 ****************************************************************/
 	public static String getPermissionListAsJSON() {
-		ResultSet result = CFW.DB.Permissions.getPermissionList();
-		return CFWDB.resultSetToJSON(result);
+		return new Permission()
+				.queryCache(CFWDBPermission.class, "getPermissionListAsJSON")
+				.select()
+				.orderby(PermissionFields.NAME.toString())
+				.getAsJSON();
 	}
 	
 	/***************************************************************
@@ -234,24 +160,23 @@ public class CFWDBPermission {
 	 ****************************************************************/
 	public static boolean update(Permission permission) {
 		
-		String updateByID = 
-				"UPDATE "+TABLE_NAME
-				+" SET ("
-				  + PermissionDBFields.NAME +", "
-				  + PermissionDBFields.DESCRIPTION +", "
-				  + PermissionDBFields.IS_DELETABLE +" "
-				  + ") = (?,?,?) "
-				+" WHERE "
-					+ PermissionDBFields.PK_ID+" = ?";
+		if(permission == null) {
+			new CFWLog(logger)
+				.method("update")
+				.warn("The permission that should be updated cannot be null");
+			return false;
+		}
 		
-		boolean result = CFWDB.preparedExecute(updateByID, 
-				permission.name(),
-				permission.description(),
-				permission.isDeletable(),
-				permission.id());
-		
-		
-		return result;
+		if(permission.name() == null || permission.name().isEmpty()) {
+			new CFWLog(logger)
+				.method("update")
+				.warn("Please specify a name for the permission.");
+			return false;
+		}
+				
+		return permission
+				.queryCache(CFWDBPermission.class, "update")
+				.update();
 		
 	}
 	
@@ -270,14 +195,12 @@ public class CFWDBPermission {
 			return false;
 		}
 		
-		String deleteByID = 
-				"DELETE FROM "+TABLE_NAME
-				+" WHERE "
-					+ PermissionDBFields.PK_ID+" = ? "
-					+ "AND "
-					+ PermissionDBFields.IS_DELETABLE+" = TRUE ";
-		
-		return CFWDB.preparedExecute(deleteByID, id);
+		return new Permission()
+				.queryCache(CFWDBPermission.class, "deleteByID")
+				.delete()
+				.where(PermissionFields.PK_ID.toString(), id)
+				.and(PermissionFields.IS_DELETABLE.toString(), true)
+				.executeDelete();
 			
 	}
 	
@@ -297,14 +220,12 @@ public class CFWDBPermission {
 			return false;
 		}
 
-		String deleteByID = 
-				"DELETE FROM "+TABLE_NAME
-				+" WHERE "
-					+ PermissionDBFields.PK_ID+" IN(?) "
-					+ "AND "
-					+ PermissionDBFields.IS_DELETABLE+" = TRUE ";
-		
-		return CFWDB.preparedExecute(deleteByID, resultIDs);
+		return new Permission()
+				.queryCache(CFWDBPermission.class, "deleteMultipleByID")
+				.delete()
+				.whereIn(PermissionFields.PK_ID.toString(), resultIDs)
+				.and(PermissionFields.IS_DELETABLE.toString(), true)
+				.executeDelete();
 			
 	}
 	
@@ -323,14 +244,12 @@ public class CFWDBPermission {
 			return false;
 		}
 		
-		String deleteByID = 
-				"DELETE FROM "+TABLE_NAME
-				+" WHERE "
-					+ PermissionDBFields.NAME+" = ? "
-					+ "AND "
-					+ PermissionDBFields.IS_DELETABLE+" = TRUE ";
-		
-		return CFWDB.preparedExecute(deleteByID, name);
+		return new Permission()
+				.queryCache(CFWDBPermission.class, "deleteByName")
+				.delete()
+				.where(PermissionFields.NAME.toString(), name)
+				.and(PermissionFields.IS_DELETABLE.toString(), true)
+				.executeDelete();
 			
 	}
 	
@@ -355,26 +274,15 @@ public class CFWDBPermission {
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkPermissionExists(String permissionName) {
-		String checkExistsSQL = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE "+PermissionDBFields.NAME+" = ?";
-		ResultSet result = CFW.DB.preparedExecuteQuery(checkExistsSQL, permissionName);
 		
-		try {
-			if(result != null && result.next()) {
-				int count = result.getInt(1);
-				return (count == 0) ? false : true;
-			}
-		} catch (SQLException e) {
-			new CFWLog(logger)
-			.method("checkPermissionExists")
-			.severe("Exception occured while checking of group exists.", e);
-			
-			return false;
-		}finally {
-			CFWDB.close(result);
-		}
+		int count = new Permission()
+				.queryCache(CFWDBPermission.class, "checkPermissionExists")
+				.selectCount()
+				.where(PermissionFields.NAME.toString(), permissionName)
+				.getCount();
+		System.out.println("### Count: "+count);
 		
-		
-		return false; 
+		return (count > 0);
 	}
 	
 }

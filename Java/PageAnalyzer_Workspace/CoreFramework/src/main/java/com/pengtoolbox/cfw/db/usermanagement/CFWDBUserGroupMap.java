@@ -37,7 +37,7 @@ public class CFWDBUserGroupMap {
 							  + UserGroupMapDBFields.FK_ID_USER + " INT, "
 							  + UserGroupMapDBFields.FK_ID_GROUP + " INT, "
 							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_USER+") REFERENCES "+CFWDBUser.TABLE_NAME+"("+UserDBFields.PK_ID+") ON DELETE CASCADE, "
-							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_GROUP+") REFERENCES "+CFWDBGroup.TABLE_NAME+"("+Group.GroupFields.PK_ID+") ON DELETE CASCADE"
+							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_GROUP+") REFERENCES "+Group.TABLE_NAME+"("+Group.GroupFields.PK_ID+") ON DELETE CASCADE"
 							  + ");";
 		
 		CFWDB.preparedExecute(createTableSQL);
@@ -261,7 +261,7 @@ public class CFWDBUserGroupMap {
 	public static HashMap<String, Group> selectGroupsForUser(int userID) {
 		
 		
-		String selectGroupsForUser = "SELECT * FROM "+CFWDBGroup.TABLE_NAME+" G "
+		String selectGroupsForUser = "SELECT * FROM "+Group.TABLE_NAME+" G "
 				+ " INNER JOIN "+CFWDBUserGroupMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_GROUP = G.PK_ID "
 				+ " WHERE M.FK_ID_USER = ?";
@@ -306,7 +306,7 @@ public class CFWDBUserGroupMap {
 			return "[]";
 		}
 		
-		String selectGroupsForUser = "SELECT G.PK_ID, G.NAME, G.DESCRIPTION, M.FK_ID_USER AS ITEM_ID, M.IS_DELETABLE FROM "+CFWDBGroup.TABLE_NAME+" G "
+		String selectGroupsForUser = "SELECT G.PK_ID, G.NAME, G.DESCRIPTION, M.FK_ID_USER AS ITEM_ID, M.IS_DELETABLE FROM "+Group.TABLE_NAME+" G "
 				+ " LEFT JOIN "+CFWDBUserGroupMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_GROUP = G.PK_ID "
 				+ " AND M.FK_ID_USER = ?"

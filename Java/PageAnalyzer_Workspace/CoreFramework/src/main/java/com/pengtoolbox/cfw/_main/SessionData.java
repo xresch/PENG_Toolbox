@@ -84,8 +84,8 @@ public class SessionData {
 	
 	public void addForm(BTForm form){
 		
-		//keep cached forms below 5 to prevent memory leaks
-		while(formMap.size() > 5) {
+		//keep cached forms below 7 to prevent memory leaks
+		while(formMap.size() > 7) {
 			formMap.remove(formMap.keySet().toArray()[0]);
 		}
 		

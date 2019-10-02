@@ -13,6 +13,8 @@ import com.pengtoolbox.cfw.validation.LengthValidator;
 
 public class Group extends CFWObject {
 	
+	public static final String TABLE_NAME = "CFW_GROUP";
+	
 	public enum GroupFields{
 		PK_ID,
 		NAME,
@@ -44,7 +46,7 @@ public class Group extends CFWObject {
 	
 	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, GroupFields.DESCRIPTION.toString())
 											.setColumnDefinition("CLOB")
-											.addValidator(new LengthValidator(-1, 2000000000));
+											.addValidator(new LengthValidator(-1, 2000000));
 	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, GroupFields.IS_DELETABLE.toString())
 											.setColumnDefinition("BOOLEAN")
@@ -82,7 +84,7 @@ public class Group extends CFWObject {
 	}
 	
 	private void initializeFields() {
-		this.setTableName(CFWDBGroup.TABLE_NAME);
+		this.setTableName(TABLE_NAME);
 		this.setPrimaryField(id);
 		this.addFields(id, name, description, isDeletable, isRenamable);
 	}

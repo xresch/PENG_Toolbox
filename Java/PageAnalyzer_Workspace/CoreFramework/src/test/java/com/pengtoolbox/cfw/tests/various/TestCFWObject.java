@@ -39,7 +39,7 @@ public class TestCFWObject extends DBTestMaster{
 				  + Group.GroupFields.NAME +", "
 				  + Group.GroupFields.DESCRIPTION +", "
 				  + Group.GroupFields.IS_DELETABLE +" "
-				+" FROM "+CFWDBGroup.TABLE_NAME
+				+" FROM "+Group.TABLE_NAME
 				+" WHERE "
 				+ Group.GroupFields.NAME + " = ?";
 		

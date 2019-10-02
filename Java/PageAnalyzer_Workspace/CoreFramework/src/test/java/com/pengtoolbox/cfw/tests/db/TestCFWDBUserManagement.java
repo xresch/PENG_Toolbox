@@ -67,6 +67,8 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// Permissions
 		CFW.DB.Permissions.create(new Permission("PermissionA"));
 		permissionA = CFW.DB.Permissions.selectByName("PermissionA");
+		System.out.println("=============== PermissionA ===================\n"+permissionA.getFieldsAsKeyValueString());
+		System.out.println("=============== GroupA ===================\n"+testgroupA.getFieldsAsKeyValueString());
 		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionA.id(), testgroupA.id(), true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionAA"));

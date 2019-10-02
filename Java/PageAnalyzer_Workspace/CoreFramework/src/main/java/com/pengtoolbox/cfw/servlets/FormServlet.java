@@ -41,7 +41,7 @@ public class FormServlet extends HttpServlet
     		json.setSuccess(false);
     		new CFWLog(logger)
 	    		.method("doGet")
-	    		.severe("The form with ID '"+id+"' could not be found.");
+	    		.severe("The form with ID '"+id+"' could not be found. TRy to refresh the page");
     		return;
     	}
 		

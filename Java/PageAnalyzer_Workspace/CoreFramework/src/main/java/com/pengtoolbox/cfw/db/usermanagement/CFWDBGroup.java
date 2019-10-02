@@ -7,13 +7,13 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission.PermissionDBFields;
 import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
+import com.pengtoolbox.cfw.db.usermanagement.Permission.PermissionFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBGroup {
 
-	public static String TABLE_NAME = "CFW_GROUP";
+	
 	public static String CFW_GROUP_SUPERUSER = "Superuser";
 	public static String CFW_GROUP_ADMIN = "Administrator";
 	public static String CFW_GROUP_FOREIGN_USER = "Foreign User";
@@ -160,14 +160,14 @@ public class CFWDBGroup {
 		if(group == null) {
 			new CFWLog(logger)
 				.method("update")
-				.warn("The group cannot be null");
+				.warn("The group that should be updated cannot be null");
 			return false;
 		}
 		
 		if(group.name() == null || group.name().isEmpty()) {
 			new CFWLog(logger)
 				.method("update")
-				.warn("Please specify a name for the group to create.");
+				.warn("Please specify a name for the group.");
 			return false;
 		}
 				
@@ -205,7 +205,7 @@ public class CFWDBGroup {
 				.queryCache(CFWDBGroup.class, "deleteByID")
 				.delete()
 				.where(GroupFields.PK_ID.toString(), id)
-				.and(PermissionDBFields.IS_DELETABLE.toString(), true)
+				.and(PermissionFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 					
 	}
@@ -230,7 +230,7 @@ public class CFWDBGroup {
 				.queryCache(CFWDBGroup.class, "deleteMultipleByID")
 				.delete()
 				.whereIn(GroupFields.PK_ID.toString(), resultIDs)
-				.and(PermissionDBFields.IS_DELETABLE.toString(), true)
+				.and(PermissionFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 					
 	}
@@ -254,7 +254,7 @@ public class CFWDBGroup {
 				.queryCache(CFWDBGroup.class, "deleteByName")
 				.delete()
 				.where(GroupFields.NAME.toString(), name)
-				.and(PermissionDBFields.IS_DELETABLE.toString(), true)
+				.and(PermissionFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 					
 	}
@@ -280,26 +280,15 @@ public class CFWDBGroup {
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkGroupExists(String groupName) {
-		String checkExistsSQL = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE "+GroupFields.NAME+" = ?";
-		ResultSet result = CFW.DB.preparedExecuteQuery(checkExistsSQL, groupName);
 		
-		try {
-			if(result != null && result.next()) {
-				int count = result.getInt(1);
-				return (count == 0) ? false : true;
-			}
-		} catch (SQLException e) {
-			new CFWLog(logger)
-			.method("groupExists")
-			.severe("Exception occured while checking of group exists.", e);
-			
-			return false;
-		}finally {
-			CFWDB.close(result);
-		}
+		int count = new Group()
+				.queryCache(CFWDBGroup.class, "checkGroupExists")
+				.selectCount()
+				.where(GroupFields.NAME.toString(), groupName)
+				.getCount();
 		
+		return (count > 0);
 		
-		return false; 
 	}
 	
 }
