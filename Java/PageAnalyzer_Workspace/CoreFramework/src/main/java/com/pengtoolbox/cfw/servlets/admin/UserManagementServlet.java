@@ -108,10 +108,11 @@ public class UserManagementServlet extends HttpServlet
 			
 			@Override
 			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
-				
-				origin.mapRequestParameters(request);
-				
+								
 				if(origin != null) {
+					
+					origin.mapRequestParameters(request);
+					
 					if(CFW.DB.Groups.create((Group)origin)) {
 						CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Group created successfully!");
 					}

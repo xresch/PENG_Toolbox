@@ -79,13 +79,13 @@ public class FormTestServlet extends HttpServlet
         
         handledForm2.setFormHandler(new BTFormHandler() {
 			@Override
-			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject object) {
+			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
 				// TODO Auto-generated method stub
 				String formID = request.getParameter(BTForm.FORM_ID);
-				object.mapRequestParameters(request);
+				origin.mapRequestParameters(request);
 				JSONResponse json = new JSONResponse();
 		    	json.addAlert(MessageType.SUCCESS, "BTFormHandler: Post recieved from "+formID+"!!!");
-		    	json.addAlert(MessageType.SUCCESS, object.getFieldsAsKeyValueString());
+		    	json.addAlert(MessageType.SUCCESS, origin.getFieldsAsKeyValueHTML());
 		    	form.mapRequestParameters(request);
 			}
 		});

@@ -37,7 +37,7 @@ public class CFWObject {
 		form.setOrigin(this);
 		
 		for(CFWField field : fields.values()) {
-			form.addChild(field);
+			form.addField(field);
 		}
 		
 		return form;
@@ -50,7 +50,7 @@ public class CFWObject {
 		
 		for(String fieldName : fieldNames) {
 			if(fields.containsKey(fieldName)) {
-				form.addChild(fields.get(fieldName));
+				form.addField(fields.get(fieldName));
 			}else {
 				new CFWLog(logger)
 				.method("toForm")
@@ -118,6 +118,20 @@ public class CFWObject {
 		
 		for(CFWField field : fields.values()) {
 			builder.append("\n")
+			.append(field.getName())
+			.append(": ")
+			.append(field.getValue());
+		}
+
+		return builder.toString();
+	}
+	
+	public String getFieldsAsKeyValueHTML() {
+		
+		StringBuilder builder = new StringBuilder();
+		
+		for(CFWField field : fields.values()) {
+			builder.append("<br/>")
 			.append(field.getName())
 			.append(": ")
 			.append(field.getValue());

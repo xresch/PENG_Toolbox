@@ -12,7 +12,6 @@ TODO
   - Num requests Http 1.1
   - Num requests > 200
 - Add Support info for async calls
-- add Callback to showModal Close buttons for refreshing user and group list
 
 - Support Info: Use default Modal, make exceptions unique.
 - Custom Error page CFW.App.createErrorHandler();
@@ -29,6 +28,7 @@ TODO
 
 DONE
 ====
+- add Callback to showModal Close buttons for refreshing user and group list
 - Form Cache limit.
 - user exists compare lowercase.
 - Forward login url

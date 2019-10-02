@@ -1,6 +1,5 @@
 package com.pengtoolbox.cfw.datahandling;
 
-import java.sql.Clob;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -20,6 +19,7 @@ import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.HierarchicalHTMLItem;
 import com.pengtoolbox.cfw.utils.TextUtils;
 import com.pengtoolbox.cfw.validation.BooleanValidator;
+import com.pengtoolbox.cfw.validation.EpochOrTimeValidator;
 import com.pengtoolbox.cfw.validation.IValidatable;
 import com.pengtoolbox.cfw.validation.IValidator;
 import com.pengtoolbox.cfw.validation.IntegerValidator;
@@ -57,33 +57,38 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	//###################################################################################
 	// CONSTRUCTORS
 	//###################################################################################
-	private CFWField(Class clazz, FormFieldType type, String fieldID) {
+	private CFWField(Class clazz, FormFieldType type, String fieldName) {
 		this.valueClass = clazz;
 		this.type = type;
-		this.name = fieldID;
-		this.formLabel = TextUtils.fieldNameToLabel(fieldID);
+		this.name = fieldName;
+		this.formLabel = TextUtils.fieldNameToLabel(fieldName);
 	}
 			
 	//###################################################################################
 	// Initializer
 	//###################################################################################
-	public static CFWField<String> newString(FormFieldType type, String fieldID){
-		return new CFWField<String>(String.class, type, fieldID);
+	public static CFWField<String> newString(FormFieldType type, String fieldName){
+		return new CFWField<String>(String.class, type, fieldName);
 	}
 	
-	public static CFWField<Integer> newInteger(FormFieldType type, String fieldID){
-		return new CFWField<Integer>(Integer.class, type, fieldID)
+	public static CFWField<Integer> newInteger(FormFieldType type, String fieldName){
+		return new CFWField<Integer>(Integer.class, type, fieldName)
 				.addValidator(new IntegerValidator());
 	}
 	
-	public static CFWField<Boolean> newBoolean(FormFieldType type, String fieldID){
-		return new CFWField<Boolean>(Boolean.class, type, fieldID)
+	public static CFWField<Boolean> newBoolean(FormFieldType type, String fieldName){
+		return new CFWField<Boolean>(Boolean.class, type, fieldName)
 				.addValidator(new BooleanValidator());
 	}
 	
-	public static CFWField<Boolean> newTimestamp(FormFieldType type, String fieldID){
-		return new CFWField<Boolean>(Timestamp.class, type, fieldID)
-				.addValidator(new BooleanValidator());
+	public static CFWField<Timestamp> newTimestamp(FormFieldType type, String fieldName){
+		return new CFWField<Timestamp>(Timestamp.class, type, fieldName)
+				.addValidator(new EpochOrTimeValidator());
+	}
+	
+	public static CFWField<Date> newDate(FormFieldType type, String fieldName){
+		return new CFWField<Date>(Date.class, type, fieldName)
+				.addValidator(new EpochOrTimeValidator());
 	}
 		
 	//###################################################################################
@@ -380,16 +385,24 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		if(value == null) {
 			return this.changeValue(value);
 		}
+		
 		if(value.getClass() == this.valueClass) {
 			this.changeValue(value);
 			return true;
 		}
 		
 		if(value.getClass() == String.class) {
-			if     (valueClass == Integer.class) 	{ this.changeValue(Integer.parseInt((String)value)); return true;}
-			else if(valueClass == Boolean.class) 	{ this.changeValue(Boolean.parseBoolean( ((String)value).trim()) ); return true;}
-			else if(valueClass == Timestamp.class)  { this.changeValue(new Timestamp(Long.parseLong( ((String)value).trim()) )); return true; }
-			else if(valueClass == Date.class)  		{ this.changeValue(new Date(Long.parseLong( ((String)value).trim()) )); return true; }
+			if( ((String)value).trim().equals("")) { 
+				if(valueClass == Integer.class) 	    { return this.changeValue(0); }
+				else if(valueClass == Boolean.class) 	{ return this.changeValue(false); }
+				else if(valueClass == Timestamp.class)  { return this.changeValue(null);  }
+				else if(valueClass == Date.class)  		{ return this.changeValue(null); }
+				else {return false;}
+			}
+			else if(valueClass == Integer.class) 	{ return this.changeValue(Integer.parseInt((String)value)); }
+			else if(valueClass == Boolean.class) 	{ return this.changeValue(Boolean.parseBoolean( ((String)value).trim()) ); }
+			else if(valueClass == Timestamp.class)  { return this.changeValue(new Timestamp(Long.parseLong( ((String)value).trim()) )); }
+			else if(valueClass == Date.class)  		{ return this.changeValue(new Date(Long.parseLong( ((String)value).trim()) )); }
 			else {return false;}
 		}
 		

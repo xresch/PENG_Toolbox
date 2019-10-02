@@ -1,11 +1,15 @@
 package com.pengtoolbox.cfw.tests.validation;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw.validation.AbstractValidatable;
 import com.pengtoolbox.cfw.validation.BooleanValidator;
 import com.pengtoolbox.cfw.validation.EmailValidator;
+import com.pengtoolbox.cfw.validation.EpochOrTimeValidator;
 import com.pengtoolbox.cfw.validation.IValidatable;
 import com.pengtoolbox.cfw.validation.IntegerValidator;
 import com.pengtoolbox.cfw.validation.LengthValidator;
@@ -136,8 +140,38 @@ public class CFWValidationTests {
 		Assertions.assertFalse(validateThis.setValueValidated("email@domain"), "Is an invalid email address");
 		Assertions.assertFalse(validateThis.setValueValidated("email@domain..com"), "Is an invalid email address");
 		
-		
 	}
 	
+	@Test
+	public void testEpochOrTimeValidator() {
+		
+		IValidatable validateThis = new AbstractValidatable() {};
+		EpochOrTimeValidator bv = new EpochOrTimeValidator(validateThis);
+		
+		
+		Assertions.assertTrue(validateThis.setValueValidated(null),
+				" Null validates to true");
+				
+		Assertions.assertTrue(validateThis.setValueValidated(1580053600000L),
+				" Long value '1580053600000' is recognized as epoch time.");
+		
+		Assertions.assertTrue(validateThis.setValueValidated("1580053600000"),
+				" String value '1580053600000' is recognized as epoch time.");
+		
+		Assertions.assertTrue(validateThis.setValueValidated(new Date(1580053600000L)),
+				" Date is recognized as epoch time.");
+		
+		Assertions.assertTrue(validateThis.setValueValidated(new Timestamp(1580053600000L)),
+				" Timestamp is recognized as epoch time.");
+		
+		Assertions.assertFalse(validateThis.setValueValidated(1),
+				" Integers is not recognized as epoch time.");
+		
+		bv.setNullAllowed(false);
+		Assertions.assertFalse(validateThis.setValueValidated(null),
+				" Null validates to false.");
+		
+		
+	}
 	
 }

@@ -1,8 +1,11 @@
 package com.pengtoolbox.cfw.tests.assets.mockups;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
 import com.pengtoolbox.cfw.datahandling.CFWField;
-import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
 public class CFWObjectMockup extends CFWObject{
@@ -16,10 +19,10 @@ public class CFWObjectMockup extends CFWObject{
 	private CFWField<String> textarea = CFWField.newString(FormFieldType.TEXTAREA, "10ROW_TEXTAREA").setLabel("10 Row Textarea")
 			.addAttribute("rows", "10");
 	
-	private CFWField<String> date = CFWField.newString(FormFieldType.DATEPICKER, "DATE")
-			.setValue("1580053600000");
+	private CFWField<Date> date = CFWField.newDate(FormFieldType.DATEPICKER, "DATE")
+			.setValue(new Date(1580053600000L));
 	
-	private CFWField<String> date2 = CFWField.newString(FormFieldType.DATEPICKER, "DATE2");
+	private CFWField<Timestamp> timestamp = CFWField.newTimestamp(FormFieldType.DATEPICKER, "TIMESTAMP");
 	
 	public CFWObjectMockup() {
 		withValue.setValueValidated("This is the Value");
@@ -27,7 +30,7 @@ public class CFWObjectMockup extends CFWObject{
 	}
 		
 	public void addFields() {
-		this.addFields(firstname, lastname, withValue, description, textarea, date, date2);
+		this.addFields(firstname, lastname, withValue, description, textarea, date, timestamp);
 	}
 
 }
