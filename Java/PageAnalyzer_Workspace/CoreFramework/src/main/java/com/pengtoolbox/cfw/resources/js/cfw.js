@@ -520,9 +520,10 @@ function cfw_addToast(toastTitle, toastBody, style, delay){
  * Create a model with content.
  * @param modalTitle the title for the modal
  * @param modalBody the body of the modal
+ * @param jsCode to execute on modal close
  * @return nothing
  *************************************************************************************/
-function cfw_showModal(modalTitle, modalBody){
+function cfw_showModal(modalTitle, modalBody, jsCode){
 	
 	var body = $("body");
 	var modalID = 'cfw-default-modal';
@@ -546,11 +547,22 @@ function cfw_showModal(modalTitle, modalBody){
 				+ '    </div>'
 				+ '  </div>'
 				+ '</div>');
-		
+				
 		defaultModal.modal();
 		$('body').prepend(defaultModal);
 	}
 
+	//---------------------------------
+	// Add Callback
+	if(jsCode != null){
+		defaultModal.on('hidden.bs.modal', function () {
+			eval(jsCode);
+			$("#"+modalID).off('hidden.bs.modal');
+		});	
+	}
+	
+	//---------------------------------
+	// ShowModal
 	defaultModal.find(".modal-title").html("").append(modalTitle);
 	defaultModal.find('.modal-body').html("").append(modalBody);
 	
@@ -561,17 +573,18 @@ function cfw_showModal(modalTitle, modalBody){
  * Create a model with content.
  * @param modalTitle the title for the modal
  * @param modalBody the body of the modal
+ * @param jsCode to execute on modal close
  * @return nothing
  *************************************************************************************/
-function cfw_showSmallModal(modalTitle, modalBody){
+function cfw_showSmallModal(modalTitle, modalBody, jsCode){
 	
 	var body = $("body");
 	var modalID = 'cfw-small-modal';
 	
-	var defaultModal = $("#"+modalID);
-	if(defaultModal.length == 0){
+	var smallModal = $("#"+modalID);
+	if(smallModal.length == 0){
 	
-		defaultModal = $(
+		smallModal = $(
 				'<div id="'+modalID+'" class="modal fade"  tabindex="-1" role="dialog">'
 				+ '  <div class="modal-dialog modal-sm" role="document">'
 				+ '    <div class="modal-content">'
@@ -587,15 +600,27 @@ function cfw_showSmallModal(modalTitle, modalBody){
 				+ '    </div>'
 				+ '  </div>'
 				+ '</div>');
+
+		smallModal.modal();
+		$('body').prepend(smallModal);
 		
-		defaultModal.modal();
-		$('body').prepend(defaultModal);
 	}
 
-	defaultModal.find(".modal-title").html("").append(modalTitle);
-	defaultModal.find('.modal-body').html("").append(modalBody);
+	//---------------------------------
+	// Add Callback
+	if(jsCode != null){
+		smallModal.on('hidden.bs.modal', function () {
+			eval(jsCode);
+			$("#"+modalID).off('hidden.bs.modal');
+		});	
+	}
 	
-	defaultModal.modal('show');
+	//---------------------------------
+	// Show Modal
+	smallModal.find(".modal-title").html("").append(modalTitle);
+	smallModal.find('.modal-body').html("").append(modalBody);
+	
+	smallModal.modal('show');
 }
 
 
@@ -921,6 +946,27 @@ function cfw_fetchAndCacheData(url, params, key, callback){
 	}
 }
 
+/******************************************************************
+ * Method to remove the cached data under the specified key.
+ *
+ * @param key under which the data is stored
+ * @return nothing
+ *
+ ******************************************************************/
+function cfw_removeFromCache(key){
+	CFW.cache.data[key] = null;
+}
+
+/******************************************************************
+ * Method to remove all the data in the cache.
+ *
+ * @return nothing
+ *
+ ******************************************************************/
+function cfw_clearCache(){
+	CFW.cache.data = {};
+}
+
 /**************************************************************************************
  * Select all the content of the given element.
  * For example to select everything inside a given DIV element using 
@@ -965,7 +1011,9 @@ var CFW = {
 		postJSON: cfw_postJSON,
 		getForm: cfw_getForm,
 		createForm: cfw_createForm,
-		fetchAndCacheData: cfw_fetchAndCacheData
+		fetchAndCacheData: cfw_fetchAndCacheData,
+		removeFromCache: cfw_removeFromCache,
+		clearCache: cfw_clearCache
 	},
 	
 	selection: {
