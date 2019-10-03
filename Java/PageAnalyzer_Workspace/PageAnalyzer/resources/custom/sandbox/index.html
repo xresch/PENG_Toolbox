@@ -6,24 +6,138 @@
 	<input type="hidden" placeholder="Pk Id" name="PK_ID" value="-999">
 	
 	<div class="form-group row">  
-		<label class="col-sm-3 col-form-label" for="DATE">Date:</label>   
-		<div class="col-sm-9">
-			<input id="DATE-datepicker" type="text" class="form-control" placeholder="Date" name="DATE" value="">
+		<label class="col-sm-3 col-form-label" for="DATE-datepicker">Date:</label> 
+		<div class="col-sm-9 custom-control-inline mr-0">
+			<input id="DATE-datepicker" type="date" onchange="cfw_updateTimeField('DATE')" class="col-sm-9 form-control" placeholder="Date" value="">
+			<input id="DATE-timepicker" type="time" onchange="cfw_updateTimeField('DATE')" class="col-sm-3 form-control"  name="DATE-time" value="">
 			<input id="DATE" type="hidden" class="form-control" placeholder="Date" name="DATE" value="">
 		</div>
+		<input id="DATE-weekpicker" type="week" onchange="weekTest('DATE')" class="form-control"  name="DATE-time" value="">
 	</div>
 	<script>
-		window.addEventListener('DOMContentLoaded', function() {
-				$('#DATE-datepicker').datepicker({
-			  	dateFormat: 'dd.mm.yy',
-				altField: '#DATE',
-			  	altFormat: '@',
-			  	beforeShow: function(input, inst) {
-				        $('#ui-datepicker-div').addClass('bg-dark');
-			  		}
-				});
+		
+	function weekTest(fieldID){
+		
+		var id = '#'+fieldID;
+		var weekpicker = $(id+'-weekpicker');
+		
+		var dateString = weekpicker.first().val();
+		console.log("weekpicker: "+dateString);
+				
+	}
+	
+	 class CFWDate{
+			
+		 constructor(dateArgument){
+			 if(dateArgument != null){
+				 this.date = new Date(dateArgument);
+			 }else{
+				 this.date = new Date();
+			 }
+			 
+		 }
+		
+		 /********************************************
+		  * Returns a String in the format YYYY-MM-DD
+		  ********************************************/
+		 getDateForInput(){
+			 var datestring = this.fillDigits(this.date.getFullYear(), 4)+"-"
+			 				+ this.fillDigits(this.date.getMonth()+1, 2)+"-"
+			 				+ this.fillDigits(this.date.getDate(), 2);
+			 
+			 return datestring;
+		 }
+		 
+		 /********************************************
+		  * Returns a String in the format HH:MM:ss.SSS
+		  ********************************************/
+		 getTimeForInput(){
+			 var datestring = this.fillDigits(this.date.getHours(), 2)+":"
+			 				+ this.fillDigits(this.date.getMinutes(), 2);
+			 				/* +":"
+			 				+ this.fillDigits(this.date.getSeconds(), 2)+"."
+			 				+ this.f illDigits(this.date.getMilliseconds(), 3);*/
+			 
+			 return datestring;
+		 }
+		 
+		 /********************************************
+		  * Fill the digits to the needed amount
+		  ********************************************/
+		 fillDigits(value, digits){
+			
+			var stringValue = ''+value;
+			var length = stringValue.length;
+			
+			for(var i = stringValue.length; i < digits;i++){
+				stringValue = '0'+stringValue;
 			}
-		);
+			
+			return stringValue;
+			
+		}
+	 }
+	 
+		
+		function cfw_initializeTimefield(fieldID, epochMillis){
+			
+			
+			var id = '#'+fieldID;
+			var datepicker = $(id+'-datepicker');
+			var timepicker = $(id+'-timepicker');
+			
+			if(datepicker.length == 0){
+				CFW.ui.addToastDanger('Error: the datepicker field is unknown: '+fieldID);
+				return;
+			}
+			
+			if(epochMillis != null){
+				date = new CFWDate(epochMillis);
+			}else{
+				date = new CFWDate();
+			}
+			
+			console.log("date.getDateForInput(): "+date.getDateForInput());
+			console.log("date.getTimeForInput(): "+date.getTimeForInput());
+			
+			datepicker.first().val(date.getDateForInput());
+			
+			if(timepicker.length > 0 != null){
+				timepicker.first().val(date.getTimeForInput());
+			}
+		}
+	
+		function cfw_updateTimeField(fieldID){
+			
+			var id = '#'+fieldID;
+			var datepicker = $(id+'-datepicker');
+			var timepicker = $(id+'-timepicker');
+			
+			if(datepicker.length == 0){
+				CFW.ui.addToastDanger('Error: the datepicker field is unknown: '+fieldID)
+			}
+			
+			var dateString = datepicker.first().val();
+			console.log("dateString: "+dateString);
+			
+			if(timepicker.length > 0){
+				var timeString = timepicker.first().val();
+				if(timeString.length > 0 ){
+					dateString = dateString +"T"+timeString;
+				}
+			}
+			
+			if(dateString.length > 0){
+				$(id).val(Date.parse(dateString));
+				console.log("Epoch: "+Date.parse(dateString));
+			}
+			
+		}
+		
+		window.addEventListener('DOMContentLoaded', function() {
+			cfw_initializeTimefield('DATE'); //, -27080313788000);
+		}); 
+		
 	</script>
 
 	<input type="button" onclick="cfw_postJSON('/cfw/formhandler', $('#cfw-createGroupForm').serialize())" class="form-control btn-primary" value="Create Group"></form>
