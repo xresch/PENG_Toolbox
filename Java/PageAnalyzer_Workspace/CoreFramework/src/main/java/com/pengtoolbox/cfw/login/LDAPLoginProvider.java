@@ -49,7 +49,7 @@ public class LDAPLoginProvider implements LoginProvider {
 				CFW.DB.Users.create(newUser);
 				User userFromDB = CFW.DB.Users.selectByUsernameOrMail(username);
 				
-				CFW.DB.UserGroupMap.addUserToGroup(userFromDB, CFW.DB.Groups.CFW_GROUP_FOREIGN_USER, true);
+				CFW.DB.UserGroupMap.addUserToGroup(userFromDB, CFW.DB.Groups.CFW_GROUP_USER, true);
 				
 				return userFromDB;
 			}

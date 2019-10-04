@@ -29,6 +29,8 @@ TODO
 
 DONE
 ====
+- Remove Foreign User Group
+- Add new users to User group
 - Add FormFieldType.DATETIMEPICKER
 - add Callback to showModal Close buttons for refreshing user and group list
 - Form Cache limit.

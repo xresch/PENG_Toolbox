@@ -204,24 +204,14 @@ public class CFWDB {
 		//-----------------------------------------
 		// Create Group Foreign
 		//-----------------------------------------
-		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.CFW_GROUP_FOREIGN_USER)) {
-			CFW.DB.Groups.create(new Group(CFWDBGroup.CFW_GROUP_FOREIGN_USER)
-				.description("Foreign users are accounts which are managed by other sources like LDAP or .csv-Files. They normally don't have certain perissions like changing the password, as this is managed by the foreign account source.")
-				.isDeletable(false)
-			);
-		}
-		
 		Group foreignuserGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_FOREIGN_USER);
 		
-		if(foreignuserGroup == null) {
-			new CFWLog(logger)
-			.method("createDefaultGroups")
-			.severe("User group '"+CFWDBGroup.CFW_GROUP_FOREIGN_USER+"' was not found in the database.");
+		if(!(foreignuserGroup == null)) {
+			foreignuserGroup.isRenamable(true);
+			foreignuserGroup.isDeletable(true);
+			CFW.DB.Groups.update(foreignuserGroup);
 		}
 
-		foreignuserGroup.isRenamable(false);
-		CFW.DB.Groups.update(foreignuserGroup);
-		
 		return superuserGroup;
 	}
 	

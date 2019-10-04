@@ -71,7 +71,7 @@ function cfw_usermgmt_createUser(){
 
 	CFW.http.getForm('cfw-createUserForm', html);
 	
-	CFW.ui.showModal("Create User", html, "CFW.http.clearCache(); cfw_usermgmt_draw({tab: 'users'})");
+	CFW.ui.showModal("Create User", html, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'users'})");
 	
 }
 
@@ -144,7 +144,7 @@ function cfw_usermgmt_editGroup(groupID){
 	
 	cfw_usermgmt_createToggleTable(groupDiv, "grouppermissionmap", groupID)
 	
-	CFW.ui.showModal("Edit Group", allDiv, "CFW.http.clearCache(); cfw_usermgmt_draw({tab: 'groups'})");
+	CFW.ui.showModal("Edit Group", allDiv, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'groups'})");
 	
 	//-----------------------------------
 	// Load Form

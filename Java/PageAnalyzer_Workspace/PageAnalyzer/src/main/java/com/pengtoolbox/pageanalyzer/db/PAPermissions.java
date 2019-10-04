@@ -9,7 +9,7 @@ public class PAPermissions {
 	public static String MANAGE_RESULTS 		= "Manage Results";
 	public static String ANALYZE_HAR 			= "Analyze HAR";
 	public static String DOWNLOAD_HAR 			= "Download HAR";
-	public static String DOWNLOAD_YSLOW			= "Download YSlow";
+	public static String DELETE_RESULT			= "Delete Result";
 	public static String ANALYZE_URL 			= "Analyze URL";
 	public static String VIEW_HISTORY 			= "View History";
 	public static String VIEW_DOCU				= "View Documentation";
@@ -62,20 +62,7 @@ public class PAPermissions {
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(downloadHAR, userGroup, true);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(downloadHAR, foreignGroup, true);
 		}
-		//-----------------------------------
-		// Download YSlow
-		if(!CFW.DB.Permissions.checkPermissionExists(DOWNLOAD_YSLOW)) {
-			Permission downloadYslow = 
-					new Permission(DOWNLOAD_YSLOW)
-						.description("Download YSlow result files from the result history.")
-						.isDeletable(false);
-			
-			CFW.DB.Permissions.create(downloadYslow);
-			downloadYslow = CFW.DB.Permissions.selectByName(DOWNLOAD_YSLOW);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(downloadYslow, adminGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(downloadYslow, userGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(downloadYslow, foreignGroup, true);
-		}
+		
 		//-----------------------------------
 		// Analyze URL
 		if(!CFW.DB.Permissions.checkPermissionExists(ANALYZE_URL)) {
@@ -90,6 +77,7 @@ public class PAPermissions {
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(analyzeURL, userGroup, true);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(analyzeURL, foreignGroup, true);
 		}
+		
 		//-----------------------------------
 		// View History
 		if(!CFW.DB.Permissions.checkPermissionExists(VIEW_HISTORY)) {
@@ -103,6 +91,21 @@ public class PAPermissions {
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewHistory, adminGroup, true);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewHistory, userGroup, true);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewHistory, foreignGroup, true);
+		}
+		
+		//-----------------------------------
+		// Delete Result
+		if(!CFW.DB.Permissions.checkPermissionExists(DELETE_RESULT)) {
+			Permission deleteResult = 
+					new Permission(DELETE_RESULT)
+						.description("Delete results from the result history.")
+						.isDeletable(false);
+			
+			CFW.DB.Permissions.create(deleteResult);
+			deleteResult = CFW.DB.Permissions.selectByName(DELETE_RESULT);
+			CFW.DB.GroupPermissionMap.addPermissionToGroup(deleteResult, adminGroup, true);
+			CFW.DB.GroupPermissionMap.addPermissionToGroup(deleteResult, userGroup, true);
+			CFW.DB.GroupPermissionMap.addPermissionToGroup(deleteResult, foreignGroup, true);
 		}
 		//-----------------------------------
 		// View Documentation

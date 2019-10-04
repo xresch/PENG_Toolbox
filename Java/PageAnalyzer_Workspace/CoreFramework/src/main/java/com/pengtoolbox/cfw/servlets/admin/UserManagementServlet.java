@@ -91,7 +91,12 @@ public class UserManagementServlet extends HttpServlet
 					
 					if(newUser != null) {
 						if(CFW.DB.Users.create(newUser)) {
-							CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "User created successfully!");
+							
+							User userFromDB = CFW.DB.Users.selectByUsernameOrMail(newUser.username());
+							if (CFW.DB.UserGroupMap.addUserToGroup(userFromDB, CFW.DB.Groups.CFW_GROUP_USER, true)) {
+								CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "User created successfully!");
+								return;
+							}
 						}
 					}
 				}

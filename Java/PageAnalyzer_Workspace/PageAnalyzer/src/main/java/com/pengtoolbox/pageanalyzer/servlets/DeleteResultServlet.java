@@ -9,8 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
+import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 public class DeleteResultServlet extends HttpServlet
@@ -28,11 +31,20 @@ public class DeleteResultServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
+		
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
-		
+				
 		JSONResponse jsonResponse = new JSONResponse();
 		StringBuffer content = jsonResponse.getContent();
+		
+		if(!CFW.Context.Request.hasPermission(PAPermissions.DELETE_RESULT)
+		&& !CFW.Context.Request.hasPermission(PAPermissions.MANAGE_RESULTS)) {
+			jsonResponse.setSuccess(false);
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "You don't have the required permission to delete results.");
+			CFW.HTTP.redirectToReferer(request, response);
+			return;
+		}
 		
 		String resultIDs = request.getParameter("resultids");
 		

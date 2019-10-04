@@ -906,14 +906,14 @@ function printResultList(parent, data){
 	var cfwTable = CFW.ui.createTable();
 	cfwTable.isSticky = true;
 	
-	cfwTable.addHeaders(['&nbsp;', 'ID', 'Timestamp']);
+	cfwTable.addHeaders(['&nbsp;', 'Timestamp']);
 	if(data[0] != null && data[0].USER_ID != undefined){
 		cfwTable.addHeader('User');
 	}
 	
-	cfwTable.addHeaders(['Name', 'URL', '&nbsp;', '&nbsp;', '&nbsp;', '&nbsp;', '&nbsp;']);
+	cfwTable.addHeaders(['Name', 'URL', '&nbsp;', '&nbsp;', '&nbsp;', '&nbsp;']);
 	if (CFW.hasPermission("Download HAR")){ cfwTable.addHeaders(['&nbsp;']); }
-	
+	if (CFW.hasPermission("Delete Result")){ cfwTable.addHeaders(['&nbsp;']); }
 	//----------------------------------
 	// Create Rows
 	var resultCount = data.length;
@@ -926,7 +926,6 @@ function printResultList(parent, data){
 		var rowString = '<tr>';
 		
 		rowString += '<td><input class="resultSelectionCheckbox" type="checkbox" onchange="resultSelectionChanged();" value="'+currentData.RESULT_ID+'" /></td>';
-		rowString += '<td>'+currentData.RESULT_ID+'</td>';
 		rowString += '<td>'+currentData.TIME+'</td>';
 		
 		if(data[0] != null && data[0].USER_ID != undefined){
@@ -964,7 +963,11 @@ function printResultList(parent, data){
 		if (CFW.hasPermission("Download HAR")){
 			rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Dowload HAR" title="Dowload HAR" href=./data?type=har&resultid='+currentData.RESULT_ID+' download="'+resultName+'.har"><i class="fa fa-download"> HAR</i></a></td>';
 		}
-		rowString += '<td><button class="btn btn-danger btn-sm" alt="Delete Result" title="Delete Result" onclick="CFW.ui.confirmExecute(\'Do you want to delete the results?\', \'Delete\', \'deleteResults('+currentData.RESULT_ID+')\')"><i class="fa fa-trash"></i></button></td>';
+		
+		//Delete Result
+		if (CFW.hasPermission("Delete Result")){
+			rowString += '<td><button class="btn btn-danger btn-sm" alt="Delete Result" title="Delete Result" onclick="CFW.ui.confirmExecute(\'Do you want to delete the results?\', \'Delete\', \'deleteResults('+currentData.RESULT_ID+')\')"><i class="fa fa-trash"></i></button></td>';
+		}
 		rowString += "</tr>";
 		
 		cfwTable.addRow(rowString);
@@ -982,7 +985,9 @@ function printResultList(parent, data){
 	parent.append(selectAllButton);
 	parent.append(deselectAllButton);
 	parent.append(compareButton);
-	parent.append(deleteButton);
+	if (CFW.hasPermission("Delete Result")){
+		parent.append(deleteButton);
+	}
 }
 
 /**************************************************************************************
