@@ -51,7 +51,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private ArrayList<String> invalidMessages;
 	
 	public enum FormFieldType{
-		TEXT, TEXTAREA, PASSWORD, HIDDEN, BOOLEAN, DATEPICKER, NONE
+		TEXT, TEXTAREA, PASSWORD, HIDDEN, BOOLEAN, DATEPICKER, DATETIMEPICKER, NONE
 	}
 		
 	//###################################################################################
@@ -119,26 +119,29 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		if(value != null) {	this.addAttribute("value", value.toString()); };
 		
 		switch(type) {
-			case TEXT:  		html.append("<input type=\"text\" class=\"form-control\" "+this.getAttributesString()+"/>");
-								break;
+			case TEXT:  			html.append("<input type=\"text\" class=\"form-control\" "+this.getAttributesString()+"/>");
+									break;
 								
-			case TEXTAREA: 		createTextArea(html);
-								break;
+			case TEXTAREA: 			createTextArea(html);
+									break;
 								
-			case HIDDEN:  		html.append("<input type=\"hidden\" "+this.getAttributesString()+"/>");
-								break;
+			case HIDDEN:  			html.append("<input type=\"hidden\" "+this.getAttributesString()+"/>");
+									break;
 			
-			case BOOLEAN:  		createBooleanRadiobuttons(html);
-								break;		
+			case BOOLEAN:  			createBooleanRadiobuttons(html);
+									break;		
 								
-			case DATEPICKER:  	createDatePicker(html);
-								break;
-								
-			case PASSWORD:  	html.append("<input type=\"password\" class=\"form-control\" "+this.getAttributesString()+"/>");
-								break;
+			case DATEPICKER:  		createDatePicker(html);
+									break;
 			
-			case NONE:			//do nothing
-								break;
+			case DATETIMEPICKER:  	createDateTimePicker(html);
+									break;
+								
+			case PASSWORD:  		html.append("<input type=\"password\" class=\"form-control\" "+this.getAttributesString()+"/>");
+									break;
+			
+			case NONE:				//do nothing
+									break;
 			
 		}
 		
@@ -201,17 +204,57 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		
 		//---------------------------------
 		// Create Field
-		html.append("<input id=\""+name+"-datepicker\" type=\"text\" class=\"form-control\" placeholder=\"Date\" >\r\n" + 
+		html.append("<input id=\""+name+"-datepicker\" type=\"date\" onchange=\"cfw_updateTimeField('"+name+"')\" class=\"form-control\" placeholder=\"Date\" >\r\n" + 
 				"	<input id=\""+name+"\" type=\"hidden\" class=\"form-control\" "+this.getAttributesString()+">\r\n" + 
 				"	<script>\r\n" + 
 				"		window.addEventListener('DOMContentLoaded', function() {\r\n" + 
-				"			cfw_initializeDatePicker('"+name+"', "+epochTime+")"+
+				"			cfw_initializeTimefield('"+name+"', "+epochTime+")"+
 				"			}\r\n" + 
 				"		);\r\n" 
 				);
 		
 		html.append("</script>");
 		
+	}
+	
+	/***********************************************************************************
+	 * Create DatePicker
+	 ***********************************************************************************/
+	private void createDateTimePicker(StringBuilder html) {
+		
+		//---------------------------------
+		// Set initial value
+		String epochTime = null;
+		if(this.value != null) {
+			
+			if(value instanceof Date) {
+				epochTime = ""+((Date)value).getTime();
+				this.addAttribute("value", ""+epochTime);
+			}else if(value instanceof Timestamp) {
+				epochTime = ""+((Timestamp)value).getTime();
+				this.addAttribute("value", ""+epochTime);
+			}else {
+				epochTime = value.toString();
+				this.addAttribute("value", ""+value.toString());
+			}
+
+		}
+		
+		//---------------------------------
+		// Create Field
+		html.append("  <div class=\"custom-control-inline w-100 mr-0\">\r\n"
+					+ "    <input id=\""+name+"-datepicker\" type=\"date\" onchange=\"cfw_updateTimeField('"+name+"')\" class=\"col-md-9 form-control\" >\r\n"
+					+ "    <input id=\""+name+"-timepicker\" type=\"time\" onchange=\"cfw_updateTimeField('"+name+"')\" class=\"col-md-3 form-control\">"
+					+ "	   <input id=\""+name+"\" type=\"hidden\" class=\"form-control\" "+this.getAttributesString()+">\r\n" 
+					+ "</div>\r\n" 
+					+ "<script>\r\n" 
+					+ "		window.addEventListener('DOMContentLoaded', function() {\r\n" 
+					+ "			cfw_initializeTimefield('"+name+"', "+epochTime+")"
+					+ "			}\r\n"  
+					+ "		);\r\n" 
+					+ "</script>\r\n" 
+				);
+				
 	}
 	
 	/***********************************************************************************

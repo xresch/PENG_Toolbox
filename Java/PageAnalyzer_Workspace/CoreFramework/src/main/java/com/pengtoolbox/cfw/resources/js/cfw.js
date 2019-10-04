@@ -6,6 +6,62 @@
  * @author Reto Scheiwiller, 2019
  *************************************************************************************/
 
+/******************************************************************
+ * Class to wrap a date for easier formatting.
+ * 
+ ******************************************************************/
+class CFWDate{
+	
+	 constructor(dateArgument){
+		 if(dateArgument != null){
+			 this.date = new Date(dateArgument);
+		 }else{
+			 this.date = new Date();
+		 }
+		 
+	 }
+	
+	 /********************************************
+	  * Returns a String in the format YYYY-MM-DD
+	  ********************************************/
+	 getDateForInput(){
+		 var datestring = this.fillDigits(this.date.getFullYear(), 4)+"-"
+		 				+ this.fillDigits(this.date.getMonth()+1, 2)+"-"
+		 				+ this.fillDigits(this.date.getDate(), 2);
+		 
+		 return datestring;
+	 }
+	 
+	 /********************************************
+	  * Returns a String in the format HH:MM:ss.SSS
+	  ********************************************/
+	 getTimeForInput(){
+		 var datestring = this.fillDigits(this.date.getHours(), 2)+":"
+		 				+ this.fillDigits(this.date.getMinutes(), 2);
+		 				/* +":"
+		 				+ this.fillDigits(this.date.getSeconds(), 2)+"."
+		 				+ this.f illDigits(this.date.getMilliseconds(), 3);*/
+		 
+		 return datestring;
+	 }
+	 
+	 /********************************************
+	  * Fill the digits to the needed amount
+	  ********************************************/
+	 fillDigits(value, digits){
+		
+		var stringValue = ''+value;
+		var length = stringValue.length;
+		
+		for(var i = stringValue.length; i < digits;i++){
+			stringValue = '0'+stringValue;
+		}
+		
+		return stringValue;
+		
+	}
+}
+
 /**************************************************************************************
  * Filter the rows of a table by the value of the search field.
  * This method is best used by triggering it on the onchange-event on the search field
@@ -34,6 +90,8 @@ function cfw_filterTable(searchField){
 	});
 
 }
+
+
 /******************************************************************
  * Print the list of results found in the database.
  * 
@@ -271,22 +329,85 @@ function cfw_toggleTheToggleButton(button){
  * @param epochInitial the initial date in epoch time
  * @return nothing
  *************************************************************************************/
-function cfw_initializeDatePicker(name, epochInitial) {
-	
-	$('#'+name+'-datepicker').datepicker({
-	  	dateFormat: 'dd.mm.yy',
-		altField: '#'+name,
-	  	altFormat: '@',
-		showOptions: { direction: 'up' },
-	  	beforeShow: function(input, inst) {
-		        $('#ui-datepicker-div').addClass('bg-dark');
-	  		}
-	});
-	
-	if(epochInitial != null){
-		$('#'+name+'-datepicker').datepicker( 'setDate', new Date(epochInitial) );	
-	}
+//function cfw_initializeDatePicker(name, epochInitial) {
+//	
+//	$('#'+name+'-datepicker').datepicker({
+//	  	dateFormat: 'dd.mm.yy',
+//		altField: '#'+name,
+//	  	altFormat: '@',
+//		showOptions: { direction: 'up' },
+//	  	beforeShow: function(input, inst) {
+//		        $('#ui-datepicker-div').addClass('bg-dark');
+//	  		}
+//	});
+//	
+//	if(epochInitial != null){
+//		$('#'+name+'-datepicker').datepicker( 'setDate', new Date(epochInitial) );	
+//	}
+//
+//}
 
+/**************************************************************************************
+ * Initialize a Date and/or Timepicker created with the Java object CFWField.
+ * @param fieldID the name of the field
+ * @param epochMillis the initial date in epoch time or null
+ * @return nothing
+ *************************************************************************************/
+function cfw_initializeTimefield(fieldID, epochMillis){
+	
+	
+	var id = '#'+fieldID;
+	var datepicker = $(id+'-datepicker');
+	var timepicker = $(id+'-timepicker');
+	
+	if(datepicker.length == 0){
+		CFW.ui.addToastDanger('Error: the datepicker field is unknown: '+fieldID);
+		return;
+	}
+	
+	if(epochMillis != null){
+		date = new CFWDate(epochMillis);
+	}else{
+		date = new CFWDate();
+	}
+		
+	datepicker.first().val(date.getDateForInput());
+	
+	if(timepicker.length > 0 != null){
+		timepicker.first().val(date.getTimeForInput());
+	}
+}
+
+/**************************************************************************************
+ * Update a Date and/or Timepicker created with the Java object CFWField.
+ * @param fieldID the name of the field
+ * @return nothing
+ *************************************************************************************/
+function cfw_updateTimeField(fieldID){
+	
+	var id = '#'+fieldID;
+	var datepicker = $(id+'-datepicker');
+	var timepicker = $(id+'-timepicker');
+	
+	if(datepicker.length == 0){
+		CFW.ui.addToastDanger('Error: the datepicker field is unknown: '+fieldID)
+	}
+	
+	var dateString = datepicker.first().val();
+	console.log("dateString: "+dateString);
+	
+	if(timepicker.length > 0){
+		var timeString = timepicker.first().val();
+		if(timeString.length > 0 ){
+			dateString = dateString +"T"+timeString;
+		}
+	}
+	
+	if(dateString.length > 0){
+		$(id).val(Date.parse(dateString));
+		console.log("Epoch: "+Date.parse(dateString));
+	}
+	
 }
 
 /**************************************************************************************

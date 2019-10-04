@@ -22,7 +22,7 @@ public class CFWObjectMockup extends CFWObject{
 	private CFWField<Date> date = CFWField.newDate(FormFieldType.DATEPICKER, "DATE")
 			.setValue(new Date(1580053600000L));
 	
-	private CFWField<Timestamp> timestamp = CFWField.newTimestamp(FormFieldType.DATEPICKER, "TIMESTAMP");
+	private CFWField<Timestamp> timestamp = CFWField.newTimestamp(FormFieldType.DATETIMEPICKER, "TIMESTAMP");
 	
 	public CFWObjectMockup() {
 		withValue.setValueValidated("This is the Value");
