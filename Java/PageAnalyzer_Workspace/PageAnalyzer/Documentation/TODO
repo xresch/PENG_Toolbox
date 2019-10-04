@@ -1,6 +1,6 @@
 TODO
 ====
-- 
+- Add FormFieldType.TAGS
 - Add FormFieldType.AUTOCOMPLETE
 - Form errors add to field.
 - Add UserStatus Table
