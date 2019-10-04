@@ -15,6 +15,7 @@ import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
+import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
 
 /*************************************************************************
@@ -78,7 +79,11 @@ public class DataServlet extends HttpServlet {
 				case "allresults": 		content.append(PageAnalyzerDB.getAllResults());
 										break;
 										
-				case "har": 			content.append(PageAnalyzerDB.getHARFileByID(Integer.parseInt(resultID)));
+				case "har": 			if(CFW.Context.Request.hasPermission(PAPermissions.DOWNLOAD_HAR)) {
+											content.append(PageAnalyzerDB.getHARFileByID(Integer.parseInt(resultID)));
+										}else {
+											CFW.Context.Request.addAlertMessage(MessageType.ERROR, "You don't have the required permission to download HAR files.");
+										}
 										break;
 				
 				case "compareyslow": 	String resultIDs = request.getParameter("resultids");

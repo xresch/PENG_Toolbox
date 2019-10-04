@@ -29,6 +29,7 @@ TODO
 
 DONE
 ====
+- Add FormFieldType.DATETIMEPICKER
 - add Callback to showModal Close buttons for refreshing user and group list
 - Form Cache limit.
 - user exists compare lowercase.

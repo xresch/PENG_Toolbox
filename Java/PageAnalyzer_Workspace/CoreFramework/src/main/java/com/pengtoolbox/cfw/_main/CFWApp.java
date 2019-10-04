@@ -37,6 +37,7 @@ import com.pengtoolbox.cfw.servlets.FormServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
+import com.pengtoolbox.cfw.servlets.PermissionsServlet;
 import com.pengtoolbox.cfw.servlets.admin.APIUserMgmtSevlet;
 import com.pengtoolbox.cfw.servlets.admin.UserManagementServlet;
 import com.pengtoolbox.cfw.servlets.userprofile.ChangePasswordServlet;
@@ -245,6 +246,7 @@ public class CFWApp {
 		//-----------------------------------------
 		// User Management Servlets
 	    servletContextHandler.addServlet(UserManagementServlet.class,  "/usermanagement");
+	    servletContextHandler.addServlet(PermissionsServlet.class,  "/usermanagement/permissions");
 		servletContextHandler.addServlet(APIUserMgmtSevlet.class, "/usermanagement/data"); 
 	    
 	}

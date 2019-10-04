@@ -1108,6 +1108,23 @@ function cfw_selectElementContent(el) {
     }
 }
 
+/**************************************************************************************
+ * Checks if the user has the specified permission
+ * @param permissionName the name of the Permission
+ *************************************************************************************/
+function  cfw_hasPermission(permissionName){
+	$.ajaxSetup({async: false});
+	cfw_fetchAndCacheData("./usermanagement/permissions", null, "userPermissions")
+	$.ajaxSetup({async: true});
+	
+	if(CFW.cache.data["userPermissions"] != null
+	&& CFW.cache.data["userPermissions"].payload.includes(permissionName)){
+		return true;
+	}
+	
+	return false;
+}
+
 /********************************************************************
  * CFW FRAMEWORK STRUCTURE
  * -----------------------
@@ -1119,7 +1136,9 @@ var CFW = {
 		toastErrorDelay: 10000
 	},
 	cache: { 
-		data: {}
+		data: {},
+		removeFromCache: cfw_removeFromCache,
+		clearCache: cfw_clearCache
 	},
 	array: {
 		sortArrayByValueOfObject: cfw_sortArrayByValueOfObject
@@ -1132,15 +1151,14 @@ var CFW = {
 		postJSON: cfw_postJSON,
 		getForm: cfw_getForm,
 		createForm: cfw_createForm,
-		fetchAndCacheData: cfw_fetchAndCacheData,
-		removeFromCache: cfw_removeFromCache,
-		clearCache: cfw_clearCache
+		fetchAndCacheData: cfw_fetchAndCacheData
+
 	},
 	
 	selection: {
 		selectElementContent: cfw_selectElementContent
 	},
-	
+
 	ui: {
 		createTable: cfw_createTable,
 		createToggleButton: cfw_createToggleButton,
@@ -1154,5 +1172,6 @@ var CFW = {
 		toogleLoader: cfw_toogleLoader,
 		addAlert: cfw_addAlertMessage
 	},
+	hasPermission: cfw_hasPermission,
 
 }

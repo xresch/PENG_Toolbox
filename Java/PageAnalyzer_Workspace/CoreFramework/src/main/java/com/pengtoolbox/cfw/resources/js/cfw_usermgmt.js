@@ -99,7 +99,7 @@ function cfw_usermgmt_editUser(userID){
 	
 	cfw_usermgmt_createToggleTable(groupDiv, "usergroupmap", userID)
 	
-	CFW.ui.showModal("Edit User", allDiv, "CFW.http.clearCache(); cfw_usermgmt_draw({tab: 'users'})");
+	CFW.ui.showModal("Edit User", allDiv, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'users'})");
 	
 	//-----------------------------------
 	// Load Form
@@ -118,7 +118,7 @@ function cfw_usermgmt_createGroup(){
 
 	CFW.http.getForm('cfw-createGroupForm', html);
 	
-	CFW.ui.showModal("Create Group", html, "CFW.http.clearCache(); cfw_usermgmt_draw({tab: 'groups'})");
+	CFW.ui.showModal("Create Group", html, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'groups'})");
 	
 }
 /******************************************************************

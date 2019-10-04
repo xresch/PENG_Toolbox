@@ -911,8 +911,8 @@ function printResultList(parent, data){
 		cfwTable.addHeader('User');
 	}
 	
-	cfwTable.addHeaders(['Name', 'URL', '&nbsp;', '&nbsp;', '&nbsp;', '&nbsp;', '&nbsp;', '&nbsp;']);
-	
+	cfwTable.addHeaders(['Name', 'URL', '&nbsp;', '&nbsp;', '&nbsp;', '&nbsp;', '&nbsp;']);
+	if (CFW.hasPermission("Download HAR")){ cfwTable.addHeaders(['&nbsp;']); }
 	
 	//----------------------------------
 	// Create Rows
@@ -960,9 +960,10 @@ function printResultList(parent, data){
 
 		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Download Result" title="Download Result" href=./data?type=yslowresult&resultid='+currentData.RESULT_ID+' download="'+resultName+'_yslow_results.json"><i class="fa fa-save"></i></a></td>';
 		
-		//Save HAR
-		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Dowload HAR" title="Dowload HAR" href=./data?type=har&resultid='+currentData.RESULT_ID+' download="'+resultName+'.har"><i class="fa fa-download"> HAR</i></a></td>';
-
+		//Download HAR
+		if (CFW.hasPermission("Download HAR")){
+			rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Dowload HAR" title="Dowload HAR" href=./data?type=har&resultid='+currentData.RESULT_ID+' download="'+resultName+'.har"><i class="fa fa-download"> HAR</i></a></td>';
+		}
 		rowString += '<td><button class="btn btn-danger btn-sm" alt="Delete Result" title="Delete Result" onclick="CFW.ui.confirmExecute(\'Do you want to delete the results?\', \'Delete\', \'deleteResults('+currentData.RESULT_ID+')\')"><i class="fa fa-trash"></i></button></td>';
 		rowString += "</tr>";
 		
