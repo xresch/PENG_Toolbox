@@ -53,7 +53,7 @@ public class PAPermissions {
 		if(!CFW.DB.Permissions.checkPermissionExists(DOWNLOAD_HAR)) {
 			Permission downloadHAR = 
 					new Permission(DOWNLOAD_HAR)
-						.description("Download HAR files from the result history.")
+						.description("Download HAR files from the result history and analyze Gantt Charts.")
 						.isDeletable(false);
 			
 			CFW.DB.Permissions.create(downloadHAR);

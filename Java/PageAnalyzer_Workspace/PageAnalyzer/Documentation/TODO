@@ -1,14 +1,11 @@
 TODO
 ====
-- Add FormFieldType.TAGS
-- Add FormFieldType.AUTOCOMPLETE
 - Form errors add to field.
 - Add UserStatus Table
-- More Permissions
-  - Delete Results
-  - View Gantt Chart
-  - Download HAR
-  - Download Results
+- Check is user active
+- Add FormFieldType.TAGS
+- Add FormFieldType.AUTOCOMPLETE
+
 - Add Rule for HTTP2
   - Num requests Http 1.1
   - Num requests > 200
@@ -16,19 +13,20 @@ TODO
 
 - Support Info: Use default Modal, make exceptions unique.
 - Custom Error page CFW.App.createErrorHandler();
-- Check is user active
-- Add status table for user active
-- Add password policy
-- JS: Create request method for exchanging standard json format
-- Java: Create validatable form
-- add single js file to html template
-
 - Check if url exists and prompt for compare
 - Add modal panel for comparing rules.
 - SPNEGO/Kerberos Authentication
 
 DONE
 ====
+- JS: Create request method for exchanging standard json format
+- Java: Create validatable form
+- add single js file to html template
+- Add password policy
+- More Permissions
+  - Delete Results
+  - View Gantt Chart
+  - Download HAR
 - Remove Foreign User Group
 - Add new users to User group
 - Add FormFieldType.DATETIMEPICKER

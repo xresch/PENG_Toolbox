@@ -912,7 +912,7 @@ function printResultList(parent, data){
 	}
 	
 	cfwTable.addHeaders(['Name', 'URL', '&nbsp;', '&nbsp;', '&nbsp;', '&nbsp;']);
-	if (CFW.hasPermission("Download HAR")){ cfwTable.addHeaders(['&nbsp;']); }
+	if (CFW.hasPermission("Download HAR")){ cfwTable.addHeaders(['&nbsp;', '&nbsp;']); }
 	if (CFW.hasPermission("Delete Result")){ cfwTable.addHeaders(['&nbsp;']); }
 	//----------------------------------
 	// Create Rows
@@ -942,8 +942,9 @@ function printResultList(parent, data){
 		rowString += '<td><a class="btn btn-primary btn-sm" alt="View Result" title="View Result" href="./resultview?resultid='+currentData.RESULT_ID+'"><i class="fa fa-eye"></i></a></td>';
 		
 		// Gantt Chart Icon
-		rowString += '<td><a class="btn btn-primary btn-sm" alt="View Gantt Chart" title="View Gantt Chart" href="./ganttchart?resultid='+currentData.RESULT_ID+'"><i class="fas fa-sliders-h"></i></a></td>';
-		
+		if (CFW.hasPermission("Download HAR")){
+			rowString += '<td><a class="btn btn-primary btn-sm" alt="View Gantt Chart" title="View Gantt Chart" href="./ganttchart?resultid='+currentData.RESULT_ID+'"><i class="fas fa-sliders-h"></i></a></td>';
+		}
 		// Link Icon
 		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Open URL" title="Open URL" href="'+url+'"><i class="fa fa-link"></i></a></td>';
 		
