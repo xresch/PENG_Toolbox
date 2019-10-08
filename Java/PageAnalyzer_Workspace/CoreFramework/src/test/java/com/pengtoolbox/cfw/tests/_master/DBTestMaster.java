@@ -27,5 +27,7 @@ public class DBTestMaster {
 	@AfterClass
 	public static void stopDefaultApplication() throws Exception {
 		CFWDB.rollbackTransaction();
+		System.out.println("========== ALERTS =========");
+		System.out.println(CFW.Context.Request.getAlertsAsJSONArray());
 	}
 }

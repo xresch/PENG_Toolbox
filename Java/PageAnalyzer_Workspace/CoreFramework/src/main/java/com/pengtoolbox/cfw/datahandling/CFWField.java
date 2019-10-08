@@ -8,11 +8,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWHttp;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.response.bootstrap.BTForm;
@@ -35,6 +35,8 @@ import com.pengtoolbox.cfw.validation.IntegerValidator;
  * 
  **********************************************************************************/
 public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T> {
+	
+	private static Logger logger = CFWLog.getLogger(CFWField.class.getName());
 	
 	private Class<T> valueClass;
 	private FormFieldType type;
@@ -89,6 +91,10 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public static CFWField<Date> newDate(FormFieldType type, String fieldName){
 		return new CFWField<Date>(Date.class, type, fieldName)
 				.addValidator(new EpochOrTimeValidator());
+	}
+	
+	public static CFWField<Object[]> newArray(FormFieldType type, String fieldName){
+		return new CFWField<Object[]>(Object[].class, type, fieldName);
 	}
 		
 	//###################################################################################
@@ -410,6 +416,12 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 ******************************************************************************************************/
 	private boolean changeValue(Object value) {
 		
+		if(this.isDisabled()) { 
+			new CFWLog(logger)
+			.method("changeValue")
+			.severe("The field '"+this.name+"' cannot be changed as the field is disabled.");
+			return false; 
+		}
 		if(changeHandler != null) {
 			if(changeHandler.handle(this.value, value)) {
 				this.value = value;
@@ -419,6 +431,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		}else {
 			this.value = value;
 		}
+		
+		this.fireChange();
 		return true;
 	}
 	
@@ -429,7 +443,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			return this.changeValue(value);
 		}
 		
-		if(value.getClass() == this.valueClass) {
+		if(this.valueClass.isAssignableFrom(value.getClass())) {
 			this.changeValue(value);
 			return true;
 		}
@@ -440,12 +454,14 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				else if(valueClass == Boolean.class) 	{ return this.changeValue(false); }
 				else if(valueClass == Timestamp.class)  { return this.changeValue(null);  }
 				else if(valueClass == Date.class)  		{ return this.changeValue(null); }
+				else if(valueClass == Object[].class)	{ return this.changeValue(null); }
 				else {return false;}
 			}
 			else if(valueClass == Integer.class) 	{ return this.changeValue(Integer.parseInt((String)value)); }
 			else if(valueClass == Boolean.class) 	{ return this.changeValue(Boolean.parseBoolean( ((String)value).trim()) ); }
 			else if(valueClass == Timestamp.class)  { return this.changeValue(new Timestamp(Long.parseLong( ((String)value).trim()) )); }
 			else if(valueClass == Date.class)  		{ return this.changeValue(new Date(Long.parseLong( ((String)value).trim()) )); }
+			else if(valueClass == Object[].class)	{ return this.changeValue( ((String)value).split(",") ); }
 			else {return false;}
 		}
 		
@@ -512,7 +528,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 						result = false;
 					}
 				}else {
-					new CFWLog(CFWHttp.logger)
+					new CFWLog(logger)
 						.method("mapAndValidateParamsToFields")
 						.severe("The field with name '"+key+"' is unknown for this type.");
 				}
@@ -551,14 +567,17 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				if(fields.containsKey(colName)) {
 					CFWField current = fields.get(colName);
 					
-					if      (current.getValueClass() == String.class)  { current.setValueValidated(result.getString(colName)); }
-					else if(current.getValueClass() == Integer.class)  { current.setValueValidated(result.getInt(colName)); }
-					else if(current.getValueClass() == Boolean.class)  { current.setValueValidated(result.getBoolean(colName)); }
-					else if(current.getValueClass() == Timestamp.class)  { current.setValueValidated(result.getTimestamp(colName)); }
-					else if(current.getValueClass() == Date.class)  { current.setValueValidated(result.getDate(colName)); }
+					if     ( String.class.isAssignableFrom(current.getValueClass()) )  { current.setValueValidated(result.getString(colName)); }
+					else if( Integer.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getInt(colName)); }
+					else if( Boolean.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getBoolean(colName)); }
+					else if( Timestamp.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getTimestamp(colName)); }
+					else if( Date.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getDate(colName)); }
+					else if( Object[].class.isAssignableFrom(current.getValueClass()) )  { 
+						current.setValueValidated(result.getArray(colName).getArray()); }
+					
 				}else {
 					success = false;
-					new CFWLog(CFWHttp.logger)
+					new CFWLog(logger)
 						.method("mapResultSetColumnsToFields")
 						.silent()
 						.warn("The object doesn't contain a field with name '"+colName+"'.");
@@ -567,7 +586,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		
 		} catch (SQLException e) {
 			success = false;
-			new CFWLog(CFWHttp.logger)
+			new CFWLog(logger)
 				.method("mapResultSetColumnsToFields")
 				.severe("SQL Exception occured while trying to map ResultSet to fields. Check Cursor position.", e);
 		}

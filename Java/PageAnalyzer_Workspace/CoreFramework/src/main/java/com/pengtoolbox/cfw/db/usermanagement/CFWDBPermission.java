@@ -280,7 +280,6 @@ public class CFWDBPermission {
 				.selectCount()
 				.where(PermissionFields.NAME.toString(), permissionName)
 				.getCount();
-		System.out.println("### Count: "+count);
 		
 		return (count > 0);
 	}

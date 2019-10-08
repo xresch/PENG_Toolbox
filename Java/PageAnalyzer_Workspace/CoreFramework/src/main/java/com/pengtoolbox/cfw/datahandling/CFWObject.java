@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw.datahandling;
 
 import java.sql.ResultSet;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
@@ -119,8 +120,13 @@ public class CFWObject {
 		for(CFWField field : fields.values()) {
 			builder.append("\n")
 			.append(field.getName())
-			.append(": ")
-			.append(field.getValue());
+			.append(": ");
+			if(!(field.getValue() instanceof Object[])) {
+				builder.append(field.getValue());
+			}else {
+				builder.append(Arrays.toString((Object[])field.getValue()));
+			}
+			
 		}
 
 		return builder.toString();

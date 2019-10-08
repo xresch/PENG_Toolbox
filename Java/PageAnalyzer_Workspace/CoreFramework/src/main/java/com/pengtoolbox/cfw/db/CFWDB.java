@@ -117,6 +117,7 @@ public class CFWDB {
 	 ********************************************************************************************/
 	public static void initializeTables() {
 		
+		CFW.DB.Config.initializeTable();
 		CFW.DB.Users.initializeTable();
 		CFW.DB.Groups.initializeTable();
 		CFW.DB.UserGroupMap.initializeTable();
@@ -622,6 +623,7 @@ public class CFWDB {
 				else if (currentValue instanceof Blob) 		{ prepared.setBlob(i+1, (Blob)currentValue); }
 				else if (currentValue instanceof Clob) 		{ prepared.setClob(i+1, (Clob)currentValue); }
 				else if (currentValue instanceof Byte) 		{ prepared.setByte(i+1, (Byte)currentValue); }
+				else if (currentValue instanceof Object[]) 	{ prepared.setArray(i+1, prepared.getConnection().createArrayOf("VARCHAR", (Object[])currentValue)); }
 				else if (currentValue == null) 				{ prepared.setNull(i+1, Types.NULL); }
 				else { throw new RuntimeException("Unsupported database field type: "+ currentValue.getClass().getName());}
 			}
