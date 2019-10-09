@@ -987,7 +987,9 @@ function cfw_getForm(formid, targetElement){
 
 	$.get('/cfw/formhandler', {id: formid})
 		  .done(function(response) {
-		      $(targetElement).html(response.payload.html)
+			  $(targetElement).html(response.payload.html);
+		      formID = $(targetElement).find('form').attr("id");
+              eval("intializeForm_"+formID+"();");
 		  })
 		  .fail(function(response) {
 			  console.error("Request failed: "+url);
@@ -1025,7 +1027,9 @@ function cfw_createForm(url, params, targetElement){
 
 	$.get(url, params)
 		  .done(function(response) {
-		      $(targetElement).html(response.payload.html)
+		      $(targetElement).html(response.payload.html);
+		      formID = $(targetElement).find('form').attr("id");
+              eval("intializeForm_"+formID+"();");
 		  })
 		  .fail(function(response) {
 			  console.error("Request failed: "+url);

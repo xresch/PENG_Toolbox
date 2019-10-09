@@ -7,8 +7,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import javax.sql.rowset.serial.SerialClob;
-
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
@@ -60,6 +58,7 @@ public class User extends CFWObject {
 	
 	private CFWField<String> status = CFWField.newString(FormFieldType.SELECT, UserDBFields.STATUS.toString())
 			.setOptions(new String[] {"Active", "Inactive"})
+			.setDescription("Active users can login, inactive users are prohibited to login.")
 			.addValidator(new LengthValidator(-1, 255));
 			
 	private Blob avatarImage;
@@ -67,7 +66,19 @@ public class User extends CFWObject {
 	private Timestamp dateCreated = new Timestamp(new Date().getTime());
 	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, UserDBFields.IS_DELETABLE.toString())
-			.setValue(true);
+			.setValue(true)
+			.setChangeHandler(new CFWFieldChangeHandler<Boolean>() {
+				@Override
+				public boolean handle(Boolean oldValue, Boolean newValue) {
+					if(newValue) {
+						status.isDisabled(false);
+					}else {
+						status.isDisabled(true);
+					}
+					
+					return true;
+				}
+			});;;
 												
 
 	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, UserDBFields.IS_RENAMABLE.toString())
@@ -76,10 +87,10 @@ public class User extends CFWObject {
 				
 				@Override
 				public boolean handle(Boolean oldValue, Boolean newValue) {
-					if(!newValue) {
-						username.isDisabled(true);
-					}else {
+					if(newValue) {
 						username.isDisabled(false);
+					}else {
+						username.isDisabled(true);
 					}
 					
 					return true;
@@ -88,7 +99,8 @@ public class User extends CFWObject {
 	
 	//Username and password is managed in another source, like LDAP or CSV
 	private CFWField<Boolean> isForeign = CFWField.newBoolean(FormFieldType.BOOLEAN, UserDBFields.IS_FOREIGN.toString())
-												.setValue(false);
+					.setDescription("Foreign users are managed by other authentication providers like LDAP. Password in database is ignored.")
+					.setValue(false);
 	
 	private boolean hasUsernameChanged = false;
 

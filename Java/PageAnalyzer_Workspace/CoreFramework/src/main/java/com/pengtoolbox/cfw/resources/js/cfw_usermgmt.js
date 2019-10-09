@@ -69,7 +69,7 @@ function cfw_usermgmt_createUser(){
 	
 	var html = $('<div id="cfw-usermgmt-createUser">');	
 
-	CFW.http.getForm('cfw-createUserForm', html);
+	CFW.http.getForm('cfwCreateUserForm', html);
 	
 	CFW.ui.showModal("Create User", html, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'users'})");
 	
@@ -116,7 +116,7 @@ function cfw_usermgmt_createGroup(){
 	
 	var html = $('<div id="cfw-usermgmt-createGroup">');	
 
-	CFW.http.getForm('cfw-createGroupForm', html);
+	CFW.http.getForm('cfwCreateGroupForm', html);
 	
 	CFW.ui.showModal("Create Group", html, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'groups'})");
 	

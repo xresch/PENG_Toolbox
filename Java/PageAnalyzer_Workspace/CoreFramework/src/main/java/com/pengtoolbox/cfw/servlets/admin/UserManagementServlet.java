@@ -76,7 +76,7 @@ public class UserManagementServlet extends HttpServlet
 		
 		//--------------------------------------
 		// Create User Form
-		CreateUserForm createUserForm = new CreateUserForm("cfw-createUserForm", "Create User");
+		CreateUserForm createUserForm = new CreateUserForm("cfwCreateUserForm", "Create User");
 		
 		createUserForm.setFormHandler(new BTFormHandler() {
 			
@@ -86,9 +86,9 @@ public class UserManagementServlet extends HttpServlet
 				if(form.mapRequestParameters(request)) {
 					CreateUserForm casted = (CreateUserForm)form;
 					User newUser = new User(casted.getUsername())
-							.setInitialPassword(casted.getPassword(), casted.getRepeatedPassword())
 							.status("Active")
-							.isForeign(casted.getIsForeign());
+							.isForeign(casted.getIsForeign())
+							.setInitialPassword(casted.getPassword(), casted.getRepeatedPassword());
 					
 					if(newUser != null) {
 						if(CFW.DB.Users.create(newUser)) {
@@ -108,7 +108,7 @@ public class UserManagementServlet extends HttpServlet
 		//--------------------------------------
 		// Create Group Form
 		
-		BTForm createGroupForm = new Group("").toForm("cfw-createGroupForm", "Create Group");
+		BTForm createGroupForm = new Group("").toForm("cfwCreateGroupForm", "Create Group");
 		
 		createGroupForm.setFormHandler(new BTFormHandler() {
 			

@@ -25,6 +25,7 @@ public class BTForm extends HierarchicalHTMLItem {
 	private String submitLabel = "";
 	private String postURL;
 	private CFWObject origin;
+	public StringBuilder javascript = new StringBuilder();
 	
 	// Contains the fields with field name as key
 	public LinkedHashMap<String, CFWField> fields = new LinkedHashMap<String, CFWField>();
@@ -32,11 +33,15 @@ public class BTForm extends HierarchicalHTMLItem {
 	private BTFormHandler formHandler = null;
 	
 	public BTForm(String formID, String submitLabel) {
+		
+		if(formID.matches(".*[^A-Za-z0-9]+.*")) {
+			CFW.Context.Request.addAlertMessage(MessageType.WARNING, "Don't use any other characters for formIDs than A-Z, a-z and 0-9: '"+formID+"'");
+		}
 		this.formID = formID;
 		this.submitLabel = submitLabel;
 		
 		CFWField<String> formIDField = CFWField.newString(FormFieldType.HIDDEN, BTForm.FORM_ID);
-		formIDField.setValueValidated(formID);
+		formIDField.setValueValidated(this.formID);
 		this.addChild(formIDField);
 		
 		// Default post to servlet creating the form
@@ -73,8 +78,25 @@ public class BTForm extends HierarchicalHTMLItem {
 			}
 		}
 
+		//---------------------------
+		// Create send button
 		String onclick = "cfw_postJSON('"+postURL+"', $('#"+formID+"').serialize())";
 		html.append("<input type=\"button\" onclick=\""+onclick+"\" class=\"form-control btn-primary\" value=\""+submitLabel+"\">");
+		
+		//---------------------------
+		// Add javascript
+		html.append(
+				"<script>\r\n" + 
+				"	function intializeForm_"+formID+"(){\r\n"+
+				"		$('[data-toggle=\"tooltip\"]').tooltip();\r\n"+		
+						javascript.toString()+
+				"	}\r\n" + 
+				"	window.addEventListener('DOMContentLoaded', function() {\r\n" + 
+				"       intializeForm_"+formID+"();"+
+				"});\r\n"+
+				"</script>"
+				);
+		
 		html.append("</form>");
 	}	
 

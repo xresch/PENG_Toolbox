@@ -1,10 +1,8 @@
 TODO
 ====
 
-- Config Table
 - Form errors add to field.
-- Add UserStatus Table
-- Check is user active
+
 - Add FormFieldType.TAGS
 - Add FormFieldType.AUTOCOMPLETE
 
@@ -21,6 +19,8 @@ TODO
 
 DONE
 ====
+- Check is user active
+- Config Table
 - JS: Create request method for exchanging standard json format
 - Java: Create validatable form
 - add single js file to html template

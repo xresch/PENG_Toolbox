@@ -156,7 +156,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 		
 		if(user != null) {
 			
-			BTForm editUserForm = user.toForm("cfw-editUserForm-"+ID, "Update User");
+			BTForm editUserForm = user.toForm("cfwEditUserForm"+ID, "Update User");
 			
 			editUserForm.setFormHandler(new BTFormHandler() {
 				
@@ -187,7 +187,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 		
 		if(group != null) {
 			
-			BTForm editGroupForm = group.toForm("cfw-editGroupForm-"+ID, "Update Group");
+			BTForm editGroupForm = group.toForm("cfwEditGroupForm"+ID, "Update Group");
 			
 			editGroupForm.setFormHandler(new BTFormHandler() {
 				

@@ -277,16 +277,14 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		
 		//---------------------------------
 		// Create Field
-		html.append("<input id=\""+name+"-datepicker\" type=\"date\" onchange=\"cfw_updateTimeField('"+name+"')\" class=\"form-control\" placeholder=\"Date\" >\r\n" + 
-				"	<input id=\""+name+"\" type=\"hidden\" class=\"form-control\" "+this.getAttributesString()+">\r\n" + 
-				"	<script>\r\n" + 
-				"		window.addEventListener('DOMContentLoaded', function() {\r\n" + 
-				"			cfw_initializeTimefield('"+name+"', "+epochTime+")"+
-				"			}\r\n" + 
-				"		);\r\n" 
-				);
 		
-		html.append("</script>");
+		html.append("<input id=\""+name+"-datepicker\" type=\"date\" onchange=\"cfw_updateTimeField('"+name+"')\" class=\"form-control\" placeholder=\"Date\" >\r\n" + 
+				"	<input id=\""+name+"\" type=\"hidden\" class=\"form-control\" "+this.getAttributesString()+">\r\n");
+		
+		if(this.parent instanceof BTForm) {
+			((BTForm)this.parent).javascript.append("cfw_initializeTimefield('"+name+"', "+epochTime+");\r\n");
+		}
+
 		
 	}
 	
@@ -319,14 +317,11 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					+ "    <input id=\""+name+"-datepicker\" type=\"date\" onchange=\"cfw_updateTimeField('"+name+"')\" class=\"col-md-9 form-control\" >\r\n"
 					+ "    <input id=\""+name+"-timepicker\" type=\"time\" onchange=\"cfw_updateTimeField('"+name+"')\" class=\"col-md-3 form-control\">"
 					+ "	   <input id=\""+name+"\" type=\"hidden\" class=\"form-control\" "+this.getAttributesString()+">\r\n" 
-					+ "</div>\r\n" 
-					+ "<script>\r\n" 
-					+ "		window.addEventListener('DOMContentLoaded', function() {\r\n" 
-					+ "			cfw_initializeTimefield('"+name+"', "+epochTime+")"
-					+ "			}\r\n"  
-					+ "		);\r\n" 
-					+ "</script>\r\n" 
-				);
+					+ "</div>\r\n");
+		
+		if(this.parent instanceof BTForm) {
+			((BTForm)this.parent).javascript.append("cfw_initializeTimefield('"+name+"', "+epochTime+");\r\n");
+		}
 				
 	}
 	
