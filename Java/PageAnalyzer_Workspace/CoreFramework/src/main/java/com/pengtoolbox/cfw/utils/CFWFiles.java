@@ -19,7 +19,9 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWProperties;
+import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWFiles {
@@ -67,7 +69,7 @@ public class CFWFiles {
 	public static String getFileContent(HttpServletRequest request, String path){
 		CFWLog omlogger = new CFWLog(logger).method("getFileContent");
 		
-		if( CFWConfig.CACHING_FILE_ENABLED && CFWFiles.permanentStringFileCache.containsKey(path)){
+		if( CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING) && CFWFiles.permanentStringFileCache.containsKey(path)){
 			omlogger.finest("Read file content from cache");
 			return CFWFiles.permanentStringFileCache.get(path);
 		}else{
@@ -179,7 +181,7 @@ public class CFWFiles {
 			packageName = packageName.replaceAll("\\.", "/");
 			String resourcePath = packageName + "/" + filename;
 			
-			if( CFWConfig.CACHING_FILE_ENABLED && CFWFiles.permanentStringFileCache.containsKey(resourcePath)){
+			if( CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING) && CFWFiles.permanentStringFileCache.containsKey(resourcePath)){
 				new CFWLog(logger).finest("Read package resource content from cache");
 				return CFWFiles.permanentStringFileCache.get(resourcePath);
 			}else{
@@ -215,7 +217,7 @@ public class CFWFiles {
 			packageName = packageName.replaceAll("\\.", "/");
 			String resourcePath = packageName + "/" + filename;
 			
-			if( CFWConfig.CACHING_FILE_ENABLED && CFWFiles.permanentByteFileCache.containsKey(resourcePath)){
+			if( CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING) && CFWFiles.permanentByteFileCache.containsKey(resourcePath)){
 				new CFWLog(logger).finest("Read package resource content from cache");
 				return CFWFiles.permanentByteFileCache.get(resourcePath);
 			}else{

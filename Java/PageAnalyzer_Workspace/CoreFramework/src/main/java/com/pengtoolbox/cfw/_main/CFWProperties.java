@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-public class CFWConfig {
+public class CFWProperties {
 
 	public static final Properties configProperties = new Properties();
 	
@@ -52,10 +52,7 @@ public class CFWConfig {
 	
 	/** the base url of the application. */
 	public static String BASE_URL = "/";
-	
-	/** Enables or disables the Authentication. (Property=cfw_caching_file_enabled, Default="true") */
-	public static boolean CACHING_FILE_ENABLED = true;
-	
+		
 	/** Session Time in Seconds. (Property=cfw_session_timeout, Default=36000) */
 	public static int SESSION_TIMEOUT = 36000;
 	
@@ -113,48 +110,47 @@ public class CFWConfig {
 	 *******************************************************************************/
 	public static void loadConfiguration(String configFilePath) throws IOException {
 		
-		CFWConfig.configProperties.load(new FileReader(new File(configFilePath)));
+		CFWProperties.configProperties.load(new FileReader(new File(configFilePath)));
 		printConfiguration();
 		
-		APPLICATION_ID					= CFWConfig.configAsString("cfw_application_id", APPLICATION_ID);
-		APPLICATION_NAME				= CFWConfig.configAsString("cfw_application_name", APPLICATION_NAME);
-		APPLICATION_THEME				= CFWConfig.configAsString("cfw_application_theme", APPLICATION_THEME);
-		APPLICATION_MAX_UPLOADSIZE		= CFWConfig.configAsInt("cfw_application_max_uploadsize", APPLICATION_MAX_UPLOADSIZE);
-		RESET_ADMIN_PW 					= CFWConfig.configAsBoolean("cfw_reset_admin_pw", RESET_ADMIN_PW);
+		APPLICATION_ID					= CFWProperties.configAsString("cfw_application_id", APPLICATION_ID);
+		APPLICATION_NAME				= CFWProperties.configAsString("cfw_application_name", APPLICATION_NAME);
+		APPLICATION_THEME				= CFWProperties.configAsString("cfw_application_theme", APPLICATION_THEME);
+		APPLICATION_MAX_UPLOADSIZE		= CFWProperties.configAsInt("cfw_application_max_uploadsize", APPLICATION_MAX_UPLOADSIZE);
+		RESET_ADMIN_PW 					= CFWProperties.configAsBoolean("cfw_reset_admin_pw", RESET_ADMIN_PW);
 				
 		BASE_URL 						= "/"+APPLICATION_NAME;
 		
-		HTTP_ENABLED 					= CFWConfig.configAsBoolean("cfw_http_enabled", HTTP_ENABLED);
-		HTTP_PORT 						= CFWConfig.configAsInt("cfw_http_port", HTTP_PORT);
-		HTTP_REDIRECT_TO_HTTPS			= CFWConfig.configAsBoolean("cfw_http_redirect_to_https", HTTP_REDIRECT_TO_HTTPS);
+		HTTP_ENABLED 					= CFWProperties.configAsBoolean("cfw_http_enabled", HTTP_ENABLED);
+		HTTP_PORT 						= CFWProperties.configAsInt("cfw_http_port", HTTP_PORT);
+		HTTP_REDIRECT_TO_HTTPS			= CFWProperties.configAsBoolean("cfw_http_redirect_to_https", HTTP_REDIRECT_TO_HTTPS);
 
-		HTTPS_ENABLED 					= CFWConfig.configAsBoolean("cfw_https_enabled", HTTPS_ENABLED);
-		HTTPS_PORT 						= CFWConfig.configAsInt("cfw_https_port", HTTPS_PORT);
+		HTTPS_ENABLED 					= CFWProperties.configAsBoolean("cfw_https_enabled", HTTPS_ENABLED);
+		HTTPS_PORT 						= CFWProperties.configAsInt("cfw_https_port", HTTPS_PORT);
 		
-		HTTPS_KEYSTORE_PATH 			= CFWConfig.configAsString("cfw_https_keystore_path", HTTPS_KEYSTORE_PATH);
-		HTTPS_KEYSTORE_PASSWORD			= CFWConfig.configAsString("cfw_https_keystore_password", HTTPS_KEYSTORE_PASSWORD);
-		HTTPS_KEYMANAGER_PASSWORD		= CFWConfig.configAsString("cfw_https_keymanager_password", HTTPS_KEYMANAGER_PASSWORD);
+		HTTPS_KEYSTORE_PATH 			= CFWProperties.configAsString("cfw_https_keystore_path", HTTPS_KEYSTORE_PATH);
+		HTTPS_KEYSTORE_PASSWORD			= CFWProperties.configAsString("cfw_https_keystore_password", HTTPS_KEYSTORE_PASSWORD);
+		HTTPS_KEYMANAGER_PASSWORD		= CFWProperties.configAsString("cfw_https_keymanager_password", HTTPS_KEYMANAGER_PASSWORD);
 		
-		CACHING_FILE_ENABLED 	  		= CFWConfig.configAsBoolean("cfw_caching_file_enabled", CACHING_FILE_ENABLED);
-		SESSION_TIMEOUT					= CFWConfig.configAsInt("cfw_session_timeout", SESSION_TIMEOUT);
-		BROWSER_RESOURCE_MAXAGE 		= CFWConfig.configAsInt("cfw_browser_resource_maxage", BROWSER_RESOURCE_MAXAGE);
+		SESSION_TIMEOUT					= CFWProperties.configAsInt("cfw_session_timeout", SESSION_TIMEOUT);
+		BROWSER_RESOURCE_MAXAGE 		= CFWProperties.configAsInt("cfw_browser_resource_maxage", BROWSER_RESOURCE_MAXAGE);
 		
-		AUTHENTICATION_METHOD 			= CFWConfig.configAsString("authentication_method", AUTHENTICATION_METHOD);
-		AUTHENTICATION_ENABLED 			= CFWConfig.configAsBoolean("cfw_authentication_enabled", AUTHENTICATION_ENABLED);
-		AUTHENTICATION_CSV_FILE			= CFWConfig.configAsString("authentication_csv_file", AUTHENTICATION_CSV_FILE);
+		AUTHENTICATION_METHOD 			= CFWProperties.configAsString("authentication_method", AUTHENTICATION_METHOD);
+		AUTHENTICATION_ENABLED 			= CFWProperties.configAsBoolean("cfw_authentication_enabled", AUTHENTICATION_ENABLED);
+		AUTHENTICATION_CSV_FILE			= CFWProperties.configAsString("authentication_csv_file", AUTHENTICATION_CSV_FILE);
 		
-		LDAP_URL 						= CFWConfig.configAsString("authentication_ldap_url", LDAP_URL);
-		LDAP_USER 						= CFWConfig.configAsString("authentication_ldap_user", LDAP_USER);
-		LDAP_PASSWORD 					= CFWConfig.configAsString("authentication_ldap_password", LDAP_PASSWORD);
-		LDAP_SEARCHBASE 				= CFWConfig.configAsString("authentication_ldap_searchbase", LDAP_SEARCHBASE);
-		LDAP_USER_ATTRIBUTE 			= CFWConfig.configAsString("authentication_ldap_user_attribute", LDAP_USER_ATTRIBUTE);
+		LDAP_URL 						= CFWProperties.configAsString("authentication_ldap_url", LDAP_URL);
+		LDAP_USER 						= CFWProperties.configAsString("authentication_ldap_user", LDAP_USER);
+		LDAP_PASSWORD 					= CFWProperties.configAsString("authentication_ldap_password", LDAP_PASSWORD);
+		LDAP_SEARCHBASE 				= CFWProperties.configAsString("authentication_ldap_searchbase", LDAP_SEARCHBASE);
+		LDAP_USER_ATTRIBUTE 			= CFWProperties.configAsString("authentication_ldap_user_attribute", LDAP_USER_ATTRIBUTE);
 
-		DB_SERVER					= CFWConfig.configAsString("cfw_h2_server", DB_SERVER);
-		DB_PORT						= CFWConfig.configAsInt("cfw_h2_port", DB_PORT);
-		DB_STORE_PATH				= CFWConfig.configAsString("cfw_h2_path", DB_STORE_PATH);
-		DB_NAME						= CFWConfig.configAsString("cfw_h2_db_name", DB_NAME);
-		DB_USERNAME					= CFWConfig.configAsString("cfw_h2_username", DB_USERNAME);
-		DB_PASSWORD					= CFWConfig.configAsString("cfw_h2_password", DB_PASSWORD);
+		DB_SERVER					= CFWProperties.configAsString("cfw_h2_server", DB_SERVER);
+		DB_PORT						= CFWProperties.configAsInt("cfw_h2_port", DB_PORT);
+		DB_STORE_PATH				= CFWProperties.configAsString("cfw_h2_path", DB_STORE_PATH);
+		DB_NAME						= CFWProperties.configAsString("cfw_h2_db_name", DB_NAME);
+		DB_USERNAME					= CFWProperties.configAsString("cfw_h2_username", DB_USERNAME);
+		DB_PASSWORD					= CFWProperties.configAsString("cfw_h2_password", DB_PASSWORD);
 		
 	}
 	

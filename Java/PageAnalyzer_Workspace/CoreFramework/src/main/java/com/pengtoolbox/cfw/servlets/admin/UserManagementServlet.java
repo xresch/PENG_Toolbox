@@ -87,6 +87,7 @@ public class UserManagementServlet extends HttpServlet
 					CreateUserForm casted = (CreateUserForm)form;
 					User newUser = new User(casted.getUsername())
 							.setInitialPassword(casted.getPassword(), casted.getRepeatedPassword())
+							.status("Active")
 							.isForeign(casted.getIsForeign());
 					
 					if(newUser != null) {

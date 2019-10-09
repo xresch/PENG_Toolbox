@@ -46,7 +46,7 @@ public class CSVLoginProvider implements LoginProvider {
 			{
 				User newUser = new User(username)
 						.isForeign(true)
-						.status("ACTIVE");
+						.status("Active");
 				
 				CFW.DB.Users.create(newUser);
 				User userFromDB = CFW.DB.Users.selectByUsernameOrMail(username);
@@ -65,10 +65,10 @@ public class CSVLoginProvider implements LoginProvider {
 		
 		//------------------------------
 		// Load File
-		String credentials = CFW.Files.getFileContent(null, CFW.Config.AUTHENTICATION_CSV_FILE);
+		String credentials = CFW.Files.getFileContent(null, CFW.Properties.AUTHENTICATION_CSV_FILE);
 		
 		if(credentials == null) {
-			log.severe("Credential file could not be loaded: "+CFW.Config.AUTHENTICATION_CSV_FILE);
+			log.severe("Credential file could not be loaded: "+CFW.Properties.AUTHENTICATION_CSV_FILE);
 			return;
 		}
 		

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
@@ -48,7 +48,7 @@ public class DocuServlet extends HttpServlet {
 		if(CFW.Context.Request.hasPermission(PAPermissions.VIEW_DOCU)) {
 			content.append(CFWFiles.getFileContent(request, "./resources/html/docu.html"));
 			
-			String supportDetails = CFWConfig.configAsString("pa_support_details", "");
+			String supportDetails = CFWProperties.configAsString("pa_support_details", "");
 			if(supportDetails != null) {
 				content.append("<h1>Support Contact</h1>");
 		

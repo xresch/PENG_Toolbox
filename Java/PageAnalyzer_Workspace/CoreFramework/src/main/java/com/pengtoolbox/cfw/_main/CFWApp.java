@@ -33,6 +33,7 @@ import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.response.bootstrap.UserMenuItem;
 import com.pengtoolbox.cfw.servlets.AssemblyServlet;
+import com.pengtoolbox.cfw.servlets.ConfigurationServlet;
 import com.pengtoolbox.cfw.servlets.FormServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
@@ -189,33 +190,33 @@ public class CFWApp {
 	    server.setSessionIdManager(idmanager);
 	    
 		
-		if(CFWConfig.HTTP_ENABLED) {
+		if(CFWProperties.HTTP_ENABLED) {
 			HttpConfiguration httpConf = new HttpConfiguration();
-			httpConf.setSecurePort(CFWConfig.HTTPS_PORT);
+			httpConf.setSecurePort(CFWProperties.HTTPS_PORT);
 			httpConf.setSecureScheme("https");
 			
 			ServerConnector httpConnector = new ServerConnector(server, new HttpConnectionFactory(httpConf));
 			httpConnector.setName("unsecured");
-			httpConnector.setPort(CFWConfig.HTTP_PORT);
+			httpConnector.setPort(CFWProperties.HTTP_PORT);
 			connectorArray.add(httpConnector);
 		}
 		
-		if(CFWConfig.HTTPS_ENABLED) {
+		if(CFWProperties.HTTPS_ENABLED) {
 			HttpConfiguration httpsConf = new HttpConfiguration();
 			httpsConf.addCustomizer(new SecureRequestCustomizer());
-			httpsConf.setSecurePort(CFWConfig.HTTPS_PORT);
+			httpsConf.setSecurePort(CFWProperties.HTTPS_PORT);
 			httpsConf.setSecureScheme("https");
 			
 			SslContextFactory sslContextFactory = new SslContextFactory();
-			sslContextFactory.setKeyStorePath(CFWConfig.HTTPS_KEYSTORE_PATH);
-			sslContextFactory.setKeyStorePassword(CFWConfig.HTTPS_KEYSTORE_PASSWORD);
-			sslContextFactory.setKeyManagerPassword(CFWConfig.HTTPS_KEYMANAGER_PASSWORD);
+			sslContextFactory.setKeyStorePath(CFWProperties.HTTPS_KEYSTORE_PATH);
+			sslContextFactory.setKeyStorePassword(CFWProperties.HTTPS_KEYSTORE_PASSWORD);
+			sslContextFactory.setKeyManagerPassword(CFWProperties.HTTPS_KEYMANAGER_PASSWORD);
 			
 			ServerConnector httpsConnector = new ServerConnector(server,
 					new SslConnectionFactory(sslContextFactory, "http/1.1"),
 					new HttpConnectionFactory(httpsConf));
 			httpsConnector.setName("secured");
-			httpsConnector.setPort(CFWConfig.HTTPS_PORT);
+			httpsConnector.setPort(CFWProperties.HTTPS_PORT);
 			
 			connectorArray.add(httpsConnector);
 		}
@@ -234,7 +235,7 @@ public class CFWApp {
 		
 		//-----------------------------------------
 		// Authentication Servlets
-	    if(CFWConfig.AUTHENTICATION_ENABLED) {
+	    if(CFWProperties.AUTHENTICATION_ENABLED) {
 	        servletContextHandler.addServlet(LoginServlet.class, "/login");
 	        servletContextHandler.addServlet(LogoutServlet.class,  "/logout");
 	    }
@@ -245,6 +246,7 @@ public class CFWApp {
 	    
 		//-----------------------------------------
 		// User Management Servlets
+	    servletContextHandler.addServlet(ConfigurationServlet.class,  "/configuration");
 	    servletContextHandler.addServlet(UserManagementServlet.class,  "/usermanagement");
 	    servletContextHandler.addServlet(PermissionsServlet.class,  "/usermanagement/permissions");
 		servletContextHandler.addServlet(APIUserMgmtSevlet.class, "/usermanagement/data"); 
@@ -318,7 +320,7 @@ public class CFWApp {
 	    sessionHandler.setSessionIdManager(idmanager);
 	    // workaround maxInactiveInterval=-1 issue
 	    // set inactive interval in RequestHandler
-	    sessionHandler.setMaxInactiveInterval(CFW.Config.SESSION_TIMEOUT);
+	    sessionHandler.setMaxInactiveInterval(CFW.Properties.SESSION_TIMEOUT);
 	    sessionHandler.setHttpOnly(false);
 	    sessionHandler.setUsingCookies(true);
 	    sessionHandler.setSecureRequestOnly(false);

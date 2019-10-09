@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFW.Config;
+import com.pengtoolbox.cfw._main.CFW.Properties;
 import com.pengtoolbox.cfw._main.CFWContextRequest;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.caching.FileDefinition;
@@ -79,32 +79,38 @@ public class LoginServlet extends HttpServlet
 		// Check authorization
 		if(username == null || password == null){
 			
-			CFWContextRequest.addAlertMessage(MessageType.ERROR, "Please specify a username and password.");
+			CFWContextRequest.addAlertMessage(MessageType.ERROR, "Please specify username and password.");
 			createLoginPage(request, response);
+			return; 
 			
 		}else {
 			User user = LoginFacade.getInstance().checkCredentials(username, password);
+			
+			
 			if(user != null) {
-				//Login success
-				SessionData data = CFW.Context.Request.getSessionData(); 
-				data.resetUser();
-				data.setUser(user);
-				data.triggerLogin();
 				
-				if(url == null || url.isEmpty()) {
-					url = Config.BASE_URL;
+				if(user.status() != null && user.status().toUpperCase().equals("ACTIVE")) {
+					//Login success
+					SessionData data = CFW.Context.Request.getSessionData(); 
+					data.resetUser();
+					data.setUser(user);
+					data.triggerLogin();
+					
+					if(url == null || url.isEmpty()) {
+						url = Properties.BASE_URL;
+					}
+					CFW.HTTP.redirectToURL(response, url);
+					return; 
 				}
-				CFW.HTTP.redirectToURL(response, url);
 				
-			}else {
-				//Login Failure
-				createLoginPage(request, response);
-				CFWContextRequest.addAlertMessage(MessageType.ERROR, "Username or password invalid.");
+				
 			}
 			
 		}
 		
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
+		//Login Failure
+		createLoginPage(request, response);
+		CFWContextRequest.addAlertMessage(MessageType.ERROR, "Username or password invalid.");
+
 	}
 }

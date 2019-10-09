@@ -13,7 +13,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer._main.Main;
 import com.sun.javafx.webkit.WebConsoleListener;
@@ -60,7 +60,7 @@ public class YSlowExecutor extends Application {
 		
 		String yslowJS = CFWFiles.getFileContent(null, "./resources/js/custom_yslow.js");
 		
-		int contextCount = CFWConfig.configAsInt("pa_analysis_threads", 10);
+		int contextCount = CFWProperties.configAsInt("pa_analysis_threads", 10);
 		
 		Main.javafxLogWorkaround(Level.INFO, "Create "+contextCount+" execution context for analysis", "YSlowExecutor.start()");
 		for(int i = 0; i < contextCount; i++) {

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
-import com.pengtoolbox.cfw.db.config.Config;
+import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.tests._master.DBTestMaster;
 
 public class TestCFWDBConfig extends DBTestMaster {
@@ -16,8 +16,7 @@ public class TestCFWDBConfig extends DBTestMaster {
 	public static void fillWithTestData() {
 		
 	}
-	
-	
+
 	@Test
 	public void testCRUDConfig() {
 		
@@ -26,7 +25,7 @@ public class TestCFWDBConfig extends DBTestMaster {
 		
 		//--------------------------------------
 		// Cleanup
-		Config configToDelete = CFW.DB.Config.selectByName(configname);
+		Configuration configToDelete = CFW.DB.Config.selectByName(configname);
 		if(configToDelete != null) {
 			CFW.DB.Config.deleteByID(configToDelete.id());
 		}
@@ -42,7 +41,7 @@ public class TestCFWDBConfig extends DBTestMaster {
 		//--------------------------------------
 		// CREATE
 		CFW.DB.Config.create(
-				new Config(configname)
+				new Configuration("Test", configname)
 				.description("Testdescription")
 				.type(FormFieldType.TEXT)
 				.options(new String[] {"A", "B", "C"})
@@ -53,7 +52,7 @@ public class TestCFWDBConfig extends DBTestMaster {
 
 		//--------------------------------------
 		// SELECT BY NAME
-		Config config = CFW.DB.Config.selectByName(configname);
+		Configuration config = CFW.DB.Config.selectByName(configname);
 		
 		System.out.println("===== CONFIG =====");
 		System.out.println(config.getFieldsAsKeyValueString());
@@ -74,7 +73,7 @@ public class TestCFWDBConfig extends DBTestMaster {
 		
 		//--------------------------------------
 		// SELECT UPDATED CONFIG
-		Config updatedConfig = CFW.DB.Config.selectByName(confignameUpdated);
+		Configuration updatedConfig = CFW.DB.Config.selectByName(confignameUpdated);
 		
 		System.out.println("===== UPDATED CONFIG =====");
 		System.out.println(updatedConfig.getFieldsAsKeyValueString());
@@ -85,9 +84,15 @@ public class TestCFWDBConfig extends DBTestMaster {
 		
 		//--------------------------------------
 		// SELECT BY ID
-		Config configByID = CFW.DB.Config.selectByID(updatedConfig.id());
+		Configuration configByID = CFW.DB.Config.selectByID(updatedConfig.id());
 		
 		Assertions.assertTrue(configByID != null, "Config is selected by ID.");
+		
+		//--------------------------------------
+		// Read from cache
+		String cachedValue = CFW.DB.Config.getConfigAsString(confignameUpdated);
+		Assertions.assertTrue(cachedValue.contentEquals("B"), "Current value is read from cache.");
+		
 		//--------------------------------------
 		// DELETE
 		CFW.DB.Config.deleteByID(updatedConfig.id());

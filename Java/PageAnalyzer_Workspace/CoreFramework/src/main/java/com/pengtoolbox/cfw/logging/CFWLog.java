@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.response.AbstractHTMLResponse;
 import com.pengtoolbox.cfw.response.AbstractResponse;
@@ -237,7 +237,7 @@ public class CFWLog {
 				this.queryString = request.getQueryString();
 				this.sessionID = request.getSession().getId();
 				
-				if(CFWConfig.AUTHENTICATION_ENABLED) {
+				if(CFWProperties.AUTHENTICATION_ENABLED) {
 					SessionData data = CFW.Context.Request.getSessionData(); 
 					if(data.isLoggedIn()) {
 						this.userID = data.getUser().username();

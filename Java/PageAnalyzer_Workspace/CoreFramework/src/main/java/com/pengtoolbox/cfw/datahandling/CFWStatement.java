@@ -142,7 +142,8 @@ public class CFWStatement {
 			StringBuilder columnNames = new StringBuilder("(");
 			StringBuilder placeholders = new StringBuilder("(");
 			
-			for(CFWField field : fields.values()) {
+			for(String fieldname : fieldnames) {
+				CFWField field = fields.get(fieldname);
 				if(field != object.getPrimaryField()) {
 					if(!isQueryCached()) {
 						columnNames.append(field.getName()).append(",");
@@ -185,8 +186,10 @@ public class CFWStatement {
 		StringBuilder columnNames = new StringBuilder();
 		StringBuilder placeholders = new StringBuilder();
 		
-		for(CFWField field : fields.values()) {
+		for(String fieldname : fieldnames) {
+			CFWField field = fields.get(fieldname);
 			if(!field.equals(object.getPrimaryField())) {
+				
 				if(!isQueryCached()) {
 					columnNames.append(field.getName()).append(",");
 					placeholders.append("?,");

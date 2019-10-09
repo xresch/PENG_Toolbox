@@ -1175,3 +1175,12 @@ var CFW = {
 	hasPermission: cfw_hasPermission,
 
 }
+
+
+/********************************************************************
+ * General initialization
+ ********************************************************************/
+
+$(function () {
+	  $('[data-toggle="tooltip"]').tooltip()
+})

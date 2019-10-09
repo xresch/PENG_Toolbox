@@ -22,7 +22,7 @@ public class CFW {
 	// Hierarchical Binding
 	//##############################################################################
 	public class App extends CFWApp {} 
-	public class Config extends CFWConfig {}
+	public class Properties extends CFWProperties {}
 	public static class Context {
 		public static class Request extends CFWContextRequest{};
 		public static class Session extends CFWContextSession{};
@@ -71,7 +71,7 @@ public class CFW {
 		
 		//------------------------------------
 		// Load Configuration
-		CFW.Config.loadConfiguration(configFilePath);
+		CFW.Properties.loadConfiguration(configFilePath);
 		
 
 		

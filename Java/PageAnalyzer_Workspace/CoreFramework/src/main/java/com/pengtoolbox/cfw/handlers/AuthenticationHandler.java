@@ -12,7 +12,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
  
@@ -27,7 +27,7 @@ public class AuthenticationHandler extends HandlerWrapper
                                                       ServletException
     {
     	
-    	if(CFWConfig.AUTHENTICATION_ENABLED) {
+    	if(CFWProperties.AUTHENTICATION_ENABLED) {
     		
     		//##################################
         	// Get Session

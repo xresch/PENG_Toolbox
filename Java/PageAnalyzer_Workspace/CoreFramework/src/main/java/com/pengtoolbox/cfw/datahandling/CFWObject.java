@@ -117,7 +117,7 @@ public class CFWObject {
 		
 		StringBuilder builder = new StringBuilder();
 		
-		for(CFWField field : fields.values()) {
+		for(CFWField<?> field : fields.values()) {
 			builder.append("\n")
 			.append(field.getName())
 			.append(": ");
@@ -136,7 +136,7 @@ public class CFWObject {
 		
 		StringBuilder builder = new StringBuilder();
 		
-		for(CFWField field : fields.values()) {
+		for(CFWField<?> field : fields.values()) {
 			builder.append("<br/>")
 			.append(field.getName())
 			.append(": ")

@@ -1,6 +1,6 @@
 package com.pengtoolbox.cfw.login;
 
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 
 public class LoginFacade {
@@ -11,7 +11,7 @@ public class LoginFacade {
 	
 	private LoginFacade() {
 		
-		switch(CFWConfig.AUTHENTICATION_METHOD.trim().toUpperCase()) {
+		switch(CFWProperties.AUTHENTICATION_METHOD.trim().toUpperCase()) {
 		
 			case "CSV": 	provider = new CSVLoginProvider();
 				 			break;
@@ -22,7 +22,7 @@ public class LoginFacade {
 			case "DB": 		provider = new DBLoginProvider();
 				break;
  							
-			default:		throw new RuntimeException("Unknown authentication method'"+CFWConfig.AUTHENTICATION_METHOD+"', please review the config file.");
+			default:		throw new RuntimeException("Unknown authentication method'"+CFWProperties.AUTHENTICATION_METHOD+"', please review the config file.");
 		}
 	}
 	

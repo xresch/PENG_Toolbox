@@ -6,7 +6,10 @@
 	<input type="hidden" placeholder="Pk Id" name="PK_ID" value="-999">
 	
 	<div class="form-group row">  
-		<label class="col-sm-3 col-form-label" for="DATE-datepicker">Date:</label> 
+		
+		<label class="col-sm-3 col-form-label" for="DATE-datepicker">
+		<span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="Tooltip on top"><i class="fa fa-info"></i></span>
+		Date:</label> 
 		<div class="col-sm-9 custom-control-inline mr-0">
 			<input id="DATE-datepicker" type="date" onchange="cfw_updateTimeField('DATE')" class="col-sm-9 form-control" placeholder="Date" value="">
 			<input id="DATE-timepicker" type="time" onchange="cfw_updateTimeField('DATE')" class="col-sm-3 form-control" value="">
@@ -25,59 +28,6 @@
 		console.log("weekpicker: "+dateString);
 				
 	}
-	
-	 class CFWDate{
-			
-		 constructor(dateArgument){
-			 if(dateArgument != null){
-				 this.date = new Date(dateArgument);
-			 }else{
-				 this.date = new Date();
-			 }
-			 
-		 }
-		
-		 /********************************************
-		  * Returns a String in the format YYYY-MM-DD
-		  ********************************************/
-		 getDateForInput(){
-			 var datestring = this.fillDigits(this.date.getFullYear(), 4)+"-"
-			 				+ this.fillDigits(this.date.getMonth()+1, 2)+"-"
-			 				+ this.fillDigits(this.date.getDate(), 2);
-			 
-			 return datestring;
-		 }
-		 
-		 /********************************************
-		  * Returns a String in the format HH:MM:ss.SSS
-		  ********************************************/
-		 getTimeForInput(){
-			 var datestring = this.fillDigits(this.date.getHours(), 2)+":"
-			 				+ this.fillDigits(this.date.getMinutes(), 2);
-			 				/* +":"
-			 				+ this.fillDigits(this.date.getSeconds(), 2)+"."
-			 				+ this.f illDigits(this.date.getMilliseconds(), 3);*/
-			 
-			 return datestring;
-		 }
-		 
-		 /********************************************
-		  * Fill the digits to the needed amount
-		  ********************************************/
-		 fillDigits(value, digits){
-			
-			var stringValue = ''+value;
-			var length = stringValue.length;
-			
-			for(var i = stringValue.length; i < digits;i++){
-				stringValue = '0'+stringValue;
-			}
-			
-			return stringValue;
-			
-		}
-	 }
-	 
 		
 		function cfw_initializeTimefield(fieldID, epochMillis){
 			

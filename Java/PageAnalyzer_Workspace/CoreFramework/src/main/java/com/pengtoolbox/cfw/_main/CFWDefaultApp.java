@@ -84,7 +84,7 @@ public class CFWDefaultApp {
     	
     	//---------------------------------------
     	// Default Multipart Config
-        int maxSize = 1024*1024*CFW.Config.APPLICATION_MAX_UPLOADSIZE;
+        int maxSize = 1024*1024*CFW.Properties.APPLICATION_MAX_UPLOADSIZE;
         globalMultipartConfig = new MultipartConfigElement(null, maxSize, maxSize, maxSize);
          
 	}
@@ -99,7 +99,7 @@ public class CFWDefaultApp {
 
         //----------------------------------
         // Build Handler Chain
-        ContextHandler unsecureContextHandler = new ContextHandler(CFWConfig.BASE_URL+""+relativePath);	
+        ContextHandler unsecureContextHandler = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);	
         ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);   
 		
         new HandlerChainBuilder(unsecureContextHandler)
@@ -122,7 +122,7 @@ public class CFWDefaultApp {
         //-------------------------------
         // Create HandlerChain
         //-------------------------------
-        ContextHandler secureContext = new ContextHandler(CFWConfig.BASE_URL+""+relativePath);
+        ContextHandler secureContext = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);
        
         ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
         
@@ -152,9 +152,9 @@ public class CFWDefaultApp {
 
         RedirectRegexRule mainRedirect = new RedirectRegexRule();
         mainRedirect.setRegex("^/$"+
-        					 "|"+CFWConfig.BASE_URL+"/?$"+
-        					 "|"+CFWConfig.BASE_URL+"/app/?$");
-        mainRedirect.setReplacement(CFWConfig.BASE_URL+defaultURL);
+        					 "|"+CFWProperties.BASE_URL+"/?$"+
+        					 "|"+CFWProperties.BASE_URL+"/app/?$");
+        mainRedirect.setReplacement(CFWProperties.BASE_URL+defaultURL);
         rewriteHandler.addRule(mainRedirect);	
         
 		// TODO Auto-generated method stub
@@ -164,7 +164,7 @@ public class CFWDefaultApp {
         
         //Connect all relevant Handlers
         ArrayList<Handler> handlerArray = new ArrayList<Handler>();
-        handlerArray.add(new ShutdownHandler(CFW.Config.APPLICATION_ID, true, true));
+        handlerArray.add(new ShutdownHandler(CFW.Properties.APPLICATION_ID, true, true));
         handlerArray.add(new HTTPSRedirectHandler());
         handlerArray.addAll(unsecureContextArray);
         handlerArray.add(rewriteHandler);
@@ -193,16 +193,16 @@ public class CFWDefaultApp {
 		//----------------------------------
 		// Resolve Port to use
 		String protocol = "http";
-		int port = CFW.Config.HTTP_PORT;
-		if(!CFW.Config.HTTP_ENABLED && CFW.Config.HTTPS_ENABLED) {
+		int port = CFW.Properties.HTTP_PORT;
+		if(!CFW.Properties.HTTP_ENABLED && CFW.Properties.HTTPS_ENABLED) {
 			protocol = "https";
-			port = CFW.Config.HTTPS_PORT;
+			port = CFW.Properties.HTTPS_PORT;
 		}
 		
 		//----------------------------------
 		// Try Stop 
         try {
-        	URL url = new URL(protocol, "localhost", port, "/shutdown?token="+CFW.Config.APPLICATION_ID);
+        	URL url = new URL(protocol, "localhost", port, "/shutdown?token="+CFW.Properties.APPLICATION_ID);
         	 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
              connection.setRequestMethod("POST");
 

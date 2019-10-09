@@ -1,5 +1,6 @@
 package com.pengtoolbox.cfw.datahandling;
 
+import java.sql.Array;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -52,6 +53,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
 	private String name = "";
 	private Object value;
+	private String description = null;
 	
 	private ArrayList<String> invalidMessages;
 	
@@ -113,8 +115,13 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		// Create Form Group
 		//---------------------------------------------
 		if(type != FormFieldType.HIDDEN && type != FormFieldType.NONE) {
+			
 			html.append("<div class=\"form-group row\">");
-			html.append("  <label class=\"col-sm-3 col-form-label\" for=\""+name+"\" >"+formLabel+":</label> ");
+			html.append("  <label class=\"col-sm-3 col-form-label\" for=\""+name+"\" >");
+			if(description != null && !description.isEmpty()) {
+				html.append("<span class=\"badge badge-info mr-2\" data-toggle=\"tooltip\" data-placement=\"top\" title=\""+description+"\"><i class=\"fa fa-info\"></i></span>");
+			}
+			html.append(formLabel+":</label> ");
 			html.append("  <div class=\"col-sm-9\">");
 		}
 		
@@ -205,9 +212,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		this.removeAttribute("value");
 		
 		
-		String stringVal = value == null ? "" : value.toString();
+		String stringVal = (value == null) ? "" : value.toString();
 
-		html.append("<select class=\"form-control\" "+this.getAttributesString()+"/>");
+		html.append("<select class=\"form-control\" "+this.getAttributesString()+" >");
 		
 		//-----------------------------------
 		// handle options
@@ -438,6 +445,15 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return this;
 	}
 	
+	public String getDescription() {
+		return description;
+	}
+
+	public CFWField<T> setDescription(String description) {
+		fireChange();
+		this.description = description;
+		return this;
+	}
 	
 	
 	public String getColumnDefinition() {
@@ -522,7 +538,11 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		}
 		
 		if(this.valueClass.isAssignableFrom(value.getClass())) {
-			this.changeValue(value);
+			if(valueClass == String.class && (((String)value).trim().equals(""))) {
+				this.changeValue(null);
+			}else {
+				this.changeValue(value);
+			}
 			return true;
 		}
 		
@@ -651,7 +671,13 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					else if( Timestamp.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getTimestamp(colName)); }
 					else if( Date.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getDate(colName)); }
 					else if( Object[].class.isAssignableFrom(current.getValueClass()) )  { 
-						current.setValueValidated(result.getArray(colName).getArray()); }
+						Array array = result.getArray(colName);
+						if(array != null) {
+							current.setValueValidated(result.getArray(colName).getArray()); 
+						}else {
+							current.setValueValidated(null);
+						}
+					}
 					
 				}else {
 					success = false;

@@ -15,7 +15,7 @@ public class PageAnalyzerMenu extends BTMenu {
 		
 		this.setLabel("PAGE ANALYZER");
 		SessionData session = CFW.Context.Request.getSessionData();
-		if( CFW.Config.AUTHENTICATION_ENABLED == false ||
+		if( CFW.Properties.AUTHENTICATION_ENABLED == false ||
 			( session != null && session.isLoggedIn()) ) {
 			
 			if(CFW.Context.Request.hasPermission(PAPermissions.ANALYZE_HAR)) {

@@ -58,7 +58,8 @@ public class User extends CFWObject {
 	private CFWField<String> passwordSalt = CFWField.newString(FormFieldType.NONE, UserDBFields.PASSWORD_SALT.toString())
 			.addValidator(new LengthValidator(-1, 255));
 	
-	private CFWField<String> status = CFWField.newString(FormFieldType.NONE, UserDBFields.STATUS.toString())
+	private CFWField<String> status = CFWField.newString(FormFieldType.SELECT, UserDBFields.STATUS.toString())
+			.setOptions(new String[] {"Active", "Inactive"})
 			.addValidator(new LengthValidator(-1, 255));
 			
 	private Blob avatarImage;

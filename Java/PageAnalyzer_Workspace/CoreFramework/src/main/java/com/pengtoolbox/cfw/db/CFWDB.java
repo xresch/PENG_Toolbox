@@ -19,8 +19,10 @@ import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.Server;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFW.Config;
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFW.Properties;
+import com.pengtoolbox.cfw._main.CFWProperties;
+import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
@@ -46,12 +48,12 @@ public class CFWDB {
     	
     	//---------------------------------------
     	// Get variables
-		String server 		= CFWConfig.DB_SERVER;
-		String storePath 	= CFWConfig.DB_STORE_PATH;
-		String databaseName	= CFWConfig.DB_NAME;
-		int port 			= CFWConfig.DB_PORT;
-		String username		= CFWConfig.DB_USERNAME;
-		String password		= CFWConfig.DB_PASSWORD;
+		String server 		= CFWProperties.DB_SERVER;
+		String storePath 	= CFWProperties.DB_STORE_PATH;
+		String databaseName	= CFWProperties.DB_NAME;
+		int port 			= CFWProperties.DB_PORT;
+		String username		= CFWProperties.DB_USERNAME;
+		String password		= CFWProperties.DB_PASSWORD;
 		
 		//---------------------------------------
     	// Create Folder  
@@ -93,7 +95,7 @@ public class CFWDB {
 	
 	public static void resetAdminPW() {
 		
-		if(Config.RESET_ADMIN_PW) {
+		if(Properties.RESET_ADMIN_PW) {
 			User admin = CFW.DB.Users.selectByUsernameOrMail("admin");
 			admin.setInitialPassword("admin", "admin");
 			
@@ -130,6 +132,7 @@ public class CFWDB {
 	 ********************************************************************************************/
 	private static void createDefaultEntries() {
 		
+		CFWDB.createDefaultConfigs();
 		CFWDB.createDefaultGroups();
 		CFWDB.createDefaultPermissions();
 		CFWDB.createDefaultUsers();
@@ -139,7 +142,27 @@ public class CFWDB {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	private static Group createDefaultGroups() {
+	private static void createDefaultConfigs() {
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Config.checkConfigExists(Configuration.FILE_CACHING)) {
+			CFW.DB.Config.create(
+				new Configuration("Core Framework", Configuration.FILE_CACHING)
+					.description("Enables the caching of files read from the disk.")
+					.type(FormFieldType.BOOLEAN)
+					.value("true")
+			);
+		}
+				
+		CFW.DB.Config.updateCache();
+	}
+	
+	/********************************************************************************************
+	 *
+	 ********************************************************************************************/
+	private static void createDefaultGroups() {
 		//-----------------------------------------
 		// Create Group Superuser
 		//-----------------------------------------
@@ -213,7 +236,6 @@ public class CFWDB {
 			CFW.DB.Groups.update(foreignuserGroup);
 		}
 
-		return superuserGroup;
 	}
 	
 	/********************************************************************************************
@@ -221,23 +243,44 @@ public class CFWDB {
 	 * 
 	 ********************************************************************************************/
 	private static void createDefaultPermissions() {
+		
 		//-----------------------------------------
-		// Create User Management Permission
+		//
 		//-----------------------------------------
 		if(!CFW.DB.Permissions.checkPermissionExists(CFWDBPermission.CFW_USER_MANAGEMENT)) {
 			CFW.DB.Permissions.create(new Permission(CFWDBPermission.CFW_USER_MANAGEMENT)
 				.description("Gives the user the ability to view, create, update and delete users.")
 				.isDeletable(false)
 			);
+			
+			Permission userManagement = CFW.DB.Permissions.selectByName(CFWDBPermission.CFW_USER_MANAGEMENT);
+			
+			if(userManagement == null) {
+				new CFWLog(logger)
+				.method("createDefaultPermissions")
+				.severe("User permission '"+CFWDBPermission.CFW_USER_MANAGEMENT+"' was not found in the database.");
+			}
 		}
 		
-		Permission userManagement = CFW.DB.Permissions.selectByName(CFWDBPermission.CFW_USER_MANAGEMENT);
-		
-		if(userManagement == null) {
-			new CFWLog(logger)
-			.method("createDefaultPermissions")
-			.severe("User permission '"+CFWDBPermission.CFW_USER_MANAGEMENT+"' was not found in the database.");
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Permissions.checkPermissionExists(CFWDBPermission.CFW_CONFIG_MANAGEMENT)) {
+			CFW.DB.Permissions.create(new Permission(CFWDBPermission.CFW_CONFIG_MANAGEMENT)
+				.description("Gives the user the ability to view and update the configurations in the database.")
+				.isDeletable(false)
+			);
+			
+			Permission userManagement = CFW.DB.Permissions.selectByName(CFWDBPermission.CFW_CONFIG_MANAGEMENT);
+			
+			if(userManagement == null) {
+				new CFWLog(logger)
+				.method("createDefaultPermissions")
+				.severe("User permission '"+CFWDBPermission.CFW_CONFIG_MANAGEMENT+"' was not found in the database.");
+			}
 		}
+		
+
 	}
 	/********************************************************************************************
 	 * Groups have to be existing.
@@ -248,7 +291,7 @@ public class CFWDB {
 		//-----------------------------------------
 		// Create anonymous user 
 		//-----------------------------------------
-		if(!CFW.Config.AUTHENTICATION_ENABLED) {
+		if(!CFW.Properties.AUTHENTICATION_ENABLED) {
 			String initialPassword = CFW.Encryption.createPasswordSalt(32);
 			if(!CFW.DB.Users.checkUsernameExists("anonymous")) {
 			    CFW.DB.Users.create(

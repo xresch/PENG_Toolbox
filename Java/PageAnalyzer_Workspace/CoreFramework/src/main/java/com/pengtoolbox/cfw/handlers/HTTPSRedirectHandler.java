@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWProperties;
 
 
 public class HTTPSRedirectHandler extends SecuredRedirectHandler {
@@ -17,7 +17,7 @@ public class HTTPSRedirectHandler extends SecuredRedirectHandler {
 	@Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
     {
-		if(CFWConfig.HTTP_ENABLED && CFWConfig.HTTP_REDIRECT_TO_HTTPS) {
+		if(CFWProperties.HTTP_ENABLED && CFWProperties.HTTP_REDIRECT_TO_HTTPS) {
 			super.handle(target, baseRequest, request, response);
 		}
     }

@@ -88,7 +88,7 @@ public class CFWContextRequest {
 	
 	public static boolean hasPermission(String permissionName) {
 		
-		if(!CFW.Config.AUTHENTICATION_ENABLED) {
+		if(!CFW.Properties.AUTHENTICATION_ENABLED) {
 			return true;
 		}
 		

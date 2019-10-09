@@ -46,7 +46,7 @@ public class WebTestMaster {
 		APP  = new CFWDefaultApp(new String[] {});
 		
 		testContext = APP.createUnsecureContext("/test");
-		TEST_URL = "http://localhost:"+CFW.Config.HTTP_PORT+CFW.Config.BASE_URL+"/test";
+		TEST_URL = "http://localhost:"+CFW.Properties.HTTP_PORT+CFW.Properties.BASE_URL+"/test";
 		
 		//Seperate thread to not make the test thread block
 		Runnable r = new Runnable() {

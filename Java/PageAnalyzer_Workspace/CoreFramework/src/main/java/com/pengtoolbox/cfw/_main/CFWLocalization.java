@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
+import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.AbstractResponse;
 
@@ -100,17 +101,25 @@ public class CFWLocalization {
 		String filename = "language_"+localeString.toLowerCase()+".json";
 		
 		if(CFW.Files.isFile(LANGUAGE_FOLDER_PATH+"/"+filename)){
-			if(!languageCache.containsKey(filename) || !CFW.Config.CACHING_FILE_ENABLED) {
+			
+			if (languageCache.containsKey(filename) && CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING)) {
+				return languageCache.get(filename);
+			}else {
 				String jsonString = CFW.Files.getFileContent(null, LANGUAGE_FOLDER_PATH, filename);
 				Gson gson = new Gson();
 				Map<String,String> languageMap = gson.fromJson(jsonString, Map.class);
 				
-				languageCache.put(filename, languageMap);
+				if(CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING) && !languageCache.containsKey(filename) ) {
+					languageCache.put(filename, languageMap);
+				}
 				
+				return languageMap;
 			}
 		}
 		
-		return languageCache.get(filename);
+		return null;
+		
+		
 		
 	}
 

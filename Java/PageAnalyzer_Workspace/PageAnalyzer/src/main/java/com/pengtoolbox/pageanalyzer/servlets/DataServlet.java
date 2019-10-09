@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
@@ -49,7 +49,7 @@ public class DataServlet extends HttpServlet {
 		//-------------------------------------------
 		String username = "";
 		
-		if(CFWConfig.AUTHENTICATION_ENABLED) {
+		if(CFWProperties.AUTHENTICATION_ENABLED) {
 			SessionData data = CFW.Context.Request.getSessionData(); 
 			if(data.isLoggedIn()) {
 				username = data.getUser().username();

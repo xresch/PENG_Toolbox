@@ -11,12 +11,15 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.CustomValidator;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
-public class Config extends CFWObject {
+public class Configuration extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_CONFIG";
 	
+	public static final String FILE_CACHING = "Cache Files";
+	
 	public enum ConfigFields{
 		PK_ID,
+		CATEGORY,
 		NAME,
 		DESCRIPTION,
 		TYPE,
@@ -24,12 +27,16 @@ public class Config extends CFWObject {
 		OPTIONS
 	}
 
-	private static Logger logger = CFWLog.getLogger(Config.class.getName());
+	private static Logger logger = CFWLog.getLogger(Configuration.class.getName());
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, ConfigFields.PK_ID.toString())
 									.setPrimaryKeyAutoIncrement()
 									.setValue(-999);
 	
+	private CFWField<String> category = CFWField.newString(FormFieldType.NONE, ConfigFields.CATEGORY.toString())
+									.setColumnDefinition("VARCHAR(255)")
+									.addValidator(new LengthValidator(1, 255))
+									;
 	private CFWField<String> name = CFWField.newString(FormFieldType.NONE, ConfigFields.NAME.toString())
 									.setColumnDefinition("VARCHAR(255) UNIQUE")
 									.addValidator(new LengthValidator(1, 255))
@@ -41,25 +48,7 @@ public class Config extends CFWObject {
 	
 	private CFWField<String> type = CFWField.newString(FormFieldType.NONE, ConfigFields.TYPE.toString())
 			.setColumnDefinition("VARCHAR(32)")
-			.addValidator(new CustomValidator() {
-
-				@Override
-				public boolean validate(Object value) {
-					String stringVal = value.toString();
-					if(stringVal.toUpperCase().equals("TEXT")
-					|| stringVal.toUpperCase().equals("BOOLEAN")
-					|| stringVal.toUpperCase().equals("NUMBER")) {
-						return true;
-					}
-					
-					new CFWLog(logger)
-						.method("CustomValidator.validate")
-						.severe("The value of '"+type+"' must be one of: 'TEXT', 'BOOLEAN', 'INTEGER'.");
-					return false; 
-
-				}
-				
-			});
+			.addValidator(new LengthValidator(1, 32));
 	
 	private CFWField<String> value = CFWField.newString(FormFieldType.NONE, ConfigFields.VALUE.toString())
 			.setColumnDefinition("VARCHAR(1024)")
@@ -69,16 +58,17 @@ public class Config extends CFWObject {
 	private CFWField<Object[]> options = CFWField.newArray(FormFieldType.NONE, ConfigFields.OPTIONS.toString())
 			.setColumnDefinition("ARRAY");
 	
-	public Config() {
+	public Configuration() {
 		initializeFields();
 	}
 	
-	public Config(String name) {
+	public Configuration(String category, String name) {
 		initializeFields();
+		this.category.setValue(category);
 		this.name.setValue(name);
 	}
 	
-	public Config(ResultSet result) throws SQLException {
+	public Configuration(ResultSet result) throws SQLException {
 		initializeFields();
 		this.mapResultSet(result);	
 	}
@@ -86,15 +76,24 @@ public class Config extends CFWObject {
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
 		this.setPrimaryField(id);
-		this.addFields(id, name, description, type, value, options);
+		this.addFields(id, name, description, type, value, options, category);
 	}
 
 	public int id() {
 		return id.getValue();
 	}
 	
-	public Config id(int id) {
+	public Configuration id(int id) {
 		this.id.setValue(id);
+		return this;
+	}
+	
+	public String category() {
+		return category.getValue();
+	}
+	
+	public Configuration category(String category) {
+		this.category.setValue(category);
 		return this;
 	}
 	
@@ -102,7 +101,7 @@ public class Config extends CFWObject {
 		return name.getValue();
 	}
 	
-	public Config name(String name) {
+	public Configuration name(String name) {
 		this.name.setValue(name);
 		return this;
 	}
@@ -111,7 +110,7 @@ public class Config extends CFWObject {
 		return description.getValue();
 	}
 
-	public Config description(String description) {
+	public Configuration description(String description) {
 		this.description.setValue(description);
 		return this;
 	}
@@ -120,7 +119,7 @@ public class Config extends CFWObject {
 		return type.getValue();
 	}
 
-	public Config type(FormFieldType type) {
+	public Configuration type(FormFieldType type) {
 		this.type.setValue(type.toString());
 		return this;
 	}
@@ -129,7 +128,7 @@ public class Config extends CFWObject {
 		return value.getValue();
 	}
 
-	public Config value(String value) {
+	public Configuration value(String value) {
 		this.value.setValue(value);
 		return this;
 	}
@@ -138,7 +137,7 @@ public class Config extends CFWObject {
 		return options.getValue();
 	}
 
-	public Config options(Object[] options) {
+	public Configuration options(Object[] options) {
 		this.options.setValue(options);
 		return this;
 	}

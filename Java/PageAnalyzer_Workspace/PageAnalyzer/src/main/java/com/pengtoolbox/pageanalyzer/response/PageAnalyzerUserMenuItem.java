@@ -20,6 +20,9 @@ public class PageAnalyzerUserMenuItem extends UserMenuItem {
 			this.addChild(new MenuItem("Manage Results").href("./manageresults"));
 		}
 		
+		if(CFW.Context.Request.hasPermission(CFWDBPermission.CFW_CONFIG_MANAGEMENT)) {
+			this.addChild(new MenuItem("Manage Configuration").href("./configuration"));
+		}
 		if(CFW.Context.Request.hasPermission(CFWDBPermission.CFW_USER_MANAGEMENT)) {
 			this.addChild(new MenuItem("Manage Users").href("./usermanagement"));
 		}

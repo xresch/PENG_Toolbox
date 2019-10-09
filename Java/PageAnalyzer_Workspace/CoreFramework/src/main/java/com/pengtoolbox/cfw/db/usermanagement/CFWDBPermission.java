@@ -13,6 +13,7 @@ public class CFWDBPermission {
 	public static String TABLE_NAME = "CFW_PERMISSION";
 	
 	public static String CFW_USER_MANAGEMENT = "User Management";
+	public static String CFW_CONFIG_MANAGEMENT = "Configuration Management";
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBPermission.class.getName());
 	

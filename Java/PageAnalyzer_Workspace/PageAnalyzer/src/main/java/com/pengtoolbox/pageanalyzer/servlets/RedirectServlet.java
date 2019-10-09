@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 //@MultipartConfig(maxFileSize=1024*1024*100, maxRequestSize=1024*1024*100)
@@ -32,13 +32,13 @@ public class RedirectServlet extends HttpServlet
 		
 		switch(request.getRequestURI()) {
 		
-			case "/": 			  	response.sendRedirect(response.encodeRedirectURL(CFWConfig.BASE_URL+"/harupload"));
+			case "/": 			  	response.sendRedirect(response.encodeRedirectURL(CFWProperties.BASE_URL+"/harupload"));
 									break;
 									
-			case "/pageanalyzer": 	response.sendRedirect(response.encodeRedirectURL(CFWConfig.BASE_URL+"/harupload"));
+			case "/pageanalyzer": 	response.sendRedirect(response.encodeRedirectURL(CFWProperties.BASE_URL+"/harupload"));
 									break;
 			
-			default: response.sendRedirect(response.encodeRedirectURL(CFWConfig.BASE_URL+"/harupload"));
+			default: response.sendRedirect(response.encodeRedirectURL(CFWProperties.BASE_URL+"/harupload"));
 		}
 
 		

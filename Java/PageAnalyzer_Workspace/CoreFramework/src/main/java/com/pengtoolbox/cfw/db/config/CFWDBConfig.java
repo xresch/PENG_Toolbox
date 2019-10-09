@@ -1,14 +1,22 @@
 package com.pengtoolbox.cfw.db.config;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
-import com.pengtoolbox.cfw.db.config.Config.ConfigFields;
+import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.db.CFWDB;
+import com.pengtoolbox.cfw.db.config.Configuration.ConfigFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBConfig {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBConfig.class.getName());
+	
+	//name/value pairs of configuration elements
+	public static LinkedHashMap<String, String> configCache = new LinkedHashMap<String, String>();
 	
 	/********************************************************************************************
 	 * Creates the table and default admin user if not already exists.
@@ -16,8 +24,70 @@ public class CFWDBConfig {
 	 * 
 	 ********************************************************************************************/
 	public static void initializeTable() {
-		new Config().createTable();
+		new Configuration().createTable();
 	}
+	
+	
+	/********************************************************************************************
+	 * Creates the table and default admin user if not already exists.
+	 * This method is executed by CFW.DB.initialize().
+	 * 
+	 ********************************************************************************************/
+	public static boolean updateCache() {
+		ResultSet result = new Configuration()
+			.select(ConfigFields.NAME.toString(), ConfigFields.VALUE.toString())
+			.getResultSet();
+		
+		if(result == null) {
+			return false;
+		}
+		
+		try {
+			LinkedHashMap<String, String> newCache = new LinkedHashMap<String, String>();
+			while(result.next()) {
+				newCache.put(
+					result.getString(ConfigFields.NAME.toString()),
+					result.getString(ConfigFields.VALUE.toString())
+				);
+			}
+			configCache = newCache;
+		} catch (SQLException e) {
+			new CFWLog(logger)
+			.method("updateCache")
+			.severe("Error updating configuration cache.", e);
+			return false;
+		}finally {
+			CFWDB.close(result);
+		}
+		
+		return true;
+	}
+	
+	/********************************************************************************************
+	 * Returns a config value from cache as String
+	 * 
+	 ********************************************************************************************/
+	public static String getConfigAsString(String configName) {
+		return configCache.get(configName);
+	}
+	
+	/********************************************************************************************
+	 * Returns a config value from cache as boolean
+	 * 
+	 ********************************************************************************************/
+	public static boolean getConfigAsBoolean(String configName) {
+		//System.out.println("===== Key: "+configName+", Value: "+configCache.get(configName));
+		return Boolean.parseBoolean(configCache.get(configName));
+	}
+	
+	/********************************************************************************************
+	 * Returns a config value from cache as integer
+	 * 
+	 ********************************************************************************************/
+	public static int getConfigAsInt(String configName) {
+		return Integer.parseInt(configCache.get(configName));
+	}
+	
 	
 	/********************************************************************************************
 	 * Creates multiple configs in the DB.
@@ -25,20 +95,20 @@ public class CFWDBConfig {
 	 * @return nothing
 	 * 
 	 ********************************************************************************************/
-	public static void create(Config... configs) {
+	public static void create(Configuration... configs) {
 		
-		for(Config config : configs) {
+		for(Configuration config : configs) {
 			create(config);
 		}
 	}
 	
 	/********************************************************************************************
 	 * Creates a new config in the DB.
-	 * @param Config with the values that should be inserted. ID will be set by the Database.
+	 * @param Configuration with the values that should be inserted. ID will be set by the Database.
 	 * @return true if successful, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean create(Config config) {
+	public static boolean create(Configuration config) {
 		
 		if(config == null) {
 			new CFWLog(logger)
@@ -61,9 +131,13 @@ public class CFWDBConfig {
 			return false;
 		}
 		
-		return config
+		boolean insertResult =  config
 				.queryCache(CFWDBConfig.class, "create")
 				.insert();
+		
+		updateCache();
+		
+		return insertResult;
 	}
 	
 	/***************************************************************
@@ -71,9 +145,9 @@ public class CFWDBConfig {
 	 * @param id of the config
 	 * @return Returns a config or null if not found or in case of exception.
 	 ****************************************************************/
-	public static Config selectByName(String name) {
+	public static Configuration selectByName(String name) {
 		
-		return (Config)new Config()
+		return (Configuration)new Configuration()
 				.queryCache(CFWDBConfig.class, "selectByName")
 				.select()
 				.where(ConfigFields.NAME.toString(), name)
@@ -86,9 +160,9 @@ public class CFWDBConfig {
 	 * @param id of the config
 	 * @return Returns a config or null if not found or in case of exception.
 	 ****************************************************************/
-	public static Config selectByID(int id ) {
+	public static Configuration selectByID(int id ) {
 
-		return (Config)new Config()
+		return (Configuration)new Configuration()
 				.queryCache(CFWDBConfig.class, "selectByID")
 				.select()
 				.where(ConfigFields.PK_ID.toString(), id)
@@ -103,7 +177,7 @@ public class CFWDBConfig {
 	 ****************************************************************/
 	public static String getConfigAsJSON(String id) {
 		
-		return new Config()
+		return new Configuration()
 				.queryCache(CFWDBConfig.class, "getConfigAsJSON")
 				.select()
 				.where(ConfigFields.PK_ID.toString(), Integer.parseInt(id))
@@ -118,11 +192,26 @@ public class CFWDBConfig {
 	 ****************************************************************/
 	public static ResultSet getConfigList() {
 		
-		return new Config()
+		return new Configuration()
 				.queryCache(CFWDBConfig.class, "getConfigList")
 				.select()
 				.orderby(ConfigFields.NAME.toString())
 				.getResultSet();
+		
+	}
+	
+	/***************************************************************
+	 * Return a list of all configs
+	 * 
+	 * @return Returns a resultSet with all configs or null.
+	 ****************************************************************/
+	public static ArrayList<CFWObject> getConfigObjectList() {
+		
+		return new Configuration()
+				.queryCache(CFWDBConfig.class, "getConfigList")
+				.select()
+				.orderby(ConfigFields.NAME.toString())
+				.getObjectList();
 		
 	}
 	
@@ -132,7 +221,7 @@ public class CFWDBConfig {
 	 * @return Returns a result set with all users or null.
 	 ****************************************************************/
 	public static String getConfigListAsJSON() {
-		return new Config()
+		return new Configuration()
 				.queryCache(CFWDBConfig.class, "getConfigListAsJSON")
 				.select()
 				.orderby(ConfigFields.NAME.toString())
@@ -144,7 +233,7 @@ public class CFWDBConfig {
 	 * @param config
 	 * @return true or false
 	 ****************************************************************/
-	public static boolean update(Config config) {
+	public static boolean update(Configuration config) {
 		
 		if(config == null) {
 			new CFWLog(logger)
@@ -160,9 +249,30 @@ public class CFWDBConfig {
 			return false;
 		}
 				
-		return config
+		boolean updateResult =  config
 				.queryCache(CFWDBConfig.class, "update")
 				.update();
+		
+		updateCache();
+		
+		return updateResult;
+	}
+	
+	/***************************************************************
+	 * Updates the object selecting by ID.
+	 * you have to call the updateCache(method manually after using 
+	 * this method.
+	 * 
+	 * @param config
+	 * @return true or false
+	 ****************************************************************/
+	public static boolean updateValue(int id, String value) {
+		
+		return new Configuration()
+				.id(id)
+				.value(value)
+				.queryCache(CFWDBConfig.class, "updateValue")
+				.update(ConfigFields.VALUE.toString());
 		
 	}
 	
@@ -174,7 +284,7 @@ public class CFWDBConfig {
 	 ****************************************************************/
 	public static boolean deleteByID(int id) {
 		
-		Config config = selectByID(id);
+		Configuration config = selectByID(id);
 		if(config == null ) {
 			new CFWLog(logger)
 			.method("deleteByID")
@@ -182,7 +292,7 @@ public class CFWDBConfig {
 			return false;
 		}
 		
-		return new Config()
+		return new Configuration()
 				.queryCache(CFWDBConfig.class, "deleteByID")
 				.delete()
 				.where(ConfigFields.PK_ID.toString(), id)
@@ -206,7 +316,7 @@ public class CFWDBConfig {
 			return false;
 		}
 
-		return new Config()
+		return new Configuration()
 				.queryCache(CFWDBConfig.class, "deleteMultipleByID")
 				.delete()
 				.whereIn(ConfigFields.PK_ID.toString(), resultIDs)
@@ -221,7 +331,7 @@ public class CFWDBConfig {
 	 ****************************************************************/
 	public static boolean deleteByName(String name) {
 		
-		Config config = selectByName(name);
+		Configuration config = selectByName(name);
 		if(config == null ) {
 			new CFWLog(logger)
 			.method("deleteByID")
@@ -229,7 +339,7 @@ public class CFWDBConfig {
 			return false;
 		}
 		
-		return new Config()
+		return new Configuration()
 				.queryCache(CFWDBConfig.class, "deleteByName")
 				.delete()
 				.where(ConfigFields.NAME.toString(), name)
@@ -244,7 +354,7 @@ public class CFWDBConfig {
 	 * @param config to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
-	public static boolean checkConfigExists(Config config) {
+	public static boolean checkConfigExists(Configuration config) {
 		if(config != null) {
 			return checkConfigExists(config.name());
 		}
@@ -259,7 +369,7 @@ public class CFWDBConfig {
 	 ****************************************************************/
 	public static boolean checkConfigExists(String configName) {
 		
-		int count = new Config()
+		int count = new Configuration()
 				.queryCache(CFWDBConfig.class, "checkConfigExists")
 				.selectCount()
 				.where(ConfigFields.NAME.toString(), configName)

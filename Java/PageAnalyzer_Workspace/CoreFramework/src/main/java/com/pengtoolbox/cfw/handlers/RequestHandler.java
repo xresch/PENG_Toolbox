@@ -84,7 +84,7 @@ public class RequestHandler extends HandlerWrapper
     	CFW.Context.Request.setSessionData((SessionData)session.getAttribute(CFW.SESSION_DATA));
     	
     	//workaround maxInactiveInterval=-1 issue
-    	session.setMaxInactiveInterval(CFW.Config.SESSION_TIMEOUT);
+    	session.setMaxInactiveInterval(CFW.Properties.SESSION_TIMEOUT);
     	
 
     	//##################################

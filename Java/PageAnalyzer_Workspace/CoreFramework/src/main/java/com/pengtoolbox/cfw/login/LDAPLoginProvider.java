@@ -9,7 +9,7 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWConfig;
+import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.servlets.LoginServlet;
@@ -44,7 +44,7 @@ public class LDAPLoginProvider implements LoginProvider {
 			{
 				User newUser = new User(username)
 						.isForeign(true)
-						.status("ACTIVE");
+						.status("Active");
 				
 				CFW.DB.Users.create(newUser);
 				User userFromDB = CFW.DB.Users.selectByUsernameOrMail(username);
@@ -71,9 +71,9 @@ public class LDAPLoginProvider implements LoginProvider {
 		
 		try {
 		    props.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		    props.put(Context.PROVIDER_URL, CFWConfig.LDAP_URL);
-		    props.put(Context.SECURITY_PRINCIPAL, CFWConfig.LDAP_USER);
-		    props.put(Context.SECURITY_CREDENTIALS, CFWConfig.LDAP_PASSWORD);
+		    props.put(Context.PROVIDER_URL, CFWProperties.LDAP_URL);
+		    props.put(Context.SECURITY_PRINCIPAL, CFWProperties.LDAP_USER);
+		    props.put(Context.SECURITY_CREDENTIALS, CFWProperties.LDAP_PASSWORD);
 	
 		    context = new InitialDirContext(props);
 	
@@ -81,7 +81,7 @@ public class LDAPLoginProvider implements LoginProvider {
 		    ctrls.setReturningAttributes(new String[] {});
 		    ctrls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 	
-		    NamingEnumeration<javax.naming.directory.SearchResult> answers = context.search(CFWConfig.LDAP_SEARCHBASE, "("+CFWConfig.LDAP_USER_ATTRIBUTE+"=" + username + ")", ctrls);
+		    NamingEnumeration<javax.naming.directory.SearchResult> answers = context.search(CFWProperties.LDAP_SEARCHBASE, "("+CFWProperties.LDAP_USER_ATTRIBUTE+"=" + username + ")", ctrls);
 		    if(answers.hasMore()) {
 		    	javax.naming.directory.SearchResult result = answers.nextElement();
 		    	user = result.getNameInNamespace();
@@ -98,7 +98,7 @@ public class LDAPLoginProvider implements LoginProvider {
 	    try {
 	        props = new Properties();
 	        props.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-	        props.put(Context.PROVIDER_URL, CFWConfig.LDAP_URL);
+	        props.put(Context.PROVIDER_URL, CFWProperties.LDAP_URL);
 	        props.put(Context.SECURITY_PRINCIPAL, user);
 	        props.put(Context.SECURITY_CREDENTIALS, password);
 

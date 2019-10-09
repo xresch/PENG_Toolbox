@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.db.config.Configuration;
 
 public class FileAssembly {
 	
@@ -77,7 +78,7 @@ public class FileAssembly {
 		assemblyServletPath = "/cfw/assembly?name="+URLEncoder.encode(assemblyName);
 		//--------------------------------
 		// Initialize
-		if(!FileAssembly.hasAssembly((assemblyName)) || !CFW.Config.CACHING_FILE_ENABLED ) {
+		if(!FileAssembly.hasAssembly((assemblyName)) || !CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING)) {
 			
 			StringBuffer concatenatedFile = new StringBuffer();
 			for(FileDefinition fileDef : fileArray) {
@@ -103,7 +104,7 @@ public class FileAssembly {
 	 * @return the name of the assembly
 	 ***********************************************************************/
 	public FileAssembly cache() {
-		if(!FileAssembly.hasAssembly((assemblyName)) || !CFW.Config.CACHING_FILE_ENABLED ) {
+		if(!FileAssembly.hasAssembly((assemblyName)) || !CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING)) {
 			assemblyCache.put(assemblyName, this);
 		}
 		return this;

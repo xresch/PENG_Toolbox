@@ -1,5 +1,6 @@
 package com.pengtoolbox.cfw.response.bootstrap;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ public class BTForm extends HierarchicalHTMLItem {
 	private String postURL;
 	private CFWObject origin;
 	
+	// Contains the fields with field name as key
 	public LinkedHashMap<String, CFWField> fields = new LinkedHashMap<String, CFWField>();
 	
 	private BTFormHandler formHandler = null;
@@ -98,6 +100,12 @@ public class BTForm extends HierarchicalHTMLItem {
 		}
 	}
 	
+	/***********************************************************************************
+	 * Returns a hashmap with fields. The keys are the names of the fields.
+	 ***********************************************************************************/
+	public LinkedHashMap<String, CFWField> getFields() {
+		return fields;
+	}
 	public String getFormID() {
 		return formID;
 	}
@@ -140,6 +148,39 @@ public class BTForm extends HierarchicalHTMLItem {
     	payload.addProperty("html", this.getHTML());
     	
     	json.getContent().append(payload.toString());
+	}
+	
+	public String getFieldsAsKeyValueString() {
+		
+		StringBuilder builder = new StringBuilder();
+		
+		for(CFWField<?> field : fields.values()) {
+			builder.append("\n")
+			.append(field.getName())
+			.append(": ");
+			if(!(field.getValue() instanceof Object[])) {
+				builder.append(field.getValue());
+			}else {
+				builder.append(Arrays.toString((Object[])field.getValue()));
+			}
+			
+		}
+
+		return builder.toString();
+	}
+	
+	public String getFieldsAsKeyValueHTML() {
+		
+		StringBuilder builder = new StringBuilder();
+		
+		for(CFWField<?> field : fields.values()) {
+			builder.append("<br/>")
+			.append(field.getName())
+			.append(": ")
+			.append(field.getValue());
+		}
+
+		return builder.toString();
 	}
 
 }
