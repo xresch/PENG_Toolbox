@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private FormFieldType type;
 	private String formLabel = "&nbsp;";
 	private String columnDefinition = null;
+	private Object[] options = null;
+	private LinkedHashMap<?, ?> valueLabelOptions = null;
 	private boolean isDisabled = false;
 	
 	private CFWFieldChangeHandler changeHandler = null;
@@ -53,7 +56,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private ArrayList<String> invalidMessages;
 	
 	public enum FormFieldType{
-		TEXT, TEXTAREA, PASSWORD, HIDDEN, BOOLEAN, DATEPICKER, DATETIMEPICKER, NONE
+		TEXT, TEXTAREA, PASSWORD, NUMBER, HIDDEN, BOOLEAN, SELECT, DATEPICKER, DATETIMEPICKER, NONE
 	}
 		
 	//###################################################################################
@@ -127,7 +130,10 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		switch(type) {
 			case TEXT:  			html.append("<input type=\"text\" class=\"form-control\" "+this.getAttributesString()+"/>");
 									break;
-								
+			
+			case NUMBER:  			html.append("<input type=\"number\" class=\"form-control\" "+this.getAttributesString()+"/>");
+									break;
+			
 			case TEXTAREA: 			createTextArea(html);
 									break;
 								
@@ -136,6 +142,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			
 			case BOOLEAN:  			createBooleanRadiobuttons(html);
 									break;		
+									
+			case SELECT:  			createSelect(html);
+									break;	
 								
 			case DATEPICKER:  		createDatePicker(html);
 									break;
@@ -160,6 +169,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		}
 	}
 
+	/***********************************************************************************
+	 * Create Boolean Radio Buttons
+	 ***********************************************************************************/
 	private void createBooleanRadiobuttons(StringBuilder html) {
 		
 		String falseChecked = "";
@@ -185,6 +197,54 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				"</div>");
 	}
 	
+	/***********************************************************************************
+	 * Create Select
+	 ***********************************************************************************/
+	private void createSelect(StringBuilder html) {
+		
+		this.removeAttribute("value");
+		
+		
+		String stringVal = value == null ? "" : value.toString();
+
+		html.append("<select class=\"form-control\" "+this.getAttributesString()+"/>");
+		
+		//-----------------------------------
+		// handle options
+		if(options != null) {
+			for(int i = 0; i < options.length; i++) {
+				String currentVal = options[i].toString();
+				if(currentVal.equals(stringVal)) {
+					html.append("<option selected>")
+					.append(currentVal)
+					.append("</option>");
+				}else {
+					html.append("<option>")
+					.append(currentVal)
+					.append("</option>");
+				}
+			}
+		}
+		
+		//-----------------------------------
+		// handle options
+		if(valueLabelOptions != null) {
+			for(Object optionValue : valueLabelOptions.keySet()) {
+				String currentLabel = valueLabelOptions.get(optionValue).toString();
+				if(optionValue.toString().equals(stringVal)) {
+					html.append("<option value=\""+optionValue+"\" selected>")
+						.append(currentLabel)
+					.append("</option>");
+				}else {
+					html.append("<option value=\""+optionValue+"\">")
+						.append(currentLabel)
+					.append("</option>");
+				}
+			}
+		}
+		
+		html.append("</select>");
+	}
 	/***********************************************************************************
 	 * Create DatePicker
 	 ***********************************************************************************/
@@ -394,7 +454,25 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return this;
 	}
 	
+	public Object[] getOptions() {
+		return options;
+	}
 	
+	public LinkedHashMap<?, ?> getValueLabelOptions() {
+		return valueLabelOptions;
+	}
+
+	public CFWField<T> setOptions(Object[] options) {
+		this.valueLabelOptions = null;
+		this.options = options;
+		return this;
+	}
+	
+	public CFWField<T> setValueLabelOptions(LinkedHashMap<?, ?> keyValOptions) {
+		this.options = null;
+		this.valueLabelOptions = keyValOptions;
+		return this;
+	}
 
 	public boolean isDisabled() {
 		return isDisabled;

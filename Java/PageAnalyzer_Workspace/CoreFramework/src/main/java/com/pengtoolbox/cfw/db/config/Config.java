@@ -120,8 +120,8 @@ public class Config extends CFWObject {
 		return type.getValue();
 	}
 
-	public Config type(String type) {
-		this.type.setValue(type);
+	public Config type(FormFieldType type) {
+		this.type.setValue(type.toString());
 		return this;
 	}
 

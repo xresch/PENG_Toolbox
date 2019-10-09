@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.db.config.Config;
 import com.pengtoolbox.cfw.tests._master.DBTestMaster;
 
@@ -43,7 +44,7 @@ public class TestCFWDBConfig extends DBTestMaster {
 		CFW.DB.Config.create(
 				new Config(configname)
 				.description("Testdescription")
-				.type("TEXT")
+				.type(FormFieldType.TEXT)
 				.options(new String[] {"A", "B", "C"})
 				.value("A")
 		);
@@ -90,11 +91,8 @@ public class TestCFWDBConfig extends DBTestMaster {
 		//--------------------------------------
 		// DELETE
 		CFW.DB.Config.deleteByID(updatedConfig.id());
-		
 		Assertions.assertFalse(CFW.DB.Config.checkConfigExists(configname));
-		
-		CFW.DB.commitTransaction();
-		
+				
 	}
 	
 }

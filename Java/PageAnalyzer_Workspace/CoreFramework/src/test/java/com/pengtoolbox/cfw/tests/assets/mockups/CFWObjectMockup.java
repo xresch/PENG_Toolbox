@@ -2,6 +2,7 @@ package com.pengtoolbox.cfw.tests.assets.mockups;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.LinkedHashMap;
 
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
@@ -24,13 +25,26 @@ public class CFWObjectMockup extends CFWObject{
 	
 	private CFWField<Timestamp> timestamp = CFWField.newTimestamp(FormFieldType.DATETIMEPICKER, "TIMESTAMP");
 	
+	private CFWField<String> select = CFWField.newString(FormFieldType.SELECT, "SELECT")
+			.setOptions(new String[] {"Option A","Option B","Option C","Option D"});
+	
+	private CFWField<Integer> keyValSelect = CFWField.newInteger(FormFieldType.SELECT, "KEY_VAL_SELECT");
+	
 	public CFWObjectMockup() {
-		withValue.setValueValidated("This is the Value");
-		addFields();
+		
+		initialize();
 	}
 		
-	public void addFields() {
-		this.addFields(firstname, lastname, withValue, description, textarea, date, timestamp);
+	public void initialize() {
+		withValue.setValueValidated("This is the Value");
+		LinkedHashMap<Integer, String> options = new LinkedHashMap<Integer, String>();
+		options.put(1, "Apple");
+		options.put(2, "Banana");
+		options.put(3, "Plumb");
+		options.put(4, "Strawwberry");
+		keyValSelect.setValueLabelOptions(options);
+		
+		this.addFields(firstname, lastname, withValue, description, textarea, date, timestamp, select, keyValSelect);
 	}
 
 }
