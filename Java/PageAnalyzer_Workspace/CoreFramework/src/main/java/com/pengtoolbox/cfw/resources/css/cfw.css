@@ -17,6 +17,11 @@
 	max-height: 80%; 
 }
 
+/* make sure all top navbar items are always white*/
+.navbar-nav > li > a{
+	color: white;
+}
+
 /* .navbar{
 	background-color: black;
 } */

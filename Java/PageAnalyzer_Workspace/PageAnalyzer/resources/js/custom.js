@@ -1112,14 +1112,14 @@ function createRulePanel(rule){
 	panelHeader.attr("id", "panelHead"+GLOBAL_COUNTER);
 	//panelHeader.attr("role", "tab");
 	panelHeader.append(
-		'<span class="card-title">'+
+		'<span class="card-title text-light">'+
 		/*style.icon+*/
 		'<a role="button" data-toggle="collapse" data-target="#collapse'+GLOBAL_COUNTER+'">'+
 		'<strong>Grade '+rule.grade+' ('+rule.score+'%):</strong>&nbsp;'+rule.title+
 		'</a></span>'
 	); 
 	panelHeader.append(
-			'<span style="float: right;">(Rule: ' + rule.name+ ')</span>'
+			'<span class="text-light" style="float: right;">(Rule: ' + rule.name+ ')</span>'
 		); 
 	
 	panel.append(panelHeader);

@@ -15,10 +15,7 @@ public class CFWProperties {
 	
 	/** Application ID, used to make your application more secure. (Property=cfw_application_id, Default="change_me_now") */
 	public static String APPLICATION_ID = "change_me_now";
-	
-	/** Bootstrap Theme for the application. (Property=cfw_application_theme, Default="superhero") */
-	public static String APPLICATION_THEME = "slate";
-	
+		
 	/** Default maximum upload size for files in megabyte. (Property=cfw_application_max_uploadsize, Default=200) */
 	public static int APPLICATION_MAX_UPLOADSIZE = 200;
 	
@@ -115,7 +112,6 @@ public class CFWProperties {
 		
 		APPLICATION_ID					= CFWProperties.configAsString("cfw_application_id", APPLICATION_ID);
 		APPLICATION_NAME				= CFWProperties.configAsString("cfw_application_name", APPLICATION_NAME);
-		APPLICATION_THEME				= CFWProperties.configAsString("cfw_application_theme", APPLICATION_THEME);
 		APPLICATION_MAX_UPLOADSIZE		= CFWProperties.configAsInt("cfw_application_max_uploadsize", APPLICATION_MAX_UPLOADSIZE);
 		RESET_ADMIN_PW 					= CFWProperties.configAsBoolean("cfw_reset_admin_pw", RESET_ADMIN_PW);
 				

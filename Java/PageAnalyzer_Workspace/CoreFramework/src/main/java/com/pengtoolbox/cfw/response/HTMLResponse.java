@@ -7,6 +7,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
+import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
@@ -27,7 +28,7 @@ public class HTMLResponse extends AbstractHTMLResponse {
 		this.pageTitle = pageTitle;
 		
 		//this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap.min.css");
-		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap-theme-"+CFW.Properties.APPLICATION_THEME.toLowerCase()+".css");
+		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap-theme-"+CFW.DB.Config.getConfigAsString(Configuration.THEME)+".css");
 		//this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "jquery-ui.min.css");
 		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "cfw.css");
 		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "font-awesome.css");

@@ -23,14 +23,6 @@ public class MenuItem extends HierarchicalHTMLItem {
 		
 		String cssClass = this.popAttributeValue("class");
 		
-//		html.append("      <li class=\"nav-item dropdown\">");
-//		html.append("        <a class=\"nav-link dropdown-toggle\" href=\"#\" id=\"dropdown01\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">Dropdown</a>");
-//		html.append("        <div class=\"dropdown-menu\" aria-labelledby=\"dropdown01\">");
-//		html.append("          <a class=\"dropdown-item\" href=\"#\">Action</a>");
-//		html.append("          <a class=\"dropdown-item\" href=\"#\">Another action</a>");
-//		html.append("          <a class=\"dropdown-item\" href=\"#\">Something else here</a>");
-//		html.append("        </div>");
-//		html.append("      </li>");
 		
 		if(!this.hasChildren() && !this.hasOneTimeChildren()) {
 			html.append("\n<li class=\""+cssClass+"\">");

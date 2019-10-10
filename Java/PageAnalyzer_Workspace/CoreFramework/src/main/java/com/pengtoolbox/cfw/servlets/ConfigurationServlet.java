@@ -68,7 +68,7 @@ public class ConfigurationServlet extends HttpServlet
 		//--------------------------------------
 		// Create Group Form
 		
-		BTForm configForm = new BTForm("cfw-config-mgmt", "Save");
+		BTForm configForm = new BTForm("cfwConfigMgmt", "Save");
 		
 		ArrayList<CFWObject> configObjects = CFW.DB.Config.getConfigObjectList();
 		for(CFWObject object :  configObjects) {
@@ -90,13 +90,18 @@ public class ConfigurationServlet extends HttpServlet
 					form.mapRequestParameters(request);
 					
 					JSONResponse json = new JSONResponse();
-			    	json.addAlert(MessageType.SUCCESS, "Form was recieved!");
-			    	json.addAlert(MessageType.INFO, form.getFieldsAsKeyValueHTML());
 			    	
+			    	boolean success = true;
 			    	for(CFWField<String> field : form.getFields().values() ) {
-			    		CFW.DB.Config.updateValue(Integer.parseInt(field.getName()), field.getValue());
+			    		success = success && CFW.DB.Config.updateValue(Integer.parseInt(field.getName()), field.getValue());
 			    	}
 			    	CFW.DB.Config.updateCache();
+			    	
+			    	if(success) {
+			    		json.addAlert(MessageType.SUCCESS, "Saved!");
+			    	}else {
+			    		json.addAlert(MessageType.SUCCESS, "Something went wrong!");
+			    	}
 			    	
 				}
 				

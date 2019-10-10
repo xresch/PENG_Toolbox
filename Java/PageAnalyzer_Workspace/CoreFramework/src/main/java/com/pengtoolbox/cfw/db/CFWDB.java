@@ -155,8 +155,25 @@ public class CFWDB {
 					.value("true")
 			);
 		}
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Config.checkConfigExists(Configuration.THEME)) {
+			CFW.DB.Config.create(
+				new Configuration("Core Framework", Configuration.THEME)
+					.description("Set the application look and feel. 'Slate' is the default and recommended theme, all others are not 100% tested.")
+					.type(FormFieldType.SELECT)
+					.options(new String[]{"flatly", "lumen", "materia", "minty", "pulse", "sandstone", "simplex", "sketchy", "slate", "spacelab", "superhero", "united"})
+					.value("slate")
+			);
+		}
+				
 				
 		CFW.DB.Config.updateCache();
+		
+		
+		
 	}
 	
 	/********************************************************************************************

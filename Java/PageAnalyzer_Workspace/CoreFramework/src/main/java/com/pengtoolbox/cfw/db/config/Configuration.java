@@ -16,6 +16,8 @@ public class Configuration extends CFWObject {
 	public static final String TABLE_NAME = "CFW_CONFIG";
 	
 	public static final String FILE_CACHING = "Cache Files";
+
+	public static final String THEME = "Theme";
 	
 	public enum ConfigFields{
 		PK_ID,
