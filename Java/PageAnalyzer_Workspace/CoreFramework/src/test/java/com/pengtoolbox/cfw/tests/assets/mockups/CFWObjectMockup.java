@@ -20,6 +20,8 @@ public class CFWObjectMockup extends CFWObject{
 	private CFWField<String> textarea = CFWField.newString(FormFieldType.TEXTAREA, "10ROW_TEXTAREA").setLabel("10 Row Textarea")
 			.addAttribute("rows", "10");
 	
+	private CFWField<Integer> number = CFWField.newInteger(FormFieldType.NUMBER, "Number_Fieldxyz").setLabel("Enter a Number");
+	
 	private CFWField<Date> date = CFWField.newDate(FormFieldType.DATEPICKER, "DATE")
 			.setValue(new Date(1580053600000L));
 	
@@ -28,7 +30,8 @@ public class CFWObjectMockup extends CFWObject{
 	private CFWField<String> select = CFWField.newString(FormFieldType.SELECT, "SELECT")
 			.setOptions(new String[] {"Option A","Option B","Option C","Option D"});
 	
-	private CFWField<Integer> keyValSelect = CFWField.newInteger(FormFieldType.SELECT, "KEY_VAL_SELECT");
+	private CFWField<Integer> keyValSelect = CFWField.newInteger(FormFieldType.SELECT, "KEY_VAL_SELECT")
+											.setValue(2);
 	
 	public CFWObjectMockup() {
 		
@@ -44,7 +47,7 @@ public class CFWObjectMockup extends CFWObject{
 		options.put(4, "Strawwberry");
 		keyValSelect.setValueLabelOptions(options);
 		
-		this.addFields(firstname, lastname, withValue, description, textarea, date, timestamp, select, keyValSelect);
+		this.addFields(firstname, lastname, withValue, description, textarea, number, date, timestamp, select, keyValSelect);
 	}
 
 }

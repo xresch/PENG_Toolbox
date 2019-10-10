@@ -40,7 +40,7 @@ public class User extends CFWObject {
 				}
 			});
 	
-	private CFWField<String> email = CFWField.newString(FormFieldType.TEXT, UserDBFields.EMAIL.toString())
+	private CFWField<String> email = CFWField.newString(FormFieldType.EMAIL, UserDBFields.EMAIL.toString())
 			.addValidator(new LengthValidator(-1, 255))
 			.addValidator(new EmailValidator());
 

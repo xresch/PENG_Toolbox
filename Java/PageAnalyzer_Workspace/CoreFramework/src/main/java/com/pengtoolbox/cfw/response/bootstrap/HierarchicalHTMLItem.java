@@ -128,9 +128,10 @@ public abstract class HierarchicalHTMLItem {
 
 	/***********************************************************************************
 	 * Add an attribute to the html tag.
-	 * Adding a value for the same attribute multiple times will overwrite preceeding values.
+	 * Adding a value for the same attribute multiple times will overwrite preceding values.
 	 * @param name the name of the attribute.
 	 * @param key the key of the attribute.
+	 * @return instance for chaining
 	 ***********************************************************************************/
 	public HierarchicalHTMLItem addAttribute(String name, String value) {
 		fireChange();
@@ -141,8 +142,9 @@ public abstract class HierarchicalHTMLItem {
 	/***********************************************************************************
 	 * Remove an attribute from the html tag.
 	 * Adding a value for the same attribute multiple times will overwrite preceeding values.
+	 * 
 	 * @param name the name of the attribute.
-	 * @param key the key of the attribute.
+	 * @return instance for chaining
 	 ***********************************************************************************/
 	public HierarchicalHTMLItem removeAttribute(String name) {
 		fireChange();

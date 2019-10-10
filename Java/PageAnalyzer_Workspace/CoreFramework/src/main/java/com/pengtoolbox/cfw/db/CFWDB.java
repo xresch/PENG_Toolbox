@@ -551,7 +551,7 @@ public class CFWDB {
 				}
 			}
 		} catch (SQLException e) {
-			log.severe("Issue executing prepared statement: "+sql, e);
+			log.severe("Database Error: "+e.getMessage(), e);
 		} finally {
 			try {
 				if(conn != null && transactionConnection.get() == null) { conn.close(); }
@@ -600,7 +600,7 @@ public class CFWDB {
 				generatedID = result.getInt(1);
 			}
 		} catch (SQLException e) {
-			log.severe("Issue executing prepared statement: "+sql, e);
+			log.severe("Database Error: "+e.getMessage(), e);
 		} finally {
 			try {
 				if(conn != null && transactionConnection.get() == null) { conn.close(); }
@@ -743,7 +743,7 @@ public class CFWDB {
 					json.append("\"").append(column).append("\": ");
 					
 					String value = resultSet.getString(i);
-					if(column.equals("JSON_RESULT")) {
+					if(column.startsWith("JSON")) {
 						json.append(value).append(",");
 					}else {
 						json.append("\"").append(value).append("\",");

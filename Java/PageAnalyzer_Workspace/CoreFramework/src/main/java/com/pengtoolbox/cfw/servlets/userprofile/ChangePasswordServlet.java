@@ -82,7 +82,6 @@ public class ChangePasswordServlet extends HttpServlet
 		StringBuffer content = html.getContent();
 		content.append(CFW.Files.readPackageResource(FileDefinition.CFW_JAR_RESOURCES_PATH + ".html", "changepassword.html"));
 		
-		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
 	}

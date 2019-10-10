@@ -58,7 +58,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private ArrayList<String> invalidMessages;
 	
 	public enum FormFieldType{
-		TEXT, TEXTAREA, PASSWORD, NUMBER, HIDDEN, BOOLEAN, SELECT, DATEPICKER, DATETIMEPICKER, NONE
+		TEXT, TEXTAREA, PASSWORD, NUMBER, EMAIL, HIDDEN, BOOLEAN, SELECT, DATEPICKER, DATETIMEPICKER, NONE
 	}
 		
 	//###################################################################################
@@ -75,38 +75,46 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	// Initializer
 	//###################################################################################
 	public static CFWField<String> newString(FormFieldType type, String fieldName){
-		return new CFWField<String>(String.class, type, fieldName);
+		return new CFWField<String>(String.class, type, fieldName)
+				.setColumnDefinition("VARCHAR");
 	}
 	
 	public static CFWField<Integer> newInteger(FormFieldType type, String fieldName){
 		return new CFWField<Integer>(Integer.class, type, fieldName)
+				.setColumnDefinition("INT")
 				.addValidator(new IntegerValidator());
 	}
 	
 	public static CFWField<Boolean> newBoolean(FormFieldType type, String fieldName){
 		return new CFWField<Boolean>(Boolean.class, type, fieldName)
+				.setColumnDefinition("BOOLEAN")
 				.addValidator(new BooleanValidator());
 	}
 	
 	public static CFWField<Timestamp> newTimestamp(FormFieldType type, String fieldName){
 		return new CFWField<Timestamp>(Timestamp.class, type, fieldName)
+				.setColumnDefinition("TIMESTAMP")
 				.addValidator(new EpochOrTimeValidator());
 	}
 	
 	public static CFWField<Date> newDate(FormFieldType type, String fieldName){
 		return new CFWField<Date>(Date.class, type, fieldName)
+				.setColumnDefinition("DATE")
 				.addValidator(new EpochOrTimeValidator());
 	}
 	
 	public static CFWField<Object[]> newArray(FormFieldType type, String fieldName){
-		return new CFWField<Object[]>(Object[].class, type, fieldName);
+		return new CFWField<Object[]>(Object[].class, type, fieldName)
+				.setColumnDefinition("ARRAY");
 	}
 		
 	//###################################################################################
 	// METHODS
 	//###################################################################################
+	
 	/***********************************************************************************
 	 * Create the HTML representation of this item.
+	 * @param StringBuilder to append the resulting html
 	 * @return String html for this item. 
 	 ***********************************************************************************/
 	protected void createHTML(StringBuilder html) {
@@ -152,6 +160,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 									
 			case SELECT:  			createSelect(html);
 									break;	
+			
+			case EMAIL:  			html.append("<input type=\"email\" class=\"form-control\" "+this.getAttributesString()+"/>");
+									break;
 								
 			case DATEPICKER:  		createDatePicker(html);
 									break;
@@ -326,7 +337,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	}
 	
 	/***********************************************************************************
-	 * Create the text area
+	 * Create a text area
 	 ***********************************************************************************/
 	private void createTextArea(StringBuilder html) {
 		
@@ -398,6 +409,14 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return invalidMessages;
 	}
 	
+	/*************************************************************************
+	 * Add a validator to the field.
+	 * Will be executed when using setValueValidated() 
+	 * or mapAndValidateParamsToFields();
+	 * 
+	 * @param validator to add
+	 * @return instance for chaining
+	 *************************************************************************/ 
 	public CFWField<T> addValidator(IValidator validator) {
 		if(!validatorArray.contains(validator)) {
 			validatorArray.add(validator);
@@ -407,20 +426,45 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return this;
 	}
 	
+	/***********************************************************************************
+	 * Add an attribute to the html tag.
+	 * Adding a value for the same attribute multiple times will overwrite preceding values.
+	 * @param name the name of the attribute.
+	 * @param key the key of the attribute.
+	 * @return instance for chaining
+	 ***********************************************************************************/
 	@SuppressWarnings("unchecked")
 	public CFWField<T> addAttribute(String name, String value) {
 		return (CFWField<T>)super.addAttribute(name, value);
 	}
 	
+	/***********************************************************************************
+	 * Remove an attribute from the html tag.
+	 * Adding a value for the same attribute multiple times will overwrite preceeding values.
+	 * 
+	 * @param name the name of the attribute.
+	 * @return instance for chaining
+	 ***********************************************************************************/
 	@SuppressWarnings("unchecked")
 	public CFWField<T> removeAttribute(String name) {
 		return (CFWField<T>)super.removeAttribute(name);
 	}
 
+	/******************************************************************************************************
+	 * Remove the validator from this field
+	 * 
+	 * @return true if the specified validator was in the list
+	 ******************************************************************************************************/
 	public boolean removeValidator(IValidator o) {
 		return validatorArray.remove(o);
 	}
 	
+	/******************************************************************************************************
+	 * Set the name of this field.
+	 * Will be used as the name attribute of form elements and the name of the DB column.
+	 * 
+	 * @return instance for chaining
+	 ******************************************************************************************************/
 	public CFWField<T> setName(String propertyName) {
 		this.name = propertyName;
 		return this;
@@ -434,6 +478,12 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return formLabel;
 	}
 
+	/******************************************************************************************************
+	 * Set the label of this field.
+	 * Will be used as the field label in html forms.
+	 * 
+	 * @return instance for chaining
+	 ******************************************************************************************************/
 	public CFWField<T> setLabel(String label) {
 		fireChange();
 		this.formLabel = label;
@@ -444,6 +494,12 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return description;
 	}
 
+	/******************************************************************************************************
+	 * Set the desciption of this field.
+	 * Will be used as a decorator in html forms.
+	 * 
+	 * @return instance for chaining
+	 ******************************************************************************************************/
 	public CFWField<T> setDescription(String description) {
 		fireChange();
 		this.description = description;
@@ -454,12 +510,23 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public String getColumnDefinition() {
 		return columnDefinition;
 	}
-
+	
+	/******************************************************************************************************
+	 * Set the DB column definition of this field. 
+	 * e.g "VARCHAR(255)", "INT UNIQUE", "CLOB", "BOOLEAN", "ARRAY"
+	 * 
+	 * @return instance for chaining
+	 ******************************************************************************************************/
 	public CFWField<T> setColumnDefinition(String columnDefinition) {
 		this.columnDefinition = columnDefinition;
 		return this;
 	}
 	
+	/******************************************************************************************************
+	 * Set the DB column definition of this field as a primary key.
+	 * 
+	 * @return instance for chaining
+	 ******************************************************************************************************/
 	public CFWField<T> setPrimaryKeyAutoIncrement() {
 		this.columnDefinition = "INT PRIMARY KEY AUTO_INCREMENT";
 		return this;
@@ -473,15 +540,31 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return valueLabelOptions;
 	}
 
+	/******************************************************************************************************
+	 * Set values for selection fields. The string representations of the provided elements will be used. 
+	 * The values will be used as labels for the options.
+	 * This will reset any options set with setValueLabelOptions().
+	 * 
+	 * @param array with values
+	 * @return instance for chaining
+	 ******************************************************************************************************/
 	public CFWField<T> setOptions(Object[] options) {
 		this.valueLabelOptions = null;
 		this.options = options;
 		return this;
 	}
 	
-	public CFWField<T> setValueLabelOptions(LinkedHashMap<?, ?> keyValOptions) {
+	/******************************************************************************************************
+	 * Set values for selection fields. First element in the map will be the value of the field, the second
+	 * will be used as the label for the option.
+	 * This will reset any options set with setOptions().
+	 * 
+	 * @param map with value/label pairs
+	 * @return instance for chaining
+	 ******************************************************************************************************/
+	public CFWField<T> setValueLabelOptions(LinkedHashMap<?, ?> valueLabelPairs) {
 		this.options = null;
-		this.valueLabelOptions = keyValOptions;
+		this.valueLabelOptions = valueLabelPairs;
 		return this;
 	}
 
@@ -500,8 +583,11 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 
 	/******************************************************************************************************
 	 * Change the value and trigger the change handler if specified.
-	 * @param value to apply.
+	 * Only changes the value when assigned change handler returns true.
+	 * Triggers HierarchicalHTMLItem.fireChange() to propagate changes.
 	 * 
+	 * @param value to apply.
+	 * return true on success, false otherwise
 	 ******************************************************************************************************/
 	private boolean changeValue(Object value) {
 		
@@ -525,22 +611,32 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return true;
 	}
 	
+	/******************************************************************************************************
+	 * Change the value by first converting it to the correct type.
+	 * 
+	 ******************************************************************************************************/
 	private boolean setValueConvert(T value) {
 		boolean success = true;
 		
-		if(value == null) {
-			return this.changeValue(value);
+		//-------------------------------------------------
+		// prevent Strings from being empty. Might lead to 
+		// unique constraint violation on DB when not using 
+		// null values.
+		if(value == null 
+		|| ( valueClass == String.class && (((String)value).trim().equals(""))) ) {
+			return this.changeValue(null);
 		}
 		
+		//-------------------------------------------------
+		// If value is a subclass of the valueClass change 
+		// the value without conversion
 		if(this.valueClass.isAssignableFrom(value.getClass())) {
-			if(valueClass == String.class && (((String)value).trim().equals(""))) {
-				this.changeValue(null);
-			}else {
-				this.changeValue(value);
-			}
+			this.changeValue(value);
 			return true;
 		}
 		
+		//-------------------------------------------------
+		// Convert string values to the appropriate type
 		if(value.getClass() == String.class) {
 			if( ((String)value).trim().equals("")) { 
 				if(valueClass == Integer.class) 	    { return this.changeValue(0); }
@@ -548,19 +644,36 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				else if(valueClass == Timestamp.class)  { return this.changeValue(null);  }
 				else if(valueClass == Date.class)  		{ return this.changeValue(null); }
 				else if(valueClass == Object[].class)	{ return this.changeValue(null); }
-				else {return false;}
+				else {	
+					new CFWLog(logger)
+					.method("setValueConvert")
+					.severe("The choosen type is not supported: "+valueClass.getName());
+					return false;
+				}
 			}
 			else if(valueClass == Integer.class) 	{ return this.changeValue(Integer.parseInt((String)value)); }
 			else if(valueClass == Boolean.class) 	{ return this.changeValue(Boolean.parseBoolean( ((String)value).trim()) ); }
 			else if(valueClass == Timestamp.class)  { return this.changeValue(new Timestamp(Long.parseLong( ((String)value).trim()) )); }
 			else if(valueClass == Date.class)  		{ return this.changeValue(new Date(Long.parseLong( ((String)value).trim()) )); }
 			else if(valueClass == Object[].class)	{ return this.changeValue( ((String)value).split(",") ); }
-			else {return false;}
+			else {
+				new CFWLog(logger)
+					.method("setValueConvert")
+					.severe("The choosen type is not supported: "+valueClass.getName());
+				return false;
+			}
 		}
 		
 		return success;
 	}
 	
+	/******************************************************************************************************
+	 * Validate the value using the assigned validators.
+	 * Set the value by converting it to the correct type.
+	 * 
+	 * @param value the new value
+	 * @return true if successful, false otherwise
+	 ******************************************************************************************************/
 	public boolean setValueValidated(T value) {
 		
 		boolean result = true;
@@ -578,6 +691,13 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return result;
 	}
 	
+	/******************************************************************************************************
+	 * Set the values without validation except for the assigned CFWFieldChangeHandler.
+	 * Does not convert the value.
+	 * @param value the new value
+	 * @return instance of chaining
+	 * 
+	 ******************************************************************************************************/
 	public CFWField<T> setValue(T value) {
 		this.changeValue(value);
 		return this;
@@ -587,6 +707,11 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return (T)value;
 	}
 	
+	/******************************************************************************************************
+	 * Returns the class of the value.
+	 * 
+	 * @return class
+	 ******************************************************************************************************/
 	protected Class<T> getValueClass() {
 		return valueClass;
 	}
@@ -594,7 +719,14 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public CFWFieldChangeHandler getChangeHandler() {
 		return changeHandler;
 	}
-
+	
+	/******************************************************************************************************
+	 * Add a change handler. Will be executed when the value is changed.
+	 * The change handler can prevent the change of the value by returning false.
+	 * 
+	 * @param changeHandler
+	 * @return instance of chaining
+	 ******************************************************************************************************/
 	public CFWField<T> setChangeHandler(CFWFieldChangeHandler changeHandler) {
 		this.changeHandler = changeHandler;
 		return this;
