@@ -33,6 +33,7 @@ public class FormServlet extends HttpServlet
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
 		String id = request.getParameter("id");
+		String summernoteID = request.getParameter("summernoteid");
 		
 		BTForm form = CFW.Context.Session.getForm(id);
 		
@@ -45,10 +46,23 @@ public class FormServlet extends HttpServlet
     		return;
     	}
 		
-    	JsonObject payload = new JsonObject();
-    	payload.addProperty("html", form.getHTML());
+    	if(summernoteID == null) {
+    		//------------------------------
+    		// Return Form
+    		JsonObject payload = new JsonObject();
+        	payload.addProperty("html", form.getHTML());
+        	
+        	json.getContent().append(payload.toString());
+    	}else {
+    		//------------------------------
+    		// Return summernote editor 
+    		// content
+    		JsonObject payload = new JsonObject();
+        	payload.addProperty("html", form.getField(summernoteID).getValue().toString());
+        	
+        	json.getContent().append(payload.toString());
+    	}
     	
-    	json.getContent().append(payload.toString());
     }
 	
 	

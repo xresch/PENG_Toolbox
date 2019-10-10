@@ -29,6 +29,7 @@ public class HTMLResponse extends AbstractHTMLResponse {
 		
 		//this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap.min.css");
 		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap-theme-"+CFW.DB.Config.getConfigAsString(Configuration.THEME)+".css");
+		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "summernote-bs4.css");
 		//this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "jquery-ui.min.css");
 		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "cfw.css");
 		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "font-awesome.css");
@@ -37,6 +38,7 @@ public class HTMLResponse extends AbstractHTMLResponse {
 		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "jquery-3.4.1.min.js");
 		//this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "jquery-ui-1.12.3.min.js");
 		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap.bundle.min.js");
+		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "summernote-bs4.min.js");
 		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "cfw.js");
 		this.addJSFileBottomAssembly(FileDefinition.HandlingType.FILE, "./resources/js", "custom.js");
 		      
@@ -47,6 +49,7 @@ public class HTMLResponse extends AbstractHTMLResponse {
 		
 		StringBuffer buildedPage = new StringBuffer();
 		
+		buildedPage.append("<!DOCTYPE html>\n");
 		buildedPage.append("<html>\n");
 		
 			buildedPage.append("<head>\n");

@@ -58,7 +58,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private ArrayList<String> invalidMessages;
 	
 	public enum FormFieldType{
-		TEXT, TEXTAREA, PASSWORD, NUMBER, EMAIL, HIDDEN, BOOLEAN, SELECT, DATEPICKER, DATETIMEPICKER, NONE
+		TEXT, TEXTAREA, PASSWORD, NUMBER, EMAIL, HIDDEN, BOOLEAN, SELECT, WYSIWYG, DATEPICKER, DATETIMEPICKER, NONE
 	}
 		
 	//###################################################################################
@@ -151,7 +151,10 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			
 			case TEXTAREA: 			createTextArea(html);
 									break;
-								
+			
+			case WYSIWYG: 			createWYSIWYG(html);
+									break;						
+									
 			case HIDDEN:  			html.append("<input type=\"hidden\" "+this.getAttributesString()+"/>");
 									break;
 			
@@ -262,6 +265,29 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		}
 		
 		html.append("</select>");
+	}
+	
+	/***********************************************************************************
+	 * Create DatePicker
+	 ***********************************************************************************/
+	private void createWYSIWYG(StringBuilder html) {
+		
+		//---------------------------------
+		// Set initial value
+		this.removeAttribute("value");
+		this.addAttribute("id", name);
+		//---------------------------------
+		// Create Field
+		html.append("<textarea class=\"form-control\" "+this.getAttributesString()+"></textarea>");
+
+		
+		if(this.parent instanceof BTForm) {
+			BTForm form = ((BTForm)this.parent);
+			
+			form.javascript.append("cfw_initializeSummernote('"+form.getFormID()+"', '"+name+"');\r\n");
+		}
+
+		
 	}
 	/***********************************************************************************
 	 * Create DatePicker

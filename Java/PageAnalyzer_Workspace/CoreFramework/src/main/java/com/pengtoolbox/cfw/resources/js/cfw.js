@@ -324,28 +324,48 @@ function cfw_toggleTheToggleButton(button){
 }
 
 /**************************************************************************************
- * Initialize a DatePicker created with the Java object CFWField.
- * @param name the name of the field
- * @param epochInitial the initial date in epoch time
+ * Initialize a Date and/or Timepicker created with the Java object CFWField.
+ * @param fieldID the name of the field
+ * @param epochMillis the initial date in epoch time or null
  * @return nothing
  *************************************************************************************/
-//function cfw_initializeDatePicker(name, epochInitial) {
-//	
-//	$('#'+name+'-datepicker').datepicker({
-//	  	dateFormat: 'dd.mm.yy',
-//		altField: '#'+name,
-//	  	altFormat: '@',
-//		showOptions: { direction: 'up' },
-//	  	beforeShow: function(input, inst) {
-//		        $('#ui-datepicker-div').addClass('bg-dark');
-//	  		}
-//	});
-//	
-//	if(epochInitial != null){
-//		$('#'+name+'-datepicker').datepicker( 'setDate', new Date(epochInitial) );	
-//	}
-//
-//}
+function cfw_initializeSummernote(formID, editorID){
+	
+	var formSelector = '#'+formID;
+	var editorSelector = formSelector+' #'+editorID;
+
+	//--------------------------------------
+	// Initialize Editor
+	//--------------------------------------
+	var editor = $(editorSelector);
+	
+	if(editor.length == 0){
+		CFW.ui.addToastDanger('Error: the editor field is unknown: '+fieldID);
+		return;
+	}
+	
+	editor.summernote({
+        placeholder: 'Enter your Text',
+        tabsize: 2,
+        height: 200
+      });
+	
+	//--------------------------------------
+	// Get Editor Contents
+	//--------------------------------------
+	$.get('/cfw/formhandler', {id: formID, summernoteid: editorID})
+	  .done(function(response) {
+		  $(editor).summernote("code", response.payload.html);
+	  })
+	  .fail(function(response) {
+		  console.error("Issue loading editor content: "+url);
+		  CFW.ui.addToast("Issue Loading Editor Content", "URL: "+url, "danger", CFW.config.toastErrorDelay)
+
+	  })
+	  .always(function(response) {
+		  cfw_handleMessages(response);			  
+	  });
+}
 
 /**************************************************************************************
  * Initialize a Date and/or Timepicker created with the Java object CFWField.
