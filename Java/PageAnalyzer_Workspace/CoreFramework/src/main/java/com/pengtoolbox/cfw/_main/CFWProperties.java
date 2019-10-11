@@ -105,7 +105,7 @@ public class CFWProperties {
 	 * @param key
 	 * @return
 	 *******************************************************************************/
-	public static void loadConfiguration(String configFilePath) throws IOException {
+	public static void loadProperties(String configFilePath) throws IOException {
 		
 		CFWProperties.configProperties.load(new FileReader(new File(configFilePath)));
 		printConfiguration();

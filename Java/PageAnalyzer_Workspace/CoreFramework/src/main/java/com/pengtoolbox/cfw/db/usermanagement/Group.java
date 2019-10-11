@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -87,6 +88,81 @@ public class Group extends CFWObject {
 		this.setTableName(TABLE_NAME);
 		this.setPrimaryField(id);
 		this.addFields(id, name, description, isDeletable, isRenamable);
+	}
+	
+	public void beforeAddData() {
+		//-----------------------------------------
+		// Create Group Superuser
+		//-----------------------------------------
+		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.CFW_GROUP_SUPERUSER)) {
+			CFW.DB.Groups.create(new Group(CFWDBGroup.CFW_GROUP_SUPERUSER)
+				.description("Superusers have all the privileges in the system. They are above administrators. ")
+				.isDeletable(false)
+			);
+		}
+		
+		Group superuserGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_SUPERUSER);
+		
+		if(superuserGroup == null) {
+			new CFWLog(logger)
+			.method("createDefaultGroups")
+			.severe("User group '"+CFWDBGroup.CFW_GROUP_SUPERUSER+"' was not found in the database.");
+		}
+		
+		superuserGroup.isRenamable(false);
+		CFW.DB.Groups.update(superuserGroup);
+		
+		//-----------------------------------------
+		// Create Group Admin
+		//-----------------------------------------
+		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.CFW_GROUP_ADMIN)) {
+			CFW.DB.Groups.create(new Group(CFWDBGroup.CFW_GROUP_ADMIN)
+				.description("Administrators have the privileges to manage the application.")
+				.isDeletable(false)
+			);
+		}
+		
+		Group adminGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_ADMIN);
+		
+		if(adminGroup == null) {
+			new CFWLog(logger)
+			.method("createDefaultGroups")
+			.severe("User group '"+CFWDBGroup.CFW_GROUP_ADMIN+"' was not found in the database.");
+		}
+		
+		adminGroup.isRenamable(false);
+		CFW.DB.Groups.update(adminGroup);
+		//-----------------------------------------
+		// Create User
+		//-----------------------------------------
+		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.CFW_GROUP_USER)) {
+			CFW.DB.Groups.create(new Group(CFWDBGroup.CFW_GROUP_USER)
+				.description("Default User group. New users will automatically be added to this group if they are not managed by a foreign source.")
+				.isDeletable(false)
+			);
+		}
+		
+		Group userGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_USER);
+		
+		if(userGroup == null) {
+			new CFWLog(logger)
+			.method("createDefaultGroups")
+			.severe("User group '"+CFWDBGroup.CFW_GROUP_USER+"' was not found in the database.");
+		}
+		
+		userGroup.isRenamable(false);
+		CFW.DB.Groups.update(userGroup);
+		
+		//-----------------------------------------
+		// Create Group Foreign
+		//-----------------------------------------
+		Group foreignuserGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_FOREIGN_USER);
+		
+		if(!(foreignuserGroup == null)) {
+			foreignuserGroup.isRenamable(true);
+			foreignuserGroup.isDeletable(true);
+			CFW.DB.Groups.update(foreignuserGroup);
+		}
 	}
 
 	public int id() {

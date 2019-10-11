@@ -1,16 +1,21 @@
 package com.pengtoolbox.cfw._main;
 
-import java.io.IOException;
+import java.util.ArrayList;
 
+import com.pengtoolbox.cfw.cli.ArgumentsException;
 import com.pengtoolbox.cfw.cli.CFWCommandLineInterface;
+import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.config.CFWDBConfig;
+import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroupPermissionMap;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserGroupMap;
-import com.pengtoolbox.cfw.exceptions.ShutdownException;
+import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.Permission;
+import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWJson;
@@ -44,6 +49,7 @@ public class CFW {
 	public class Properties extends CFWProperties {}
 	public class Registry {
 		public class Components extends CFWRegistryComponents {} 
+		public class Objects extends CFWRegistryObjects {} 
 	}
 	public class Time extends CFWTime {}
 	public class Validation extends CFWValidation {}
@@ -68,15 +74,26 @@ public class CFW {
 	public static final String PATH_TEMPLATE_FOOTER = PATH_RESOURCES_HTML+"/default_template/footer.html";
 	public static final String PATH_TEMPLATE_SUPPORTINFO = PATH_RESOURCES_HTML+"/default_template/supportInfoModal.html";
 	
-	public static void initialize(String configFilePath) throws IOException{
-					
+	
+	private static void initializeCore(String[] args) throws Exception{
+		
 		//------------------------------------
-		// Classloader
+		// Command Line Arguments
+		CFW.CLI.readArguments(args);
+
+		if (!CFW.CLI.validateArguments()) {
+			System.out.println("Issues loading arguments: \n"+CFW.CLI.getInvalidMessagesAsString());
+			CFW.CLI.printUsage();
+			throw new ArgumentsException(CFW.CLI.getInvalidMessages());
+		}
+	    
+		//------------------------------------
+		// Add allowed Packages
 		CFW.Files.addAllowedPackage("com.pengtoolbox.cfw.resources");
 		
 		//------------------------------------
 		// Load Configuration
-		CFW.Properties.loadConfiguration(configFilePath);
+		CFW.Properties.loadProperties(CFW.CLI.getValue(CFW.CLI.CONFIG_FILE));
 		
 
 		
@@ -90,16 +107,72 @@ public class CFW {
 	 ***********************************************************************/
 	public static void initializeApp(CFWAppInterface appToStart, String[] args) throws Exception {
 		
+	    //--------------------------------
+	    // Initialize Core
+		CFW.initializeCore(args);
+		
+	    //--------------------------------
+	    // Handle Shutdown reguest.
+	    if (CFW.CLI.isArgumentLoaded(CLI.STOP)) {
+    		CFWApplication.stop();
+    		appToStart.stopApp();
+			System.exit(0);
+    		return;
+	    }
+		
+	    //--------------------------------
+	    // Register Components
 		appToStart.register();
 		
-		try {
-			CFWDefaultApp app = new CFWDefaultApp(args);
-			appToStart.startApp(app);
-		}catch(ShutdownException e) {
-			//do not proceed if shutdown was registered
-			appToStart.stopApp();
-			System.exit(0);
-			return;
-		}
+	    //--------------------------------
+	    // Start Database 	
+		
+    	CFW.DB.startDatabase(); 
+    	
+		CFW.Registry.Objects.addCFWObject(Configuration.class);
+		CFW.Registry.Objects.addCFWObject(User.class);
+		CFW.Registry.Objects.addCFWObject(Group.class);
+		CFW.Registry.Objects.addCFWObject(Permission.class);
+    	
+    	ArrayList<CFWObject> objectArray = CFW.Registry.Objects.getCFWObjectInstances();
+    	for(CFWObject object : objectArray) {
+    		if(object.getTableName() != null) {
+    			object.createTable();
+    			
+    		}
+    	}
+    	
+		CFW.DB.UserGroupMap.initializeTable();
+		//CFW.DB.Permissions.initializeTable();
+		CFW.DB.GroupPermissionMap.initializeTable();
+		
+    	for(CFWObject object : objectArray) {
+    		if(object.getTableName() != null) {
+    			object.beforeAddData();
+    			
+    		}
+    	}
+    	for(CFWObject object : objectArray) {
+    		if(object.getTableName() != null) {
+    			object.addTableData();
+    		}
+    	}
+    	
+    	for(CFWObject object : objectArray) {
+    		if(object.getTableName() != null) {
+    			object.afterAddData();
+    		}
+    	}
+    	
+    	CFWDB.resetAdminPW();
+    
+
+		appToStart.initializeDB();
+		
+	    //--------------------------------
+	    // Start Application
+		CFWApplication app = new CFWApplication(args);
+		appToStart.startApp(app);
+		
 	}
 }

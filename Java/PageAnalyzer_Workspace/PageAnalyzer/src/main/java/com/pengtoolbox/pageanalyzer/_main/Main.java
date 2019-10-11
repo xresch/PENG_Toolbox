@@ -8,7 +8,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppInterface;
-import com.pengtoolbox.cfw._main.CFWDefaultApp;
+import com.pengtoolbox.cfw._main.CFWApplication;
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
@@ -42,8 +42,8 @@ public class Main extends Application implements CFWAppInterface {
 	
     public static void main( String[] args ) throws Exception
     {
-    	Main main = new Main();
-    	CFW.initializeApp(main, args);
+    	
+    	CFW.initializeApp(new Main(), args);
 
     }
     
@@ -56,7 +56,7 @@ public class Main extends Application implements CFWAppInterface {
 	}
 
 	@Override
-	public void startDB() {
+	public void initializeDB() {
 		//------------------------------------
 		// Initialize Database
     	PageAnalyzerDB.initialize();
@@ -70,7 +70,7 @@ public class Main extends Application implements CFWAppInterface {
 	}
 
 	@Override
-	public void startApp(CFWDefaultApp app) {
+	public void startApp(CFWApplication app) {
 			//------------------------------------
 			// Initialize YSlow Singleton
 			// prevents error on first analysis request.

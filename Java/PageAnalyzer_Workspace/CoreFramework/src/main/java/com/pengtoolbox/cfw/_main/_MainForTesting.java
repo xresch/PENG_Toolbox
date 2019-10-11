@@ -33,7 +33,7 @@ public class _MainForTesting implements CFWAppInterface {
 	}
 
 	@Override
-	public void startDB() {
+	public void initializeDB() {
 		//###################################################################
         // Change Config
         //################################################################### 
@@ -43,7 +43,7 @@ public class _MainForTesting implements CFWAppInterface {
 	}
 
 	@Override
-	public void startApp(CFWDefaultApp app) {
+	public void startApp(CFWApplication app) {
 
         //###################################################################
         // Create API ServletContext, no login needed

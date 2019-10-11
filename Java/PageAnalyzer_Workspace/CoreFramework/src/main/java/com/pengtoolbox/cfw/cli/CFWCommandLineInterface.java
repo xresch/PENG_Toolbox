@@ -35,8 +35,7 @@ public abstract class CFWCommandLineInterface {
 	
 	static {
 		//*********************************************
-		// Add default arguments
-		//*********************************************	
+		// Config File
 		ArgumentDefinition configFile = 
 				new ArgumentDefinition(	CONFIG_FILE, 
 										CONFIG_FILE+"={filepath}",
@@ -46,6 +45,8 @@ public abstract class CFWCommandLineInterface {
 		valengine.addValidator(new FileCanReadValidator(configFile));
 		addSupportedArgument(configFile.getName(), configFile);
 		
+		//*********************************************
+		// Stop
 		ArgumentDefinition stop = 
 				new ArgumentDefinition(	STOP, 
 										STOP,
@@ -311,6 +312,13 @@ public abstract class CFWCommandLineInterface {
 		}
 		
 		return builder.toString();
+	}
+	
+	public static boolean isArgumentLoaded(String argumentKey) {
+		if(loadedArguments.get(argumentKey) != null) {
+			return true;
+		}
+		return false;
 	}
 
 	public static String getValue(String argumentKey) {

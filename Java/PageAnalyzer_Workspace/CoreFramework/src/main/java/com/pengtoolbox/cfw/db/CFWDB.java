@@ -44,7 +44,7 @@ public class CFWDB {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	public static void initialize() {
+	public static void startDatabase() {
     	
     	//---------------------------------------
     	// Get variables
@@ -79,10 +79,8 @@ public class CFWDB {
 			
 			CFWDB.isInitialized = true;
 			
-			initializeTables();
-			createDefaultEntries();
-			
-			resetAdminPW();
+			//initializeTables();
+			//createDefaultEntries();
 			
 		} catch (SQLException e) {
 			CFWDB.isInitialized = false;
@@ -108,197 +106,9 @@ public class CFWDB {
 				.method("resetAdminPW")
 				.warn("Admin password was reset failed!");
 			};
-		}else {
-			new CFWLog(logger)
-			.method("resetAdminPW")
-			.warn("Admin password was reset failed!");
 		}
 	}
-	/********************************************************************************************
-	 *
-	 ********************************************************************************************/
-	public static void initializeTables() {
-		
-		CFW.DB.Config.initializeTable();
-		CFW.DB.Users.initializeTable();
-		CFW.DB.Groups.initializeTable();
-		CFW.DB.UserGroupMap.initializeTable();
-		CFW.DB.Permissions.initializeTable();
-		CFW.DB.GroupPermissionMap.initializeTable();
-	}
-	
-	/********************************************************************************************
-	 *
-	 ********************************************************************************************/
-	private static void createDefaultEntries() {
-		
-		CFWDB.createDefaultConfigs();
-		CFWDB.createDefaultGroups();
-		CFWDB.createDefaultPermissions();
-		CFWDB.createDefaultUsers();
-		
-	}
-	
-	/********************************************************************************************
-	 *
-	 ********************************************************************************************/
-	private static void createDefaultConfigs() {
-		
-		//-----------------------------------------
-		// 
-		//-----------------------------------------
-		if(!CFW.DB.Config.checkConfigExists(Configuration.FILE_CACHING)) {
-			CFW.DB.Config.create(
-				new Configuration("Core Framework", Configuration.FILE_CACHING)
-					.description("Enables the caching of files read from the disk.")
-					.type(FormFieldType.BOOLEAN)
-					.value("true")
-			);
-		}
-		
-		//-----------------------------------------
-		// 
-		//-----------------------------------------
-		if(!CFW.DB.Config.checkConfigExists(Configuration.THEME)) {
-			CFW.DB.Config.create(
-				new Configuration("Core Framework", Configuration.THEME)
-					.description("Set the application look and feel. 'Slate' is the default and recommended theme, all others are not 100% tested.")
-					.type(FormFieldType.SELECT)
-					.options(new String[]{"flatly", "lumen", "materia", "minty", "pulse", "sandstone", "simplex", "sketchy", "slate", "spacelab", "superhero", "united"})
-					.value("slate")
-			);
-		}
-				
-				
-		CFW.DB.Config.updateCache();
-		
-		
-		
-	}
-	
-	/********************************************************************************************
-	 *
-	 ********************************************************************************************/
-	private static void createDefaultGroups() {
-		//-----------------------------------------
-		// Create Group Superuser
-		//-----------------------------------------
-		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.CFW_GROUP_SUPERUSER)) {
-			CFW.DB.Groups.create(new Group(CFWDBGroup.CFW_GROUP_SUPERUSER)
-				.description("Superusers have all the privileges in the system. They are above administrators. ")
-				.isDeletable(false)
-			);
-		}
-		
-		Group superuserGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_SUPERUSER);
-		
-		if(superuserGroup == null) {
-			new CFWLog(logger)
-			.method("createDefaultGroups")
-			.severe("User group '"+CFWDBGroup.CFW_GROUP_SUPERUSER+"' was not found in the database.");
-		}
-		
-		superuserGroup.isRenamable(false);
-		CFW.DB.Groups.update(superuserGroup);
-		
-		//-----------------------------------------
-		// Create Group Admin
-		//-----------------------------------------
-		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.CFW_GROUP_ADMIN)) {
-			CFW.DB.Groups.create(new Group(CFWDBGroup.CFW_GROUP_ADMIN)
-				.description("Administrators have the privileges to manage the application.")
-				.isDeletable(false)
-			);
-		}
-		
-		Group adminGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_ADMIN);
-		
-		if(adminGroup == null) {
-			new CFWLog(logger)
-			.method("createDefaultGroups")
-			.severe("User group '"+CFWDBGroup.CFW_GROUP_ADMIN+"' was not found in the database.");
-		}
-		
-		adminGroup.isRenamable(false);
-		CFW.DB.Groups.update(adminGroup);
-		//-----------------------------------------
-		// Create Group Foreign
-		//-----------------------------------------
-		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.CFW_GROUP_USER)) {
-			CFW.DB.Groups.create(new Group(CFWDBGroup.CFW_GROUP_USER)
-				.description("Default User group. New users will automatically be added to this group if they are not managed by a foreign source.")
-				.isDeletable(false)
-			);
-		}
-		
-		Group userGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_USER);
-		
-		if(userGroup == null) {
-			new CFWLog(logger)
-			.method("createDefaultGroups")
-			.severe("User group '"+CFWDBGroup.CFW_GROUP_USER+"' was not found in the database.");
-		}
-		
-		userGroup.isRenamable(false);
-		CFW.DB.Groups.update(userGroup);
-		
-		//-----------------------------------------
-		// Create Group Foreign
-		//-----------------------------------------
-		Group foreignuserGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_FOREIGN_USER);
-		
-		if(!(foreignuserGroup == null)) {
-			foreignuserGroup.isRenamable(true);
-			foreignuserGroup.isDeletable(true);
-			CFW.DB.Groups.update(foreignuserGroup);
-		}
-
-	}
-	
-	/********************************************************************************************
-	 * Groups have to be existing before calling this method.
-	 * 
-	 ********************************************************************************************/
-	private static void createDefaultPermissions() {
-		
-		//-----------------------------------------
-		//
-		//-----------------------------------------
-		if(!CFW.DB.Permissions.checkPermissionExists(CFWDBPermission.CFW_USER_MANAGEMENT)) {
-			CFW.DB.Permissions.create(new Permission(CFWDBPermission.CFW_USER_MANAGEMENT)
-				.description("Gives the user the ability to view, create, update and delete users.")
-				.isDeletable(false)
-			);
 			
-			Permission userManagement = CFW.DB.Permissions.selectByName(CFWDBPermission.CFW_USER_MANAGEMENT);
-			
-			if(userManagement == null) {
-				new CFWLog(logger)
-				.method("createDefaultPermissions")
-				.severe("User permission '"+CFWDBPermission.CFW_USER_MANAGEMENT+"' was not found in the database.");
-			}
-		}
-		
-		//-----------------------------------------
-		// 
-		//-----------------------------------------
-		if(!CFW.DB.Permissions.checkPermissionExists(CFWDBPermission.CFW_CONFIG_MANAGEMENT)) {
-			CFW.DB.Permissions.create(new Permission(CFWDBPermission.CFW_CONFIG_MANAGEMENT)
-				.description("Gives the user the ability to view and update the configurations in the database.")
-				.isDeletable(false)
-			);
-			
-			Permission userManagement = CFW.DB.Permissions.selectByName(CFWDBPermission.CFW_CONFIG_MANAGEMENT);
-			
-			if(userManagement == null) {
-				new CFWLog(logger)
-				.method("createDefaultPermissions")
-				.severe("User permission '"+CFWDBPermission.CFW_CONFIG_MANAGEMENT+"' was not found in the database.");
-			}
-		}
-		
-
-	}
 	/********************************************************************************************
 	 * Groups have to be existing.
 	 * 

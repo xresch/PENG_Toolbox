@@ -36,7 +36,7 @@ public class CFWDBUserGroupMap {
 							  + UserGroupMapDBFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
 							  + UserGroupMapDBFields.FK_ID_USER + " INT, "
 							  + UserGroupMapDBFields.FK_ID_GROUP + " INT, "
-							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_USER+") REFERENCES "+CFWDBUser.TABLE_NAME+"("+UserDBFields.PK_ID+") ON DELETE CASCADE, "
+							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_USER+") REFERENCES "+User.TABLE_NAME+"("+UserDBFields.PK_ID+") ON DELETE CASCADE, "
 							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_GROUP+") REFERENCES "+Group.TABLE_NAME+"("+Group.GroupFields.PK_ID+") ON DELETE CASCADE"
 							  + ");";
 		

@@ -8,11 +8,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWDefaultApp;
+import com.pengtoolbox.cfw._main.CFWApplication;
 
 public class WebTestMaster {
 
-	protected static CFWDefaultApp APP;
+	protected static CFWApplication APP;
 	protected static String TEST_URL;
 	
 	// context path on "/test"
@@ -43,7 +43,7 @@ public class WebTestMaster {
 	@BeforeClass
 	public static void startDefaultApplication() throws Exception {
 		
-		APP  = new CFWDefaultApp(new String[] {});
+		APP  = new CFWApplication(new String[] {});
 		
 		testContext = APP.createUnsecureContext("/test");
 		TEST_URL = "http://localhost:"+CFW.Properties.HTTP_PORT+CFW.Properties.BASE_URL+"/test";

@@ -159,6 +159,34 @@ public class CFWObject {
 	}
 	
 	/****************************************************************
+	 * Will be executed after createTable(). Use this method to make
+	 * manual changes to the database.
+	 * 
+	 * @return CFWQuery for method chaining
+	 ****************************************************************/
+	public void beforeAddData() {
+		
+	}
+	/****************************************************************
+	 * Will be executed after updateTable(). Use this method to create
+	 * default entries in the database.
+	 * @return CFWQuery for method chaining
+	 ****************************************************************/
+	public void addTableData() {
+		
+	}
+	
+	/****************************************************************
+	 * Will be executed after createTable(). Use this method to make
+	 * manual changes to the database.
+	 * 
+	 * @return CFWQuery for method chaining
+	 ****************************************************************/
+	public void afterAddData() {
+		
+	}
+	
+	/****************************************************************
 	 * Caches the query with the specified name for lower performance
 	 * impact.
 	 * @param Class of the class using the query.

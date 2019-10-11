@@ -4,11 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.validation.CustomValidator;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
 public class Configuration extends CFWObject {
@@ -80,7 +80,37 @@ public class Configuration extends CFWObject {
 		this.setPrimaryField(id);
 		this.addFields(id, name, description, type, value, options, category);
 	}
-
+	
+	public void addTableData() {
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Config.checkConfigExists(Configuration.FILE_CACHING)) {
+			CFW.DB.Config.create(
+				new Configuration("Core Framework", Configuration.FILE_CACHING)
+					.description("Enables the caching of files read from the disk.")
+					.type(FormFieldType.BOOLEAN)
+					.value("true")
+			);
+		}
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Config.checkConfigExists(Configuration.THEME)) {
+			CFW.DB.Config.create(
+				new Configuration("Core Framework", Configuration.THEME)
+					.description("Set the application look and feel. 'Slate' is the default and recommended theme, all others are not 100% tested.")
+					.type(FormFieldType.SELECT)
+					.options(new String[]{"flatly", "lumen", "materia", "minty", "pulse", "sandstone", "simplex", "sketchy", "slate", "spacelab", "superhero", "united"})
+					.value("slate")
+			);
+		}
+				
+				
+		CFW.DB.Config.updateCache();
+	}
+	
 	public int id() {
 		return id.getValue();
 	}

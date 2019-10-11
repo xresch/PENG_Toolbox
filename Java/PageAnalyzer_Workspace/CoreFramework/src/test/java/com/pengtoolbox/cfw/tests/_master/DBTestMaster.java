@@ -6,20 +6,20 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main._MainForTesting;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.Group;
-import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
-public class DBTestMaster {
+public class DBTestMaster extends WebTestMaster {
 	
 	private static Logger logger = CFWLog.getLogger(DBTestMaster.class.getName());
 	
 	@BeforeClass
 	public static void a_startDefaultApplication() throws Exception {
 		
-		CFW.initialize("./config/cfw.properties");
-		CFWDB.initialize();
+//		CFW.initializeApp(new _MainForTesting(), new String [] {});
+//		//CFW.initialize("./config/cfw.properties");
+//		CFWDB.initialize();
 		
 		CFWDB.beginTransaction();
 	}

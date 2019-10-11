@@ -4,8 +4,8 @@ public interface CFWAppInterface {
 
 	public void register();
 	
-	public void startDB();
-	public void startApp(CFWDefaultApp app);
+	public void initializeDB();
+	public void startApp(CFWApplication app);
 	
 	public void stopApp();
 }

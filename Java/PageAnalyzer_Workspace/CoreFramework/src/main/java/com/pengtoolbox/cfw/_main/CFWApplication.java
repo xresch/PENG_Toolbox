@@ -1,7 +1,6 @@
 package com.pengtoolbox.cfw._main;
 
 import java.io.IOException;
-import java.lang.management.PlatformLoggingMXBean;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,13 +32,11 @@ import org.eclipse.jetty.server.session.DefaultSessionIdManager;
 import org.eclipse.jetty.server.session.NullSessionDataStore;
 import org.eclipse.jetty.server.session.SessionCache;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.servlet.ErrorPageErrorHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import com.pengtoolbox.cfw._main.CFW.Properties;
-import com.pengtoolbox.cfw.cli.ArgumentsException;
+import com.pengtoolbox.cfw._main.CFW.CLI;
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
 import com.pengtoolbox.cfw.handlers.HTTPSRedirectHandler;
@@ -57,7 +54,7 @@ import com.pengtoolbox.cfw.servlets.admin.UserManagementServlet;
 import com.pengtoolbox.cfw.servlets.userprofile.ChangePasswordServlet;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
-public class CFWDefaultApp {
+public class CFWApplication {
 	
 	private Server server;
 	private MultipartConfigElement globalMultipartConfig;
@@ -72,43 +69,16 @@ public class CFWDefaultApp {
 	
 	public static WebAppContext applicationContext;
 	
-	public CFWDefaultApp(String[] args) throws Exception {
-		
-        //###################################################################
-        // Initialize
-        //###################################################################
-    	
-		CFW.CLI.readArguments(args);
-
-		if (!CFW.CLI.validateArguments()) {
-			System.out.println("Issues loading arguments: \n"+CFW.CLI.getInvalidMessagesAsString());
-			CFW.CLI.printUsage();
-			throw new ArgumentsException(CFW.CLI.getInvalidMessages());
-		}
-    	//---------------------------------------
-    	// General 
-	    CFW.initialize(CFW.CLI.getValue(CFW.CLI.CONFIG_FILE));
-    	
-	    if (args.length == 1) {
-	    	
-	    	switch(args[0]) {
-	    		case "-stop":  this.stop(); 
-	    					   throw new ShutdownException();
-	    	}
-            
-        }
-	    
+	public CFWApplication(String[] args) throws Exception {
+		    	            	    
     	//---------------------------------------
     	// Create Server 
-        server = CFWDefaultApp.createServer();
+        server = CFWApplication.createServer();
         applicationContext = new WebAppContext();
         applicationContext.setContextPath("/");
         applicationContext.setServer(server);
-        applicationContext.setSessionHandler(CFWDefaultApp.createSessionHandler());
-        applicationContext.setErrorHandler(CFWDefaultApp.createErrorHandler());
-    	//---------------------------------------
-    	// Database    	
-    	CFW.DB.initialize();
+        applicationContext.setSessionHandler(CFWApplication.createSessionHandler());
+        applicationContext.setErrorHandler(CFWApplication.createErrorHandler());
     	
     	//---------------------------------------
     	// Default Multipart Config
@@ -197,8 +167,8 @@ public class CFWDefaultApp {
         handlerArray.addAll(unsecureContextArray);
         handlerArray.add(rewriteHandler);
         handlerArray.addAll(secureContextArray);
-        handlerArray.add(CFWDefaultApp.createResourceHandler());
-        handlerArray.add(CFWDefaultApp.createCFWHandler());
+        handlerArray.add(CFWApplication.createResourceHandler());
+        handlerArray.add(CFWApplication.createCFWHandler());
         
         HandlerCollection handlerCollection = new HandlerCollection();
         handlerCollection.setHandlers(handlerArray.toArray(new Handler[] {}));
@@ -214,7 +184,7 @@ public class CFWDefaultApp {
 	/**************************************************************************************************
 	 * 
 	 **************************************************************************************************/
-	public void stop() {
+	public static void stop() {
 		
 		System.out.println("Try to stop running application instance.");
 		
@@ -311,7 +281,7 @@ public class CFWDefaultApp {
 	public static SessionHandler createSessionHandler() {
 	
 	    SessionHandler sessionHandler = new SessionHandler();
-	    sessionHandler.setSessionIdManager(CFWDefaultApp.idmanager);
+	    sessionHandler.setSessionIdManager(CFWApplication.idmanager);
 	    // workaround maxInactiveInterval=-1 issue
 	    // set inactive interval in RequestHandler
 	    sessionHandler.setMaxInactiveInterval(CFW.Properties.SESSION_TIMEOUT);
@@ -406,8 +376,8 @@ public class CFWDefaultApp {
 		Server server = new Server();
 		ArrayList<Connector> connectorArray = new ArrayList<Connector>();
 		
-		CFWDefaultApp.idmanager = new DefaultSessionIdManager(server);
-	    server.setSessionIdManager(CFWDefaultApp.idmanager);
+		CFWApplication.idmanager = new DefaultSessionIdManager(server);
+	    server.setSessionIdManager(CFWApplication.idmanager);
 	    
 		
 		if(CFWProperties.HTTP_ENABLED) {

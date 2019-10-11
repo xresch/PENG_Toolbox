@@ -12,8 +12,6 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBUser {
 
-	public static String TABLE_NAME = "CFW_USER";
-	
 	public static Logger logger = CFWLog.getLogger(CFWDBUser.class.getName());
 	
 	public enum UserDBFields{
@@ -24,7 +22,6 @@ public class CFWDBUser {
 		LASTNAME, 
 		PASSWORD_HASH,
 		PASSWORD_SALT,
-		AVATAR_IMAGE, 
 		DATE_CREATED, 
 		STATUS, 
 		IS_DELETABLE, 
@@ -39,7 +36,7 @@ public class CFWDBUser {
 	 ********************************************************************************************/
 	public static void initializeTable() {
 			
-		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+"("
+		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+User.TABLE_NAME+"("
 							  + UserDBFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
 							  + UserDBFields.USERNAME + " VARCHAR(255) UNIQUE,"
 							  + UserDBFields.EMAIL + " VARCHAR(255) UNIQUE,"
@@ -47,7 +44,6 @@ public class CFWDBUser {
 							  + UserDBFields.LASTNAME + " VARCHAR(255),"
 							  + UserDBFields.PASSWORD_HASH + " VARCHAR(127),"
 							  + UserDBFields.PASSWORD_SALT + " VARCHAR(31),"
-							  + UserDBFields.AVATAR_IMAGE + " IMAGE(1M),"
 							  + UserDBFields.DATE_CREATED + " TIMESTAMP,"
 							  + UserDBFields.STATUS + " VARCHAR(31),"
 							  + UserDBFields.IS_DELETABLE + " BOOLEAN,"
@@ -111,20 +107,19 @@ public class CFWDBUser {
 			return false;
 		}
 		
-		String insertUserSQL = "INSERT INTO "+TABLE_NAME+"("
+		String insertUserSQL = "INSERT INTO "+User.TABLE_NAME+"("
 				  + UserDBFields.USERNAME +", "
 				  + UserDBFields.EMAIL +", "
 				  + UserDBFields.FIRSTNAME +", "
 				  + UserDBFields.LASTNAME +", "
 				  + UserDBFields.PASSWORD_HASH +", "
 				  + UserDBFields.PASSWORD_SALT +", "
-				  + UserDBFields.AVATAR_IMAGE +", "
 				  + UserDBFields.DATE_CREATED +", "
 				  + UserDBFields.STATUS +", "
 				  + UserDBFields.IS_DELETABLE +", "
 				  + UserDBFields.IS_RENAMABLE + ", "
 				  + UserDBFields.IS_FOREIGN +", "
-				  + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
+				  + ") VALUES (?,?,?,?,?,?,?,?,?,?,?);";
 		
 		return CFWDB.preparedExecute(insertUserSQL, 
 				user.username(),
@@ -133,7 +128,6 @@ public class CFWDBUser {
 				user.lastname(),
 				user.passwordHash(),
 				user.passwordSalt(),
-				user.avatarImage(),
 				user.dateCreated(),
 				user.status(),
 				user.isDeletable(),
@@ -167,13 +161,12 @@ public class CFWDBUser {
 				  + UserDBFields.LASTNAME +", "
 				  + UserDBFields.PASSWORD_HASH +", "
 				  + UserDBFields.PASSWORD_SALT +", "
-				  + UserDBFields.AVATAR_IMAGE +", "
 				  + UserDBFields.DATE_CREATED +", "
 				  + UserDBFields.STATUS +", "
 				  + UserDBFields.IS_DELETABLE +", "
 				  + UserDBFields.IS_RENAMABLE + ", "
 				  + UserDBFields.IS_FOREIGN 
-				+" FROM "+TABLE_NAME
+				+" FROM "+User.TABLE_NAME
 				+" WHERE "
 					+ "LOWER(" + UserDBFields.USERNAME+") = LOWER(?) OR "
 					+ "LOWER(" +UserDBFields.EMAIL	+ ") = LOWER(?)";
@@ -218,13 +211,12 @@ public class CFWDBUser {
 				  + UserDBFields.LASTNAME +", "
 				  + UserDBFields.PASSWORD_HASH +", "
 				  + UserDBFields.PASSWORD_SALT +", "
-				  + UserDBFields.AVATAR_IMAGE +", "
 				  + UserDBFields.DATE_CREATED +", "
 				  + UserDBFields.STATUS +", "
 				  + UserDBFields.IS_DELETABLE +", "
 				  + UserDBFields.IS_RENAMABLE + ", "
 				  + UserDBFields.IS_FOREIGN 
-				+" FROM "+TABLE_NAME
+				+" FROM "+User.TABLE_NAME
 				+" WHERE "
 					+ UserDBFields.PK_ID	+ " = ?";
 		
@@ -266,13 +258,12 @@ public class CFWDBUser {
 				  + UserDBFields.EMAIL +", "
 				  + UserDBFields.FIRSTNAME +", "
 				  + UserDBFields.LASTNAME +", "
-				  + UserDBFields.AVATAR_IMAGE +", "
 				  + UserDBFields.DATE_CREATED +", "
 				  + UserDBFields.STATUS +", "
 				  + UserDBFields.IS_DELETABLE +", "
 				  + UserDBFields.IS_RENAMABLE + ", "
 				  + UserDBFields.IS_FOREIGN 
-				+" FROM "+TABLE_NAME
+				+" FROM "+User.TABLE_NAME
 				+" WHERE "
 					+ UserDBFields.PK_ID	+ " = ?";
 		
@@ -303,7 +294,7 @@ public class CFWDBUser {
 				  + UserDBFields.IS_DELETABLE +", "
 				  + UserDBFields.IS_RENAMABLE + ", "
 				  + UserDBFields.IS_FOREIGN 
-				+" FROM "+TABLE_NAME
+				+" FROM "+User.TABLE_NAME
 				+" ORDER BY LOWER("+UserDBFields.USERNAME +") ASC";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectAllUsers);
@@ -357,19 +348,18 @@ public class CFWDBUser {
 		}
 		
 		String updateByID = 
-				"UPDATE "+TABLE_NAME
+				"UPDATE "+User.TABLE_NAME
 				+" SET ("
 				  + UserDBFields.EMAIL +", "
 				  + UserDBFields.FIRSTNAME +", "
 				  + UserDBFields.LASTNAME +", "
 				  + UserDBFields.PASSWORD_HASH +", "
 				  + UserDBFields.PASSWORD_SALT +", "
-				  + UserDBFields.AVATAR_IMAGE +", "
 				  + UserDBFields.STATUS +", "
 				  + UserDBFields.IS_DELETABLE +", "
 				  + UserDBFields.IS_RENAMABLE + ", "
 				  + UserDBFields.IS_FOREIGN 
-				  + ") = (?,?,?,?,?,?,?,?,?,?) "
+				  + ") = (?,?,?,?,?,?,?,?,?) "
 				+" WHERE "
 					+ UserDBFields.PK_ID+" = ?";
 		
@@ -379,7 +369,6 @@ public class CFWDBUser {
 				user.lastname(),
 				user.passwordHash(),
 				user.passwordSalt(),
-				user.avatarImage(),
 				user.status(),
 				user.isDeletable(),
 				user.isRenamable(),
@@ -398,7 +387,7 @@ public class CFWDBUser {
 			}
 
 			String updateNameByID = 
-				"UPDATE "+TABLE_NAME
+				"UPDATE "+User.TABLE_NAME
 				+" SET ("
 				  + UserDBFields.USERNAME +""
 				  + ") = (?) "
@@ -431,7 +420,7 @@ public class CFWDBUser {
 		}
 		
 		String deleteByID = 
-				"DELETE FROM "+TABLE_NAME
+				"DELETE FROM "+User.TABLE_NAME
 				+" WHERE "
 					+ UserDBFields.PK_ID+" = ? "
 					+ "AND "
@@ -458,7 +447,7 @@ public class CFWDBUser {
 		}
 
 		String deleteByID = 
-				"DELETE FROM "+TABLE_NAME
+				"DELETE FROM "+User.TABLE_NAME
 				+" WHERE "
 					+ UserDBFields.PK_ID+" IN(?) "
 					+ "AND "
@@ -491,7 +480,7 @@ public class CFWDBUser {
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkUsernameExists(String username) {
-		String checkUserExistsSQL = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE LOWER("+UserDBFields.USERNAME+") = LOWER(?)";
+		String checkUserExistsSQL = "SELECT COUNT(*) FROM "+User.TABLE_NAME+" WHERE LOWER("+UserDBFields.USERNAME+") = LOWER(?)";
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkUserExistsSQL, username);
 		
 		try {
@@ -532,7 +521,7 @@ public class CFWDBUser {
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkEmailExists(String email) {
-		String checkEmailExists = "SELECT COUNT(*) FROM "+TABLE_NAME+" WHERE LOWER("+UserDBFields.EMAIL+") = LOWER(?)";
+		String checkEmailExists = "SELECT COUNT(*) FROM "+User.TABLE_NAME+" WHERE LOWER("+UserDBFields.EMAIL+") = LOWER(?)";
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkEmailExists, email);
 		
 		try {
