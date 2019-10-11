@@ -101,7 +101,7 @@ public class Configuration extends CFWObject {
 				new Configuration("Core Framework", Configuration.THEME)
 					.description("Set the application look and feel. 'Slate' is the default and recommended theme, all others are not 100% tested.")
 					.type(FormFieldType.SELECT)
-					.options(new String[]{"flatly", "lumen", "materia", "minty", "pulse", "sandstone", "simplex", "sketchy", "slate", "spacelab", "superhero", "united"})
+					.options(new String[]{"darkblue", "flatly", "lumen", "materia", "minty", "pulse", "sandstone", "simplex", "sketchy", "slate", "spacelab", "superhero", "united"})
 					.value("slate")
 			);
 		}
