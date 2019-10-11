@@ -26,7 +26,7 @@ public class Permission extends CFWObject{
 	private static Logger logger = CFWLog.getLogger(Permission.class.getName());
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, PermissionFields.PK_ID.toString())
-									.setPrimaryKeyAutoIncrement()
+									.setPrimaryKeyAutoIncrement(this)
 									.setValue(-999);
 	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, PermissionFields.NAME.toString())
@@ -73,7 +73,7 @@ public class Permission extends CFWObject{
 		this.addFields(id, name, description, isDeletable);
 	}
 	
-	public void addTableData() {
+	public void initDBSecond() {
 		
 		//-----------------------------------------
 		//

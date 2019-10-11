@@ -27,7 +27,7 @@ public class Group extends CFWObject {
 	private static Logger logger = CFWLog.getLogger(Group.class.getName());
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, GroupFields.PK_ID.toString())
-			.setPrimaryKeyAutoIncrement()
+			.setPrimaryKeyAutoIncrement(this)
 			.setValue(-999);
 	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, GroupFields.NAME.toString())
@@ -86,11 +86,10 @@ public class Group extends CFWObject {
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.setPrimaryField(id);
 		this.addFields(id, name, description, isDeletable, isRenamable);
 	}
 	
-	public void beforeAddData() {
+	public void initDB() {
 		//-----------------------------------------
 		// Create Group Superuser
 		//-----------------------------------------

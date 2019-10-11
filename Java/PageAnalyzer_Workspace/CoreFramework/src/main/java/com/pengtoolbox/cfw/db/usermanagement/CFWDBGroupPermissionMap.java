@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserGroupMap.UserGroupMapDBFields;
+import com.pengtoolbox.cfw.db.usermanagement.GroupPermissionMap.GroupPermissionMapFields;
 import com.pengtoolbox.cfw.db.usermanagement.Permission.PermissionFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
@@ -17,12 +17,7 @@ public class CFWDBGroupPermissionMap {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBGroupPermissionMap.class.getName());
 	
-	enum GroupPermissionMapDBFields{
-		PK_ID, 
-		FK_ID_PERMISSION,
-		FK_ID_GROUP,
-		IS_DELETABLE,
-	}
+
 
 	/********************************************************************************************
 	 * Creates the table and default admin user if not already exists.
@@ -32,16 +27,16 @@ public class CFWDBGroupPermissionMap {
 	public static void initializeTable() {
 			
 		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+"("
-							  + GroupPermissionMapDBFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
-							  + GroupPermissionMapDBFields.FK_ID_GROUP + " INT, "
-							  + GroupPermissionMapDBFields.FK_ID_PERMISSION + " INT, "
-							  + "FOREIGN KEY ("+GroupPermissionMapDBFields.FK_ID_GROUP+") REFERENCES "+Group.TABLE_NAME+"("+Group.GroupFields.PK_ID+") ON DELETE CASCADE, "
-							  + "FOREIGN KEY ("+GroupPermissionMapDBFields.FK_ID_PERMISSION+") REFERENCES "+CFWDBPermission.TABLE_NAME+"("+PermissionFields.PK_ID+") ON DELETE CASCADE"
+							  + GroupPermissionMapFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
+							  + GroupPermissionMapFields.FK_ID_GROUP + " INT, "
+							  + GroupPermissionMapFields.FK_ID_PERMISSION + " INT, "
+							  + "FOREIGN KEY ("+GroupPermissionMapFields.FK_ID_GROUP+") REFERENCES "+Group.TABLE_NAME+"("+Group.GroupFields.PK_ID+") ON DELETE CASCADE, "
+							  + "FOREIGN KEY ("+GroupPermissionMapFields.FK_ID_PERMISSION+") REFERENCES "+CFWDBPermission.TABLE_NAME+"("+PermissionFields.PK_ID+") ON DELETE CASCADE"
 							  + ");";
 		
 		CFWDB.preparedExecute(createTableSQL);
 		
-		String addColumnSQL = "ALTER TABLE "+TABLE_NAME+" ADD COLUMN IF NOT EXISTS "+GroupPermissionMapDBFields.IS_DELETABLE+" BOOLEAN NOT NULL DEFAULT TRUE;";
+		String addColumnSQL = "ALTER TABLE "+TABLE_NAME+" ADD COLUMN IF NOT EXISTS "+GroupPermissionMapFields.IS_DELETABLE+" BOOLEAN NOT NULL DEFAULT TRUE;";
 		CFWDB.preparedExecute(addColumnSQL);
 	}
 	
@@ -102,9 +97,9 @@ public class CFWDBGroupPermissionMap {
 		}
 		
 		String insertPermissionSQL = "INSERT INTO "+TABLE_NAME+" ("
-				  + GroupPermissionMapDBFields.FK_ID_PERMISSION +", "
-				  + GroupPermissionMapDBFields.FK_ID_GROUP +", "
-				  + GroupPermissionMapDBFields.IS_DELETABLE +" "
+				  + GroupPermissionMapFields.FK_ID_PERMISSION +", "
+				  + GroupPermissionMapFields.FK_ID_GROUP +", "
+				  + GroupPermissionMapFields.IS_DELETABLE +" "
 				  + ") VALUES (?,?,?);";
 		
 		return CFWDB.preparedExecute(insertPermissionSQL, 
@@ -123,11 +118,11 @@ public class CFWDBGroupPermissionMap {
 	 ********************************************************************************************/
 	public static boolean updateIsDeletable(int permissionID, int groupID, boolean isDeletable) {
 		String removeUserFromGroupSQL = "UPDATE "+TABLE_NAME
-				+" SET "+ UserGroupMapDBFields.IS_DELETABLE +" = ? "
+				+" SET "+ GroupPermissionMapFields.IS_DELETABLE +" = ? "
 				+" WHERE "
-				  + GroupPermissionMapDBFields.FK_ID_PERMISSION +" = ? "
+				  + GroupPermissionMapFields.FK_ID_PERMISSION +" = ? "
 				  + " AND "
-				  + UserGroupMapDBFields.FK_ID_GROUP +" = ? "
+				  + GroupPermissionMapFields.FK_ID_GROUP +" = ? "
 				  + ";";
 		
 		return CFWDB.preparedExecute(removeUserFromGroupSQL, 
@@ -186,11 +181,11 @@ public class CFWDBGroupPermissionMap {
 		
 		String removePermissionFromGroupSQL = "DELETE FROM "+TABLE_NAME
 				+" WHERE "
-				  + GroupPermissionMapDBFields.FK_ID_PERMISSION +" = ? "
+				  + GroupPermissionMapFields.FK_ID_PERMISSION +" = ? "
 				  + " AND "
-				  + GroupPermissionMapDBFields.FK_ID_GROUP +" = ? "
+				  + GroupPermissionMapFields.FK_ID_GROUP +" = ? "
 				  + " AND "
-				  + GroupPermissionMapDBFields.IS_DELETABLE +" = TRUE "
+				  + GroupPermissionMapFields.IS_DELETABLE +" = TRUE "
 				  + ";";
 		
 		return CFWDB.preparedExecute(removePermissionFromGroupSQL, 
@@ -227,8 +222,8 @@ public class CFWDBGroupPermissionMap {
 	public static boolean checkIsPermissionInGroup(int permissionid, int groupid) {
 		
 		String checkIsPermissionInGroup = "SELECT COUNT(*) FROM "+TABLE_NAME
-				+" WHERE "+GroupPermissionMapDBFields.FK_ID_PERMISSION+" = ?"
-				+" AND "+GroupPermissionMapDBFields.FK_ID_GROUP+" = ?";
+				+" WHERE "+GroupPermissionMapFields.FK_ID_PERMISSION+" = ?"
+				+" AND "+GroupPermissionMapFields.FK_ID_GROUP+" = ?";
 		
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkIsPermissionInGroup, permissionid, groupid);
 		

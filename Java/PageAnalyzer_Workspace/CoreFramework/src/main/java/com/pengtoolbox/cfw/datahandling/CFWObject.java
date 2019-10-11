@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw.datahandling;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
@@ -15,9 +16,17 @@ public class CFWObject {
 	private static Logger logger = CFWLog.getLogger(CFWObject.class.getName());
 	protected String tableName; 
 	
-	public LinkedHashMap<String, CFWField> fields = new LinkedHashMap<String, CFWField>();
-	public CFWField primaryField = null;
+	private LinkedHashMap<String, CFWField<?>> fields = new LinkedHashMap<String, CFWField<?>>();
+	public CFWField<?> primaryField = null;
 	
+	private ArrayList<ForeignKeyDefinition> foreignKeys = new ArrayList<ForeignKeyDefinition>();
+	
+	class ForeignKeyDefinition{
+		public String fieldname;
+		public String foreignFieldname;
+		public Class<? extends CFWObject> foreignObject;
+		public String ondelete;
+	}
 	public CFWObject() {
 
 	}
@@ -89,7 +98,7 @@ public class CFWObject {
 		return fields.get(name);
 	}
 	
-	public LinkedHashMap<String, CFWField> getFields(){
+	public LinkedHashMap<String, CFWField<?>> getFields(){
 		return fields;
 	}
 	
@@ -111,6 +120,29 @@ public class CFWObject {
 	public CFWObject setPrimaryField(CFWField primaryField) {
 		this.primaryField = primaryField;
 		return this;
+	}
+	
+	/*****************************************************************************
+	 * Add a foreign key definition to this object.
+	 * Only one foreign key per foreign object is allowed.
+	 * 
+	 * @param foreignObject
+	 * @param fieldname
+	 * @return instance for chaining
+	 *****************************************************************************/
+	public CFWObject addForeignKey(String fieldname, Class<? extends CFWObject> foreignObject, String foreignFieldname, String ondelete) {
+		ForeignKeyDefinition fkd = new ForeignKeyDefinition();
+		fkd.fieldname = fieldname;
+		fkd.foreignObject = foreignObject;
+		fkd.foreignFieldname = foreignFieldname;
+		fkd.ondelete = ondelete;
+		
+		foreignKeys.add(fkd);
+		return this;
+	}
+	
+	public ArrayList<ForeignKeyDefinition> getForeignKeys() {
+		return foreignKeys;
 	}
 
 	public String getFieldsAsKeyValueString() {
@@ -159,30 +191,29 @@ public class CFWObject {
 	}
 	
 	/****************************************************************
-	 * Will be executed after createTable(). Use this method to make
-	 * manual changes to the database.
+	 * Will be executed after all createTable() methods where executed
+	 * of all objects in the Registry. 
 	 * 
-	 * @return CFWQuery for method chaining
 	 ****************************************************************/
-	public void beforeAddData() {
-		
-	}
-	/****************************************************************
-	 * Will be executed after updateTable(). Use this method to create
-	 * default entries in the database.
-	 * @return CFWQuery for method chaining
-	 ****************************************************************/
-	public void addTableData() {
+	public void initDB() {
 		
 	}
 	
 	/****************************************************************
-	 * Will be executed after createTable(). Use this method to make
-	 * manual changes to the database.
-	 * 
-	 * @return CFWQuery for method chaining
+	 * Will be executed after all initDB() methods where executed
+	 * of all objects in the Registry. Use this in case you have 
+	 * dependency on other data created first.
 	 ****************************************************************/
-	public void afterAddData() {
+	public void initDBSecond() {
+		
+	}
+	
+	/****************************************************************
+	 * Will be executed after all initDBSecond() methods where executed
+	 * of all objects in the Registry. Use this in case you have 
+	 * dependency on other data created first.
+	 ****************************************************************/
+	public void initDBThird() {
 		
 	}
 	

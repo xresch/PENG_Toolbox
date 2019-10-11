@@ -7,9 +7,8 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroupPermissionMap.GroupPermissionMapDBFields;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserFields;
-import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
+import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
+import com.pengtoolbox.cfw.db.usermanagement.UserGroupMap.UserGroupMapFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBUserGroupMap {
@@ -18,12 +17,7 @@ public class CFWDBUserGroupMap {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBUserGroupMap.class.getName());
 	
-	enum UserGroupMapDBFields{
-		PK_ID, 
-		FK_ID_USER,
-		FK_ID_GROUP,
-		IS_DELETABLE
-	}
+
 
 	/********************************************************************************************
 	 * Creates the table and default admin user if not already exists.
@@ -33,16 +27,16 @@ public class CFWDBUserGroupMap {
 	public static void initializeTable() {
 			
 		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+"("
-							  + UserGroupMapDBFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
-							  + UserGroupMapDBFields.FK_ID_USER + " INT, "
-							  + UserGroupMapDBFields.FK_ID_GROUP + " INT, "
-							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_USER+") REFERENCES "+User.TABLE_NAME+"("+UserFields.PK_ID+") ON DELETE CASCADE, "
-							  + "FOREIGN KEY ("+UserGroupMapDBFields.FK_ID_GROUP+") REFERENCES "+Group.TABLE_NAME+"("+Group.GroupFields.PK_ID+") ON DELETE CASCADE"
+							  + UserGroupMapFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
+							  + UserGroupMapFields.FK_ID_USER + " INT, "
+							  + UserGroupMapFields.FK_ID_GROUP + " INT, "
+							  + "FOREIGN KEY ("+UserGroupMapFields.FK_ID_USER+") REFERENCES "+User.TABLE_NAME+"("+UserFields.PK_ID+") ON DELETE CASCADE, "
+							  + "FOREIGN KEY ("+UserGroupMapFields.FK_ID_GROUP+") REFERENCES "+Group.TABLE_NAME+"("+Group.GroupFields.PK_ID+") ON DELETE CASCADE"
 							  + ");";
 		
 		CFWDB.preparedExecute(createTableSQL);
 		
-		String addColumnSQL = "ALTER TABLE "+TABLE_NAME+" ADD COLUMN IF NOT EXISTS "+UserGroupMapDBFields.IS_DELETABLE+" BOOLEAN NOT NULL DEFAULT TRUE;";
+		String addColumnSQL = "ALTER TABLE "+TABLE_NAME+" ADD COLUMN IF NOT EXISTS "+UserGroupMapFields.IS_DELETABLE+" BOOLEAN NOT NULL DEFAULT TRUE;";
 		CFWDB.preparedExecute(addColumnSQL);
 				
 	}
@@ -101,9 +95,9 @@ public class CFWDBUserGroupMap {
 	 ********************************************************************************************/
 	public static boolean addUserToGroup(int userid, int groupid, boolean isDeletable) {
 		String insertGroupSQL = "INSERT INTO "+TABLE_NAME+" ("
-				  + UserGroupMapDBFields.FK_ID_USER +", "
-				  + UserGroupMapDBFields.FK_ID_GROUP +", "
-				  + UserGroupMapDBFields.IS_DELETABLE +" "
+				  + UserGroupMapFields.FK_ID_USER +", "
+				  + UserGroupMapFields.FK_ID_GROUP +", "
+				  + UserGroupMapFields.IS_DELETABLE +" "
 				  + ") VALUES (?,?,?);";
 		
 		return CFWDB.preparedExecute(insertGroupSQL, 
@@ -149,11 +143,11 @@ public class CFWDBUserGroupMap {
 	public static boolean removeUserFromGroup(int userID, int groupID) {
 		String removeUserFromGroupSQL = "DELETE FROM "+TABLE_NAME
 				+" WHERE "
-				  + UserGroupMapDBFields.FK_ID_USER +" = ? "
+				  + UserGroupMapFields.FK_ID_USER +" = ? "
 				  + " AND "
-				  + UserGroupMapDBFields.FK_ID_GROUP +" = ? "
+				  + UserGroupMapFields.FK_ID_GROUP +" = ? "
 				  + " AND "
-				  + UserGroupMapDBFields.IS_DELETABLE +" = TRUE "
+				  + UserGroupMapFields.IS_DELETABLE +" = TRUE "
 				  + ";";
 		
 		return CFWDB.preparedExecute(removeUserFromGroupSQL, 
@@ -171,11 +165,11 @@ public class CFWDBUserGroupMap {
 	 ********************************************************************************************/
 	public static boolean updateIsDeletable(int userID, int groupID, boolean isDeletable) {
 		String removeUserFromGroupSQL = "UPDATE "+TABLE_NAME
-				+" SET "+ UserGroupMapDBFields.IS_DELETABLE +" = ? "
+				+" SET "+ UserGroupMapFields.IS_DELETABLE +" = ? "
 				+" WHERE "
-				  + UserGroupMapDBFields.FK_ID_USER +" = ? "
+				  + UserGroupMapFields.FK_ID_USER +" = ? "
 				  + " AND "
-				  + UserGroupMapDBFields.FK_ID_GROUP +" = ? "
+				  + UserGroupMapFields.FK_ID_GROUP +" = ? "
 				  + ";";
 		
 		return CFWDB.preparedExecute(removeUserFromGroupSQL, 
@@ -213,8 +207,8 @@ public class CFWDBUserGroupMap {
 	public static boolean checkIsUserInGroup(int userid, int groupid) {
 		
 		String checkIsUserInGroup = "SELECT COUNT(*) FROM "+TABLE_NAME
-				+" WHERE "+UserGroupMapDBFields.FK_ID_USER+" = ?"
-				+" AND "+UserGroupMapDBFields.FK_ID_GROUP+" = ?";
+				+" WHERE "+UserGroupMapFields.FK_ID_USER+" = ?"
+				+" AND "+UserGroupMapFields.FK_ID_GROUP+" = ?";
 		
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkIsUserInGroup, userid, groupid);
 		

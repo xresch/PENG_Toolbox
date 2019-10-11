@@ -92,8 +92,9 @@ public class ConfigurationServlet extends HttpServlet
 					JSONResponse json = new JSONResponse();
 			    	
 			    	boolean success = true;
-			    	for(CFWField<String> field : form.getFields().values() ) {
-			    		success = success && CFW.DB.Config.updateValue(Integer.parseInt(field.getName()), field.getValue());
+			    	
+			    	for(CFWField field : form.getFields().values() ) {
+			    		success = success && CFW.DB.Config.updateValue(Integer.parseInt(field.getName()), field.getValue().toString());
 			    	}
 			    	CFW.DB.Config.updateCache();
 			    	

@@ -71,7 +71,7 @@ public class CFWDB {
 			
 			connectionPool = JdbcConnectionPool.create(h2_url, username, password);
 			connectionPool.setMaxConnections(90);
-			
+
 			CFWDB.dataSource = new JdbcDataSource();
 			CFWDB.dataSource.setURL(h2_url);
 			CFWDB.dataSource.setUser(username);
@@ -201,6 +201,7 @@ public class CFWDB {
 	 * @throws SQLException 
 	 ********************************************************************************************/
 	public static Connection getConnection() throws SQLException {	
+		
 		if(isInitialized) {
 			CFWLog log = new CFWLog(logger).method("getConnection");
 			log.finer("DB Connections Active: "+connectionPool.getActiveConnections());

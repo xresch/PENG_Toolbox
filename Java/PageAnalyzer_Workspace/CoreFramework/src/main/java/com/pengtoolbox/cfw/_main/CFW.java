@@ -2,6 +2,7 @@ package com.pengtoolbox.cfw._main;
 
 import java.util.ArrayList;
 
+import com.pengtoolbox.cfw._main.CFW.DB.UserGroupMap;
 import com.pengtoolbox.cfw.cli.ArgumentsException;
 import com.pengtoolbox.cfw.cli.CFWCommandLineInterface;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -102,7 +103,6 @@ public class CFW {
 	/***********************************************************************
 	 * Create an instance of the CFWDefaultApp.
 	 * @param args command line arguments
-	 * @return CFWDefaultApp instance
 	 * @throws Exception 
 	 ***********************************************************************/
 	public static void initializeApp(CFWAppInterface appToStart, String[] args) throws Exception {
@@ -122,18 +122,52 @@ public class CFW {
 		
 	    //--------------------------------
 	    // Register Components
-		appToStart.register();
+	    doRegister(appToStart);
 		
 	    //--------------------------------
 	    // Start Database 	
+    	initializeDatabase(appToStart);
 		
-    	CFW.DB.startDatabase(); 
-    	
+	    //--------------------------------
+	    // Start Application
+		CFWApplication app = new CFWApplication(args);
+		appToStart.startApp(app);
+		
+	}
+	
+	/***********************************************************************
+	 * Starts and initializes the Database. Iterates over all Objects in the 
+	 * Registry and add
+	 * @param CFWAppInterface application to start
+	 ***********************************************************************/
+	private static void doRegister(CFWAppInterface appToStart) {
+		
+		//---------------------------
+		// Register  
 		CFW.Registry.Objects.addCFWObject(Configuration.class);
 		CFW.Registry.Objects.addCFWObject(User.class);
 		CFW.Registry.Objects.addCFWObject(Group.class);
 		CFW.Registry.Objects.addCFWObject(Permission.class);
-    	
+		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.UserGroupMap.class);
+		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.GroupPermissionMap.class);
+		
+		//---------------------------
+		// Application Register
+		appToStart.register();
+	}
+	/***********************************************************************
+	 * Starts and initializes the Database. Iterates over all Objects in the 
+	 * Registry and add
+	 * @param CFWAppInterface application to start
+	 ***********************************************************************/
+	private static void initializeDatabase(CFWAppInterface appToStart) {
+		
+		//---------------------------
+		// Start Database 
+		CFW.DB.startDatabase(); 
+		
+		//---------------------------
+		// Iterate over Registered Objects
     	ArrayList<CFWObject> objectArray = CFW.Registry.Objects.getCFWObjectInstances();
     	for(CFWObject object : objectArray) {
     		if(object.getTableName() != null) {
@@ -141,38 +175,32 @@ public class CFW {
     			
     		}
     	}
-    	
-		CFW.DB.UserGroupMap.initializeTable();
-		//CFW.DB.Permissions.initializeTable();
-		CFW.DB.GroupPermissionMap.initializeTable();
 		
     	for(CFWObject object : objectArray) {
     		if(object.getTableName() != null) {
-    			object.beforeAddData();
+    			object.initDB();
     			
     		}
     	}
     	for(CFWObject object : objectArray) {
     		if(object.getTableName() != null) {
-    			object.addTableData();
+    			object.initDBSecond();
     		}
     	}
     	
     	for(CFWObject object : objectArray) {
     		if(object.getTableName() != null) {
-    			object.afterAddData();
+    			object.initDBThird();
     		}
     	}
     	
+		//---------------------------
+		// Reset Admin PW if configured
     	CFWDB.resetAdminPW();
     
-
+		//---------------------------
+		// Do Application init
 		appToStart.initializeDB();
-		
-	    //--------------------------------
-	    // Start Application
-		CFWApplication app = new CFWApplication(args);
-		appToStart.startApp(app);
 		
 	}
 }

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw.datahandling.CFWObject.ForeignKeyDefinition;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
@@ -18,7 +19,7 @@ public class CFWStatement {
 	private String queryName = null;
 	
 	private CFWObject object;
-	private LinkedHashMap<String, CFWField> fields;
+	private LinkedHashMap<String, CFWField<?>> fields;
 	
 	private StringBuilder query = new StringBuilder();
 	private ArrayList<Object> values = new ArrayList<Object>();
@@ -71,10 +72,14 @@ public class CFWStatement {
 	 ****************************************************************/
 	public boolean createTable() {
 		
+		//------------------------------------
+		// Create Table
 		boolean success = true;
 		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+object.getTableName();
 		success &= CFWDB.preparedExecute(createTableSQL);
 		
+		//------------------------------------
+		// Create Columns
 		for(CFWField field : fields.values()) {
 			if(field.getColumnDefinition() != null) {
 				String addColumnIsRenamable = "ALTER TABLE "+object.getTableName()
@@ -86,6 +91,29 @@ public class CFWStatement {
 					.severe("The field "+field.getName()+" is missing a columnDefinition. Use CFWField.setColumnDefinition(). ");
 				success &= false;
 			}
+		}
+		
+		//------------------------------------
+		// Create ForeignKeys
+		for(ForeignKeyDefinition fkd : object.getForeignKeys()) {
+			String foreignTable;
+			try {
+				foreignTable = fkd.foreignObject.newInstance().getTableName();
+					
+				// ALTER TABLE PUBLIC.CORE_USERROLE_TO_PARAMETER ADD CONSTRAINT IF NOT EXISTS PUBLIC.CURTBP_USER_ID FOREIGN KEY(USER_ID) REFERENCES PUBLIC.CORE_USER(ID) NOCHECK;
+				String createForeignKeysSQL = "ALTER TABLE "+object.getTableName()
+				  + " ADD CONSTRAINT IF NOT EXISTS PUBLIC.FK_"+object.getTableName()+"_"+fkd.fieldname
+				  + " FOREIGN KEY ("+fkd.fieldname
+				  + ") REFERENCES "+foreignTable+"("+fkd.foreignFieldname+") ON DELETE "+fkd.ondelete;
+			
+				success &= CFWDB.preparedExecute(createForeignKeysSQL);
+				
+			} catch (Exception e) {
+				new CFWLog(logger)
+				.method("createTable")
+				.severe("An error occured trying to create foreign keys for table: "+object.getTableName(), e);
+			} 
+			
 		}
 		
 		return success;

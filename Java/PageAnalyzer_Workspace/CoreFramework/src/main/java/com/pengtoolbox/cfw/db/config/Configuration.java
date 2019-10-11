@@ -32,7 +32,7 @@ public class Configuration extends CFWObject {
 	private static Logger logger = CFWLog.getLogger(Configuration.class.getName());
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, ConfigFields.PK_ID.toString())
-									.setPrimaryKeyAutoIncrement()
+									.setPrimaryKeyAutoIncrement(this)
 									.setValue(-999);
 	
 	private CFWField<String> category = CFWField.newString(FormFieldType.NONE, ConfigFields.CATEGORY.toString())
@@ -77,11 +77,10 @@ public class Configuration extends CFWObject {
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.setPrimaryField(id);
 		this.addFields(id, name, description, type, value, options, category);
 	}
 	
-	public void addTableData() {
+	public void initDBSecond() {
 		//-----------------------------------------
 		// 
 		//-----------------------------------------

@@ -28,7 +28,7 @@ public class BTForm extends HierarchicalHTMLItem {
 	public StringBuilder javascript = new StringBuilder();
 	
 	// Contains the fields with field name as key
-	public LinkedHashMap<String, CFWField> fields = new LinkedHashMap<String, CFWField>();
+	public LinkedHashMap<String, CFWField<?>> fields = new LinkedHashMap<String, CFWField<?>>();
 	
 	private BTFormHandler formHandler = null;
 	
@@ -125,7 +125,7 @@ public class BTForm extends HierarchicalHTMLItem {
 	/***********************************************************************************
 	 * Returns a hashmap with fields. The keys are the names of the fields.
 	 ***********************************************************************************/
-	public LinkedHashMap<String, CFWField> getFields() {
+	public LinkedHashMap<String, CFWField<?>> getFields() {
 		return fields;
 	}
 	public String getFormID() {

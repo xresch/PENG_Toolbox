@@ -1,35 +1,18 @@
 package com.pengtoolbox.cfw.db.usermanagement;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
 import com.pengtoolbox.cfw.db.usermanagement.Permission.PermissionFields;
+import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBUser {
 
 	public static Logger logger = CFWLog.getLogger(CFWDBUser.class.getName());
 	
-	public enum UserFields{
-		PK_ID, 
-		USERNAME,
-		EMAIL, 
-		FIRSTNAME, 
-		LASTNAME, 
-		PASSWORD_HASH,
-		PASSWORD_SALT,
-		DATE_CREATED, 
-		STATUS, 
-		IS_DELETABLE, 
-		IS_RENAMABLE, 
-		IS_FOREIGN
-	}
-
 	
 	/********************************************************************************************
 	 * Creates multiple users in the DB.

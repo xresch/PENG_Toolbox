@@ -1,6 +1,7 @@
 TODO
 ====
-- E-Tags for assembly files
+
+- Manage open connections and check on request exit.
 - Form errors add to field.
 
 - Add FormFieldType.TAGS
@@ -19,6 +20,7 @@ TODO
 
 DONE
 ====
+- E-Tags for assembly files
 - Check is user active
 - Config Table
 - JS: Create request method for exchanging standard json format
