@@ -8,13 +8,14 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
+import com.pengtoolbox.cfw.db.usermanagement.Permission.PermissionFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBUser {
 
 	public static Logger logger = CFWLog.getLogger(CFWDBUser.class.getName());
 	
-	public enum UserDBFields{
+	public enum UserFields{
 		PK_ID, 
 		USERNAME,
 		EMAIL, 
@@ -29,31 +30,6 @@ public class CFWDBUser {
 		IS_FOREIGN
 	}
 
-	/********************************************************************************************
-	 * Creates the table and default admin user if not already exists.
-	 * This method is executed by CFW.DB.initialize().
-	 * 
-	 ********************************************************************************************/
-	public static void initializeTable() {
-			
-		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+User.TABLE_NAME+"("
-							  + UserDBFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
-							  + UserDBFields.USERNAME + " VARCHAR(255) UNIQUE,"
-							  + UserDBFields.EMAIL + " VARCHAR(255) UNIQUE,"
-							  + UserDBFields.FIRSTNAME + " VARCHAR(255),"
-							  + UserDBFields.LASTNAME + " VARCHAR(255),"
-							  + UserDBFields.PASSWORD_HASH + " VARCHAR(127),"
-							  + UserDBFields.PASSWORD_SALT + " VARCHAR(31),"
-							  + UserDBFields.DATE_CREATED + " TIMESTAMP,"
-							  + UserDBFields.STATUS + " VARCHAR(31),"
-							  + UserDBFields.IS_DELETABLE + " BOOLEAN,"
-							  + UserDBFields.IS_RENAMABLE + " BOOLEAN,"
-							  + UserDBFields.IS_FOREIGN + " BOOLEAN"
-							  + ");";
-		
-		CFWDB.preparedExecute(createTableSQL);
-				
-	}
 	
 	/********************************************************************************************
 	 * Creates multiple users in the DB.
@@ -107,33 +83,9 @@ public class CFWDBUser {
 			return false;
 		}
 		
-		String insertUserSQL = "INSERT INTO "+User.TABLE_NAME+"("
-				  + UserDBFields.USERNAME +", "
-				  + UserDBFields.EMAIL +", "
-				  + UserDBFields.FIRSTNAME +", "
-				  + UserDBFields.LASTNAME +", "
-				  + UserDBFields.PASSWORD_HASH +", "
-				  + UserDBFields.PASSWORD_SALT +", "
-				  + UserDBFields.DATE_CREATED +", "
-				  + UserDBFields.STATUS +", "
-				  + UserDBFields.IS_DELETABLE +", "
-				  + UserDBFields.IS_RENAMABLE + ", "
-				  + UserDBFields.IS_FOREIGN +", "
-				  + ") VALUES (?,?,?,?,?,?,?,?,?,?,?);";
-		
-		return CFWDB.preparedExecute(insertUserSQL, 
-				user.username(),
-				user.email(),
-				user.firstname(),
-				user.lastname(),
-				user.passwordHash(),
-				user.passwordSalt(),
-				user.dateCreated(),
-				user.status(),
-				user.isDeletable(),
-				user.isRenamable(),
-				user.isForeign()
-				);
+		return user
+				.queryCache(CFWDBUser.class, "create")
+				.insert();
 	}
 	
 	/***************************************************************
@@ -152,46 +104,13 @@ public class CFWDBUser {
 			return null;
 		}
 		
-		String selectByUsernameOrMail = 
-				"SELECT "
-				  + UserDBFields.PK_ID +", "
-				  + UserDBFields.USERNAME +", "
-				  + UserDBFields.EMAIL +", "
-				  + UserDBFields.FIRSTNAME +", "
-				  + UserDBFields.LASTNAME +", "
-				  + UserDBFields.PASSWORD_HASH +", "
-				  + UserDBFields.PASSWORD_SALT +", "
-				  + UserDBFields.DATE_CREATED +", "
-				  + UserDBFields.STATUS +", "
-				  + UserDBFields.IS_DELETABLE +", "
-				  + UserDBFields.IS_RENAMABLE + ", "
-				  + UserDBFields.IS_FOREIGN 
-				+" FROM "+User.TABLE_NAME
-				+" WHERE "
-					+ "LOWER(" + UserDBFields.USERNAME+") = LOWER(?) OR "
-					+ "LOWER(" +UserDBFields.EMAIL	+ ") = LOWER(?)";
-		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectByUsernameOrMail, usernameOrMail, usernameOrMail);
-		
-		if(result == null) {
-			return null;
-		}
-		
-		try {
-			if(result.next()) {
-				return new User(result);
-			}
-		} catch (SQLException e) {
-			new CFWLog(logger)
-			.method("selectByUsernameOrMail")
-			.severe("Error reading user from database.", e);;
+		return (User)new User()
+				.queryCache(CFWDBUser.class, "selectByUsernameOrMail")
+				.select()
+				.where(UserFields.USERNAME.toString(), usernameOrMail, false)
+				.or(UserFields.EMAIL.toString(), usernameOrMail, false)
+				.getFirstObject();
 			
-		}finally {
-			CFWDB.close(result);
-		}
-		
-		return null;
-		
 	}
 	
 	/***************************************************************
@@ -202,44 +121,12 @@ public class CFWDBUser {
 	 ****************************************************************/
 	public static User selectByID(int id) {
 		
-		String selectByID = 
-				"SELECT "
-				  + UserDBFields.PK_ID +", "
-				  + UserDBFields.USERNAME +", "
-				  + UserDBFields.EMAIL +", "
-				  + UserDBFields.FIRSTNAME +", "
-				  + UserDBFields.LASTNAME +", "
-				  + UserDBFields.PASSWORD_HASH +", "
-				  + UserDBFields.PASSWORD_SALT +", "
-				  + UserDBFields.DATE_CREATED +", "
-				  + UserDBFields.STATUS +", "
-				  + UserDBFields.IS_DELETABLE +", "
-				  + UserDBFields.IS_RENAMABLE + ", "
-				  + UserDBFields.IS_FOREIGN 
-				+" FROM "+User.TABLE_NAME
-				+" WHERE "
-					+ UserDBFields.PK_ID	+ " = ?";
 		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectByID, id);
-		
-		if(result == null) {
-			return null;
-		}
-		
-		try {
-			if(result.next()) {
-				return new User(result);
-			}
-		} catch (SQLException e) {
-			new CFWLog(logger)
-			.method("selectByID")
-			.severe("Error reading user from database.", e);;
-			
-		}finally {
-			CFWDB.close(result);
-		}
-		
-		return null;
+		return (User)new User()
+				.queryCache(CFWDBUser.class, "selectByID")
+				.select()
+				.where(UserFields.PK_ID.toString(), id)
+				.getFirstObject();
 		
 	}
 	
@@ -250,58 +137,75 @@ public class CFWDBUser {
 	 * @return Returns a user or null if not found or in case of exception.
 	 ****************************************************************/
 	public static String getUserAsJSON(String userID) {
-				
-		String selectByID = 
-				"SELECT "
-				  + UserDBFields.PK_ID +", "
-				  + UserDBFields.USERNAME +", "
-				  + UserDBFields.EMAIL +", "
-				  + UserDBFields.FIRSTNAME +", "
-				  + UserDBFields.LASTNAME +", "
-				  + UserDBFields.DATE_CREATED +", "
-				  + UserDBFields.STATUS +", "
-				  + UserDBFields.IS_DELETABLE +", "
-				  + UserDBFields.IS_RENAMABLE + ", "
-				  + UserDBFields.IS_FOREIGN 
-				+" FROM "+User.TABLE_NAME
-				+" WHERE "
-					+ UserDBFields.PK_ID	+ " = ?";
 		
-		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectByID, userID);
-		String json = CFWDB.resultSetToJSON(result);
-		CFWDB.close(result);	
-		return json;
+		return new User()
+				.queryCache(CFWDBUser.class, "getUserAsJSON")
+				.selectWithout(UserFields.PASSWORD_HASH.toString(), 
+						       UserFields.PASSWORD_SALT.toString())
+				.where(UserFields.PK_ID.toString(), userID)
+				.getAsJSON();
 		
 	}
-	
 	
 	/***************************************************************
-	 * Return a list of all users as json string.
+	 * Return a list of all users.
+	 * Don't forget to close the db connection using CFWDB.close().
 	 * 
-	 * @return Returns a result set with all users or null.
+	 * @return Returns a resultSet with all groups or null.
+	 ****************************************************************/
+	public static ResultSet getUserList() {
+		
+		return new User()
+				.queryCache(CFWDBUser.class, "getUserList")
+				.select()
+				.orderby(UserFields.USERNAME.toString())
+				.getResultSet();
+		
+	}
+	
+	/***************************************************************
+	 * Return a list of all users.
+	 * Don't forget to close the db connection using CFWDB.close().
+	 * 
+	 * @return Returns a resultSet with all groups or null.
 	 ****************************************************************/
 	public static String getUserListAsJSON() {
-		String selectAllUsers = 
-				"SELECT "
-				  + UserDBFields.PK_ID +", "
-				  + UserDBFields.USERNAME +", "
-				  + UserDBFields.EMAIL +", "
-				  + UserDBFields.FIRSTNAME +", "
-				  + UserDBFields.LASTNAME +", "
-				  + UserDBFields.DATE_CREATED +", "
-				  + UserDBFields.STATUS +", "
-				  + UserDBFields.IS_DELETABLE +", "
-				  + UserDBFields.IS_RENAMABLE + ", "
-				  + UserDBFields.IS_FOREIGN 
-				+" FROM "+User.TABLE_NAME
-				+" ORDER BY LOWER("+UserDBFields.USERNAME +") ASC";
 		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectAllUsers);
-		String json = CFWDB.resultSetToJSON(result);
-		CFWDB.close(result);	
-		return json;
+		return new User()
+				.queryCache(CFWDBUser.class, "getUserList")
+				.select()
+				.orderby(UserFields.USERNAME.toString())
+				.getAsJSON();
+		
 	}
+	
+	
+//	/***************************************************************
+//	 * Return a list of all users as json string.
+//	 * 
+//	 * @return Returns a result set with all users or null.
+//	 ****************************************************************/
+//	public static String getUserListAsJSON() {
+//		String selectAllUsers = 
+//				"SELECT "
+//				  + UserFields.PK_ID +", "
+//				  + UserFields.USERNAME +", "
+//				  + UserFields.EMAIL +", "
+//				  + UserFields.FIRSTNAME +", "
+//				  + UserFields.LASTNAME +", "
+//				  + UserFields.DATE_CREATED +", "
+//				  + UserFields.STATUS +", "
+//				  + UserFields.IS_DELETABLE +", "
+//				  + UserFields.IS_RENAMABLE + ", "
+//				  + UserFields.IS_FOREIGN 
+//				+" FROM "+User.TABLE_NAME
+//				+" ORDER BY LOWER("+UserFields.USERNAME +") ASC";
+//		
+//		ResultSet result = CFWDB.preparedExecuteQuery(selectAllUsers);
+//		String json = CFWDB.resultSetToJSON(result);
+//		CFWDB.close(result);	
+//		return json;
+//	}
 	
 	/***************************************************************
 	 * Retrieve the groups for the specified user.
@@ -347,33 +251,10 @@ public class CFWDBUser {
 			return false;
 		}
 		
-		String updateByID = 
-				"UPDATE "+User.TABLE_NAME
-				+" SET ("
-				  + UserDBFields.EMAIL +", "
-				  + UserDBFields.FIRSTNAME +", "
-				  + UserDBFields.LASTNAME +", "
-				  + UserDBFields.PASSWORD_HASH +", "
-				  + UserDBFields.PASSWORD_SALT +", "
-				  + UserDBFields.STATUS +", "
-				  + UserDBFields.IS_DELETABLE +", "
-				  + UserDBFields.IS_RENAMABLE + ", "
-				  + UserDBFields.IS_FOREIGN 
-				  + ") = (?,?,?,?,?,?,?,?,?) "
-				+" WHERE "
-					+ UserDBFields.PK_ID+" = ?";
-		
-		boolean resultUpdate = CFWDB.preparedExecute(updateByID, 
-				user.email(),
-				user.firstname(),
-				user.lastname(),
-				user.passwordHash(),
-				user.passwordSalt(),
-				user.status(),
-				user.isDeletable(),
-				user.isRenamable(),
-				user.isForeign(),
-				user.id());
+		boolean resultUpdate = 
+			   user.queryCache(CFWDBUser.class, "update")
+					.updateWithout(UserFields.USERNAME.toString());
+
 		
 		boolean resultRename = true;
 		
@@ -385,20 +266,12 @@ public class CFWDBUser {
 				.severe("The user '"+user.username()+"' cannot be renamed as it is marked as not renamable.");
 				return false;
 			}
-
-			String updateNameByID = 
-				"UPDATE "+User.TABLE_NAME
-				+" SET ("
-				  + UserDBFields.USERNAME +""
-				  + ") = (?) "
-				+" WHERE "
-					+ UserDBFields.PK_ID+" = ? AND "
-					+ UserDBFields.IS_RENAMABLE+"=TRUE";
-		
-			resultRename = CFWDB.preparedExecute(updateNameByID, 
-				user.username(),
-				user.id());
+			
+			resultRename = 
+					   user.queryCache(CFWDBUser.class, "updateNameOnly")
+							.update(UserFields.USERNAME.toString());
 		}
+		
 		return resultUpdate && resultRename;
 		
 	}
@@ -419,14 +292,13 @@ public class CFWDBUser {
 			return false;
 		}
 		
-		String deleteByID = 
-				"DELETE FROM "+User.TABLE_NAME
-				+" WHERE "
-					+ UserDBFields.PK_ID+" = ? "
-					+ "AND "
-					+ UserDBFields.IS_DELETABLE+" = TRUE ";
+		return new User()
+				.queryCache(CFWDBUser.class, "deleteByID")
+				.delete()
+				.where(UserFields.PK_ID.toString(), id)
+				.and(PermissionFields.IS_DELETABLE.toString(), true)
+				.executeDelete();
 		
-		return CFWDB.preparedExecute(deleteByID, id);
 			
 	}
 	
@@ -445,15 +317,13 @@ public class CFWDBUser {
 			.severe("The userID's '"+resultIDs+"' are not a comma separated list of strings.");
 			return false;
 		}
-
-		String deleteByID = 
-				"DELETE FROM "+User.TABLE_NAME
-				+" WHERE "
-					+ UserDBFields.PK_ID+" IN(?) "
-					+ "AND "
-					+ UserDBFields.IS_DELETABLE+" = TRUE ";
 		
-		return CFWDB.preparedExecute(deleteByID, resultIDs);
+		return new User()
+				.queryCache(CFWDBUser.class, "deleteMultipleByID")
+				.delete()
+				.whereIn(UserFields.PK_ID.toString(), resultIDs)
+				.and(UserFields.IS_DELETABLE.toString(), true)
+				.executeDelete();
 			
 	}
 	
@@ -480,25 +350,15 @@ public class CFWDBUser {
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkUsernameExists(String username) {
-		String checkUserExistsSQL = "SELECT COUNT(*) FROM "+User.TABLE_NAME+" WHERE LOWER("+UserDBFields.USERNAME+") = LOWER(?)";
-		ResultSet result = CFW.DB.preparedExecuteQuery(checkUserExistsSQL, username);
 		
-		try {
-			if(result != null && result.next()) {
-				int count = result.getInt(1);
-				return (count == 0) ? false : true;
-			}
-		} catch (SQLException e) {
-			new CFWLog(logger)
-			.method("checkUsernameExists")
-			.severe("Error while checking if the user exists.", e);
-			
-			return false;
-		}finally {
-			CFWDB.close(result);
-		}
+		int count = new User()
+				.queryCache(CFWDBUser.class, "checkUsernameExists")
+				.selectCount()
+				.where(UserFields.USERNAME.toString(), username, false)
+				.getCount();
 		
-		return false; 
+		return (count > 0);
+		
 	}
 	
 	/****************************************************************
@@ -521,25 +381,15 @@ public class CFWDBUser {
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkEmailExists(String email) {
-		String checkEmailExists = "SELECT COUNT(*) FROM "+User.TABLE_NAME+" WHERE LOWER("+UserDBFields.EMAIL+") = LOWER(?)";
-		ResultSet result = CFW.DB.preparedExecuteQuery(checkEmailExists, email);
 		
-		try {
-			if(result.next()) {
-				int count = result.getInt(1);
-				return (count == 0) ? false : true;
-			}
-		} catch (SQLException e) {
-			new CFWLog(logger)
-			.method("checkEmailInUse")
-			.severe("Error while checking the if the email is in use.", e);
-			
-			return false;
-		}finally {
-			CFWDB.close(result);
-		}
+		int count = new User()
+				.queryCache(CFWDBUser.class, "checkEmailExists")
+				.selectCount()
+				.where(UserFields.EMAIL.toString(), email, false)
+				.getCount();
 		
-		return false;
+		return (count > 0);
+
 	}
 	
 }

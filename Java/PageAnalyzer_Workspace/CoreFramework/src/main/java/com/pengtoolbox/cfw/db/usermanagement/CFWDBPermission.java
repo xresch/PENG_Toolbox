@@ -17,18 +17,6 @@ public class CFWDBPermission {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBPermission.class.getName());
 	
-
-
-	/********************************************************************************************
-	 * Creates the table if not already exists.
-	 * This method is executed by CFW.DB.initialize().
-	 * 
-	 ********************************************************************************************/
-	public static void initializeTable() {
-				
-		new Permission().createTable();
-		
-	}
 	
 	/********************************************************************************************
 	 * Creates multiple permissions in the DB.

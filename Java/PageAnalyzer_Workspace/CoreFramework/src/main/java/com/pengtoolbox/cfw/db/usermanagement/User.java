@@ -12,7 +12,7 @@ import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserDBFields;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.EmailValidator;
 import com.pengtoolbox.cfw.validation.LengthValidator;
@@ -21,12 +21,12 @@ public class User extends CFWObject {
 	
 	public static String TABLE_NAME = "CFW_USER";
 	
-	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, UserDBFields.PK_ID.toString())
+	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, UserFields.PK_ID.toString())
 								   .setPrimaryKeyAutoIncrement()
 								   .setValue(-999);
 	
-	private CFWField<String> username = CFWField.newString(FormFieldType.TEXT, UserDBFields.USERNAME.toString())
-			.setColumnDefinition("VARCHAR(255)")
+	private CFWField<String> username = CFWField.newString(FormFieldType.TEXT, UserFields.USERNAME.toString())
+			.setColumnDefinition("VARCHAR(255) UNIQUE")
 			.addValidator(new LengthValidator(1, 255))
 			.setChangeHandler(new CFWFieldChangeHandler<String>() {
 				public boolean handle(String oldValue, String newValue) {
@@ -44,38 +44,38 @@ public class User extends CFWObject {
 				}
 			});
 	
-	private CFWField<String> email = CFWField.newString(FormFieldType.EMAIL, UserDBFields.EMAIL.toString())
-			.setColumnDefinition("VARCHAR(255)")
+	private CFWField<String> email = CFWField.newString(FormFieldType.EMAIL, UserFields.EMAIL.toString())
+			.setColumnDefinition("VARCHAR(255) UNIQUE")
 			.addValidator(new LengthValidator(-1, 255))
 			.addValidator(new EmailValidator());
 
-	private CFWField<String> firstname = CFWField.newString(FormFieldType.TEXT, UserDBFields.FIRSTNAME.toString())
+	private CFWField<String> firstname = CFWField.newString(FormFieldType.TEXT, UserFields.FIRSTNAME.toString())
 			.setColumnDefinition("VARCHAR(255)")
 			.addValidator(new LengthValidator(-1, 255));
 	
-	private CFWField<String> lastname = CFWField.newString(FormFieldType.TEXT, UserDBFields.LASTNAME.toString())
+	private CFWField<String> lastname = CFWField.newString(FormFieldType.TEXT, UserFields.LASTNAME.toString())
 			.setColumnDefinition("VARCHAR(255)")
 			.addValidator(new LengthValidator(-1, 255));
 	
-	private CFWField<String> passwordHash = CFWField.newString(FormFieldType.NONE, UserDBFields.PASSWORD_HASH.toString())
+	private CFWField<String> passwordHash = CFWField.newString(FormFieldType.NONE, UserFields.PASSWORD_HASH.toString())
 			.setColumnDefinition("VARCHAR(127)")
 			.addValidator(new LengthValidator(-1, 255));
 	
-	private CFWField<String> passwordSalt = CFWField.newString(FormFieldType.NONE, UserDBFields.PASSWORD_SALT.toString())
+	private CFWField<String> passwordSalt = CFWField.newString(FormFieldType.NONE, UserFields.PASSWORD_SALT.toString())
 			.setColumnDefinition("VARCHAR(31)")
 			.addValidator(new LengthValidator(-1, 255));
 	
-	private CFWField<String> status = CFWField.newString(FormFieldType.SELECT, UserDBFields.STATUS.toString())
+	private CFWField<String> status = CFWField.newString(FormFieldType.SELECT, UserFields.STATUS.toString())
 			.setColumnDefinition("VARCHAR(15)")
 			.setOptions(new String[] {"Active", "Inactive"})
 			.setDescription("Active users can login, inactive users are prohibited to login.")
-			.addValidator(new LengthValidator(-1, 255))
+			.addValidator(new LengthValidator(-1, 15))
 			.setValue("Active");
 				
-	private CFWField<Timestamp> dateCreated = CFWField.newTimestamp(FormFieldType.NONE, UserDBFields.DATE_CREATED.toString())
+	private CFWField<Timestamp> dateCreated = CFWField.newTimestamp(FormFieldType.NONE, UserFields.DATE_CREATED.toString())
 			.setValue(new Timestamp(new Date().getTime()));
 	
-	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, UserDBFields.IS_DELETABLE.toString())
+	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, UserFields.IS_DELETABLE.toString())
 			.setValue(true)
 			.setChangeHandler(new CFWFieldChangeHandler<Boolean>() {
 				@Override
@@ -91,7 +91,7 @@ public class User extends CFWObject {
 			});;;
 												
 
-	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, UserDBFields.IS_RENAMABLE.toString())
+	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, UserFields.IS_RENAMABLE.toString())
 			.setValue(true)
 			.setChangeHandler(new CFWFieldChangeHandler<Boolean>() {
 				
@@ -108,7 +108,7 @@ public class User extends CFWObject {
 			});;
 	
 	//Username and password is managed in another source, like LDAP or CSV
-	private CFWField<Boolean> isForeign = CFWField.newBoolean(FormFieldType.BOOLEAN, UserDBFields.IS_FOREIGN.toString())
+	private CFWField<Boolean> isForeign = CFWField.newBoolean(FormFieldType.BOOLEAN, UserFields.IS_FOREIGN.toString())
 					.setDescription("Foreign users are managed by other authentication providers like LDAP. Password in database is ignored.")
 					.setValue(false);
 	
@@ -209,6 +209,7 @@ public class User extends CFWObject {
 		if(!CFW.DB.UserGroupMap.checkIsUserInGroup(adminUser, superuserGroup)) {
 			CFW.DB.UserGroupMap.addUserToGroup(adminUser, superuserGroup, false);
 		}
+		
 		//Needed for Upgrade
 		CFW.DB.UserGroupMap.updateIsDeletable(adminUser.id(), superuserGroup.id(), false);
 

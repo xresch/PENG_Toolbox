@@ -213,16 +213,16 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//--------------------------------------
 		// UPDATE
 		user.isRenamable(true);
+		user.isDeletable(true);
 		user.username(usernameUpdated)
 			.email("t.testonia2@cfw.com")
 			.firstname("Testika2")
 			.lastname("Testonia2")
 			.passwordHash("hash2")
 			.passwordSalt("salt2")
-			.status("INACTIVE")
-			.isDeletable(true)
-			.isRenamable(true)
-			.isForeign(false);
+			.status("Inactive")
+			.isForeign(false)
+			;
 		
 		Assertions.assertTrue(CFW.DB.Users.update(user),"The update with rename is successful.");
 		
@@ -244,7 +244,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		Assertions.assertTrue(updatedUser.lastname().equals("Testonia2"));
 		Assertions.assertTrue(updatedUser.passwordHash().equals("hash2"));
 		Assertions.assertTrue(updatedUser.passwordSalt().equals("salt2"));
-		Assertions.assertTrue(updatedUser.status().equals("INACTIVE"));
+		Assertions.assertTrue(updatedUser.status().equals("Inactive"));
 		Assertions.assertTrue(updatedUser.isDeletable() == true);
 		Assertions.assertTrue(updatedUser.isRenamable() == true);
 		Assertions.assertTrue(updatedUser.isForeign() == false);

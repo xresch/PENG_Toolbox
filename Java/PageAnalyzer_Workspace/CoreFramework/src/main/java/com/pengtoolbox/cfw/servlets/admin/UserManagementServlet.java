@@ -17,7 +17,7 @@ import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.User;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserDBFields;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser.UserFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
@@ -86,7 +86,7 @@ public class UserManagementServlet extends HttpServlet
 				if(form.mapRequestParameters(request)) {
 					CreateUserForm casted = (CreateUserForm)form;
 					User newUser = new User(casted.getUsername())
-							.status("Active")
+							.status(casted.getStatus())
 							.isForeign(casted.getIsForeign())
 							.setInitialPassword(casted.getPassword(), casted.getRepeatedPassword());
 					
@@ -140,7 +140,12 @@ public class UserManagementServlet extends HttpServlet
 		protected CFWField<String> repeatedPassword = CFWField.newString(FormFieldType.PASSWORD, "Repeat Password")
 				.addValidator(new NotNullOrEmptyValidator());
 		
-		private CFWField<Boolean> isForeign = CFWField.newBoolean(FormFieldType.BOOLEAN, UserDBFields.IS_FOREIGN.toString())
+		private CFWField<String> status = CFWField.newString(FormFieldType.SELECT, "Status")
+				.setOptions(new String[] {"Active", "Inactive"})
+				.setDescription("Active users can login, inactive users are prohibited to login.")
+				.addValidator(new LengthValidator(-1, 15));
+		
+		private CFWField<Boolean> isForeign = CFWField.newBoolean(FormFieldType.BOOLEAN, UserFields.IS_FOREIGN.toString())
 											 .setValue(false);
 		
 		public CreateUserForm(String formID, String submitLabel) {
@@ -148,12 +153,15 @@ public class UserManagementServlet extends HttpServlet
 			this.addField(username);
 			this.addField(password);
 			this.addField(repeatedPassword);
+			this.addField(status);
 			this.addField(isForeign);
 		}
 		
 		public String getUsername() { return username.getValue(); }
 		public String getPassword() { return password.getValue(); }
 		public String getRepeatedPassword() { return repeatedPassword.getValue(); }
+		public String getStatus() { return status.getValue(); }
 		public boolean getIsForeign() { return isForeign.getValue(); }
+
 	}
 }

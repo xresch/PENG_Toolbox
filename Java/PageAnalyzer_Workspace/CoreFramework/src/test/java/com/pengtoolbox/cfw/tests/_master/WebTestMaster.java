@@ -8,6 +8,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWAppInterface;
 import com.pengtoolbox.cfw._main.CFWApplication;
 
 public class WebTestMaster {
@@ -43,29 +44,60 @@ public class WebTestMaster {
 	@BeforeClass
 	public static void startDefaultApplication() throws Exception {
 		
-		APP  = new CFWApplication(new String[] {});
-		
-		testContext = APP.createUnsecureContext("/test");
-		TEST_URL = "http://localhost:"+CFW.Properties.HTTP_PORT+CFW.Properties.BASE_URL+"/test";
-		
-		//Seperate thread to not make the test thread block
-		Runnable r = new Runnable() {
-
+		CFW.initializeApp(new CFWAppInterface() {
+			
 			@Override
-			public void run() {
+			public void stopApp() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void startApp(CFWApplication app) {
+				APP  = app;
+				
+				testContext = APP.createUnsecureContext("/test");
+				TEST_URL = "http://localhost:"+CFW.Properties.HTTP_PORT+CFW.Properties.BASE_URL+"/test";
+				
+				//Seperate thread to not make the test thread block
+				Runnable r = new Runnable() {
+
+					@Override
+					public void run() {
+						try {
+							APP.start();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				};
+				Thread t = new Thread(r);
+				
+				t.start();
+
 				try {
-					APP.start();
-				} catch (Exception e) {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 			}
-		};
-		Thread t = new Thread(r);
+			
+			@Override
+			public void register() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void initializeDB() {
+				// TODO Auto-generated method stub
+				
+			}
+		}, new String[] {});
 		
-		t.start();
-
-		Thread.sleep(5000);
 		
 		
 	}

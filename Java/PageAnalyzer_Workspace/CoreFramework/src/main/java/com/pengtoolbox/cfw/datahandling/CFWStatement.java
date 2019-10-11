@@ -3,6 +3,7 @@ package com.pengtoolbox.cfw.datahandling;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
@@ -120,6 +121,28 @@ public class CFWStatement {
 	}
 	
 	/****************************************************************
+	 * Begins a SELECT statement including all fields except the 
+	 * ones specified by the parameter.
+	 * @param fieldnames
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement selectWithout(String ...fieldnames) {
+		if(!isQueryCached()) {
+			query.append("SELECT");
+			Arrays.sort(fieldnames);
+			for(String name : fields.keySet()) {
+				//add if name is not in fieldnames
+				if(Arrays.binarySearch(fieldnames, name) < 0) {
+					query.append(" ").append(name).append(",");
+				}
+			}
+			query.deleteCharAt(query.length()-1);
+			query.append(" FROM "+object.getTableName());
+		}
+		return this;
+	}
+	
+	/****************************************************************
 	 * Creates an insert statement including all fields and executes
 	 * the statement with the values assigned to the fields of the
 	 * object.
@@ -216,6 +239,54 @@ public class CFWStatement {
 	}
 	
 	/****************************************************************
+	 * Creates an update statement including the specified fields.
+	 * and executes it with the values assigned to the fields of the
+	 * object.
+	 * @param fieldnames
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public boolean updateWithout(String ...fieldnames) {
+		
+		StringBuilder columnNames = new StringBuilder();
+		StringBuilder placeholders = new StringBuilder();
+		Arrays.sort(fieldnames);
+		for(String name : fields.keySet()) {
+			//add if name is not in fieldnames
+			if(Arrays.binarySearch(fieldnames, name) < 0) {
+				CFWField field = fields.get(name);
+				if(!field.equals(object.getPrimaryField())) {
+					
+					
+					if(!isQueryCached()) {
+						columnNames.append(field.getName()).append(",");
+						placeholders.append("?,");
+					}
+					values.add(field.getValue());
+				}
+			}
+		}
+		for(String fieldname : fieldnames) {
+			
+		}
+		
+		if(!isQueryCached()) {
+			//Replace last comma with closing brace
+			columnNames.deleteCharAt(columnNames.length()-1);
+			placeholders.deleteCharAt(placeholders.length()-1);
+		}
+		
+		values.add(object.getPrimaryField().getValue());
+		
+		if(!isQueryCached()) {
+			query.append("UPDATE "+object.getTableName()+" SET ("+columnNames
+					  + ") = ("+placeholders+")"
+					  +" WHERE "
+					  + object.getPrimaryField().getName()+" = ?");
+		}
+		return this.execute();
+	}
+	
+	/****************************************************************
 	 * Begins a DELETE statement.
 	 * @return CFWStatement for method chaining
 	 ****************************************************************/
@@ -228,11 +299,24 @@ public class CFWStatement {
 	
 	/****************************************************************
 	 * Adds a WHERE clause to the query.
+	 * This method is case sensitive.
 	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public CFWStatement where(String fieldname, Object value) {
+		return where(fieldname, value, true);
+	}
+	
+	/****************************************************************
+	 * Adds a WHERE clause to the query.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement where(String fieldname, Object value, boolean isCaseSensitive) {
 		if(!isQueryCached()) {
-			query.append(" WHERE "+fieldname).append(" = ?");	
+			if(isCaseSensitive) {
+				query.append(" WHERE "+fieldname).append(" = ?");	
+			}else {
+				query.append(" WHERE LOWER("+fieldname).append(") = LOWER(?)");	
+			}
 		}
 		values.add(value);
 		return this;
@@ -296,15 +380,27 @@ public class CFWStatement {
 	}
 	
 	/****************************************************************
-	 * Adds an OR clause to the query.
+	 * Adds a OR clause to the query.
+	 * This method is case sensitive.
 	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public CFWStatement or(String fieldname, Object value) {
+		return or(fieldname, value, true);
+	}
+	
+	/****************************************************************
+	 * Adds a WHERE clause to the query.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement or(String fieldname, Object value, boolean isCaseSensitive) {
 		if(!isQueryCached()) {
-			query.append(" OR "+fieldname).append(" = ?");
+			if(isCaseSensitive) {
+				query.append(" OR "+fieldname).append(" = ?");	
+			}else {
+				query.append(" OR LOWER("+fieldname).append(") = LOWER(?)");	
+			}
 		}
 		values.add(value);
-		
 		return this;
 	}
 	

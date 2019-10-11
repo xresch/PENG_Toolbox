@@ -21,15 +21,7 @@ public class CFWDBGroup {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBGroup.class.getName());
 	
-	/********************************************************************************************
-	 * Creates the table and default admin user if not already exists.
-	 * This method is executed by CFW.DB.initialize().
-	 * 
-	 ********************************************************************************************/
-	public static void initializeTable() {
-		new Group().createTable();
-	}
-	
+
 	/********************************************************************************************
 	 * Creates multiple groups in the DB.
 	 * @param Groups with the values that should be inserted. ID will be set by the Database.
@@ -230,7 +222,7 @@ public class CFWDBGroup {
 				.queryCache(CFWDBGroup.class, "deleteMultipleByID")
 				.delete()
 				.whereIn(GroupFields.PK_ID.toString(), resultIDs)
-				.and(PermissionFields.IS_DELETABLE.toString(), true)
+				.and(GroupFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 					
 	}
