@@ -10,6 +10,7 @@ import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroupPermissionMap;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserGroupMap;
+import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWJson;
@@ -21,12 +22,7 @@ public class CFW {
 	//##############################################################################
 	// Hierarchical Binding
 	//##############################################################################
-	public class App extends CFWApp {} 
-	public class Properties extends CFWProperties {}
-	public static class Context {
-		public static class Request extends CFWContextRequest{};
-		public static class Session extends CFWContextSession{};
-	}
+
 	public static class DB extends CFWDB {
 		public static class Config extends CFWDBConfig{};
 		public static class Users extends CFWDBUser{};
@@ -35,14 +31,23 @@ public class CFW {
 		public static class Permissions extends CFWDBPermission{};
 		public static class GroupPermissionMap extends CFWDBGroupPermissionMap{};
 	}
-	public class HTTP extends CFWHttp {}
-	public class Files extends CFWFiles {}
-	public class Localization extends CFWLocalization {}
+	public static class Context {
+		public static class Request extends CFWContextRequest{};
+		public static class Session extends CFWContextSession{};
+	}
+	public class CLI extends CFWCommandLineInterface {}
 	public class Encryption extends CFWEncryption {}
+	public class Files extends CFWFiles {}
+	public class HTTP extends CFWHttp {}
+	public class JSON extends CFWJson {}
+	public class Localization extends CFWLocalization {}
+	public class Properties extends CFWProperties {}
+	public class Registry {
+		public class Components extends CFWRegistryComponents {} 
+	}
 	public class Time extends CFWTime {}
 	public class Validation extends CFWValidation {}
-	public class CLI extends CFWCommandLineInterface {}
-	public class JSON extends CFWJson {}
+	
 	
 	//##############################################################################
 	// GLOBAL
@@ -75,5 +80,26 @@ public class CFW {
 		
 
 		
+	}
+
+	/***********************************************************************
+	 * Create an instance of the CFWDefaultApp.
+	 * @param args command line arguments
+	 * @return CFWDefaultApp instance
+	 * @throws Exception 
+	 ***********************************************************************/
+	public static void initializeApp(CFWAppInterface appToStart, String[] args) throws Exception {
+		
+		appToStart.register();
+		
+		try {
+			CFWDefaultApp app = new CFWDefaultApp(args);
+			appToStart.startApp(app);
+		}catch(ShutdownException e) {
+			//do not proceed if shutdown was registered
+			appToStart.stopApp();
+			System.exit(0);
+			return;
+		}
 	}
 }

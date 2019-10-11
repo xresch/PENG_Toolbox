@@ -38,6 +38,14 @@
  /*************************************************************************
  * Default Layout
  *************************************************************************/
+
+#cfw-html{
+	height: 100%;
+}
+
+#cfw-body{
+	height: 100%;
+}
 #cfw-messages {
 	padding-top: 56px;
 }
@@ -58,8 +66,7 @@
 
 #cfw-content {
 	min-height: 90%;
-	padding: 20px;
-	margin-top: 20px;
+	padding: 40px 20px 20px 20px;
 }
 
 #cfw-footer {

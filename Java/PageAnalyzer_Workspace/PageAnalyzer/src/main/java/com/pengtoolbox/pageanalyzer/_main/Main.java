@@ -7,6 +7,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.CFWAppInterface;
 import com.pengtoolbox.cfw._main.CFWDefaultApp;
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -34,90 +35,99 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+public class Main extends Application implements CFWAppInterface {
 	
 	public static Logger logger = CFWLog.getLogger(Main.class.getName());
 	protected static CFWLog log = new CFWLog(logger);
 	
     public static void main( String[] args ) throws Exception
     {
-    	
-        //###################################################################
-        // Initialization
-        //################################################################### 
-    	
-    	//------------------------------------
-    	// Create Default App
-    	CFWDefaultApp app;
-    	try {
-    		app = CFW.App.createApp(args);
-    	}catch(ShutdownException e) {
-    		//do not proceed if shutdown was registered
-    		Platform.exit();
-    		System.exit(0);
-    		return;
-    	}
-    	
-        
-    	CFW.App.setDefaultMenu(PageAnalyzerMenu.class);
-    	CFW.App.setDefaultUserMenuItem(PageAnalyzerUserMenuItem.class);
-    	CFW.App.setDefaultFooter(PageAnalyzerFooter.class);
-		//------------------------------------
-		// Initialize YSlow Singleton
-		// prevents error on first analysis request.
-		YSlow.instance();
-		YSlowExecutor.instance();
+    	Main main = new Main();
+    	CFW.initializeApp(main, args);
+
+    }
+    
+	@Override
+	public void register() {
+    	CFW.Registry.Components.setDefaultMenu(PageAnalyzerMenu.class);
+    	CFW.Registry.Components.setDefaultUserMenuItem(PageAnalyzerUserMenuItem.class);
+    	CFW.Registry.Components.setDefaultFooter(PageAnalyzerFooter.class);
 		
+	}
+
+	@Override
+	public void startDB() {
 		//------------------------------------
 		// Initialize Database
     	PageAnalyzerDB.initialize();
     	PAPermissions.initializePermissions();
-    	
-    	// For Testing only
-    	//CFW.DB.createTestData();
-    	
-        //###################################################################
-        // Create API ServletContext, no login needed
-        //################################################################### 
-    	ServletContextHandler apiContext = app.createUnsecureContext("/api");
-    	
-    	ServletHolder apiHolder = new ServletHolder(new RestAPIServlet());
-        apiHolder.getRegistration().setMultipartConfig(app.getGlobalMultipartConfig());
-        
-        apiContext.addServlet(apiHolder, "/analyzehar");
-        
-        
-        //###################################################################
-        // Create authenticatedServletContext
-        //###################################################################    	
-    	ServletContextHandler appContext = app.createSecureContext("/app");
-    	
-        ServletHolder uploadHolder = new ServletHolder(new HARUploadServlet());
-        uploadHolder.getRegistration().setMultipartConfig(app.getGlobalMultipartConfig());
-        appContext.addServlet(uploadHolder, "/");
-        appContext.addServlet(uploadHolder, "/harupload");
-        appContext.addServlet(DataServlet.class, "/data");
-        
-        appContext.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
-        appContext.addServlet(ResultViewServlet.class, "/resultview");
-        appContext.addServlet(CompareServlet.class, "/compare");
-        appContext.addServlet(DeleteResultServlet.class, "/delete");
-        appContext.addServlet(ResultListServlet.class, "/resultlist");
-        appContext.addServlet(GanttChartServlet.class, "/ganttchart");
-        appContext.addServlet(ManageResultsServlet.class, "/manageresults");
-        appContext.addServlet(DocuServlet.class, "/docu");
-        appContext.addServlet(CustomContentServlet.class, "/custom");
-        
-        //Login, Logout and Resource Servlets
-        CFW.App.addCFWServlets(appContext);
-        
-        //###################################################################
-        // Startup
-        //###################################################################
-        app.setDefaultURL("/app/harupload");
-        app.start();
-        
-    }
+		
+	}
+	
+	@Override
+	public void stopApp() {
+		Platform.exit();
+	}
+
+	@Override
+	public void startApp(CFWDefaultApp app) {
+			//------------------------------------
+			// Initialize YSlow Singleton
+			// prevents error on first analysis request.
+			YSlow.instance();
+			YSlowExecutor.instance();
+			
+	    	
+	    	// For Testing only
+	    	//CFW.DB.createTestData();
+	    	
+	        //###################################################################
+	        // Create API ServletContext, no login needed
+	        //################################################################### 
+	    	ServletContextHandler apiContext = app.createUnsecureContext("/api");
+	    	
+	    	ServletHolder apiHolder = new ServletHolder(new RestAPIServlet());
+	        apiHolder.getRegistration().setMultipartConfig(app.getGlobalMultipartConfig());
+	        
+	        apiContext.addServlet(apiHolder, "/analyzehar");
+	        
+	        
+	        //###################################################################
+	        // Create authenticatedServletContext
+	        //###################################################################    	
+	    	ServletContextHandler appContext = app.createSecureContext("/app");
+	    	
+	        ServletHolder uploadHolder = new ServletHolder(new HARUploadServlet());
+	        uploadHolder.getRegistration().setMultipartConfig(app.getGlobalMultipartConfig());
+	        appContext.addServlet(uploadHolder, "/");
+	        appContext.addServlet(uploadHolder, "/harupload");
+	        appContext.addServlet(DataServlet.class, "/data");
+	        
+	        appContext.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
+	        appContext.addServlet(ResultViewServlet.class, "/resultview");
+	        appContext.addServlet(CompareServlet.class, "/compare");
+	        appContext.addServlet(DeleteResultServlet.class, "/delete");
+	        appContext.addServlet(ResultListServlet.class, "/resultlist");
+	        appContext.addServlet(GanttChartServlet.class, "/ganttchart");
+	        appContext.addServlet(ManageResultsServlet.class, "/manageresults");
+	        appContext.addServlet(DocuServlet.class, "/docu");
+	        appContext.addServlet(CustomContentServlet.class, "/custom");
+	        
+	        //Login, Logout and Resource Servlets
+	        app.addCFWServlets(appContext);
+	        
+	        //###################################################################
+	        // Startup
+	        //###################################################################
+	        app.setDefaultURL("/app/harupload");
+	        try {
+				app.start();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+	}
 
     //Method from JavaFX Application startup
 	@Override

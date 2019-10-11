@@ -50,7 +50,7 @@ public class HTMLResponse extends AbstractHTMLResponse {
 		StringBuffer buildedPage = new StringBuffer();
 		
 		buildedPage.append("<!DOCTYPE html>\n");
-		buildedPage.append("<html>\n");
+		buildedPage.append("<html id=\"cfw-html\">\n");
 		
 			buildedPage.append("<head>\n");
 				buildedPage.append("<meta charset=\"utf-8\">");
@@ -66,7 +66,7 @@ public class HTMLResponse extends AbstractHTMLResponse {
 				}
 			buildedPage.append("</head>\n");
 			
-			buildedPage.append("<body ng-app=\"omApp\">\n");
+			buildedPage.append("<body id=\"cfw-body\">\n");
 			
 				//--------------------------
 				// Menubar

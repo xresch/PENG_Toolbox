@@ -23,24 +23,24 @@ public class SessionData {
 	private BTFooter footer;
 	
 	public SessionData() {
-		menu = CFW.App.createDefaultMenuInstance();
-		footer = CFW.App.createDefaultFooterInstance();
+		menu = CFW.Registry.Components.createDefaultMenuInstance();
+		footer = CFW.Registry.Components.createDefaultFooterInstance();
 	}
 	
 	public void triggerLogin() {
 		isLoggedIn = true;
 		
-		menu = CFW.App.createDefaultMenuInstance();
-		menu.setUserMenuItem(CFW.App.createUserMenuItemInstance(this));
-		footer = CFW.App.createDefaultFooterInstance();
+		menu = CFW.Registry.Components.createDefaultMenuInstance();
+		menu.setUserMenuItem(CFW.Registry.Components.createUserMenuItemInstance(this));
+		footer = CFW.Registry.Components.createDefaultFooterInstance();
 
 	}
 	
 	public void triggerLogout() {
 		isLoggedIn = false;
 		
-		menu = CFW.App.createDefaultMenuInstance();
-		footer = CFW.App.createDefaultFooterInstance();
+		menu = CFW.Registry.Components.createDefaultMenuInstance();
+		footer = CFW.Registry.Components.createDefaultFooterInstance();
 		user = null;
 	}
 	
