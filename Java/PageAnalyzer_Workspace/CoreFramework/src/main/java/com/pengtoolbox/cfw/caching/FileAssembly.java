@@ -69,15 +69,7 @@ public class FileAssembly {
 	 ***********************************************************************/
 	public FileAssembly assemble() {
 		
-		//--------------------------------
-		// Initialize
-		int hashCode = 0;
-		for(FileDefinition fileDef : fileArray) {
-			hashCode += fileDef.hashCode();
-		}
-		
-		assemblyName = inputName + "_" + hashCode + "." + filetype;
-		assemblyServletPath = "/cfw/assembly?name="+URLEncoder.encode(assemblyName);
+
 		//--------------------------------
 		// Initialize
 		if(!FileAssembly.hasAssembly((assemblyName)) || !CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING)) {
@@ -97,6 +89,9 @@ public class FileAssembly {
 			
 			assemblyContent = concatenatedFile.toString();
 			etag = assemblyContent.hashCode();
+						
+			assemblyName = inputName + "_" + etag + "." + filetype;
+			assemblyServletPath = "/cfw/assembly?name="+URLEncoder.encode(assemblyName);
 		}
 		
 		return this;
