@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
+import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.tests.assets.mockups.TestMenu;
@@ -33,7 +34,13 @@ public class _MainForTesting {
     	}
     	
     	CFW.App.setDefaultMenu(TestMenu.class);
-
+    	
+        //###################################################################
+        // Change Config
+        //################################################################### 
+    	Configuration config = CFW.DB.Config.selectByName(Configuration.FILE_CACHING).value("false");
+    	CFW.DB.Config.update(config);
+    	
         //###################################################################
         // Create API ServletContext, no login needed
         //################################################################### 

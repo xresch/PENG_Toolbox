@@ -27,15 +27,34 @@ public class AssemblyServlet extends HttpServlet
                                                         IOException
     {
 
+		//-----------------------
+		// Set Cache Control
+		response.addHeader("Cache-Control", "max-age="+CFWProperties.BROWSER_RESOURCE_MAXAGE);
+		
+		//-----------------------
+		// Fetch Assembly
 		String assemblyName = request.getParameter("name");
 		PlaintextResponse plain = new PlaintextResponse();
 		
 		if(FileAssembly.hasAssembly(assemblyName)) {
 			FileAssembly assembly = FileAssembly.getAssemblyFromCache(assemblyName);
 			
-			plain.getContent().append(assembly.getAssemblyContent());
+			//-----------------------
+			// Check ETag
+			String etag = request.getHeader("If-None-Match");
+			if(etag != null) {
+				// gzip handler will append "--gzip", therefore check on starts with
+				if(etag.startsWith(""+assembly.getEtag())) {
+					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+					return;
+				}
+			}
 			
-			response.addHeader("Cache-Control", "max-age="+CFWProperties.BROWSER_RESOURCE_MAXAGE);
+			//-----------------------
+			// Return Assembly
+			plain.getContent().append(assembly.getAssemblyContent());
+			response.addHeader("ETag", ""+assembly.getEtag());
+			
 	        response.setContentType(assembly.getContentType());
 	        response.setStatus(HttpServletResponse.SC_OK);
 	        

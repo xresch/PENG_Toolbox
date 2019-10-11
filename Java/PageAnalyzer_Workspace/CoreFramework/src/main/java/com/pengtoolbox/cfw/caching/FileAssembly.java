@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.UUID;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.config.Configuration;
@@ -21,6 +22,7 @@ public class FileAssembly {
 	private String filetype = "";
 	private String contentType = "";
 	private String assemblyContent = "";
+	private int etag = 0;
 	
 	/***********************************************************************
 	 * Constructor for the FileAssembler.
@@ -94,6 +96,7 @@ public class FileAssembly {
 			}
 			
 			assemblyContent = concatenatedFile.toString();
+			etag = assemblyContent.hashCode();
 		}
 		
 		return this;
@@ -172,6 +175,10 @@ public class FileAssembly {
 
 	public String getAssemblyContent() {
 		return assemblyContent;
+	}	
+	
+	public int getEtag() {
+		return etag;
 	}	
 	
 }
