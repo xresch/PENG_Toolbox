@@ -14,10 +14,9 @@ import com.pengtoolbox.cfw.validation.LengthValidator;
 public class Configuration extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_CONFIG";
-	
 	public static final String FILE_CACHING = "Cache Files";
-
 	public static final String THEME = "Theme";
+	public static final String CODE_THEME = "Code Theme";
 	
 	public enum ConfigFields{
 		PK_ID,
@@ -110,6 +109,19 @@ public class Configuration extends CFWObject {
 					.type(FormFieldType.SELECT)
 					.options(new String[]{"darkblue", "flatly", "lumen", "materia", "minty", "pulse", "sandstone", "simplex", "sketchy", "slate", "spacelab", "superhero", "united"})
 					.value("slate")
+			);
+		}
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Config.checkConfigExists(Configuration.CODE_THEME)) {
+			CFW.DB.Config.create(
+				new Configuration("Core Framework", Configuration.CODE_THEME)
+					.description("Set the style for the code highlighting.")
+					.type(FormFieldType.SELECT)
+					.options(new String[]{"androidstudio", "arduino-light", "magula", "pojoaque", "sunburst", "zenburn"})
+					.value("zenburn")
 			);
 		}
 				

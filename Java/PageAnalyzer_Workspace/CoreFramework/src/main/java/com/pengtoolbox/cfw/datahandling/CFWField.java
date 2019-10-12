@@ -25,6 +25,7 @@ import com.pengtoolbox.cfw.validation.EpochOrTimeValidator;
 import com.pengtoolbox.cfw.validation.IValidatable;
 import com.pengtoolbox.cfw.validation.IValidator;
 import com.pengtoolbox.cfw.validation.IntegerValidator;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 /**********************************************************************************
  * Class for creating a menu for the web application.
@@ -174,10 +175,18 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		//---------------------------------------------
 		// Check Type
 		//---------------------------------------------
+
 		FormFieldType formFieldType = this.type;
 		if(this.parent instanceof BTForm && ((BTForm)this.parent).isAPIForm()) {
 			if(this.apiFieldType != null) {
 				formFieldType = this.apiFieldType;
+				value = null;
+				if(this.options != null) {
+					Object[] copy = new Object[options.length + 1];
+					System.arraycopy(options, 0, copy, 0, options.length);
+					options = copy;
+					options[options.length-1] = null;
+				}
 			}
 		}
 		//---------------------------------------------
@@ -295,7 +304,12 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		// handle options
 		if(options != null) {
 			for(int i = 0; i < options.length; i++) {
-				String currentVal = options[i].toString();
+				Object currentOption = options[i];
+				String currentVal = "";
+				if(currentOption != null) {
+					currentVal = options[i].toString();
+				}
+					
 				if(currentVal.equals(stringVal)) {
 					html.append("<option selected>")
 					.append(currentVal)

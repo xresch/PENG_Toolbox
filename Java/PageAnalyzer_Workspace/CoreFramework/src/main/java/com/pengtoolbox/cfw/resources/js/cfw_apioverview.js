@@ -15,6 +15,8 @@ function cfw_apioverview_formResult(data){
 	form = $('#cfw-apioverview-samplemodal form');
 	serialized = form.serialize();
 	
+	//-------------------------------
+	// Regex hack remove empty params
 	serialized = serialized.replace(/cfw-formID.*?&/g, "&");
 	console.log(serialized)
 	serialized = serialized.replace(/&[^=]+=&/g, "&");
@@ -23,7 +25,9 @@ function cfw_apioverview_formResult(data){
 	console.log(serialized)
 	serialized = serialized.replace(/&[^=]+=&/g, "&");
 	console.log(serialized)
-
+	serialized = serialized.replace(/&[^=]+=$/g, "&");
+	console.log(serialized)
+	
 	sampleURL = $('#cfw-apioverview-sampleurl');
 	
 	var url = window.location.href 
@@ -204,7 +208,7 @@ function cfw_apioverview_printOverview(data){
 				// Create Panel
 				//----------------------------------------
 				
-				subPanel = new CFWPanel('info');
+				subPanel = new CFWPanel('success');
 				subPanel.title = action;
 				subPanel.body = content;
 				subPanel.appendTo(cfwPanel.body);
