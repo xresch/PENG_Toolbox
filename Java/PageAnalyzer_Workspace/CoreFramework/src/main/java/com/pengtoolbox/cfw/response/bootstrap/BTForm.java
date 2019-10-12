@@ -24,6 +24,8 @@ public class BTForm extends HierarchicalHTMLItem {
 	private String formID = "";
 	private String submitLabel = "";
 	private String postURL;
+	private String resultCallback;
+	
 	private CFWObject origin;
 	public StringBuilder javascript = new StringBuilder();
 	
@@ -31,6 +33,7 @@ public class BTForm extends HierarchicalHTMLItem {
 	public LinkedHashMap<String, CFWField<?>> fields = new LinkedHashMap<String, CFWField<?>>();
 	
 	private BTFormHandler formHandler = null;
+	private boolean isAPIForm = false;
 	
 	public BTForm(String formID, String submitLabel) {
 		
@@ -80,7 +83,7 @@ public class BTForm extends HierarchicalHTMLItem {
 
 		//---------------------------
 		// Create send button
-		String onclick = "cfw_postJSON('"+postURL+"', $('#"+formID+"').serialize())";
+		String onclick = "cfw_postJSON('"+postURL+"', $('#"+formID+"').serialize(), "+resultCallback+")";
 		html.append("<input type=\"button\" onclick=\""+onclick+"\" class=\"form-control btn-primary\" value=\""+submitLabel+"\">");
 		
 		//---------------------------
@@ -159,6 +162,19 @@ public class BTForm extends HierarchicalHTMLItem {
 
 	public void setOrigin(CFWObject origin) {
 		this.origin = origin;
+	}
+	
+	
+	public void setResultCallback(String resultCallback) {
+		this.resultCallback = resultCallback;
+	}
+
+	public void isAPIForm(boolean isAPIForm) {
+		this.isAPIForm = isAPIForm;
+	}
+	
+	public boolean isAPIForm() {
+		return isAPIForm ;
 	}
 
 	public boolean mapRequestParameters(HttpServletRequest request) {

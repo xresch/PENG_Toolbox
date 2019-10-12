@@ -2,6 +2,7 @@ package com.pengtoolbox.cfw.api;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,28 +22,51 @@ public class CFWRegistryAPI {
 	
 	public static Logger logger = CFWLog.getLogger(CFWRegistryAPI.class.getName());
 	
-	private static ArrayList<APIDefinition> definitionArray = new ArrayList<APIDefinition>();
+	private static LinkedHashMap<String, APIDefinition> definitionArray = new LinkedHashMap<String, APIDefinition>();
 	
+	public static String getFullyQualifiedName(APIDefinition definition) {
+		return definition.getApiName()+"-"+definition.getActionName();
+	}
+	public static String getFullyQualifiedName(String name, String action) {
+		return name+"-"+action;
+	}
 	/***********************************************************************
-	 * Adds a APIConfiguration class to the registry.
+	 * Adds a APIDefinition class to the registry.
 	 * @param definition
 	 ***********************************************************************/
 	public static void add(APIDefinition definition)  {
-		definitionArray.add(definition);
-	}
-	
-	/***********************************************************************
-	 * Adds a APIConfiguration class to the registry.
-	 * @param definition
-	 ***********************************************************************/
-	public static void addAll(ArrayList<APIDefinition> definitions)  {
-		if(definitions != null) {
-			definitionArray.addAll(definitions);
+		String fullname = getFullyQualifiedName(definition);
+		if(!definitionArray.containsKey(fullname)) {
+			definitionArray.put(fullname,definition);
+		}else {
+			new CFWLog(logger)
+				.method("add")
+				.warn("An API definition with name'"+fullname+"' was already defined. Appending a number to the name.");
+			
+			int i = 0;
+			do {
+				i++;
+				definition.setApiName(definition.getApiName()+i);
+			}while ( definitionArray.containsKey(getFullyQualifiedName(definition)) );
+			
+			definitionArray.put(getFullyQualifiedName(definition), definition);
 		}
 	}
 	
 	/***********************************************************************
-	 * Removes a APIConfiguration class to the registry.
+	 * Adds a APIDefinition class to the registry.
+	 * @param definition
+	 ***********************************************************************/
+	public static void addAll(ArrayList<APIDefinition> definitions)  {
+		if(definitions != null) {
+			for(APIDefinition definition : definitions) {
+				CFWRegistryAPI.add(definition);
+			}
+		}
+	}
+	
+	/***********************************************************************
+	 * Removes a APIDefinition class to the registry.
 	 * @param definition
 	 ***********************************************************************/
 	public static void remove(APIDefinition definition)  {
@@ -50,10 +74,18 @@ public class CFWRegistryAPI {
 	}
 	
 	/***********************************************************************
-	 * Removes a APIConfiguration class to the registry.
+	 * Returns a APIDefinition class for the given name.
 	 * @param definition
 	 ***********************************************************************/
-	public static ArrayList<APIDefinition> getAPIDefinitions()  {
+	public static APIDefinition getDefinition(String apiName, String actionName)  {
+		return definitionArray.get(getFullyQualifiedName(apiName, actionName));
+	}
+	
+	/***********************************************************************
+	 * Removes a APIDefinition class to the registry.
+	 * @param definition
+	 ***********************************************************************/
+	public static LinkedHashMap<String, APIDefinition> getAPIDefinitions()  {
 		return definitionArray;
 	}
 	
@@ -66,14 +98,15 @@ public class CFWRegistryAPI {
 		StringBuilder json = new StringBuilder();
 		
 		json.append("["); 
-		for(APIDefinition definition : definitionArray) {
+		for(APIDefinition definition : definitionArray.values()) {
 			json.append(definition.getJSON());
 			json.append(",");
-
 		}
 		
+		//--------------------------
+		//remove last comma
 		if(definitionArray.size()>0) {
-			json.deleteCharAt(json.length()-1); //remove last comma
+			json.deleteCharAt(json.length()-1); 
 		}
 		json.append("]");
 		return json.toString();
@@ -114,6 +147,7 @@ public class CFWRegistryAPI {
 					json.setSuccess(false);
 					return;
 				}
+				
 				ArrayList<CFWField> affectedFields = new ArrayList<CFWField>();
 				ArrayList<String> fieldnames = new ArrayList<String>();
 				boolean success = true;
@@ -121,15 +155,17 @@ public class CFWRegistryAPI {
 				// iterate parameters
 				while(params.hasMoreElements()) {
 					String current = params.nextElement();
+					String currentValue = request.getParameter(current);
+					
 					CFWField field = object.getFieldIgnoreCase(current);
+
 					if(field != null) {
-						success = success && field.setValueValidated(request.getParameter(current));
-						affectedFields.add(field);
-						fieldnames.add(field.getName());
+						if(currentValue != null && !currentValue.isEmpty()) {
+							field.setValueValidated(request.getParameter(current));
+							affectedFields.add(field);
+							fieldnames.add(field.getName());
+						}
 						
-					}else {
-						CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The parameter '"+current+"' is not supported.");
-						success = false;
 					}
 				}
 				
@@ -137,14 +173,14 @@ public class CFWRegistryAPI {
 				// Create Response
 				if(success) {
 					
-					CFWStatement statement = object.select();
+					CFWStatement statement = object.select(fetchAPI.getReturnFieldNames().toArray(new String[] {}));
 					
 					for(int i = 0; i < affectedFields.size(); i++) {
 						CFWField<?> currentField = affectedFields.get(i);
 						if(i == 0) {
-							statement.where(currentField.getName(), currentField.getValue());
+							statement.where(currentField.getName(), currentField.getValue(), false);
 						}else {
-							statement.and(currentField.getName(), currentField.getValue());
+							statement.and(currentField.getName(), currentField.getValue(), false);
 						}
 					}
 					String payload = statement.getAsJSON();

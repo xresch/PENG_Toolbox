@@ -31,7 +31,7 @@ public class CFWDBGroupPermissionMap {
 							  + GroupPermissionMapFields.FK_ID_GROUP + " INT, "
 							  + GroupPermissionMapFields.FK_ID_PERMISSION + " INT, "
 							  + "FOREIGN KEY ("+GroupPermissionMapFields.FK_ID_GROUP+") REFERENCES "+Group.TABLE_NAME+"("+Group.GroupFields.PK_ID+") ON DELETE CASCADE, "
-							  + "FOREIGN KEY ("+GroupPermissionMapFields.FK_ID_PERMISSION+") REFERENCES "+CFWDBPermission.TABLE_NAME+"("+PermissionFields.PK_ID+") ON DELETE CASCADE"
+							  + "FOREIGN KEY ("+GroupPermissionMapFields.FK_ID_PERMISSION+") REFERENCES "+Permission.TABLE_NAME+"("+PermissionFields.PK_ID+") ON DELETE CASCADE"
 							  + ");";
 		
 		CFWDB.preparedExecute(createTableSQL);
@@ -260,7 +260,7 @@ public class CFWDBGroupPermissionMap {
 			return null;
 		}
 		
-		String selectPermissionsForGroup = "SELECT * FROM "+CFWDBPermission.TABLE_NAME+" P "
+		String selectPermissionsForGroup = "SELECT * FROM "+Permission.TABLE_NAME+" P "
 				+ " INNER JOIN "+CFWDBGroupPermissionMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_PERMISSION = P.PK_ID "
 				+ " WHERE M.FK_ID_GROUP = ?";
@@ -349,7 +349,7 @@ public class CFWDBGroupPermissionMap {
 			return "[]";
 		}
 		
-		String sqlString = "SELECT P.PK_ID, P.NAME, P.DESCRIPTION, M.FK_ID_GROUP AS ITEM_ID, M.IS_DELETABLE FROM "+CFWDBPermission.TABLE_NAME+" P "
+		String sqlString = "SELECT P.PK_ID, P.NAME, P.DESCRIPTION, M.FK_ID_GROUP AS ITEM_ID, M.IS_DELETABLE FROM "+Permission.TABLE_NAME+" P "
 				+ " LEFT JOIN "+CFWDBGroupPermissionMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_PERMISSION = P.PK_ID"
 				+ " AND M.FK_ID_GROUP = ?"

@@ -48,7 +48,11 @@ public class AuthenticationHandler extends HandlerWrapper
         		   || request.getRequestURI().toString().contains("/login;jsessionid")) {
         			this._handler.handle(target, baseRequest, request, response);
         		}else {
-        			CFW.HTTP.redirectToURL(response, "./login?url="+URLEncoder.encode(request.getRequestURI()+"?"+request.getQueryString()) );
+        			String query = "";
+        			if(request.getQueryString() != null && !request.getQueryString().equals("#")) {
+        				query = "?"+request.getQueryString();
+        			}
+        			CFW.HTTP.redirectToURL(response, "./login?url="+URLEncoder.encode(request.getRequestURI()+query));
         		}
         	}
 	

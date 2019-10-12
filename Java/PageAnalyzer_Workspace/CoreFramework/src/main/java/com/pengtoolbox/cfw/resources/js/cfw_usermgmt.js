@@ -106,7 +106,6 @@ function cfw_usermgmt_editUser(userID){
 	//-----------------------------------
 	CFW.http.createForm(CFW_USRMGMT_URL, {action: "getform", item: "edituser", id: userID}, detailsDiv);
 	
-	
 }
 
 /******************************************************************

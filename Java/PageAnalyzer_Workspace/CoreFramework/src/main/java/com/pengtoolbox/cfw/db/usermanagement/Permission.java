@@ -15,7 +15,9 @@ import com.pengtoolbox.cfw.validation.LengthValidator;
 public class Permission extends CFWObject{
 	
 	public static final String TABLE_NAME = "CFW_PERMISSION";
-	
+	public static final String CFW_API = "API";
+	public static final String CFW_CONFIG_MANAGEMENT = "Configuration Management";
+	public static final String CFW_USER_MANAGEMENT = "User Management";
 	enum PermissionFields{
 		PK_ID, 
 		NAME,
@@ -51,8 +53,8 @@ public class Permission extends CFWObject{
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, PermissionFields.IS_DELETABLE.toString())
 											.setColumnDefinition("BOOLEAN")
 											.setValue(true);
-	
-	
+
+
 	public Permission() {
 		initializeFields();
 	}
@@ -78,36 +80,54 @@ public class Permission extends CFWObject{
 		//-----------------------------------------
 		//
 		//-----------------------------------------
-		if(!CFW.DB.Permissions.checkPermissionExists(CFWDBPermission.CFW_USER_MANAGEMENT)) {
-			CFW.DB.Permissions.create(new Permission(CFWDBPermission.CFW_USER_MANAGEMENT)
+		if(!CFW.DB.Permissions.checkPermissionExists(Permission.CFW_USER_MANAGEMENT)) {
+			CFW.DB.Permissions.create(new Permission(Permission.CFW_USER_MANAGEMENT)
 				.description("Gives the user the ability to view, create, update and delete users.")
 				.isDeletable(false)
 			);
 			
-			Permission userManagement = CFW.DB.Permissions.selectByName(CFWDBPermission.CFW_USER_MANAGEMENT);
+			Permission userManagement = CFW.DB.Permissions.selectByName(Permission.CFW_USER_MANAGEMENT);
 			
 			if(userManagement == null) {
 				new CFWLog(logger)
 				.method("createDefaultPermissions")
-				.severe("User permission '"+CFWDBPermission.CFW_USER_MANAGEMENT+"' was not found in the database.");
+				.severe("User permission '"+Permission.CFW_USER_MANAGEMENT+"' was not found in the database.");
 			}
 		}
 		
 		//-----------------------------------------
 		// 
 		//-----------------------------------------
-		if(!CFW.DB.Permissions.checkPermissionExists(CFWDBPermission.CFW_CONFIG_MANAGEMENT)) {
-			CFW.DB.Permissions.create(new Permission(CFWDBPermission.CFW_CONFIG_MANAGEMENT)
+		if(!CFW.DB.Permissions.checkPermissionExists(Permission.CFW_CONFIG_MANAGEMENT)) {
+			CFW.DB.Permissions.create(new Permission(Permission.CFW_CONFIG_MANAGEMENT)
 				.description("Gives the user the ability to view and update the configurations in the database.")
 				.isDeletable(false)
 			);
 			
-			Permission userManagement = CFW.DB.Permissions.selectByName(CFWDBPermission.CFW_CONFIG_MANAGEMENT);
+			Permission userManagement = CFW.DB.Permissions.selectByName(Permission.CFW_CONFIG_MANAGEMENT);
 			
 			if(userManagement == null) {
 				new CFWLog(logger)
 				.method("createDefaultPermissions")
-				.severe("User permission '"+CFWDBPermission.CFW_CONFIG_MANAGEMENT+"' was not found in the database.");
+				.severe("User permission '"+Permission.CFW_CONFIG_MANAGEMENT+"' was not found in the database.");
+			}
+		}
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Permissions.checkPermissionExists(Permission.CFW_API)) {
+			CFW.DB.Permissions.create(new Permission(Permission.CFW_API)
+				.description("User can access the API.")
+				.isDeletable(false)
+			);
+			
+			Permission apiPermission = CFW.DB.Permissions.selectByName(Permission.CFW_API);
+			
+			if(apiPermission == null) {
+				new CFWLog(logger)
+				.method("createDefaultPermissions")
+				.severe("User permission '"+Permission.CFW_API+"' was not found in the database.");
 			}
 		}
 	}

@@ -22,7 +22,6 @@ public class CFWObject {
 	
 	private ArrayList<ForeignKeyDefinition> foreignKeys = new ArrayList<ForeignKeyDefinition>();
 	
-	private ArrayList<APIDefinition> apiDefinitionArray = new ArrayList<APIDefinition>();
 	private boolean isAPIExposed = true;
 	private boolean generateDefaultAPI = true;
 	
@@ -125,7 +124,7 @@ public class CFWObject {
 		this.tableName = tableName;
 		return this;
 	}
-	
+		
 	
 	public boolean isAPIExposed() {
 		return isAPIExposed;

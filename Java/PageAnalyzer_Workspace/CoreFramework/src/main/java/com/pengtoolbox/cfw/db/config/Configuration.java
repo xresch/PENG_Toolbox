@@ -33,49 +33,56 @@ public class Configuration extends CFWObject {
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, ConfigFields.PK_ID.toString())
 									.setPrimaryKeyAutoIncrement(this)
+									.setDescription("The id of the configuration.")
 									.setValue(-999);
 	
 	private CFWField<String> category = CFWField.newString(FormFieldType.NONE, ConfigFields.CATEGORY.toString())
 									.setColumnDefinition("VARCHAR(255)")
+									.setDescription("The category of the configuration.")
 									.addValidator(new LengthValidator(1, 255))
 									;
 	private CFWField<String> name = CFWField.newString(FormFieldType.NONE, ConfigFields.NAME.toString())
 									.setColumnDefinition("VARCHAR(255) UNIQUE")
+									.setDescription("The name of the configuration.")
 									.addValidator(new LengthValidator(1, 255))
 									;
 	
 	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, ConfigFields.DESCRIPTION.toString())
 											.setColumnDefinition("VARCHAR(4096)")
+											.setDescription("A description of the configuration.")
 											.addValidator(new LengthValidator(-1, 4096));
 	
 	private CFWField<String> type = CFWField.newString(FormFieldType.NONE, ConfigFields.TYPE.toString())
 			.setColumnDefinition("VARCHAR(32)")
+			.setDescription("The form field type of the configuration.")
 			.addValidator(new LengthValidator(1, 32));
 	
 	private CFWField<String> value = CFWField.newString(FormFieldType.NONE, ConfigFields.VALUE.toString())
 			.setColumnDefinition("VARCHAR(1024)")
+			.setDescription("The current value of the field. Can be null.")
 			.addValidator(new LengthValidator(1, 1024))
 			;
 	
 	private CFWField<Object[]> options = CFWField.newArray(FormFieldType.NONE, ConfigFields.OPTIONS.toString())
-			.setColumnDefinition("ARRAY");
+			.setColumnDefinition("ARRAY")
+			.setDescription("The options available for the configuration(optional field).");
 	
 	public Configuration() {
-		initializeFields();
+		initialize();
 	}
 	
 	public Configuration(String category, String name) {
-		initializeFields();
+		initialize();
 		this.category.setValue(category);
 		this.name.setValue(name);
 	}
 	
 	public Configuration(ResultSet result) throws SQLException {
-		initializeFields();
+		initialize();
 		this.mapResultSet(result);	
 	}
 	
-	private void initializeFields() {
+	private void initialize() {
 		this.setTableName(TABLE_NAME);
 		this.addFields(id, name, description, type, value, options, category);
 	}

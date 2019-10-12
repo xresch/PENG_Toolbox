@@ -40,27 +40,39 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	
 	private static Logger logger = CFWLog.getLogger(CFWField.class.getName());
 	
+	//--------------------------------
+	// General
+	private String name = "";
+	private Object value;
+	private String description = null;
 	private Class<T> valueClass;
+	private CFWFieldChangeHandler changeHandler = null;
+	private ArrayList<String> invalidMessages;
+	
+	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
+
+	//--------------------------------
+	// Form
 	private FormFieldType type;
 	private String formLabel = "&nbsp;";
-	private String columnDefinition = null;
 	private Object[] options = null;
 	private LinkedHashMap<?, ?> valueLabelOptions = null;
 	private boolean isDisabled = false;
 	
-	private CFWFieldChangeHandler changeHandler = null;
-	
-	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
-	private String name = "";
-	private Object value;
-	private String description = null;
-	
-	private ArrayList<String> invalidMessages;
-	
 	public enum FormFieldType{
 		TEXT, TEXTAREA, PASSWORD, NUMBER, EMAIL, HIDDEN, BOOLEAN, SELECT, WYSIWYG, DATEPICKER, DATETIMEPICKER, NONE
 	}
-		
+	
+	//--------------------------------
+	// API
+	private FormFieldType apiFieldType;
+	private boolean isAPIParameter = false;
+	private boolean isAPIReturn = false;
+	
+	//--------------------------------
+	// Database
+	private String columnDefinition = null;
+	
 	//###################################################################################
 	// CONSTRUCTORS
 	//###################################################################################
@@ -145,11 +157,13 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return new CFWField<Object[]>(Object[].class, type, fieldName)
 				.setColumnDefinition("ARRAY");
 	}
-		
-	//###################################################################################
-	// METHODS
-	//###################################################################################
 	
+	//###########################################################################################################
+	//###########################################################################################################
+	// HTML and Form Methods
+	//###########################################################################################################
+	//###########################################################################################################
+		
 	/***********************************************************************************
 	 * Create the HTML representation of this item.
 	 * @param StringBuilder to append the resulting html
@@ -158,9 +172,18 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	protected void createHTML(StringBuilder html) {
 
 		//---------------------------------------------
+		// Check Type
+		//---------------------------------------------
+		FormFieldType formFieldType = this.type;
+		if(this.parent instanceof BTForm && ((BTForm)this.parent).isAPIForm()) {
+			if(this.apiFieldType != null) {
+				formFieldType = this.apiFieldType;
+			}
+		}
+		//---------------------------------------------
 		// Create Form Group
 		//---------------------------------------------
-		if(type != FormFieldType.HIDDEN && type != FormFieldType.NONE) {
+		if(formFieldType != FormFieldType.HIDDEN && formFieldType != FormFieldType.NONE) {
 			
 			html.append("<div class=\"form-group row\">");
 			html.append("  <label class=\"col-sm-3 col-form-label\" for=\""+name+"\" >");
@@ -180,7 +203,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		if(isDisabled) {	this.addAttribute("disabled", "disabled");};
 		if(value != null) {	this.addAttribute("value", value.toString()); };
 		
-		switch(type) {
+		switch(formFieldType) {
 			case TEXT:  			html.append("<input type=\"text\" class=\"form-control\" "+this.getAttributesString()+"/>");
 									break;
 			
@@ -222,7 +245,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		//---------------------------------------------
 		// Close Form
 		//---------------------------------------------
-		if(type != FormFieldType.HIDDEN && type != FormFieldType.NONE) {
+		if(formFieldType != FormFieldType.HIDDEN && formFieldType != FormFieldType.NONE) {
 			html.append("</div>");
 			html.append("</div>");
 		}
@@ -416,12 +439,36 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		html.append("<textarea class=\"form-control\" "+this.getAttributesString()+">"+value+"</textarea>");
 	}
 	
+	/***********************************************************************************
+	 * Add an attribute to the html tag.
+	 * Adding a value for the same attribute multiple times will overwrite preceding values.
+	 * @param name the name of the attribute.
+	 * @param key the key of the attribute.
+	 * @return instance for chaining
+	 ***********************************************************************************/
+	@SuppressWarnings("unchecked")
+	public CFWField<T> addAttribute(String name, String value) {
+		return (CFWField<T>)super.addAttribute(name, value);
+	}
 	
+	/***********************************************************************************
+	 * Remove an attribute from the html tag.
+	 * Adding a value for the same attribute multiple times will overwrite preceeding values.
+	 * 
+	 * @param name the name of the attribute.
+	 * @return instance for chaining
+	 ***********************************************************************************/
+	@SuppressWarnings("unchecked")
+	public CFWField<T> removeAttribute(String name) {
+		return (CFWField<T>)super.removeAttribute(name);
+	}
 	
-	//######################################################################################
+	//###########################################################################################################
+	//###########################################################################################################
 	// IValidatable Implementation 
-	//######################################################################################
-	
+	//###########################################################################################################
+	//###########################################################################################################
+		
 	/*************************************************************************
 	 * Executes all validators added to this instance and validates the current
 	 * value.
@@ -490,30 +537,6 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return this;
 	}
 	
-	/***********************************************************************************
-	 * Add an attribute to the html tag.
-	 * Adding a value for the same attribute multiple times will overwrite preceding values.
-	 * @param name the name of the attribute.
-	 * @param key the key of the attribute.
-	 * @return instance for chaining
-	 ***********************************************************************************/
-	@SuppressWarnings("unchecked")
-	public CFWField<T> addAttribute(String name, String value) {
-		return (CFWField<T>)super.addAttribute(name, value);
-	}
-	
-	/***********************************************************************************
-	 * Remove an attribute from the html tag.
-	 * Adding a value for the same attribute multiple times will overwrite preceeding values.
-	 * 
-	 * @param name the name of the attribute.
-	 * @return instance for chaining
-	 ***********************************************************************************/
-	@SuppressWarnings("unchecked")
-	public CFWField<T> removeAttribute(String name) {
-		return (CFWField<T>)super.removeAttribute(name);
-	}
-
 	/******************************************************************************************************
 	 * Remove the validator from this field
 	 * 
@@ -522,6 +545,12 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public boolean removeValidator(IValidator o) {
 		return validatorArray.remove(o);
 	}
+	
+	//###########################################################################################################
+	//###########################################################################################################
+	// Getters and Setters
+	//###########################################################################################################
+	//###########################################################################################################
 	
 	/******************************************************************************************************
 	 * Set the name of this field.
@@ -613,6 +642,63 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public LinkedHashMap<?, ?> getValueLabelOptions() {
 		return valueLabelOptions;
 	}
+	
+	/******************************************************************************************************
+	 * Set this field as a parameter for the API.
+	 * Form field will be the default one.
+	 * 
+	 * @return instance for chaining
+	 ******************************************************************************************************/
+	public CFWField<T> enableAPIParameter() {
+		this.apiFieldType = type;
+		this.isAPIParameter = true;
+		return this;
+	}
+	
+	/******************************************************************************************************
+	 * Set this field as a parameter for the API.
+	 * 
+	 * @param type of the form field
+	 * @return instance for chaining
+	 ******************************************************************************************************/
+	public CFWField<T> enableAPIParameter(FormFieldType apiFieldType) {
+		this.apiFieldType = apiFieldType;
+		this.isAPIParameter = true;
+		return this;
+	}
+	
+	/******************************************************************************************************
+	 * Set this field as a value returned by the api.
+	 * 
+	 * @param array with values
+	 * @return instance for chaining
+	 ******************************************************************************************************/
+	public CFWField<T> setAPIReturn(boolean isAPIReturn) {
+		this.isAPIReturn = isAPIReturn;
+		return this;
+	}
+	
+	/******************************************************************************************************
+	 *
+	 ******************************************************************************************************/
+	public FormFieldType getAPIFormFieldType() {
+		return apiFieldType;
+	}
+	/******************************************************************************************************
+	 *
+	 ******************************************************************************************************/
+	public boolean isAPIReturnValue() {
+		return isAPIReturn;
+	}
+	
+	/******************************************************************************************************
+	 *
+	 ******************************************************************************************************/
+	public boolean isAPIParameter() {
+		return isAPIParameter;
+	}
+
+	
 
 	/******************************************************************************************************
 	 * Set values for selection fields. The string representations of the provided elements will be used. 

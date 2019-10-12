@@ -392,18 +392,29 @@ public class CFWStatement {
 		}
 		return this;
 	}
-	
+		
 	/****************************************************************
-	 * Adds an AND clause to the query.
+	 * Adds a AND clause to the query.
+	 * This method is case sensitive.
 	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public CFWStatement and(String fieldname, Object value) {
-		
+		return or(fieldname, value, true);
+	}
+	
+	/****************************************************************
+	 * Adds a WHERE clause to the query.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement and(String fieldname, Object value, boolean isCaseSensitive) {
 		if(!isQueryCached()) {
-			query.append(" AND "+fieldname).append(" = ?");
+			if(isCaseSensitive) {
+				query.append(" AND "+fieldname).append(" = ?");	
+			}else {
+				query.append(" AND LOWER("+fieldname).append(") = LOWER(?)");	
+			}
 		}
 		values.add(value);
-		
 		return this;
 	}
 	

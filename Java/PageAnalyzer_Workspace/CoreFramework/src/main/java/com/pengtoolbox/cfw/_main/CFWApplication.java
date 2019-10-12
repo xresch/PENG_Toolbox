@@ -36,8 +36,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import com.pengtoolbox.cfw._main.CFW.CLI;
-import com.pengtoolbox.cfw.exceptions.ShutdownException;
+import com.pengtoolbox.cfw.api.CFWAPIServlet;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
 import com.pengtoolbox.cfw.handlers.HTTPSRedirectHandler;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
@@ -247,6 +246,10 @@ public class CFWApplication {
 	        servletContextHandler.addServlet(LoginServlet.class, "/login");
 	        servletContextHandler.addServlet(LogoutServlet.class,  "/logout");
 	    }
+	    
+		//-----------------------------------------
+		// User Profile Servlets
+	    servletContextHandler.addServlet(CFWAPIServlet.class,  "/api");
 	    
 		//-----------------------------------------
 		// User Profile Servlets

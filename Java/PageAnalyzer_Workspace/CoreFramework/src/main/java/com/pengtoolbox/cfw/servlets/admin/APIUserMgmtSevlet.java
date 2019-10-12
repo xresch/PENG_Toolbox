@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
@@ -55,7 +55,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 		JSONResponse jsonResponse = new JSONResponse();
 		StringBuffer content = jsonResponse.getContent();
 
-		if(CFW.Context.Request.hasPermission(CFWDBPermission.CFW_USER_MANAGEMENT)) {
+		if(CFW.Context.Request.hasPermission(Permission.CFW_USER_MANAGEMENT)) {
 			
 			if (action == null) {
 				CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Parameter 'data' was not specified.");

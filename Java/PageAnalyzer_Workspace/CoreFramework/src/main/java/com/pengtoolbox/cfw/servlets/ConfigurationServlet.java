@@ -14,7 +14,7 @@ import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.config.Configuration;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
+import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
@@ -47,7 +47,7 @@ public class ConfigurationServlet extends HttpServlet
 		
 		StringBuffer content = html.getContent();
 		
-		if(CFW.Context.Request.hasPermission(CFWDBPermission.CFW_CONFIG_MANAGEMENT)) {
+		if(CFW.Context.Request.hasPermission(Permission.CFW_CONFIG_MANAGEMENT)) {
 			
 			content.append("<h1>Configuration Management</h1>");
 			

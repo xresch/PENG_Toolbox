@@ -93,10 +93,7 @@ function cfw_filterTable(searchField){
 
 
 /******************************************************************
- * Print the list of results found in the database.
- * 
- * @param parent JQuery object
- * @param data object containing the list of results.
+ * Creates a CFWTable.
  * 
  ******************************************************************/
  class CFWTable{
@@ -197,18 +194,95 @@ function cfw_filterTable(searchField){
 		 }else{
 			 parent.append(this.table);
 		 }
-		 
-
-		 
 	 }
-	 
-	 
-	 
 }
 
 function cfw_createTable(){
 	return new CFWTable();
 }
+
+/******************************************************************
+ * Creates a CFWPanel 
+ * 
+//	<div class="card">
+//	  <div class="card-header">
+//	    Featured
+//	  </div>
+//	  <div class="card-body">
+//	    <h5 class="card-title">Special title treatment</h5>
+//	    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+//	    <a href="#" class="btn btn-primary">Go somewhere</a>
+//	  </div>
+//	</div>
+ * 
+ ******************************************************************/
+CFW_GLOBAL_PANEL_COUNTER = 0;
+
+class CFWPanel{
+	
+	 constructor(style){
+		 
+		 //----------------------------
+	     // to be set by user
+		 this.title = "Default Title, use something like CFWPanel.title = $('<span>your title</span>'); to change. ";
+		 this.body = "Default Title, use something like CFWPanel.body = $('<span>your title</span>'); to change. ";
+		 
+		//----------------------------
+	     // to be set by user
+		 this.title = "";
+		 
+		 this.panel = $(document.createElement("div"));
+		 this.panel.addClass("card border-"+style);
+		 
+		 this.counter = CFW_GLOBAL_PANEL_COUNTER++;
+		
+		//----------------------------
+		// Create Header
+		this.panelHeader = $(document.createElement("div"));
+		this.panelHeader.addClass("card-header text-light bg-"+style);
+		this.panelHeader.attr("id", "panelHead"+this.counter);
+		this.panelHeader.attr("role", "button");
+		this.panelHeader.attr("data-toggle", "collapse");		
+		this.panelHeader.attr("data-target", "#collapse"+this.counter);			
+	 }
+		 
+	 /********************************************
+	  * Append the table to the jquery object.
+	  * @param parent JQuery object
+	  ********************************************/
+	 appendTo(parent){
+		  
+		//----------------------------
+		// Populate Header
+		this.panelHeader.html("");
+		this.panelHeader.append(this.title); 
+			
+		this.panel.append(this.panelHeader);
+
+		//----------------------------
+		// Create Collapse Container
+		var collapseContainer = $(document.createElement("div"));
+		collapseContainer.addClass("collapse");
+		collapseContainer.attr("id", "collapse"+this.counter);
+		//collapseContainer.attr("role", "tabpanel");
+		collapseContainer.attr("aria-labelledby", "panelHead"+this.counter);
+		
+		this.panel.append(collapseContainer);
+		
+		//----------------------------
+		// Create Body
+		var panelBody = $(document.createElement("div"));
+		panelBody.addClass("card-body");
+		collapseContainer.append(panelBody);
+		panelBody.append(this.body);
+		
+		
+		 parent.append(this.panel);
+		 
+		 
+		 
+	 }
+ }
 
 /******************************************************************
  * Print the list of results found in the database.
@@ -1043,13 +1117,16 @@ function cfw_getForm(formid, targetElement){
  * @param params to pass
  * @param targetElement the element in which the form should be placed
  *************************************************************************************/
-function cfw_createForm(url, params, targetElement){
+function cfw_createForm(url, params, targetElement, callback){
 
 	$.get(url, params)
 		  .done(function(response) {
 		      $(targetElement).html(response.payload.html);
 		      formID = $(targetElement).find('form').attr("id");
               eval("intializeForm_"+formID+"();");
+              if(callback != undefined){
+            	  callback(formID);
+              }
 		  })
 		  .fail(function(response) {
 			  console.error("Request failed: "+url);
