@@ -522,8 +522,8 @@ public class CFWDB {
 
 
 	/********************************************************************************************
-	 * Returns a jsonString with an array containing a json object for eeach row.
-	 * Returns an empty array 
+	 * Returns a jsonString with an array containing a json object for each row.
+	 * Returns an empty array in case of error.
 	 * 
 	 ********************************************************************************************/
 	public static String resultSetToJSON(ResultSet resultSet) {

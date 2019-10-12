@@ -537,7 +537,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public String getName() {
 		return name;
 	}
-	
+		
 	public String getLabel() {
 		return formLabel;
 	}
@@ -786,7 +786,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * 
 	 * @return class
 	 ******************************************************************************************************/
-	protected Class<T> getValueClass() {
+	public Class<T> getValueClass() {
 		return valueClass;
 	}
 

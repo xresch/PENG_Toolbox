@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 
@@ -20,6 +21,10 @@ public class CFWObject {
 	public CFWField<?> primaryField = null;
 	
 	private ArrayList<ForeignKeyDefinition> foreignKeys = new ArrayList<ForeignKeyDefinition>();
+	
+	private ArrayList<APIDefinition> apiDefinitionArray = new ArrayList<APIDefinition>();
+	private boolean isAPIExposed = true;
+	private boolean generateDefaultAPI = true;
 	
 	class ForeignKeyDefinition{
 		public String fieldname;
@@ -98,6 +103,16 @@ public class CFWObject {
 		return fields.get(name);
 	}
 	
+	public CFWField getFieldIgnoreCase(String name) {
+		
+		for(String current : fields.keySet()) {
+			if(current.toLowerCase().equals(name.toLowerCase())) {
+				return fields.get(current);
+			}
+		}
+		return null;
+	}
+	
 	public LinkedHashMap<String, CFWField<?>> getFields(){
 		return fields;
 	}
@@ -112,6 +127,28 @@ public class CFWObject {
 	}
 	
 	
+	public boolean isAPIExposed() {
+		return isAPIExposed;
+	}
+
+	public CFWObject isAPIExposed(boolean isAPIExposed) {
+		this.isAPIExposed = isAPIExposed;
+		return this;
+	}
+	
+	public boolean generateDefaultAPI() {
+		return generateDefaultAPI;
+	}
+
+	public CFWObject generateDefaultAPI(boolean generateDefaultAPI) {
+		this.generateDefaultAPI = generateDefaultAPI;
+		return this;
+	}
+	
+	
+	public ArrayList<APIDefinition> getAPIDefinitions() {
+		return null;
+	}
 
 	public CFWField getPrimaryField() {
 		return primaryField;

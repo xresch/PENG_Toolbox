@@ -215,7 +215,7 @@ function cfw_usermgmt_printUserList(data){
 			htmlString += '<td>'+current.EMAIL+'</td>';
 			htmlString += '<td>'+current.FIRSTNAME+'</td>';
 			htmlString += '<td>'+current.LASTNAME+'</td>';
-			htmlString += '<td>'+current.STATUS+'</td>';
+			htmlString += '<td><span class="badge badge-'+((current.STATUS.toLowerCase() == "active")? 'success' : 'danger') +'">'+current.STATUS+'</td>';
 			htmlString += '<td>'+current.DATE_CREATED+'</td>';
 			
 			//Edit Button

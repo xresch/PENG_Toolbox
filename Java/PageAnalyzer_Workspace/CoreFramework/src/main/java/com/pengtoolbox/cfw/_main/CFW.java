@@ -2,10 +2,11 @@ package com.pengtoolbox.cfw._main;
 
 import java.util.ArrayList;
 
-import com.pengtoolbox.cfw._main.CFW.DB.UserGroupMap;
+import com.pengtoolbox.cfw.api.CFWRegistryAPI;
 import com.pengtoolbox.cfw.cli.ArgumentsException;
 import com.pengtoolbox.cfw.cli.CFWCommandLineInterface;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.datahandling.CFWRegistryObjects;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.config.CFWDBConfig;
 import com.pengtoolbox.cfw.db.config.Configuration;
@@ -51,6 +52,8 @@ public class CFW {
 	public class Registry {
 		public class Components extends CFWRegistryComponents {} 
 		public class Objects extends CFWRegistryObjects {} 
+		public class API extends CFWRegistryAPI {}
+	
 	}
 	public class Time extends CFWTime {}
 	public class Validation extends CFWValidation {}
@@ -154,6 +157,23 @@ public class CFW {
 		//---------------------------
 		// Application Register
 		appToStart.register();
+		
+		//---------------------------
+		// Register APIs
+		ArrayList<CFWObject> objectArray = CFW.Registry.Objects.getCFWObjectInstances();
+		
+		for(CFWObject object : objectArray) {
+			if(object.isAPIExposed()) {
+				
+				CFW.Registry.API.addAll(object.getAPIDefinitions());
+				
+				if(object.generateDefaultAPI()) {
+					CFW.Registry.API.createDefaults(object);
+				}
+			}
+		}
+		System.out.println("============ API Registry Entries =============");
+		System.out.println(CFW.Registry.API.getJSONArray());
 	}
 	/***********************************************************************
 	 * Starts and initializes the Database. Iterates over all Objects in the 

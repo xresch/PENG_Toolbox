@@ -1,11 +1,9 @@
-package com.pengtoolbox.cfw._main;
+package com.pengtoolbox.cfw.datahandling;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 
 public class CFWRegistryObjects {
 	
