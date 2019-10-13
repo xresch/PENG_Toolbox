@@ -1,5 +1,6 @@
 package com.pengtoolbox.cfw.api;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -10,16 +11,17 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.datahandling.CFWStatement;
+import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.PlaintextResponse;
 
-public class APIDefinitionFetch extends APIDefinition{
+public class APIDefinitionSQL extends APIDefinition{
 	
 	private ReturnFormat format;
-	
-	public APIDefinitionFetch(Class<? extends CFWObject> clazz,
+	private APISQLExecutor executor;
+		
+	public APIDefinitionSQL(Class<? extends CFWObject> clazz,
 							  String apiName, 
 						      String actionName, 
 						      String[] inputFieldnames,
@@ -28,8 +30,7 @@ public class APIDefinitionFetch extends APIDefinition{
 
 		super(clazz, apiName, actionName, inputFieldnames, outputFieldnames);
 		this.format = format;
-		
-		this.setDescription("Standard API to fetch "+clazz.getSimpleName()+" data as "+format.toString()+". The provided parameters will be used to create a select statement with a WHERE ... AND clause. To retrieve everything leaf all the parameters empty.");
+		APIDefinitionSQL sqlAPIDef = this;
 		
 		this.setRequestHandler(new APIRequestHandler() {
 			
@@ -78,27 +79,18 @@ public class APIDefinitionFetch extends APIDefinition{
 				// Create Response
 				if(success) {
 					
-					CFWStatement statement = object.select(definition.getOutputFieldnames());
-					
-					for(int i = 0; i < affectedFields.size(); i++) {
-						CFWField<?> currentField = affectedFields.get(i);
-						if(i == 0) {
-							statement.where(currentField.getName(), currentField.getValue(), false);
-						}else {
-							statement.and(currentField.getName(), currentField.getValue(), false);
-						}
-					}
+					ResultSet result = executor.execute(sqlAPIDef, object);
 					 
 					if(format.equals(ReturnFormat.JSON)) {
-						json.getContent().append(statement.getAsJSON());
+						json.getContent().append(CFWDB.resultSetToJSON(result));
 					}else if(format.equals(ReturnFormat.CSV)){		
 						PlaintextResponse plaintext = new PlaintextResponse();
+						plaintext.getContent().append(CFWDB.resultSetToCSV(result, ";"));
 						
-						plaintext.getContent().append(statement.getAsCSV());
 					}else if(format.equals(ReturnFormat.XML)){		
 						PlaintextResponse plaintext = new PlaintextResponse();
 						
-						plaintext.getContent().append(statement.getAsXML());
+						plaintext.getContent().append(CFWDB.resultSetToXML(result));
 					}
 					
 				}else {
@@ -110,5 +102,13 @@ public class APIDefinitionFetch extends APIDefinition{
 			}
 		});		
 	}
+
+
+
+	public void setSQLExecutor(APISQLExecutor executor) {
+		this.executor = executor;
+	}
+	
+	
 
 }

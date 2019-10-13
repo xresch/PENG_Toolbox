@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
-import com.pengtoolbox.cfw.api.APIDefinitionFetch.ReturnFormat;
+import com.pengtoolbox.cfw.api.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
@@ -32,11 +32,13 @@ public class Group extends CFWObject {
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, GroupFields.PK_ID.toString())
 			.setPrimaryKeyAutoIncrement(this)
+			.setDescription("The id of the group.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, GroupFields.NAME.toString())
 			.setColumnDefinition("VARCHAR(255) UNIQUE")
+			.setDescription("The name of the group.")
 			.addValidator(new LengthValidator(1, 255))
 			.setChangeHandler(new CFWFieldChangeHandler<String>() {
 				public boolean handle(String oldValue, String newValue) {
@@ -52,14 +54,17 @@ public class Group extends CFWObject {
 	
 	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, GroupFields.DESCRIPTION.toString())
 			.setColumnDefinition("CLOB")
+			.setDescription("The description of the group.")
 			.addValidator(new LengthValidator(-1, 2000000));
 	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, GroupFields.IS_DELETABLE.toString())
+			.setDescription("Flag to define if the group can be deleted or not.")
 			.setColumnDefinition("BOOLEAN")
 			.setValue(true);
 	
 	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, GroupFields.IS_RENAMABLE.toString())
 			.setColumnDefinition("BOOLEAN DEFAULT TRUE")
+			.setDescription("Flag to define if the group can be renamed or not.")
 			.setValue(true)
 			.setChangeHandler(new CFWFieldChangeHandler<Boolean>() {
 				

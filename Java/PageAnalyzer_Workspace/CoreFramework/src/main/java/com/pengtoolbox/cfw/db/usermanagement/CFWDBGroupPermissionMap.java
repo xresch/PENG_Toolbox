@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.datahandling.CFWStatement;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.GroupPermissionMap.GroupPermissionMapFields;
-import com.pengtoolbox.cfw.db.usermanagement.Permission.PermissionFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWDBGroupPermissionMap {
@@ -18,28 +18,6 @@ public class CFWDBGroupPermissionMap {
 	public static Logger logger = CFWLog.getLogger(CFWDBGroupPermissionMap.class.getName());
 	
 
-
-	/********************************************************************************************
-	 * Creates the table and default admin user if not already exists.
-	 * This method is executed by CFW.DB.initialize().
-	 * 
-	 ********************************************************************************************/
-	public static void initializeTable() {
-			
-		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+"("
-							  + GroupPermissionMapFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
-							  + GroupPermissionMapFields.FK_ID_GROUP + " INT, "
-							  + GroupPermissionMapFields.FK_ID_PERMISSION + " INT, "
-							  + "FOREIGN KEY ("+GroupPermissionMapFields.FK_ID_GROUP+") REFERENCES "+Group.TABLE_NAME+"("+Group.GroupFields.PK_ID+") ON DELETE CASCADE, "
-							  + "FOREIGN KEY ("+GroupPermissionMapFields.FK_ID_PERMISSION+") REFERENCES "+Permission.TABLE_NAME+"("+PermissionFields.PK_ID+") ON DELETE CASCADE"
-							  + ");";
-		
-		CFWDB.preparedExecute(createTableSQL);
-		
-		String addColumnSQL = "ALTER TABLE "+TABLE_NAME+" ADD COLUMN IF NOT EXISTS "+GroupPermissionMapFields.IS_DELETABLE+" BOOLEAN NOT NULL DEFAULT TRUE;";
-		CFWDB.preparedExecute(addColumnSQL);
-	}
-	
 	/********************************************************************************************
 	 * Adds the permission to the specified group.
 	 * @param permission
@@ -288,7 +266,6 @@ public class CFWDBGroupPermissionMap {
 	
 	}
 	
-	
 	/***************************************************************
 	 * Retrieve the permissions for the specified user.
 	 * @param group
@@ -296,25 +273,9 @@ public class CFWDBGroupPermissionMap {
 	 ****************************************************************/
 	public static HashMap<String, Permission> selectPermissionsForUser(User user) {
 		
-		if( user == null) {
-			new CFWLog(logger)
-				.method("create")
-				.severe("The user cannot be null.");
-			return null;
-		}
-		
-		String selectPermissionsForUser = 
-				"SELECT P.* "
-				+"FROM CFW_PERMISSION P "
-				+"JOIN CFW_GROUP_PERMISSION_MAP AS GP ON GP.FK_ID_PERMISSION = P.PK_ID "
-				+"JOIN CFW_USER_GROUP_MAP AS UG ON UG.FK_ID_GROUP = GP.FK_ID_GROUP "
-				+"WHERE UG.FK_ID_USER = ?;";
-		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectPermissionsForUser, 
-				user.id());
+		ResultSet result = selectPermissionsForUserResultSet(user);
 		
 		HashMap<String, Permission> permissionMap = new HashMap<String, Permission>(); 
-		
 		try {
 			while(result != null && result.next()) {
 				Permission permission = new Permission(result);
@@ -330,6 +291,53 @@ public class CFWDBGroupPermissionMap {
 		}
 		
 		return permissionMap;
+		
+	}
+	
+	/***************************************************************
+	 * Retrieve the permissions for the specified user.
+	 * @param group
+	 * @return Hashmap with permissions(key=group name), or null on exception
+	 ****************************************************************/
+	public static ResultSet selectPermissionsForUserResultSet(User user) {
+		
+		if( user == null) {
+			new CFWLog(logger)
+				.method("create")
+				.severe("The user cannot be null.");
+			return null;
+		}
+		
+		return new CFWStatement(user).custom(
+		//String selectPermissionsForUser = 
+				"SELECT P.* "
+				+"FROM CFW_PERMISSION P "
+				+"JOIN CFW_GROUP_PERMISSION_MAP AS GP ON GP.FK_ID_PERMISSION = P.PK_ID "
+				+"JOIN CFW_USER_GROUP_MAP AS UG ON UG.FK_ID_GROUP = GP.FK_ID_GROUP "
+				+"WHERE UG.FK_ID_USER = ?;", user.id())
+				.getResultSet();
+		
+		
+//		ResultSet result = CFWDB.preparedExecuteQuery(selectPermissionsForUser, 
+//				user.id());
+//		
+//		HashMap<String, Permission> permissionMap = new HashMap<String, Permission>(); 
+//		
+//		try {
+//			while(result != null && result.next()) {
+//				Permission permission = new Permission(result);
+//				permissionMap.put(permission.name(), permission);
+//			}
+//		} catch (SQLException e) {
+//			new CFWLog(logger)
+//			.method("selectGroupsForUser")
+//			.severe("Error while selecting permissions for the group '"+user.username()+"'.", e);
+//			return null;
+//		}finally {
+//			CFWDB.close(result);
+//		}
+//		
+//		return permissionMap;
 	
 	}
 	/***************************************************************

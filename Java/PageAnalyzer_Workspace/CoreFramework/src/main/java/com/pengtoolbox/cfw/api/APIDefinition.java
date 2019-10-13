@@ -132,35 +132,41 @@ public class APIDefinition {
 		
 		//-----------------------------------
 		//resolve parameters
-		json.append("\", \"params\"").append(": [");
+		if(inputFieldnames != null) {
+			json.append("\", \"params\"").append(": [");
+				
+			for(String name : inputFieldnames) {
+				CFWField field = instance.getField(name);
+				json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())
+				.append("\", \"type\"").append(": \"").append(field.getValueClass().getSimpleName())
+				.append("\", \"description\"").append(": \"").append(field.getDescription()).append("\"},");
+			}
 			
-		for(String name : inputFieldnames) {
-			CFWField field = instance.getField(name);
-			json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())
-			.append("\", \"type\"").append(": \"").append(field.getValueClass().getSimpleName())
-			.append("\", \"description\"").append(": \"").append(field.getDescription()).append("\"},");
+			if(inputFieldnames.length > 0) {
+				json.deleteCharAt(json.length()-1); //remove last comma
+			}
+			json.append("]");
 		}
-		
-		if(inputFieldnames.length > 0) {
-			json.deleteCharAt(json.length()-1); //remove last comma
-		}
-		json.append("]");
 		
 		//-----------------------------------
 		//resolve parameters
-		json.append(", \"returnValues\"").append(": [");
+		if(outputFieldnames != null) {
+			json.append(", \"returnValues\"").append(": [");
+				
+			for(String name : outputFieldnames) {
+				CFWField field = instance.getField(name);
+				json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())
+				.append("\", \"type\"").append(": \"").append(field.getValueClass().getSimpleName())
+				.append("\", \"description\"").append(": \"").append(field.getDescription()).append("\"},");
+			}
 			
-		for(String name : outputFieldnames) {
-			CFWField field = instance.getField(name);
-			json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())
-			.append("\", \"type\"").append(": \"").append(field.getValueClass().getSimpleName())
-			.append("\", \"description\"").append(": \"").append(field.getDescription()).append("\"},");
+			if(outputFieldnames.length > 0) {
+				json.deleteCharAt(json.length()-1); //remove last comma
+			}
+			
+			json.append("]");
+			
 		}
-		
-		if(inputFieldnames.length > 0) {
-			json.deleteCharAt(json.length()-1); //remove last comma
-		}
-		json.append("]");
 		
 		json.append("}");
 		return json.toString();

@@ -17,29 +17,6 @@ public class CFWDBUserGroupMap {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBUserGroupMap.class.getName());
 	
-
-
-	/********************************************************************************************
-	 * Creates the table and default admin user if not already exists.
-	 * This method is executed by CFW.DB.initialize().
-	 * 
-	 ********************************************************************************************/
-	public static void initializeTable() {
-			
-		String createTableSQL = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+"("
-							  + UserGroupMapFields.PK_ID + " INT PRIMARY KEY AUTO_INCREMENT, "
-							  + UserGroupMapFields.FK_ID_USER + " INT, "
-							  + UserGroupMapFields.FK_ID_GROUP + " INT, "
-							  + "FOREIGN KEY ("+UserGroupMapFields.FK_ID_USER+") REFERENCES "+User.TABLE_NAME+"("+UserFields.PK_ID+") ON DELETE CASCADE, "
-							  + "FOREIGN KEY ("+UserGroupMapFields.FK_ID_GROUP+") REFERENCES "+Group.TABLE_NAME+"("+Group.GroupFields.PK_ID+") ON DELETE CASCADE"
-							  + ");";
-		
-		CFWDB.preparedExecute(createTableSQL);
-		
-		String addColumnSQL = "ALTER TABLE "+TABLE_NAME+" ADD COLUMN IF NOT EXISTS "+UserGroupMapFields.IS_DELETABLE+" BOOLEAN NOT NULL DEFAULT TRUE;";
-		CFWDB.preparedExecute(addColumnSQL);
-				
-	}
 	
 	/********************************************************************************************
 	 * Adds the user to the specified group.

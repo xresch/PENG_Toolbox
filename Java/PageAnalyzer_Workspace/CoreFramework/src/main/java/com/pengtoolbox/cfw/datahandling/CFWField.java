@@ -173,12 +173,18 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		//---------------------------------------------
 		// Check Type
 		//---------------------------------------------
-
 		FormFieldType formFieldType = this.type;
-		if(this.parent instanceof BTForm && ((BTForm)this.parent).isAPIForm()) {
-			if(this.apiFieldType != null) {
+		if(this.parent instanceof BTForm) {
+			
+			// Use normal fieldType if apiFieldType is not defined
+			if(((BTForm)this.parent).isAPIForm() && this.apiFieldType != null) {
 				formFieldType = this.apiFieldType;
+			}
+			
+			if ( ((BTForm)this.parent).isEmptyForm() && !this.name.contentEquals("cfw-formID") ){
+				// Set Value to num
 				value = null;
+				
 				if(this.options != null) {
 					Object[] copy = new Object[options.length + 1];
 					System.arraycopy(options, 0, copy, 0, options.length);
@@ -186,6 +192,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					options[options.length-1] = null;
 				}
 			}
+			
 		}
 		//---------------------------------------------
 		// Create Form Group

@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
-import com.pengtoolbox.cfw.api.APIDefinitionFetch.ReturnFormat;
+import com.pengtoolbox.cfw.api.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -57,18 +57,18 @@ public class Configuration extends CFWObject {
 											.setDescription("A description of the configuration.")
 											.addValidator(new LengthValidator(-1, 4096));
 	
-	private CFWField<String> type = CFWField.newString(FormFieldType.TEXT, ConfigFields.TYPE.toString())
+	private CFWField<String> type = CFWField.newString(FormFieldType.SELECT, ConfigFields.TYPE.toString())
 			.setColumnDefinition("VARCHAR(32)")
 			.setDescription("The form field type of the configuration.")
+			.setOptions(FormFieldType.values())
 			.addValidator(new LengthValidator(1, 32));
 	
 	private CFWField<String> value = CFWField.newString(FormFieldType.TEXT, ConfigFields.VALUE.toString())
 			.setColumnDefinition("VARCHAR(1024)")
 			.setDescription("The current value of the field. Can be null.")
-			.addValidator(new LengthValidator(1, 1024))
-			;
+			.addValidator(new LengthValidator(1, 1024));
 	
-	private CFWField<Object[]> options = CFWField.newArray(FormFieldType.TEXT, ConfigFields.OPTIONS.toString())
+	private CFWField<Object[]> options = CFWField.newArray(FormFieldType.NONE, ConfigFields.OPTIONS.toString())
 			.setColumnDefinition("ARRAY")
 			.setDescription("The options available for the configuration(optional field).");
 	

@@ -163,59 +163,62 @@ function cfw_apioverview_printOverview(data){
 				//----------------------------
 				// Create Parameter Table
 				
-				content.append('<h3>Parameters:</h3>');
-				
-				var cfwTable = CFW.ui.createTable();
-				cfwTable.isNarrow = true;
-				cfwTable.isHover = true;
-				cfwTable.isResponsive = true;
-				cfwTable.isStriped = true;
-				cfwTable.filter(false);
-				
-				cfwTable.addHeaders(['Name','Type','Description']);
-				
-				htmlRows = '';
-				for(var j = 0; j < sub.params.length; j++){
-					//{"name": "pk_id", "type": "Integer", "description": "null"}
-					paramDef = sub.params[j];
-					htmlRows += '<tr>'
-					htmlRows += '<td>'+paramDef.name+'</td>';
-					htmlRows += '<td>'+paramDef.type+'</td>';
-					htmlRows += '<td>'+((paramDef.description != "null") ? paramDef.description : '') +'</td>';
-					htmlRows += '</tr>'
+				if(sub.params != undefined){
+					content.append('<h3>Parameters:</h3>');
 					
+					var cfwTable = CFW.ui.createTable();
+					cfwTable.isNarrow = true;
+					cfwTable.isHover = true;
+					cfwTable.isResponsive = true;
+					cfwTable.isStriped = true;
+					cfwTable.filter(false);
+					
+					cfwTable.addHeaders(['Name','Type','Description']);
+					
+					htmlRows = '';
+					for(var j = 0; j < sub.params.length; j++){
+						//{"name": "pk_id", "type": "Integer", "description": "null"}
+						paramDef = sub.params[j];
+						htmlRows += '<tr>'
+						htmlRows += '<td>'+paramDef.name+'</td>';
+						htmlRows += '<td>'+paramDef.type+'</td>';
+						htmlRows += '<td>'+((paramDef.description != "null") ? paramDef.description : '') +'</td>';
+						htmlRows += '</tr>'
+						
+					}
+	
+					cfwTable.addRows(htmlRows);
+					cfwTable.appendTo(content);
 				}
-
-				cfwTable.addRows(htmlRows);
-				cfwTable.appendTo(content);
-				
 				//----------------------------
 				// Create Return Value
-				content.append('<h3>Return Values:</h3>');
-				
-				var returnTable = CFW.ui.createTable();
-				returnTable.isNarrow = true;
-				returnTable.isHover = true;
-				returnTable.isResponsive = true;
-				returnTable.isStriped = true;
-				returnTable.filter(false);
-				
-				returnTable.addHeaders(['Name','Type','Description']);
-				
-				htmlRows = '';
-				for(var j = 0; j < sub.params.length; j++){
-					//{"name": "pk_id", "type": "Integer", "description": "null"}
-					returnValue = sub.returnValues[j];
-					htmlRows += '<tr>'
-					htmlRows += '<td>'+returnValue.name+'</td>';
-					htmlRows += '<td>'+returnValue.type+'</td>';
-					htmlRows += '<td>'+((returnValue.description != "null") ? returnValue.description : '') +'</td>';
-					htmlRows += '</tr>'
+				if(sub.returnValues != undefined){
+					content.append('<h3>Return Values:</h3>');
 					
+					var returnTable = CFW.ui.createTable();
+					returnTable.isNarrow = true;
+					returnTable.isHover = true;
+					returnTable.isResponsive = true;
+					returnTable.isStriped = true;
+					returnTable.filter(false);
+					
+					returnTable.addHeaders(['Name','Type','Description']);
+					
+					htmlRows = '';
+					for(var j = 0; j < sub.returnValues.length; j++){
+						//{"name": "pk_id", "type": "Integer", "description": "null"}
+						returnValue = sub.returnValues[j];
+						htmlRows += '<tr>'
+						htmlRows += '<td>'+returnValue.name+'</td>';
+						htmlRows += '<td>'+returnValue.type+'</td>';
+						htmlRows += '<td>'+((returnValue.description != "null") ? returnValue.description : '') +'</td>';
+						htmlRows += '</tr>'
+						
+					}
+	
+					returnTable.addRows(htmlRows);
+					returnTable.appendTo(content);
 				}
-
-				returnTable.addRows(htmlRows);
-				returnTable.appendTo(content);
 
 				//----------------------------
 				// Create Example Button

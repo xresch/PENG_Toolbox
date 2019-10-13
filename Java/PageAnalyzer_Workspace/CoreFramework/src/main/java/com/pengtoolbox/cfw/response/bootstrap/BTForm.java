@@ -34,6 +34,7 @@ public class BTForm extends HierarchicalHTMLItem {
 	
 	private BTFormHandler formHandler = null;
 	private boolean isAPIForm = false;
+	private boolean isEmptyForm = false;
 	
 	public BTForm(String formID, String submitLabel) {
 		
@@ -171,10 +172,19 @@ public class BTForm extends HierarchicalHTMLItem {
 
 	public void isAPIForm(boolean isAPIForm) {
 		this.isAPIForm = isAPIForm;
+		this.isEmptyForm = true;
 	}
 	
 	public boolean isAPIForm() {
-		return isAPIForm ;
+		return isAPIForm;
+	}
+	
+	public void isEmptyForm(boolean isAPIForm) {
+		this.isEmptyForm = isEmptyForm;
+	}
+	
+	public boolean isEmptyForm() {
+		return isEmptyForm ;
 	}
 
 	public boolean mapRequestParameters(HttpServletRequest request) {

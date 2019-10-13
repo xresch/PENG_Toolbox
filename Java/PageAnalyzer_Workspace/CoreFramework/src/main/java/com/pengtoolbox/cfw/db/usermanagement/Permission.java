@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
-import com.pengtoolbox.cfw.api.APIDefinitionFetch.ReturnFormat;
+import com.pengtoolbox.cfw.api.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
@@ -34,11 +34,13 @@ public class Permission extends CFWObject{
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, PermissionFields.PK_ID.toString())
 									.setPrimaryKeyAutoIncrement(this)
+									.setDescription("The id of the permission.")
 									.apiFieldType(FormFieldType.NUMBER)
 									.setValue(-999);
 	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, PermissionFields.NAME.toString())
 									.setColumnDefinition("VARCHAR(255) UNIQUE")
+									.setDescription("The name of the permission.")
 									.addValidator(new LengthValidator(1, 255))
 									.setChangeHandler(new CFWFieldChangeHandler<String>() {
 										public boolean handle(String oldValue, String newValue) {
@@ -54,12 +56,13 @@ public class Permission extends CFWObject{
 	
 	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, PermissionFields.DESCRIPTION.toString())
 											.setColumnDefinition("CLOB")
+											.setDescription("The description of the permission.")
 											.addValidator(new LengthValidator(-1, 2000000));
 	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, PermissionFields.IS_DELETABLE.toString())
 											.setColumnDefinition("BOOLEAN")
+											.setDescription("Flag to define if the permission can be deleted or not.")
 											.setValue(true);
-
 
 	public Permission() {
 		initializeFields();

@@ -1,6 +1,5 @@
 package com.pengtoolbox.cfw.db.usermanagement;
 
-import java.lang.annotation.RetentionPolicy;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -12,7 +11,9 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
-import com.pengtoolbox.cfw.api.APIDefinitionFetch.ReturnFormat;
+import com.pengtoolbox.cfw.api.APIDefinitionSQL;
+import com.pengtoolbox.cfw.api.APISQLExecutor;
+import com.pengtoolbox.cfw.api.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
@@ -105,6 +106,7 @@ public class User extends CFWObject {
 	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, UserFields.IS_DELETABLE)
 			.setValue(true)
+			.setDescription("Flag to define if the user can be deleted or not.")
 			.setChangeHandler(new CFWFieldChangeHandler<Boolean>() {
 				@Override
 				public boolean handle(Boolean oldValue, Boolean newValue) {
@@ -121,6 +123,7 @@ public class User extends CFWObject {
 
 	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, UserFields.IS_RENAMABLE)
 			.setValue(true)
+			.setDescription("Flag to define if the user can be renamed or not.")
 			.setChangeHandler(new CFWFieldChangeHandler<Boolean>() {
 				
 				@Override
@@ -137,7 +140,7 @@ public class User extends CFWObject {
 	
 	//Username and password is managed in another source, like LDAP or CSV
 	private CFWField<Boolean> isForeign = CFWField.newBoolean(FormFieldType.BOOLEAN, UserFields.IS_FOREIGN)
-					.setDescription("Foreign users are managed by other authentication providers like LDAP. Password in database is ignored.")
+					.setDescription("Foreign users are managed by other authentication providers like LDAP. Password in database is ignored when a foreign authentication provider is used.")
 					.setValue(false);
 	
 	private boolean hasUsernameChanged = false;
@@ -228,8 +231,6 @@ public class User extends CFWObject {
 			.severe("User 'admin' was not found in the database.");
 		}
 		
-		
-		
 		//-----------------------------------------
 		// Add Admin to group Superuser
 		//-----------------------------------------
@@ -285,6 +286,8 @@ public class User extends CFWObject {
 						UserFields.LASTNAME.toString(),
 						UserFields.STATUS.toString(),
 						UserFields.DATE_CREATED.toString(),
+						UserFields.IS_DELETABLE.toString(),
+						UserFields.IS_RENAMABLE.toString(),
 						UserFields.IS_FOREIGN.toString()
 		
 				};
@@ -330,6 +333,32 @@ public class User extends CFWObject {
 				);
 		
 		apis.add(fetchXMLAPI);
+		
+		//----------------------------------
+		// getPermissionsAPIJSON
+		APIDefinitionSQL getPermissionsAPIJSON = 
+				new APIDefinitionSQL(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"getUserPermissionsJSON",
+						new String[] {UserFields.PK_ID.toString()},
+						null,
+						ReturnFormat.JSON
+				);
+		
+		APISQLExecutor executor = new APISQLExecutor() {
+			@Override
+			public ResultSet execute(APIDefinitionSQL definition, CFWObject object) {
+				
+				return CFW.DB.GroupPermissionMap.selectPermissionsForUserResultSet((User)object);
+			}
+		};
+			
+		getPermissionsAPIJSON.setSQLExecutor(executor);
+		
+		apis.add(getPermissionsAPIJSON);
+		
+		
 		return apis;
 	}
 	

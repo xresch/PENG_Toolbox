@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
-import com.pengtoolbox.cfw.api.APIDefinitionFetch.ReturnFormat;
+import com.pengtoolbox.cfw.api.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -29,21 +29,25 @@ public class GroupPermissionMap extends CFWObject {
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, GroupPermissionMapFields.PK_ID)
 			.setPrimaryKeyAutoIncrement(this)
+			.setDescription("The id of the mapping.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 		
 	private CFWField<Integer> foreignKeyGroup = CFWField.newInteger(FormFieldType.HIDDEN, GroupPermissionMapFields.FK_ID_GROUP)
 			.setForeignKeyCascade(this, Group.class, GroupFields.PK_ID)
+			.setDescription("The id of the group.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
 	private CFWField<Integer> foreignKeyPermission = CFWField.newInteger(FormFieldType.HIDDEN, GroupPermissionMapFields.FK_ID_PERMISSION)
 			.setForeignKeyCascade(this, Permission.class, GroupPermissionMapFields.PK_ID)
+			.setDescription("The id of the permission.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.HIDDEN, GroupPermissionMapFields.IS_DELETABLE)
 			.setColumnDefinition("BOOLEAN")
+			.setDescription("Flag to define if the mapping can be deleted or not.")
 			.setValue(true);
 	
 	public GroupPermissionMap() {
