@@ -399,7 +399,7 @@ public class CFWStatement {
 	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public CFWStatement and(String fieldname, Object value) {
-		return or(fieldname, value, true);
+		return and(fieldname, value, true);
 	}
 	
 	/****************************************************************
