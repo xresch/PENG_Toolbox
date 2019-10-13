@@ -295,6 +295,8 @@ public class User extends CFWObject {
 		
 				};
 
+		//----------------------------------
+		// fetchJSON
 		APIDefinitionFetch fetchJsonAPI = 
 				new APIDefinitionFetch(
 						this.getClass(),
@@ -307,6 +309,8 @@ public class User extends CFWObject {
 		
 		apis.add(fetchJsonAPI);
 		
+		//----------------------------------
+		// fetchCSV
 		APIDefinitionFetch fetchCSVAPI = 
 				new APIDefinitionFetch(
 						this.getClass(),
@@ -319,6 +323,19 @@ public class User extends CFWObject {
 		
 		apis.add(fetchCSVAPI);
 		
+		//----------------------------------
+		// fetchXML
+		APIDefinitionFetch fetchXMLAPI = 
+				new APIDefinitionFetch(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"fetchXML",
+						inputFields,
+						outputFields,
+						ReturnFormat.XML
+				);
+		
+		apis.add(fetchXMLAPI);
 		return apis;
 	}
 	

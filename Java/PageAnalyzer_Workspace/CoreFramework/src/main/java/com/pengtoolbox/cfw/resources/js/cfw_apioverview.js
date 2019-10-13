@@ -39,7 +39,14 @@ function cfw_apioverview_formResult(data, status, xhr){
 	hljs.highlightBlock(sampleURL.get(0));
 	
 	//-------------------------------
-	// Sample response
+	// Sample CURL
+	curl = $('#cfw-apioverview-samplecurl');
+	cookie = CFW.http.readCookie("JSESSIONID");
+	curlString = 'curl -H "Cookie: JSESSIONID='+cookie+'" -X GET "'+url+'"';
+	curl.text(curlString);
+	hljs.highlightBlock(curl.get(0));
+	//-------------------------------
+	// Sample Response
 	responseElement = $('#cfw-apioverview-response');
 	responseElement.html('');
     
@@ -78,6 +85,9 @@ function cfw_apioverview_createExample(apiName, actionName){
 	//-----------------------------------
 	allDiv.append('<h4>URL:</h4>');
 	allDiv.append('<pre class="m-3" style="height: 50px;" ><code id="cfw-apioverview-sampleurl"></code></pre>');
+	
+	allDiv.append('<h4>CURL:</h4>');
+	allDiv.append('<pre class="m-3" style="height: 50px;" ><code id="cfw-apioverview-samplecurl"></code></pre>');
 	
 	allDiv.append('<h4>Response:</h4>');
 	allDiv.append('<pre class="m-3" style="max-height: 400px; display:block; white-space:pre-wrap" ><code id="cfw-apioverview-response"></code></pre>');

@@ -20,7 +20,7 @@ import com.pengtoolbox.cfw.response.PlaintextResponse;
 public class APIDefinitionFetch extends APIDefinition{
 	
 	public enum ReturnFormat{
-		JSON, CSV
+		JSON, CSV, XML
 	}
 	
 	private ReturnFormat format;
@@ -100,8 +100,11 @@ public class APIDefinitionFetch extends APIDefinition{
 						PlaintextResponse plaintext = new PlaintextResponse();
 						
 						plaintext.getContent().append(statement.getAsCSV());
+					}else if(format.equals(ReturnFormat.XML)){		
+						PlaintextResponse plaintext = new PlaintextResponse();
+						
+						plaintext.getContent().append(statement.getAsXML());
 					}
-					
 					
 				}else {
 					response.setStatus(HttpStatus.BAD_REQUEST_400);

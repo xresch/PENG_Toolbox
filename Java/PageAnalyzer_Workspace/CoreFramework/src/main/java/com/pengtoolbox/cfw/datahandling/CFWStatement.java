@@ -681,7 +681,7 @@ public class CFWStatement {
 	}
 	
 	/***************************************************************
-	 * Execute the Query and gets the result as JSON string.
+	 * Execute the Query and gets the result as CSV string.
 	 ****************************************************************/
 	public String getAsCSV() {
 		
@@ -694,6 +694,19 @@ public class CFWStatement {
 		
 	}
 	
+	/***************************************************************
+	 * Execute the Query and gets the result as XML string.
+	 ****************************************************************/
+	public String getAsXML() {
+		
+		if(this.execute()) {
+			return CFWDB.resultSetToXML(result);
+		}
+		CFWDB.close(result);
+		
+		return "";
+		
+	}
 	
 	
 }

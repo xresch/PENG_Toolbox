@@ -638,6 +638,57 @@ public class CFWDB {
 	}
 	
 	/********************************************************************************************
+	 * Returns a jsonString with an array containing a json object for each row.
+	 * Returns an empty array in case of error.
+	 * 
+	 ********************************************************************************************/
+	public static String resultSetToXML(ResultSet resultSet) {
+		StringBuffer json = new StringBuffer();
+		
+		try {
+			
+			if(resultSet == null) {
+				return "<data></data>";
+			}
+			//--------------------------------------
+			// Check has results
+			resultSet.beforeFirst();
+			if(!resultSet.isBeforeFirst()) {
+				return "<data></data>";
+			}
+			
+			//--------------------------------------
+			// Iterate results
+			ResultSetMetaData metadata = resultSet.getMetaData();
+			int columnCount = metadata.getColumnCount();
+	
+			json.append("<data>\n");
+			while(resultSet.next()) {
+				json.append("\t<record>\n");
+				for(int i = 1 ; i <= columnCount; i++) {
+					String column = metadata.getColumnLabel(i);
+					json.append("\t\t<").append(column).append(">");
+					
+					String value = resultSet.getString(i);
+					json.append(value);
+					json.append("</").append(column).append(">\n");
+				}
+				json.append("\t</record>\n");
+			}
+			json.append("</data>");
+			
+		} catch (SQLException e) {
+				new CFWLog(logger)
+					.method("resultSetToXML")
+					.severe("Exception occured while converting ResultSet to XML.", e);
+				
+				return "<data></data>";
+		}
+
+		return json.toString();
+	}
+	
+	/********************************************************************************************
 	 * Create Testdata for testing purposes
 	 ********************************************************************************************/
 	public static void createTestData() {
