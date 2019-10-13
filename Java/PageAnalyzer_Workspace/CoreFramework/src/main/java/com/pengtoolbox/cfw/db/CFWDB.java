@@ -579,6 +579,65 @@ public class CFWDB {
 	}
 	
 	/********************************************************************************************
+	 * Returns a jsonString with an array containing a json object for each row.
+	 * Returns an empty array in case of error.
+	 * 
+	 ********************************************************************************************/
+	public static String resultSetToCSV(ResultSet resultSet, String delimiter) {
+		StringBuffer csv = new StringBuffer();
+		
+		try {
+			
+			if(resultSet == null) {
+				return "";
+			}
+			//--------------------------------------
+			// Check has results
+			resultSet.beforeFirst();
+			if(!resultSet.isBeforeFirst()) {
+				return "";
+			}
+			
+			//--------------------------------------
+			// Iterate results
+			ResultSetMetaData metadata = resultSet.getMetaData();
+			int columnCount = metadata.getColumnCount();
+			
+			for(int i = 1 ; i <= columnCount; i++) {
+				csv.append("\"")
+				   .append(metadata.getColumnLabel(i))
+				   .append("\"")
+				   .append(delimiter);
+			}
+			csv.deleteCharAt(csv.length()-1); //remove last comma
+			csv.append("\r\n");
+			while(resultSet.next()) {
+				for(int i = 1 ; i <= columnCount; i++) {
+					
+					String value = resultSet.getString(i);
+					csv.append("\"")
+					   .append(CFW.JSON.escapeString(value))
+					   .append("\"")
+					   .append(delimiter);
+				}
+				csv.deleteCharAt(csv.length()-1); //remove last comma
+				csv.append("\r\n");
+			}
+			csv.deleteCharAt(csv.length()-1); //remove last comma
+
+			
+		} catch (SQLException e) {
+				new CFWLog(logger)
+					.method("resultSetToCSV")
+					.severe("Exception occured while converting ResultSet to CSV.", e);
+				
+				return "";
+		}
+
+		return csv.toString();
+	}
+	
+	/********************************************************************************************
 	 * Create Testdata for testing purposes
 	 ********************************************************************************************/
 	public static void createTestData() {

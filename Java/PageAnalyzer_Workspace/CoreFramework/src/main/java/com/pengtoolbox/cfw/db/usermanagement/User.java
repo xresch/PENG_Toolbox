@@ -1,13 +1,18 @@
 package com.pengtoolbox.cfw.db.usermanagement;
 
+import java.lang.annotation.RetentionPolicy;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.api.APIDefinition;
+import com.pengtoolbox.cfw.api.APIDefinitionFetch;
+import com.pengtoolbox.cfw.api.APIDefinitionFetch.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
@@ -39,12 +44,14 @@ public class User extends CFWObject {
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, UserFields.PK_ID)
 								   .setPrimaryKeyAutoIncrement(this)
+								   .setDescription("The user id.")
 								   .enableAPIParameter(FormFieldType.NUMBER)
 								   .setAPIReturn(true)
 								   .setValue(-999);
 	
 	private CFWField<String> username = CFWField.newString(FormFieldType.TEXT, UserFields.USERNAME)
 			.setColumnDefinition("VARCHAR(255) UNIQUE")
+			.setDescription("The username of the user account.")
 			.enableAPIParameter()
 			.setAPIReturn(true)
 			.addValidator(new LengthValidator(1, 255))
@@ -66,6 +73,7 @@ public class User extends CFWObject {
 	
 	private CFWField<String> email = CFWField.newString(FormFieldType.EMAIL, UserFields.EMAIL)
 			.setColumnDefinition("VARCHAR(255) UNIQUE")
+			.setDescription("The user email address.")
 			.enableAPIParameter()
 			.setAPIReturn(true)
 			.addValidator(new LengthValidator(-1, 255))
@@ -73,12 +81,14 @@ public class User extends CFWObject {
 
 	private CFWField<String> firstname = CFWField.newString(FormFieldType.TEXT, UserFields.FIRSTNAME)
 			.setColumnDefinition("VARCHAR(255)")
+			.setDescription("The firstname of the user.")
 			.enableAPIParameter()
 			.setAPIReturn(true)
 			.addValidator(new LengthValidator(-1, 255));
 	
 	private CFWField<String> lastname = CFWField.newString(FormFieldType.TEXT, UserFields.LASTNAME)
 			.setColumnDefinition("VARCHAR(255)")
+			.setDescription("The lastname of the user.")
 			.enableAPIParameter()
 			.setAPIReturn(true)
 			.addValidator(new LengthValidator(-1, 255));
@@ -101,6 +111,7 @@ public class User extends CFWObject {
 			.setValue("Active");
 				
 	private CFWField<Timestamp> dateCreated = CFWField.newTimestamp(FormFieldType.NONE, UserFields.DATE_CREATED)
+			.setDescription("The date and time the user account was created.")
 			.setAPIReturn(true)
 			.setValue(new Timestamp(new Date().getTime()));
 	
@@ -138,6 +149,7 @@ public class User extends CFWObject {
 	
 	//Username and password is managed in another source, like LDAP or CSV
 	private CFWField<Boolean> isForeign = CFWField.newBoolean(FormFieldType.BOOLEAN, UserFields.IS_FOREIGN)
+					.setAPIReturn(true)
 					.setDescription("Foreign users are managed by other authentication providers like LDAP. Password in database is ignored.")
 					.setValue(false);
 	
@@ -256,6 +268,60 @@ public class User extends CFWObject {
 		
 	}
 	
+	
+	public ArrayList<APIDefinition> getAPIDefinitions() {
+		ArrayList<APIDefinition> apis = new ArrayList<APIDefinition>();
+		
+		String[] inputFields = 
+				new String[] {
+						UserFields.PK_ID.toString(), 
+						UserFields.USERNAME.toString(),
+						UserFields.EMAIL.toString(),
+						UserFields.FIRSTNAME.toString(),
+						UserFields.LASTNAME.toString(),
+						UserFields.STATUS.toString()
+				};
+		
+		String[] outputFields = 
+				new String[] {
+						UserFields.PK_ID.toString(), 
+						UserFields.USERNAME.toString(),
+						UserFields.EMAIL.toString(),
+						UserFields.FIRSTNAME.toString(),
+						UserFields.LASTNAME.toString(),
+						UserFields.STATUS.toString(),
+						UserFields.DATE_CREATED.toString(),
+						UserFields.IS_FOREIGN.toString()
+		
+				};
+
+		APIDefinitionFetch fetchJsonAPI = 
+				new APIDefinitionFetch(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"fetchJSON",
+						inputFields,
+						outputFields,
+						ReturnFormat.JSON
+				);
+		
+		apis.add(fetchJsonAPI);
+		
+		APIDefinitionFetch fetchCSVAPI = 
+				new APIDefinitionFetch(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"fetchCSV",
+						inputFields,
+						outputFields,
+						ReturnFormat.CSV
+				);
+		
+		apis.add(fetchCSVAPI);
+		
+		return apis;
+	}
+	
 	public int id() {
 		return id.getValue();
 	}
@@ -301,7 +367,7 @@ public class User extends CFWObject {
 		return this;
 	}
 	
-	
+
 	public User setInitialPassword(String password, String repeatedPassword) {
 		
 		if(!password.equals(repeatedPassword)) {

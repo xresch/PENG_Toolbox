@@ -28,9 +28,11 @@ public class CFWJson {
 	
 	public static String escapeString(String string) {
 
-        for (String[] esc : escapes) {
-            string = string.replace(esc[0], esc[1]);
-        }
+		if(string != null) {
+	        for (String[] esc : escapes) {
+	            string = string.replace(esc[0], esc[1]);
+	        }
+		}
         return string;
     }
 	

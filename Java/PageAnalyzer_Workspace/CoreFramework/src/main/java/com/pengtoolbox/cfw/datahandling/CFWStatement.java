@@ -680,6 +680,20 @@ public class CFWStatement {
 		
 	}
 	
+	/***************************************************************
+	 * Execute the Query and gets the result as JSON string.
+	 ****************************************************************/
+	public String getAsCSV() {
+		
+		if(this.execute()) {
+			return CFWDB.resultSetToCSV(result, ";");
+		}
+		CFWDB.close(result);
+		
+		return "";
+		
+	}
+	
 	
 	
 }

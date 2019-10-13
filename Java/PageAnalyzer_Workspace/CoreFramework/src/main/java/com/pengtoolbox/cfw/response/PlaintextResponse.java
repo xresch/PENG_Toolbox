@@ -1,11 +1,12 @@
 package com.pengtoolbox.cfw.response;
 
-import javax.servlet.http.HttpServletRequest;
+import com.pengtoolbox.cfw._main.CFW;
 
 public class PlaintextResponse extends AbstractResponse {
 
 	public PlaintextResponse() {
 		super();
+		CFW.Context.Request.getHttpServletResponse().setContentType("text/plain");
 	}
 
 	@Override

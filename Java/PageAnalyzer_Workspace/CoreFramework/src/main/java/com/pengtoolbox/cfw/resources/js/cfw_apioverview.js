@@ -8,7 +8,7 @@ var MODAL_CURRENT_ACTION = "";
 /******************************************************************
  * 
  ******************************************************************/
-function cfw_apioverview_formResult(data){
+function cfw_apioverview_formResult(data, status, xhr){
 	
 	//-------------------------------
 	// URL
@@ -42,9 +42,17 @@ function cfw_apioverview_formResult(data){
 	// Sample response
 	responseElement = $('#cfw-apioverview-response');
 	responseElement.html('');
-	responseElement.text(JSON.stringify(data, null, 2));
-	console.log(data.payload)
-	console.log(JSON.stringify(data))
+    
+	var contentType = xhr.getResponseHeader("content-type") || "";
+    if (contentType.indexOf('json') > -1) {
+    	responseElement.text(JSON.stringify(data, null, 2));
+    }else{
+    	//responseElement.text(data.replace(/\r\n/g, "<br/>"));
+    	responseElement.text(data);
+    }
+	
+	
+	responseElement.text();
 	
 	hljs.highlightBlock(responseElement.get(0));
 }
@@ -72,7 +80,7 @@ function cfw_apioverview_createExample(apiName, actionName){
 	allDiv.append('<pre class="m-3" style="height: 50px;" ><code id="cfw-apioverview-sampleurl"></code></pre>');
 	
 	allDiv.append('<h4>Response:</h4>');
-	allDiv.append('<pre class="m-3" style="max-height: 400px;" ><code id="cfw-apioverview-response"></code></pre>');
+	allDiv.append('<pre class="m-3" style="max-height: 400px; display:block; white-space:pre-wrap" ><code id="cfw-apioverview-response"></code></pre>');
 	//-----------------------------------
 	//Show Modal and Load Form
 	//-----------------------------------
@@ -140,7 +148,7 @@ function cfw_apioverview_printOverview(data){
 				// Create Panel Content
 				//----------------------------------------
 				var content = $('<div>');
-				content.append('<span>'+sub.description+'</span>');
+				content.append('<p>'+sub.description+'</p>');
 				
 				
 				//----------------------------

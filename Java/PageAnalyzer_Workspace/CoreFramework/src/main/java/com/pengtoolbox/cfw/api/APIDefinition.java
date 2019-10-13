@@ -15,18 +15,26 @@ public class APIDefinition {
 	private String actionName;
 	private String description;
 
-	private ArrayList<String> parameterNames = new ArrayList<String>();
-	private ArrayList<String> returnFieldNames = new ArrayList<String>();
+	private String[] inputFieldnames = null;
+	private String[] outputFieldnames = null;
 	
-	private Class<? extends CFWObject> object;
+	private Class<? extends CFWObject> clazz;
 	private CFWObject instance;
 	
 	private APIRequestHandler requestHandler;
 
-	public APIDefinition(String apiName, String actionName, Class<? extends CFWObject> clazz) {
+	public APIDefinition(			  
+			  Class<? extends CFWObject> clazz,
+			  String apiName, 
+			  String actionName, 
+			  String[] inputFieldnames,
+			  String[] outputFieldnames) {
+		
 		this.apiName = apiName;
 		this.actionName = actionName;
-		this.object = clazz;
+		this.clazz = clazz;
+		this.inputFieldnames = inputFieldnames;
+		this.outputFieldnames = outputFieldnames;
 		
 		try {
 			instance = clazz.newInstance();
@@ -37,14 +45,6 @@ public class APIDefinition {
 			return;
 		}
 		
-		for(CFWField field : instance.getFields().values()) {
-			if(field.isAPIParameter()) {
-				parameterNames.add(field.getName());
-			}
-			if(field.isAPIReturnValue()) {
-				returnFieldNames.add(field.getName());
-			}
-		}
 	}
 	
 	public String getApiName() {
@@ -76,19 +76,43 @@ public class APIDefinition {
 	}
 
 	public Class<? extends CFWObject> getObjectClass() {
-		return object;
-	}
-
-	public void setObject(Class<? extends CFWObject> object) {
-		this.object = object;
+		return clazz;
 	}
 	
-	public ArrayList<String> getParameterNames() {
-		return parameterNames;
+	public CFWObject getObjectInstance() {
+		CFWObject object = null;
+		try {
+			object = getObjectClass().newInstance();
+		} catch (Exception e) {
+			new CFWLog(logger)
+				.method("handleRequest")
+				.severe("Could not create instance for '"+getObjectClass().getSimpleName()+"'. Check if you have a constructor without parameters.", e);
+		}
+		return object;
+	}
+	
+
+
+	public void setObject(Class<? extends CFWObject> clazz) {
+		this.clazz = clazz;
+	}
+	
+	
+	public void setInputFieldnames(String[] inputFieldnames) {
+		this.inputFieldnames = inputFieldnames;
 	}
 
-	public ArrayList<String> getReturnFieldNames() {
-		return returnFieldNames;
+
+	public String[] getInputFieldnames() {
+		return inputFieldnames;
+	}
+
+	public void setOutputFieldnames(String[] outputFieldnames) {
+		this.outputFieldnames = outputFieldnames;
+	}
+	
+	public String[] getOutputFieldnames() {
+		return outputFieldnames;
 	}
 
 	public APIRequestHandler getRequestHandler() {
@@ -110,14 +134,14 @@ public class APIDefinition {
 		//resolve parameters
 		json.append("\", \"params\"").append(": [");
 			
-		for(String name : parameterNames) {
+		for(String name : inputFieldnames) {
 			CFWField field = instance.getField(name);
 			json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())
 			.append("\", \"type\"").append(": \"").append(field.getValueClass().getSimpleName())
 			.append("\", \"description\"").append(": \"").append(field.getDescription()).append("\"},");
 		}
 		
-		if(parameterNames.size() > 0) {
+		if(inputFieldnames.length > 0) {
 			json.deleteCharAt(json.length()-1); //remove last comma
 		}
 		json.append("]");
@@ -126,14 +150,14 @@ public class APIDefinition {
 		//resolve parameters
 		json.append(", \"returnValues\"").append(": [");
 			
-		for(String name : returnFieldNames) {
+		for(String name : outputFieldnames) {
 			CFWField field = instance.getField(name);
 			json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())
 			.append("\", \"type\"").append(": \"").append(field.getValueClass().getSimpleName())
 			.append("\", \"description\"").append(": \"").append(field.getDescription()).append("\"},");
 		}
 		
-		if(parameterNames.size() > 0) {
+		if(inputFieldnames.length > 0) {
 			json.deleteCharAt(json.length()-1); //remove last comma
 		}
 		json.append("]");

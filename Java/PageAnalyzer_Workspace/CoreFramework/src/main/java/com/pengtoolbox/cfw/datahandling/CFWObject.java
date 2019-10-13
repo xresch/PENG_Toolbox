@@ -276,6 +276,15 @@ public class CFWObject {
 	 * @param field names
 	 * @return CFWQuery for method chaining
 	 ****************************************************************/
+	public CFWStatement select(ArrayList<String> fieldnames) {
+		return new CFWStatement(this).select(fieldnames.toArray(new String[] {}));
+	}
+	
+	/****************************************************************
+	 * Begins a SELECT statement including the specified fields.
+	 * @param field names
+	 * @return CFWQuery for method chaining
+	 ****************************************************************/
 	public CFWStatement select(String ...fieldnames) {
 		return new CFWStatement(this).select(fieldnames);
 	}

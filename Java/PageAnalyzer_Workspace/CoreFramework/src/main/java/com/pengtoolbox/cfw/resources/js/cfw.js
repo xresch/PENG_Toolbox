@@ -1005,9 +1005,9 @@ function cfw_handleMessages(response){
 function cfw_getJSON(url, params, callbackFunc){
 
 	$.get(url, params)
-		  .done(function(response) {
+		  .done(function(response, status, xhr) {
 		    //alert( "done" );
-			  callbackFunc(response);
+			  callbackFunc(response, status, xhr);
 		  })
 		  .fail(function(response) {
 			  console.error("Request failed: "+url);
@@ -1043,9 +1043,9 @@ function cfw_getJSON(url, params, callbackFunc){
 function cfw_postJSON(url, params, callbackFunc){
 
 	$.post(url, params)
-		  .done(function(response) {
+		  .done(function(response, status, xhr) {
 		    //alert( "done" );
-			  if(callbackFunc != null) callbackFunc(response);
+			  if(callbackFunc != null) callbackFunc(response, status, xhr);
 		  })
 		  .fail(function(response) {
 			  console.error("Request failed: "+url);

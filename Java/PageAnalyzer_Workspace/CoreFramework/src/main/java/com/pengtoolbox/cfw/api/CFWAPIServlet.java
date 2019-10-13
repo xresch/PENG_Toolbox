@@ -130,7 +130,7 @@ public class CFWAPIServlet extends HttpServlet
 			return;
 		}
 		
-		definition.getRequestHandler().handleRequest(request, response, definition.getObjectClass());
+		definition.getRequestHandler().handleRequest(request, response, definition);
 		
 	}
 	
@@ -159,7 +159,7 @@ public class CFWAPIServlet extends HttpServlet
 		// Create User Form
 		CFWObject object;
 		try {
-			object = (CFWObject)definition.getObjectClass().newInstance();
+			object = definition.getObjectInstance();
 		} catch (Exception e) {
 			new CFWLog(logger)
 			.method("handleRequest")
@@ -170,7 +170,7 @@ public class CFWAPIServlet extends HttpServlet
 		
 		} 
 		
-		BTForm sampleForm = object.toForm("cfwAPIFormExample"+apiName+action, "Submit", definition.getParameterNames().toArray(new String[] {}));	
+		BTForm sampleForm = object.toForm("cfwAPIFormExample"+apiName+action, "Submit", definition.getInputFieldnames());	
 		sampleForm.isAPIForm(true);
 		sampleForm.setResultCallback(callbackMethod);
 		sampleForm.setFormHandler(new BTFormHandler() {
@@ -178,7 +178,7 @@ public class CFWAPIServlet extends HttpServlet
 			@Override
 			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
 				
-				definition.getRequestHandler().handleRequest(request, response, definition.getObjectClass());
+				definition.getRequestHandler().handleRequest(request, response, definition);
 				
 			}
 		});

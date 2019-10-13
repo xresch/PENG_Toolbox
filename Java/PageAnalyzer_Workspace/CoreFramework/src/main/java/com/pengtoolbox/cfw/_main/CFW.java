@@ -38,10 +38,12 @@ public class CFW {
 		public static class Permissions extends CFWDBPermission{};
 		public static class GroupPermissionMap extends CFWDBGroupPermissionMap{};
 	}
+	
 	public static class Context {
 		public static class Request extends CFWContextRequest{};
 		public static class Session extends CFWContextSession{};
 	}
+	
 	public class CLI extends CFWCommandLineInterface {}
 	public class Encryption extends CFWEncryption {}
 	public class Files extends CFWFiles {}
@@ -167,9 +169,6 @@ public class CFW {
 				
 				CFW.Registry.API.addAll(object.getAPIDefinitions());
 				
-				if(object.generateDefaultAPI()) {
-					CFW.Registry.API.createDefaults(object);
-				}
 			}
 		}
 		System.out.println("============ API Registry Entries =============");

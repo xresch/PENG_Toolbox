@@ -8,6 +8,6 @@ import com.pengtoolbox.cfw.datahandling.CFWObject;
 public abstract class APIRequestHandler {
 	
 
-	public abstract void handleRequest(HttpServletRequest request, HttpServletResponse response, Class<? extends CFWObject> clazz);
+	public abstract void handleRequest(HttpServletRequest request, HttpServletResponse response, APIDefinition definition);
 
 }
