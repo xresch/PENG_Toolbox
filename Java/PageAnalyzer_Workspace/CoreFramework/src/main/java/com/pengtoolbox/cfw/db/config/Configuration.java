@@ -2,9 +2,13 @@ package com.pengtoolbox.cfw.db.config;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.api.APIDefinition;
+import com.pengtoolbox.cfw.api.APIDefinitionFetch;
+import com.pengtoolbox.cfw.api.APIDefinitionFetch.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -32,15 +36,17 @@ public class Configuration extends CFWObject {
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, ConfigFields.PK_ID.toString())
 									.setPrimaryKeyAutoIncrement(this)
+									.apiFieldType(FormFieldType.NUMBER)
 									.setDescription("The id of the configuration.")
 									.setValue(-999);
 	
-	private CFWField<String> category = CFWField.newString(FormFieldType.NONE, ConfigFields.CATEGORY.toString())
+	private CFWField<String> category = CFWField.newString(FormFieldType.TEXT, ConfigFields.CATEGORY.toString())
 									.setColumnDefinition("VARCHAR(255)")
 									.setDescription("The category of the configuration.")
 									.addValidator(new LengthValidator(1, 255))
 									;
-	private CFWField<String> name = CFWField.newString(FormFieldType.NONE, ConfigFields.NAME.toString())
+	
+	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, ConfigFields.NAME.toString())
 									.setColumnDefinition("VARCHAR(255) UNIQUE")
 									.setDescription("The name of the configuration.")
 									.addValidator(new LengthValidator(1, 255))
@@ -51,18 +57,18 @@ public class Configuration extends CFWObject {
 											.setDescription("A description of the configuration.")
 											.addValidator(new LengthValidator(-1, 4096));
 	
-	private CFWField<String> type = CFWField.newString(FormFieldType.NONE, ConfigFields.TYPE.toString())
+	private CFWField<String> type = CFWField.newString(FormFieldType.TEXT, ConfigFields.TYPE.toString())
 			.setColumnDefinition("VARCHAR(32)")
 			.setDescription("The form field type of the configuration.")
 			.addValidator(new LengthValidator(1, 32));
 	
-	private CFWField<String> value = CFWField.newString(FormFieldType.NONE, ConfigFields.VALUE.toString())
+	private CFWField<String> value = CFWField.newString(FormFieldType.TEXT, ConfigFields.VALUE.toString())
 			.setColumnDefinition("VARCHAR(1024)")
 			.setDescription("The current value of the field. Can be null.")
 			.addValidator(new LengthValidator(1, 1024))
 			;
 	
-	private CFWField<Object[]> options = CFWField.newArray(FormFieldType.NONE, ConfigFields.OPTIONS.toString())
+	private CFWField<Object[]> options = CFWField.newArray(FormFieldType.TEXT, ConfigFields.OPTIONS.toString())
 			.setColumnDefinition("ARRAY")
 			.setDescription("The options available for the configuration(optional field).");
 	
@@ -127,6 +133,76 @@ public class Configuration extends CFWObject {
 				
 				
 		CFW.DB.Config.updateCache();
+	}
+	
+	/**************************************************************************************
+	 * 
+	 **************************************************************************************/
+	public ArrayList<APIDefinition> getAPIDefinitions() {
+		ArrayList<APIDefinition> apis = new ArrayList<APIDefinition>();
+						
+		String[] inputFields = 
+				new String[] {
+						ConfigFields.PK_ID.toString(), 
+						ConfigFields.CATEGORY.toString(),
+						ConfigFields.NAME.toString(),
+						ConfigFields.TYPE.toString(),
+						ConfigFields.VALUE.toString(),
+				};
+		
+		String[] outputFields = 
+				new String[] {
+						ConfigFields.PK_ID.toString(), 
+						ConfigFields.CATEGORY.toString(),
+						ConfigFields.NAME.toString(),
+						ConfigFields.DESCRIPTION.toString(),
+						ConfigFields.TYPE.toString(),
+						ConfigFields.VALUE.toString(),
+						ConfigFields.OPTIONS.toString(),
+				};
+
+		//----------------------------------
+		// fetchJSON
+		APIDefinitionFetch fetchJsonAPI = 
+				new APIDefinitionFetch(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"fetchJSON",
+						inputFields,
+						outputFields,
+						ReturnFormat.JSON
+				);
+		
+		apis.add(fetchJsonAPI);
+		
+		//----------------------------------
+		// fetchCSV
+		APIDefinitionFetch fetchCSVAPI = 
+				new APIDefinitionFetch(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"fetchCSV",
+						inputFields,
+						outputFields,
+						ReturnFormat.CSV
+				);
+		
+		apis.add(fetchCSVAPI);
+		
+		//----------------------------------
+		// fetchXML
+		APIDefinitionFetch fetchXMLAPI = 
+				new APIDefinitionFetch(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"fetchXML",
+						inputFields,
+						outputFields,
+						ReturnFormat.XML
+				);
+		
+		apis.add(fetchXMLAPI);
+		return apis;
 	}
 	
 	public int id() {

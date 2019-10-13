@@ -45,15 +45,12 @@ public class User extends CFWObject {
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, UserFields.PK_ID)
 								   .setPrimaryKeyAutoIncrement(this)
 								   .setDescription("The user id.")
-								   .enableAPIParameter(FormFieldType.NUMBER)
-								   .setAPIReturn(true)
+								   .apiFieldType(FormFieldType.NUMBER)
 								   .setValue(-999);
 	
 	private CFWField<String> username = CFWField.newString(FormFieldType.TEXT, UserFields.USERNAME)
 			.setColumnDefinition("VARCHAR(255) UNIQUE")
 			.setDescription("The username of the user account.")
-			.enableAPIParameter()
-			.setAPIReturn(true)
 			.addValidator(new LengthValidator(1, 255))
 			.setChangeHandler(new CFWFieldChangeHandler<String>() {
 				public boolean handle(String oldValue, String newValue) {
@@ -74,23 +71,17 @@ public class User extends CFWObject {
 	private CFWField<String> email = CFWField.newString(FormFieldType.EMAIL, UserFields.EMAIL)
 			.setColumnDefinition("VARCHAR(255) UNIQUE")
 			.setDescription("The user email address.")
-			.enableAPIParameter()
-			.setAPIReturn(true)
 			.addValidator(new LengthValidator(-1, 255))
 			.addValidator(new EmailValidator());
 
 	private CFWField<String> firstname = CFWField.newString(FormFieldType.TEXT, UserFields.FIRSTNAME)
 			.setColumnDefinition("VARCHAR(255)")
 			.setDescription("The firstname of the user.")
-			.enableAPIParameter()
-			.setAPIReturn(true)
 			.addValidator(new LengthValidator(-1, 255));
 	
 	private CFWField<String> lastname = CFWField.newString(FormFieldType.TEXT, UserFields.LASTNAME)
 			.setColumnDefinition("VARCHAR(255)")
 			.setDescription("The lastname of the user.")
-			.enableAPIParameter()
-			.setAPIReturn(true)
 			.addValidator(new LengthValidator(-1, 255));
 	
 	private CFWField<String> passwordHash = CFWField.newString(FormFieldType.NONE, UserFields.PASSWORD_HASH)
@@ -105,14 +96,11 @@ public class User extends CFWObject {
 			.setColumnDefinition("VARCHAR(15)")
 			.setOptions(new String[] {"Active", "Inactive"})
 			.setDescription("Active users can login, inactive users are prohibited to login.")
-			.enableAPIParameter()
-			.setAPIReturn(true)
 			.addValidator(new LengthValidator(-1, 15))
 			.setValue("Active");
 				
 	private CFWField<Timestamp> dateCreated = CFWField.newTimestamp(FormFieldType.NONE, UserFields.DATE_CREATED)
 			.setDescription("The date and time the user account was created.")
-			.setAPIReturn(true)
 			.setValue(new Timestamp(new Date().getTime()));
 	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, UserFields.IS_DELETABLE)
@@ -149,12 +137,12 @@ public class User extends CFWObject {
 	
 	//Username and password is managed in another source, like LDAP or CSV
 	private CFWField<Boolean> isForeign = CFWField.newBoolean(FormFieldType.BOOLEAN, UserFields.IS_FOREIGN)
-					.setAPIReturn(true)
 					.setDescription("Foreign users are managed by other authentication providers like LDAP. Password in database is ignored.")
 					.setValue(false);
 	
 	private boolean hasUsernameChanged = false;
 	
+
 	public User() {
 		initializeFields();
 	}
@@ -187,6 +175,9 @@ public class User extends CFWObject {
 				);
 	}
 	
+	/**************************************************************************************
+	 * 
+	 **************************************************************************************/
 	public void initDBSecond() {
 		
 		//-----------------------------------------
@@ -269,6 +260,9 @@ public class User extends CFWObject {
 	}
 	
 	
+	/**************************************************************************************
+	 * 
+	 **************************************************************************************/
 	public ArrayList<APIDefinition> getAPIDefinitions() {
 		ArrayList<APIDefinition> apis = new ArrayList<APIDefinition>();
 		

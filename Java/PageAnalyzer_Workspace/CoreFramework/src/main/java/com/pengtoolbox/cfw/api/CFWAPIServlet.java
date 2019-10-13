@@ -11,21 +11,14 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
-import com.pengtoolbox.cfw.datahandling.CFWField;
-import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
-import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
-import com.pengtoolbox.cfw.validation.LengthValidator;
-import com.pengtoolbox.cfw.validation.NotNullOrEmptyValidator;
-import com.pengtoolbox.cfw.validation.PasswordValidator;
 
 public class CFWAPIServlet extends HttpServlet
 {
@@ -44,12 +37,12 @@ public class CFWAPIServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doGet");
 	
 		if(CFW.Context.Request.hasPermission(Permission.CFW_API)) {
-			String name = request.getParameter("name");
-			String action = request.getParameter("action");
+			String name = request.getParameter("apiName");
+			String action = request.getParameter("actionName");
 			String data = request.getParameter("overviewdata");
 			
 			//Use the name of the APIDefinition
-			String form = request.getParameter("form");
+			String form = request.getParameter("formName");
 			
 
 			
@@ -116,8 +109,8 @@ public class CFWAPIServlet extends HttpServlet
 	 ****************************************************************************************************/
 	private void handleAPIRequest(HttpServletRequest request, HttpServletResponse response) {
 		
-		String apiName = request.getParameter("name");
-		String action = request.getParameter("action");
+		String apiName = request.getParameter("apiName");
+		String action = request.getParameter("actionName");
 
 		//--------------------------------------
 		// Get API Definition
@@ -141,8 +134,8 @@ public class CFWAPIServlet extends HttpServlet
 	 ****************************************************************************************************/
 	private void createForm(HttpServletRequest request, HttpServletResponse response) {
 		
-		String apiName = request.getParameter("form");
-		String action = request.getParameter("action");
+		String apiName = request.getParameter("formName");
+		String action = request.getParameter("actionName");
 		String callbackMethod = request.getParameter("callbackMethod");
 		//--------------------------------------
 		// Get API Definition

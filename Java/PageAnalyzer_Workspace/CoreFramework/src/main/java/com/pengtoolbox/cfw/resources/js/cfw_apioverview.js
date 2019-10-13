@@ -31,8 +31,8 @@ function cfw_apioverview_formResult(data, status, xhr){
 	sampleURL = $('#cfw-apioverview-sampleurl');
 	
 	var url = window.location.href 
-			+ "?name="+MODAL_CURRENT_NAME
-			+ "&action="+MODAL_CURRENT_ACTION
+			+ "?apiName="+MODAL_CURRENT_NAME
+			+ "&actionName="+MODAL_CURRENT_ACTION
 			+ serialized;
 	sampleURL.html('<a target="_blank" href="'+url+'">'+url+'</a>');
 
@@ -96,10 +96,9 @@ function cfw_apioverview_createExample(apiName, actionName){
 	//-----------------------------------
 	CFW.ui.showModal("Example for "+apiName+": "+actionName, allDiv);
 	
-	CFW.http.createForm("./api", {form: apiName, action: actionName, callbackMethod: "cfw_apioverview_formResult"}, formDiv);
+	CFW.http.createForm("./api", {formName: apiName, actionName: actionName, callbackMethod: "cfw_apioverview_formResult"}, formDiv);
 	
 }
-
 
 /******************************************************************
  * Print the overview of the apis .

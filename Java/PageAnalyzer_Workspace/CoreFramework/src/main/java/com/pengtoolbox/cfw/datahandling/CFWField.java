@@ -67,8 +67,6 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	//--------------------------------
 	// API
 	private FormFieldType apiFieldType;
-	private boolean isAPIParameter = false;
-	private boolean isAPIReturn = false;
 	
 	//--------------------------------
 	// Database
@@ -659,36 +657,12 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	
 	/******************************************************************************************************
 	 * Set this field as a parameter for the API.
-	 * Form field will be the default one.
-	 * 
-	 * @return instance for chaining
-	 ******************************************************************************************************/
-	public CFWField<T> enableAPIParameter() {
-		this.apiFieldType = type;
-		this.isAPIParameter = true;
-		return this;
-	}
-	
-	/******************************************************************************************************
-	 * Set this field as a parameter for the API.
 	 * 
 	 * @param type of the form field
 	 * @return instance for chaining
 	 ******************************************************************************************************/
-	public CFWField<T> enableAPIParameter(FormFieldType apiFieldType) {
+	public CFWField<T> apiFieldType(FormFieldType apiFieldType) {
 		this.apiFieldType = apiFieldType;
-		this.isAPIParameter = true;
-		return this;
-	}
-	
-	/******************************************************************************************************
-	 * Set this field as a value returned by the api.
-	 * 
-	 * @param array with values
-	 * @return instance for chaining
-	 ******************************************************************************************************/
-	public CFWField<T> setAPIReturn(boolean isAPIReturn) {
-		this.isAPIReturn = isAPIReturn;
 		return this;
 	}
 	
@@ -698,20 +672,6 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public FormFieldType getAPIFormFieldType() {
 		return apiFieldType;
 	}
-	/******************************************************************************************************
-	 *
-	 ******************************************************************************************************/
-	public boolean isAPIReturnValue() {
-		return isAPIReturn;
-	}
-	
-	/******************************************************************************************************
-	 *
-	 ******************************************************************************************************/
-	public boolean isAPIParameter() {
-		return isAPIParameter;
-	}
-
 	
 
 	/******************************************************************************************************

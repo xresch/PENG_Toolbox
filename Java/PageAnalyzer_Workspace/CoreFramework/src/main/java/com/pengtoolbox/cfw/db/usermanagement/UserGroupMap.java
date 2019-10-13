@@ -2,8 +2,12 @@ package com.pengtoolbox.cfw.db.usermanagement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw.api.APIDefinition;
+import com.pengtoolbox.cfw.api.APIDefinitionFetch;
+import com.pengtoolbox.cfw.api.APIDefinitionFetch.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -25,14 +29,17 @@ public class UserGroupMap extends CFWObject {
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, UserGroupMapFields.PK_ID)
 			.setPrimaryKeyAutoIncrement(this)
+			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
 	private CFWField<Integer> foreignKeyUser = CFWField.newInteger(FormFieldType.HIDDEN, UserGroupMapFields.FK_ID_USER)
 			.setForeignKeyCascade(this, User.class, GroupFields.PK_ID)
+			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
 	private CFWField<Integer> foreignKeyGroup = CFWField.newInteger(FormFieldType.HIDDEN, UserGroupMapFields.FK_ID_GROUP)
 			.setForeignKeyCascade(this, Group.class, GroupFields.PK_ID)
+			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.HIDDEN, UserGroupMapFields.IS_DELETABLE)
@@ -51,6 +58,71 @@ public class UserGroupMap extends CFWObject {
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
 		this.addFields(id, foreignKeyUser, foreignKeyGroup, isDeletable);
+	}
+	
+	/**************************************************************************************
+	 * 
+	 **************************************************************************************/
+	public ArrayList<APIDefinition> getAPIDefinitions() {
+		ArrayList<APIDefinition> apis = new ArrayList<APIDefinition>();
+				
+		String[] inputFields = 
+				new String[] {
+						UserGroupMapFields.PK_ID.toString(), 
+						UserGroupMapFields.FK_ID_USER.toString(),
+						UserGroupMapFields.FK_ID_GROUP.toString(),
+				};
+		
+		String[] outputFields = 
+				new String[] {
+						UserGroupMapFields.PK_ID.toString(), 
+						UserGroupMapFields.FK_ID_USER.toString(),
+						UserGroupMapFields.FK_ID_GROUP.toString(),
+						UserGroupMapFields.IS_DELETABLE.toString(),
+				};
+
+		//----------------------------------
+		// fetchJSON
+		APIDefinitionFetch fetchJsonAPI = 
+				new APIDefinitionFetch(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"fetchJSON",
+						inputFields,
+						outputFields,
+						ReturnFormat.JSON
+				);
+		
+		apis.add(fetchJsonAPI);
+		
+		//----------------------------------
+		// fetchCSV
+		APIDefinitionFetch fetchCSVAPI = 
+				new APIDefinitionFetch(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"fetchCSV",
+						inputFields,
+						outputFields,
+						ReturnFormat.CSV
+				);
+		
+		apis.add(fetchCSVAPI);
+		
+		//----------------------------------
+		// fetchXML
+		APIDefinitionFetch fetchXMLAPI = 
+				new APIDefinitionFetch(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"fetchXML",
+						inputFields,
+						outputFields,
+						ReturnFormat.XML
+				);
+		
+		apis.add(fetchXMLAPI);
+		return apis;
 	}
 	
 	public int id() {

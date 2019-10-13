@@ -2,13 +2,17 @@ package com.pengtoolbox.cfw.db.usermanagement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.api.APIDefinition;
+import com.pengtoolbox.cfw.api.APIDefinitionFetch;
+import com.pengtoolbox.cfw.api.APIDefinitionFetch.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
+import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
@@ -28,6 +32,7 @@ public class Group extends CFWObject {
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, GroupFields.PK_ID.toString())
 			.setPrimaryKeyAutoIncrement(this)
+			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, GroupFields.NAME.toString())
@@ -89,6 +94,9 @@ public class Group extends CFWObject {
 		this.addFields(id, name, description, isDeletable, isRenamable);
 	}
 	
+	/**************************************************************************************
+	 * 
+	 **************************************************************************************/
 	public void initDB() {
 		//-----------------------------------------
 		// Create Group Superuser
@@ -162,6 +170,72 @@ public class Group extends CFWObject {
 			foreignuserGroup.isDeletable(true);
 			CFW.DB.Groups.update(foreignuserGroup);
 		}
+	}
+	
+	/**************************************************************************************
+	 * 
+	 **************************************************************************************/
+	public ArrayList<APIDefinition> getAPIDefinitions() {
+		ArrayList<APIDefinition> apis = new ArrayList<APIDefinition>();
+		
+		
+		String[] inputFields = 
+				new String[] {
+						GroupFields.PK_ID.toString(), 
+						GroupFields.NAME.toString(),
+				};
+		
+		String[] outputFields = 
+				new String[] {
+						GroupFields.PK_ID.toString(), 
+						GroupFields.NAME.toString(),
+						GroupFields.DESCRIPTION.toString(),
+						GroupFields.IS_DELETABLE.toString(),
+						GroupFields.IS_RENAMABLE.toString(),		
+				};
+
+		//----------------------------------
+		// fetchJSON
+		APIDefinitionFetch fetchJsonAPI = 
+				new APIDefinitionFetch(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"fetchJSON",
+						inputFields,
+						outputFields,
+						ReturnFormat.JSON
+				);
+		
+		apis.add(fetchJsonAPI);
+		
+		//----------------------------------
+		// fetchCSV
+		APIDefinitionFetch fetchCSVAPI = 
+				new APIDefinitionFetch(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"fetchCSV",
+						inputFields,
+						outputFields,
+						ReturnFormat.CSV
+				);
+		
+		apis.add(fetchCSVAPI);
+		
+		//----------------------------------
+		// fetchXML
+		APIDefinitionFetch fetchXMLAPI = 
+				new APIDefinitionFetch(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"fetchXML",
+						inputFields,
+						outputFields,
+						ReturnFormat.XML
+				);
+		
+		apis.add(fetchXMLAPI);
+		return apis;
 	}
 
 	public int id() {

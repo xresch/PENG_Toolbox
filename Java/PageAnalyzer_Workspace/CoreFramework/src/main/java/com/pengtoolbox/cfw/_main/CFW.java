@@ -171,8 +171,8 @@ public class CFW {
 				
 			}
 		}
-		System.out.println("============ API Registry Entries =============");
-		System.out.println(CFW.Registry.API.getJSONArray());
+		//System.out.println("============ API Registry Entries =============");
+		//System.out.println(CFW.Registry.API.getJSONArray());
 	}
 	/***********************************************************************
 	 * Starts and initializes the Database. Iterates over all Objects in the 
