@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.servlets.LoginServlet;
 
 public class CSVLoginProvider implements LoginProvider {
 	

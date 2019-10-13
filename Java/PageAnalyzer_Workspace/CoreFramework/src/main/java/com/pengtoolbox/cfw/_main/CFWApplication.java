@@ -41,11 +41,12 @@ import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
 import com.pengtoolbox.cfw.handlers.HTTPSRedirectHandler;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.login.APILoginServlet;
+import com.pengtoolbox.cfw.login.LoginServlet;
 import com.pengtoolbox.cfw.servlets.AssemblyServlet;
 import com.pengtoolbox.cfw.servlets.ConfigurationServlet;
 import com.pengtoolbox.cfw.servlets.FormServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
-import com.pengtoolbox.cfw.servlets.LoginServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
 import com.pengtoolbox.cfw.servlets.PermissionsServlet;
 import com.pengtoolbox.cfw.servlets.admin.APIUserMgmtSevlet;
@@ -63,22 +64,25 @@ public class CFWApplication {
 	
 	private String defaultURL = "/";
 	static DefaultSessionIdManager idmanager;
-		
+	private SessionHandler sessionHandler;	
+	
 	public static Logger logger = CFWLog.getLogger(CFW.class.getName());
 	
-	public static WebAppContext applicationContext;
+	public WebAppContext applicationContext;
 	
 	public CFWApplication(String[] args) throws Exception {
-		    	            	    
+		    	       
+		sessionHandler = CFWApplication.createSessionHandler();
+		
     	//---------------------------------------
     	// Create Server 
         server = CFWApplication.createServer();
         applicationContext = new WebAppContext();
         applicationContext.setContextPath("/");
         applicationContext.setServer(server);
-        applicationContext.setSessionHandler(CFWApplication.createSessionHandler());
+        applicationContext.setSessionHandler(sessionHandler);
         applicationContext.setErrorHandler(CFWApplication.createErrorHandler());
-    	
+
     	//---------------------------------------
     	// Default Multipart Config
         int maxSize = 1024*1024*CFW.Properties.APPLICATION_MAX_UPLOADSIZE;
@@ -98,7 +102,7 @@ public class CFWApplication {
         // Build Handler Chain
         ContextHandler unsecureContextHandler = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);	
         ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);   
-		
+        
         new HandlerChainBuilder(unsecureContextHandler)
 	        .chain(new GzipHandler())
 	    	.chain(new RequestHandler())
@@ -122,7 +126,7 @@ public class CFWApplication {
         ContextHandler secureContext = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);
        
         ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        
+
         new HandlerChainBuilder(secureContext)
         	.chain(new GzipHandler())
 	        .chain(new RequestHandler())
@@ -167,7 +171,7 @@ public class CFWApplication {
         handlerArray.add(rewriteHandler);
         handlerArray.addAll(secureContextArray);
         handlerArray.add(CFWApplication.createResourceHandler());
-        handlerArray.add(CFWApplication.createCFWHandler());
+        handlerArray.add(createCFWHandler());
         
         HandlerCollection handlerCollection = new HandlerCollection();
         handlerCollection.setHandlers(handlerArray.toArray(new Handler[] {}));
@@ -247,6 +251,7 @@ public class CFWApplication {
 	        servletContextHandler.addServlet(LogoutServlet.class,  "/logout");
 	    }
 	    
+	    
 		//-----------------------------------------
 		// User Profile Servlets
 	    servletContextHandler.addServlet(CFWAPIServlet.class,  "/api");
@@ -284,6 +289,8 @@ public class CFWApplication {
 	public static SessionHandler createSessionHandler() {
 	
 	    SessionHandler sessionHandler = new SessionHandler();
+	    
+	    
 	    sessionHandler.setSessionIdManager(CFWApplication.idmanager);
 	    // workaround maxInactiveInterval=-1 issue
 	    // set inactive interval in RequestHandler
@@ -295,6 +302,7 @@ public class CFWApplication {
 	    HashSet<SessionTrackingMode> trackingModes = new HashSet<SessionTrackingMode>();
 	    trackingModes.add(SessionTrackingMode.COOKIE);
 	    sessionHandler.setSessionTrackingModes(trackingModes);
+	    sessionHandler.getSessionCookieConfig().setPath("/");
 	    
 	    //prevent URL rewrite
 	    sessionHandler.setSessionIdPathParameterName("none");
@@ -343,11 +351,16 @@ public class CFWApplication {
 	 *  JARFontServlet on /jarfont
 	 *  TestServlet on /test
 	 ***********************************************************************/
-	public static HandlerWrapper createCFWHandler() {
+	public HandlerWrapper createCFWHandler() {
 		
 		ContextHandler contextHandler = new ContextHandler("/cfw");
+
 		ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-		
+		servletContextHandler.setSessionHandler(sessionHandler);
+	    //-----------------------------------------
+	    // Form Servlet
+	    servletContextHandler.addServlet(APILoginServlet.class,  "/apilogin");
+	    
 	    //-----------------------------------------
 	    // Form Servlet
 	    servletContextHandler.addServlet(FormServlet.class,  "/formhandler");

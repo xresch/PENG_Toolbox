@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.servlets;
+package com.pengtoolbox.cfw.login;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -15,7 +15,6 @@ import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.login.LoginFacade;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
