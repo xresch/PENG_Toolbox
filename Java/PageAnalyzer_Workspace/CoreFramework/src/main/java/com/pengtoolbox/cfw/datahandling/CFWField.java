@@ -25,7 +25,6 @@ import com.pengtoolbox.cfw.validation.EpochOrTimeValidator;
 import com.pengtoolbox.cfw.validation.IValidatable;
 import com.pengtoolbox.cfw.validation.IValidator;
 import com.pengtoolbox.cfw.validation.IntegerValidator;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 /**********************************************************************************
  * Class for creating a menu for the web application.

@@ -21,6 +21,9 @@ public class Configuration extends CFWObject {
 	public static final String FILE_CACHING = "Cache Files";
 	public static final String THEME = "Theme";
 	public static final String CODE_THEME = "Code Theme";
+	public static final String MENU_TITLE = "Menu Title";
+	
+	public static final String LOGO_PATH = "Logo Path";
 	
 	public enum ConfigFields{
 		PK_ID,
@@ -66,11 +69,12 @@ public class Configuration extends CFWObject {
 	private CFWField<String> value = CFWField.newString(FormFieldType.TEXT, ConfigFields.VALUE.toString())
 			.setColumnDefinition("VARCHAR(1024)")
 			.setDescription("The current value of the field. Can be null.")
-			.addValidator(new LengthValidator(1, 1024));
+			.addValidator(new LengthValidator(-1, 1024));
 	
 	private CFWField<Object[]> options = CFWField.newArray(FormFieldType.NONE, ConfigFields.OPTIONS.toString())
 			.setColumnDefinition("ARRAY")
 			.setDescription("The options available for the configuration(optional field).");
+	
 	
 	public Configuration() {
 		initialize();
@@ -111,9 +115,9 @@ public class Configuration extends CFWObject {
 		if(!CFW.DB.Config.checkConfigExists(Configuration.THEME)) {
 			CFW.DB.Config.create(
 				new Configuration("Core Framework", Configuration.THEME)
-					.description("Set the application look and feel. 'Slate' is the default and recommended theme, all others are not 100% tested.")
+					.description("Set the application look and feel. 'Slate' is the default and recommended theme, all others are not 100% tested. For custom the file has to be placed under ./resources/css/bootstrap-theme-custom.css.")
 					.type(FormFieldType.SELECT)
-					.options(new String[]{"darkblue", "flatly", "lumen", "materia", "minty", "pulse", "sandstone", "simplex", "sketchy", "slate", "spacelab", "superhero", "united"})
+					.options(new String[]{"custom", "darkblue", "flatly", "lumen", "materia", "minty", "pulse", "sandstone", "simplex", "sketchy", "slate", "spacelab", "superhero", "united"})
 					.value("slate")
 			);
 		}
@@ -130,8 +134,32 @@ public class Configuration extends CFWObject {
 					.value("zenburn")
 			);
 		}
-				
-				
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Config.checkConfigExists(Configuration.MENU_TITLE )) {
+			CFW.DB.Config.create(
+				new Configuration("Core Framework", Configuration.MENU_TITLE )
+					.description("Set the title displayed in the menu bar. Applies to all new sessions, login/logout required to see the change.")
+					.type(FormFieldType.TEXT)
+					.value("PAGE ANALYZER")
+			);
+		}
+		
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Config.checkConfigExists(Configuration.LOGO_PATH )) {
+			CFW.DB.Config.create(
+				new Configuration("Core Framework", Configuration.LOGO_PATH )
+					.description("The path of the logo displayed in the menu bar. Relativ to the installation directory or a valid URL.")
+					.type(FormFieldType.TEXT)
+					.value("/resources/images/applogo.png")
+			);
+		}
+					
 		CFW.DB.Config.updateCache();
 	}
 	

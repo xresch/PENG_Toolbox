@@ -2,6 +2,7 @@ package com.pengtoolbox.pageanalyzer.response;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.SessionData;
+import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
@@ -12,8 +13,11 @@ public class PageAnalyzerMenu extends BTMenu {
 
 	public PageAnalyzerMenu() {
 		
-		
-		this.setLabel("PAGE ANALYZER");
+		String name = CFW.DB.Config.getConfigAsString(Configuration.MENU_TITLE);
+		if(name == null) {
+			name = "";
+		}
+		this.setLabel(name);
 		SessionData session = CFW.Context.Request.getSessionData();
 		if( CFW.Properties.AUTHENTICATION_ENABLED == false ||
 			( session != null && session.isLoggedIn()) ) {

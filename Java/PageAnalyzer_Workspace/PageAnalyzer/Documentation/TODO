@@ -1,6 +1,14 @@
 TODO
 ====
+- Custom Logo Setting
+- Custom Bootstrap Setting
+- 
 
+- Truncate too long toasts.
+- Show previous toasts all toasts button
+- Spaces!!!
+- Menu Registry with permission checking
+- Fix navbar scrolling height on small device
 - Manage open connections and check on request exit.
 - Form errors add to field.
 

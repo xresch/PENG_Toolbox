@@ -1,5 +1,8 @@
 package com.pengtoolbox.cfw.response.bootstrap;
 
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.db.config.Configuration;
+
 /**********************************************************************************
  * Class for creating a menu for the web application.
  * @author Reto Scheiwiller
@@ -22,7 +25,14 @@ public class BTMenu extends HierarchicalHTMLItem {
 		html.append("\n<div id=\"menubar\">");
 		
 		html.append("<nav class=\"navbar navbar-expand-md fixed-top navbar-dark\">");
-		html.append("  <a class=\"navbar-brand\" href=\"#\">"+this.label+"</a>");
+		html.append("  <a class=\"navbar-brand\" href=\"#\">");
+		
+			String logopath = CFW.DB.Config.getConfigAsString(Configuration.LOGO_PATH);
+			if(logopath != null && !logopath.isEmpty()) {
+				html.append("<img id=\"cfw-logo\" src=\""+logopath+"\" />");
+			}
+			
+		html.append(this.label+"</a>");
 		html.append("  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#cfw-navbar-top\" aria-controls=\"cfw-navbar-top\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">");
 		html.append("    <span class=\"navbar-toggler-icon\"></span>");
 		html.append("  </button>");

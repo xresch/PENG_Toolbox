@@ -94,7 +94,8 @@ public class ConfigurationServlet extends HttpServlet
 			    	boolean success = true;
 			    	
 			    	for(CFWField field : form.getFields().values() ) {
-			    		success = success && CFW.DB.Config.updateValue(Integer.parseInt(field.getName()), field.getValue().toString());
+			    		String value = (field.getValue() != null) ? field.getValue().toString() : "";
+			    		success = success && CFW.DB.Config.updateValue(Integer.parseInt(field.getName()), value);
 			    	}
 			    	CFW.DB.Config.updateCache();
 			    	

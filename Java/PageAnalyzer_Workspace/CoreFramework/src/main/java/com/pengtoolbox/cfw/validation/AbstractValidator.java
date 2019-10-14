@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw.validation;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.Ternary;
 
 /**************************************************************************************
@@ -77,6 +78,7 @@ public abstract class AbstractValidator implements IValidator {
 	}
 
 	public Ternary validateNullEmptyAllowed(Object value) {
+		
 		if(this.isNullAllowed() && !CFW.Validation.isNotNullNotEmptyString(value)) {
 			return Ternary.TRUE;
 		}else if(!CFW.Validation.isNotNullNotEmptyString(value)) {
