@@ -671,6 +671,7 @@ public class CFWStatement {
 	 ****************************************************************/
 	public String getAsJSON() {
 		
+		this.execute();
 		String	string = CFWDB.resultSetToJSON(result);
 		CFWDB.close(result);
 		
@@ -683,6 +684,7 @@ public class CFWStatement {
 	 ****************************************************************/
 	public String getAsCSV() {
 		
+		this.execute();
 		String string = CFWDB.resultSetToCSV(result, ";");
 		CFWDB.close(result);
 		
@@ -695,6 +697,7 @@ public class CFWStatement {
 	 ****************************************************************/
 	public String getAsXML() {
 		
+		this.execute();
 		String	string = CFWDB.resultSetToXML(result);
 		CFWDB.close(result);
 		

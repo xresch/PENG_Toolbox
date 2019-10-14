@@ -30,7 +30,9 @@ public class APIDefinitionFetch extends APIDefinition{
 
 		super(clazz, apiName, actionName, inputFieldnames, outputFieldnames);
 
-		this.setDescription("Standard API to fetch "+clazz.getSimpleName()+" data. The provided parameters will be used to create a select statement with a WHERE ... AND clause. To retrieve everything leaf all the parameters empty.");
+		this.setDescription("Standard API to fetch "+clazz.getSimpleName()+" data. The provided parameters will be used to create a select statement with a WHERE ... AND clause."
+				+ " To retrieve everything leaf all the parameters empty."
+				+ " The standard return format is JSON if the parameter APIFORMAT is not specified.");
 		
 		this.setRequestHandler(new APIRequestHandler() {
 			

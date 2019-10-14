@@ -315,7 +315,8 @@ public class User extends CFWObject {
 						"getUserPermissions",
 						new String[] {UserFields.PK_ID.toString()}
 				);
-		getUserPermissionsAPI.setDescription("Returns the permission for the specified userID.");
+		getUserPermissionsAPI.setDescription("Returns the permission for the specified userID."
+				+ " The standard return format is JSON if the parameter APIFORMAT is not specified.");
 		
 		APISQLExecutor executor = new APISQLExecutor() {
 			@Override
