@@ -60,8 +60,9 @@
 #cfw-toasts {
     z-index: 2048;
     position: fixed;
-    top: 70px;
+    bottom: 20px;
     right: 20px;
+    padding-left: 20px;
 }
 
 #cfw-content {
@@ -93,12 +94,18 @@
 #cfw-default-modal{
 	
 }
+
 #cfw-loader{
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translateX(-50%) translateY(-50%);
 	visibility: hidden;
+}
+
+.cfw-decorator {
+    position: absolute;
+    left: -5px;
 }
 
 /*************************************************************************

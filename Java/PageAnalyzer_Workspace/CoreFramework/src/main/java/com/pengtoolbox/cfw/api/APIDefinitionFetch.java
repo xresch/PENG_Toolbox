@@ -93,7 +93,7 @@ public class APIDefinitionFetch extends APIDefinition{
 					}
 					
 					String format = request.getParameter(APIFORMAT);
-					if(format.equals("")) {
+					if(format == null || format.equals("")) {
 						format = "JSON";
 					}
 					if(format.toUpperCase().equals(ReturnFormat.JSON.toString())) {

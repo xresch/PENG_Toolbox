@@ -196,13 +196,13 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		//---------------------------------------------
 		if(formFieldType != FormFieldType.HIDDEN && formFieldType != FormFieldType.NONE) {
 			
-			html.append("<div class=\"form-group row\">");
+			html.append("<div class=\"form-group row ml-1\">");
 			html.append("  <label class=\"col-sm-3 col-form-label\" for=\""+name+"\" >");
-			if(description != null && !description.isEmpty()) {
-				html.append("<span class=\"badge badge-info mr-2\" data-toggle=\"tooltip\" data-placement=\"top\" title=\""+description+"\"><i class=\"fa fa-info\"></i></span>");
-			}
 			html.append(formLabel+":</label> ");
 			html.append("  <div class=\"col-sm-9\">");
+			if(description != null && !description.isEmpty()) {
+				html.append("<span class=\"badge badge-info cfw-decorator\" data-toggle=\"tooltip\" data-placement=\"top\" data-delay=\"500\" title=\""+description+"\"><i class=\"fa fa-sm fa-info\"></i></span>");
+			}
 		}
 		
 		//---------------------------------------------

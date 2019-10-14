@@ -81,7 +81,7 @@ public class APIDefinitionSQL extends APIDefinition{
 					ResultSet result = executor.execute(sqlAPIDef, object);
 					 
 					String format = request.getParameter(APIFORMAT);
-					if(format.equals("")) {
+					if(format == null || format.equals("")) {
 						format = "JSON";
 					}
 					if(format.toUpperCase().equals(ReturnFormat.JSON.toString())) {
