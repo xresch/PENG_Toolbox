@@ -1,24 +1,42 @@
 package com.pengtoolbox.cfw.api;
 
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.utils.CFWArrayUtils;
 
 public class APIDefinition {
 	
 	public static Logger logger = CFWLog.getLogger(APIDefinition.class.getName());
 	
+	@Expose()
+	@SerializedName("name")
 	private String apiName;
+	
+	@Expose()
+	@SerializedName("action")
 	private String actionName;
+	
+	@Expose()
+	@SerializedName("description")
 	private String description;
 
-	private String[] inputFieldnames = null;
-	private String[] outputFieldnames = null;
+	@Expose()
+	@SerializedName("params")
+	private String[] inputFieldnames = new String[] {};
 	
+	@Expose()
+	@SerializedName("returnVales")
+	private String[] outputFieldnames = new String[] {};
+	
+
 	private Class<? extends CFWObject> clazz;
+	
+
 	private CFWObject instance;
 	
 	private APIRequestHandler requestHandler;
@@ -79,7 +97,7 @@ public class APIDefinition {
 		return clazz;
 	}
 	
-	public CFWObject getObjectInstance() {
+	public CFWObject createObjectInstance() {
 		CFWObject object = null;
 		try {
 			object = getObjectClass().newInstance();
@@ -102,6 +120,9 @@ public class APIDefinition {
 		this.inputFieldnames = inputFieldnames;
 	}
 
+	public void addInputFieldname(String inputFieldname) {
+		inputFieldnames = CFWArrayUtils.add(inputFieldnames, inputFieldname);
+	}
 
 	public String[] getInputFieldnames() {
 		return inputFieldnames;
@@ -109,6 +130,10 @@ public class APIDefinition {
 
 	public void setOutputFieldnames(String[] outputFieldnames) {
 		this.outputFieldnames = outputFieldnames;
+	}
+	
+	public void addOutputFieldname(String outputFieldname) {
+		outputFieldnames = CFWArrayUtils.add(outputFieldnames, outputFieldname);
 	}
 	
 	public String[] getOutputFieldnames() {
@@ -124,25 +149,30 @@ public class APIDefinition {
 	}
 
 	public String getJSON() {
-		
+			
 		StringBuilder json = new StringBuilder("{");
 		json.append("\"name\"").append(": \"").append(apiName)
 			.append("\", \"action\"").append(": \"").append(actionName)
-			.append("\", \"description\"").append(": \"").append(description);
+			.append("\", \"description\"").append(": \"").append(description).append("\"");
 		
 		//-----------------------------------
 		//resolve parameters
 		if(inputFieldnames != null) {
-			json.append("\", \"params\"").append(": [");
-				
+			json.append(", \"params\"").append(": [");
+			
+			int counter = 0;
 			for(String name : inputFieldnames) {
 				CFWField field = instance.getField(name);
-				json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())
-				.append("\", \"type\"").append(": \"").append(field.getValueClass().getSimpleName())
-				.append("\", \"description\"").append(": \"").append(field.getDescription()).append("\"},");
+				//ignore unavailable fields that where added to the base CFWOBject
+				if(field != null) {
+					counter++;
+					json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())
+					.append("\", \"type\"").append(": \"").append(field.getValueClass().getSimpleName())
+					.append("\", \"description\"").append(": \"").append(field.getDescription()).append("\"},");
+				}
 			}
 			
-			if(inputFieldnames.length > 0) {
+			if(counter > 0) {
 				json.deleteCharAt(json.length()-1); //remove last comma
 			}
 			json.append("]");
@@ -152,15 +182,19 @@ public class APIDefinition {
 		//resolve parameters
 		if(outputFieldnames != null) {
 			json.append(", \"returnValues\"").append(": [");
-				
+			
+			int counter = 0;
 			for(String name : outputFieldnames) {
 				CFWField field = instance.getField(name);
-				json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())
-				.append("\", \"type\"").append(": \"").append(field.getValueClass().getSimpleName())
-				.append("\", \"description\"").append(": \"").append(field.getDescription()).append("\"},");
+				if(field != null) {
+					counter++;
+					json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())
+					.append("\", \"type\"").append(": \"").append(field.getValueClass().getSimpleName())
+					.append("\", \"description\"").append(": \"").append(field.getDescription()).append("\"},");
+				}
 			}
 			
-			if(outputFieldnames.length > 0) {
+			if(counter > 0) {
 				json.deleteCharAt(json.length()-1); //remove last comma
 			}
 			

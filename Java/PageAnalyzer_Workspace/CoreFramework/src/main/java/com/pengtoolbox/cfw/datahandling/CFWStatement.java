@@ -521,7 +521,7 @@ public class CFWStatement {
 		
 		//----------------------------
 		// Execute Statement 
-		if(statement.startsWith("SELECT")) {
+		if(statement.trim().startsWith("SELECT")) {
 			result = CFWDB.preparedExecuteQuery(statement, values.toArray());
 			if(result != null) {
 				return true;
@@ -671,26 +671,22 @@ public class CFWStatement {
 	 ****************************************************************/
 	public String getAsJSON() {
 		
-		if(this.execute()) {
-			return CFWDB.resultSetToJSON(result);
-		}
+		String	string = CFWDB.resultSetToJSON(result);
 		CFWDB.close(result);
 		
-		return "[]";
+		return string;
 		
 	}
 	
 	/***************************************************************
-	 * Execute the Query and gets the result as CSV string.
+	 * Execute the Query and gets the result as JSON string.
 	 ****************************************************************/
 	public String getAsCSV() {
 		
-		if(this.execute()) {
-			return CFWDB.resultSetToCSV(result, ";");
-		}
+		String string = CFWDB.resultSetToCSV(result, ";");
 		CFWDB.close(result);
 		
-		return "";
+		return string;
 		
 	}
 	
@@ -699,12 +695,10 @@ public class CFWStatement {
 	 ****************************************************************/
 	public String getAsXML() {
 		
-		if(this.execute()) {
-			return CFWDB.resultSetToXML(result);
-		}
+		String	string = CFWDB.resultSetToXML(result);
 		CFWDB.close(result);
 		
-		return "";
+		return string;
 		
 	}
 	

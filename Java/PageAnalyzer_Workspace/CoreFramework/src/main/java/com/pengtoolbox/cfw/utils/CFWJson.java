@@ -7,6 +7,9 @@ public class CFWJson {
 	
 	public static Gson gsonInstance = new GsonBuilder().serializeNulls().create();
 	
+	public static Gson exposedOnlyInstance = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+			.serializeNulls().create();
+
 	private static final String escapes[][] = new String[][]{
 	        {"\\", "\\\\"},
 	        {"\"", "\\\""},
@@ -25,6 +28,9 @@ public class CFWJson {
 		return gsonInstance.toJson(object);
 	}
 	
+	public static String toJSONExposedOnly(Object object) {
+		return exposedOnlyInstance.toJson(object);
+	}
 	
 	public static String escapeString(String string) {
 

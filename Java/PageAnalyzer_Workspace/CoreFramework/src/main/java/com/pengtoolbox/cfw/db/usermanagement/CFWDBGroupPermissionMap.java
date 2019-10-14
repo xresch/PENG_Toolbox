@@ -308,38 +308,41 @@ public class CFWDBGroupPermissionMap {
 			return null;
 		}
 		
-		return new CFWStatement(user).custom(
-		//String selectPermissionsForUser = 
-				"SELECT P.* "
-				+"FROM CFW_PERMISSION P "
-				+"JOIN CFW_GROUP_PERMISSION_MAP AS GP ON GP.FK_ID_PERMISSION = P.PK_ID "
-				+"JOIN CFW_USER_GROUP_MAP AS UG ON UG.FK_ID_GROUP = GP.FK_ID_GROUP "
-				+"WHERE UG.FK_ID_USER = ?;", user.id())
+		return new CFWStatement(user)
+				.queryCache(CFWDBGroupPermissionMap.class, "selectPermissionsForUserResultSet")
+				.custom(
+					"SELECT P.* "
+					+"FROM CFW_PERMISSION P "
+					+"JOIN CFW_GROUP_PERMISSION_MAP AS GP ON GP.FK_ID_PERMISSION = P.PK_ID "
+					+"JOIN CFW_USER_GROUP_MAP AS UG ON UG.FK_ID_GROUP = GP.FK_ID_GROUP "
+					+"WHERE UG.FK_ID_USER = ?;", 
+					user.id())
 				.getResultSet();
 		
-		
-//		ResultSet result = CFWDB.preparedExecuteQuery(selectPermissionsForUser, 
-//				user.id());
-//		
-//		HashMap<String, Permission> permissionMap = new HashMap<String, Permission>(); 
-//		
-//		try {
-//			while(result != null && result.next()) {
-//				Permission permission = new Permission(result);
-//				permissionMap.put(permission.name(), permission);
-//			}
-//		} catch (SQLException e) {
-//			new CFWLog(logger)
-//			.method("selectGroupsForUser")
-//			.severe("Error while selecting permissions for the group '"+user.username()+"'.", e);
-//			return null;
-//		}finally {
-//			CFWDB.close(result);
-//		}
-//		
-//		return permissionMap;
-	
 	}
+	
+	
+	/***************************************************************
+	 * Retrieve the permissions for the specified user.
+	 * @param group
+	 * @return Hashmap with permissions(key=group name), or null on exception
+	 ****************************************************************/
+	public static ResultSet getPermissionOverview() {
+		
+		return new CFWStatement(new Permission())
+				.queryCache(CFWDBGroupPermissionMap.class, "getPermissionOverview")
+				.custom(
+					"SELECT U.USERNAME, G.NAME AS GROUPNAME, P.NAME AS PERMISSION"
+					+" FROM CFW_USER U"
+					+" LEFT JOIN CFW_USER_GROUP_MAP AS UG ON UG.FK_ID_USER = U.PK_ID"
+					+" LEFT JOIN CFW_GROUP AS G ON UG.FK_ID_GROUP = G.PK_ID"
+					+" LEFT JOIN CFW_GROUP_PERMISSION_MAP AS GP ON GP.FK_ID_GROUP = G.PK_ID"
+					+" LEFT JOIN CFW_PERMISSION AS P ON GP.FK_ID_PERMISSION = P.PK_ID"
+					+" ORDER BY LOWER(U.USERNAME), LOWER(G.NAME), LOWER(P.NAME)")
+				.getResultSet();
+		
+	}
+	
 	/***************************************************************
 	 * Returns a list of all groups and if the user is part of them 
 	 * as a json array.

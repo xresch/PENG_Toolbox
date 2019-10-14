@@ -86,46 +86,18 @@ public class UserGroupMap extends CFWObject {
 				};
 
 		//----------------------------------
-		// fetchJSON
-		APIDefinitionFetch fetchJsonAPI = 
+		// fetchData
+		APIDefinitionFetch fetchDataAPI = 
 				new APIDefinitionFetch(
 						this.getClass(),
 						this.getClass().getSimpleName(),
-						"fetchJSON",
+						"fetchData",
 						inputFields,
-						outputFields,
-						ReturnFormat.JSON
+						outputFields
 				);
 		
-		apis.add(fetchJsonAPI);
+		apis.add(fetchDataAPI);
 		
-		//----------------------------------
-		// fetchCSV
-		APIDefinitionFetch fetchCSVAPI = 
-				new APIDefinitionFetch(
-						this.getClass(),
-						this.getClass().getSimpleName(),
-						"fetchCSV",
-						inputFields,
-						outputFields,
-						ReturnFormat.CSV
-				);
-		
-		apis.add(fetchCSVAPI);
-		
-		//----------------------------------
-		// fetchXML
-		APIDefinitionFetch fetchXMLAPI = 
-				new APIDefinitionFetch(
-						this.getClass(),
-						this.getClass().getSimpleName(),
-						"fetchXML",
-						inputFields,
-						outputFields,
-						ReturnFormat.XML
-				);
-		
-		apis.add(fetchXMLAPI);
 		return apis;
 	}
 	

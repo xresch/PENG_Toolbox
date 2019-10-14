@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.response.bootstrap;
+package com.pengtoolbox.cfw.datahandling;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -7,18 +7,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.datahandling.CFWField;
-import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
+import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
+import com.pengtoolbox.cfw.response.bootstrap.HierarchicalHTMLItem;
 
 /**********************************************************************************
  * Class for creating a form for the web application.
  * @author Reto Scheiwiller
  * 
  **********************************************************************************/
-public class BTForm extends HierarchicalHTMLItem {
+public class CFWForm extends HierarchicalHTMLItem {
 	
 	public static final String FORM_ID = "cfw-formID";
 	private String formID = "";
@@ -36,7 +36,7 @@ public class BTForm extends HierarchicalHTMLItem {
 	private boolean isAPIForm = false;
 	private boolean isEmptyForm = false;
 	
-	public BTForm(String formID, String submitLabel) {
+	public CFWForm(String formID, String submitLabel) {
 		
 		if(formID.matches(".*[^A-Za-z0-9]+.*")) {
 			CFW.Context.Request.addAlertMessage(MessageType.WARNING, "Don't use any other characters for formIDs than A-Z, a-z and 0-9: '"+formID+"'");
@@ -44,7 +44,7 @@ public class BTForm extends HierarchicalHTMLItem {
 		this.formID = formID;
 		this.submitLabel = submitLabel;
 		
-		CFWField<String> formIDField = CFWField.newString(FormFieldType.HIDDEN, BTForm.FORM_ID);
+		CFWField<String> formIDField = CFWField.newString(FormFieldType.HIDDEN, CFWForm.FORM_ID);
 		formIDField.setValueValidated(this.formID);
 		this.addChild(formIDField);
 		
@@ -54,7 +54,7 @@ public class BTForm extends HierarchicalHTMLItem {
 		CFW.Context.Session.addForm(this);
 	}
 	
-	public BTForm(String formID, String submitLabel, CFWObject origin) {
+	public CFWForm(String formID, String submitLabel, CFWObject origin) {
 		this(formID, submitLabel);
 		this.addFields(origin.getFields().values().toArray(new CFWField[]{}));
 		this.origin = origin;
@@ -114,6 +114,7 @@ public class BTForm extends HierarchicalHTMLItem {
 		if(!fields.containsKey(field.getName())) {
 			fields.put(field.getName(), field);
 		}else {
+			System.out.println("CFWField.addField()");
 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The field with name '"+field.getName()+"' was already added to the object.");
 		}
 		
@@ -136,13 +137,13 @@ public class BTForm extends HierarchicalHTMLItem {
 		return formID;
 	}
 
-	public BTForm setLabel(String label) {
+	public CFWForm setLabel(String label) {
 		fireChange();
 		this.formID = label;
 		return this;
 	}
 	
-	public BTForm setFormHandler(BTFormHandler formHandler) {
+	public CFWForm setFormHandler(BTFormHandler formHandler) {
 		fireChange();
 		postURL = "/cfw/formhandler";
 		this.formHandler = formHandler;

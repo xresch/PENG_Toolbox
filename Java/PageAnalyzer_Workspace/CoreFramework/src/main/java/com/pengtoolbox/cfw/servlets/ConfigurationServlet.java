@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -19,7 +20,6 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 
 public class ConfigurationServlet extends HttpServlet
@@ -51,7 +51,7 @@ public class ConfigurationServlet extends HttpServlet
 			
 			content.append("<h1>Configuration Management</h1>");
 			
-			BTForm configForm = createConfigForm();
+			CFWForm configForm = createConfigForm();
 			content.append(configForm.getHTML());
 			
 	        response.setContentType("text/html");
@@ -63,12 +63,12 @@ public class ConfigurationServlet extends HttpServlet
         
     }
 	
-	private static BTForm createConfigForm() {
+	private static CFWForm createConfigForm() {
 				
 		//--------------------------------------
 		// Create Group Form
 		
-		BTForm configForm = new BTForm("cfwConfigMgmt", "Save");
+		CFWForm configForm = new CFWForm("cfwConfigMgmt", "Save");
 		
 		ArrayList<CFWObject> configObjects = CFW.DB.Config.getConfigObjectList();
 		for(CFWObject object :  configObjects) {
@@ -85,7 +85,7 @@ public class ConfigurationServlet extends HttpServlet
 		configForm.setFormHandler(new BTFormHandler() {
 			
 			@Override
-			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
+			public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
 								
 					form.mapRequestParameters(request);
 					

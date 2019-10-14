@@ -294,57 +294,28 @@ public class User extends CFWObject {
 
 		//----------------------------------
 		// fetchJSON
-		APIDefinitionFetch fetchJsonAPI = 
+		APIDefinitionFetch fetchDataAPI = 
 				new APIDefinitionFetch(
 						this.getClass(),
 						this.getClass().getSimpleName(),
-						"fetchJSON",
+						"fetchData",
 						inputFields,
-						outputFields,
-						ReturnFormat.JSON
+						outputFields
 				);
 		
-		apis.add(fetchJsonAPI);
+		apis.add(fetchDataAPI);
+		
 		
 		//----------------------------------
-		// fetchCSV
-		APIDefinitionFetch fetchCSVAPI = 
-				new APIDefinitionFetch(
-						this.getClass(),
-						this.getClass().getSimpleName(),
-						"fetchCSV",
-						inputFields,
-						outputFields,
-						ReturnFormat.CSV
-				);
-		
-		apis.add(fetchCSVAPI);
-		
-		//----------------------------------
-		// fetchXML
-		APIDefinitionFetch fetchXMLAPI = 
-				new APIDefinitionFetch(
-						this.getClass(),
-						this.getClass().getSimpleName(),
-						"fetchXML",
-						inputFields,
-						outputFields,
-						ReturnFormat.XML
-				);
-		
-		apis.add(fetchXMLAPI);
-		
-		//----------------------------------
-		// getPermissionsAPIJSON
-		APIDefinitionSQL getPermissionsAPIJSON = 
+		// getUserPermissionsAPI
+		APIDefinitionSQL getUserPermissionsAPI = 
 				new APIDefinitionSQL(
 						this.getClass(),
 						this.getClass().getSimpleName(),
-						"getUserPermissionsJSON",
-						new String[] {UserFields.PK_ID.toString()},
-						null,
-						ReturnFormat.JSON
+						"getUserPermissions",
+						new String[] {UserFields.PK_ID.toString()}
 				);
+		getUserPermissionsAPI.setDescription("Returns the permission for the specified userID.");
 		
 		APISQLExecutor executor = new APISQLExecutor() {
 			@Override
@@ -354,9 +325,32 @@ public class User extends CFWObject {
 			}
 		};
 			
-		getPermissionsAPIJSON.setSQLExecutor(executor);
+		getUserPermissionsAPI.setSQLExecutor(executor);
 		
-		apis.add(getPermissionsAPIJSON);
+		apis.add(getUserPermissionsAPI);
+		
+		//----------------------------------
+		// getPermissionOverview
+		APIDefinitionSQL getUserPermissionsOverview = 
+				new APIDefinitionSQL(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"getPermissionOverview",
+						new String[] {}
+				);
+		getUserPermissionsOverview.setDescription("Returns the permission for the specified userID.");
+		
+		APISQLExecutor overviewExecutor = new APISQLExecutor() {
+			@Override
+			public ResultSet execute(APIDefinitionSQL definition, CFWObject object) {
+							
+				return CFW.DB.GroupPermissionMap.getPermissionOverview();
+			}
+		};
+			
+		getUserPermissionsOverview.setSQLExecutor(overviewExecutor);
+		
+		apis.add(getUserPermissionsOverview);
 		
 		
 		return apis;

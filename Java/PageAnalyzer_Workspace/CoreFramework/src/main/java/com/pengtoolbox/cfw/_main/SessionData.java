@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
-import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 
 public class SessionData {
@@ -17,7 +17,7 @@ public class SessionData {
 	private User user = null;
 	private HashMap<String, Group> userGroups = new HashMap<String, Group>();
 	private HashMap<String, Permission> userPermissions = new HashMap<String, Permission>();
-	private static LinkedHashMap<String,BTForm> formMap = new LinkedHashMap<String,BTForm>();
+	private static LinkedHashMap<String,CFWForm> formMap = new LinkedHashMap<String,CFWForm>();
 	
 	private BTMenu menu;
 	private BTFooter footer;
@@ -82,7 +82,7 @@ public class SessionData {
 		return footer;
 	}
 	
-	public void addForm(BTForm form){
+	public void addForm(CFWForm form){
 		
 		//keep cached forms below 7 to prevent memory leaks
 		while(formMap.size() > 7) {
@@ -92,15 +92,15 @@ public class SessionData {
 		formMap.put(form.getFormID(), form);	
 	}
 	
-	public void removeForm(BTForm form){
+	public void removeForm(CFWForm form){
 		formMap.remove(form.getFormID(), form);	
 	}
 	
-	public BTForm getForm(String formID) {
+	public CFWForm getForm(String formID) {
 		return formMap.get(formID);
 	}
 	
-	public Collection<BTForm> getForms() {
+	public Collection<CFWForm> getForms() {
 		return formMap.values();
 	}
 }

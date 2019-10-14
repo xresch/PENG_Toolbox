@@ -11,25 +11,24 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.PlaintextResponse;
+import com.pengtoolbox.cfw.utils.CFWArrayUtils;
 
 public class APIDefinitionSQL extends APIDefinition{
 	
-	private ReturnFormat format;
+	private static final String APIFORMAT = "APIFORMAT";
 	private APISQLExecutor executor;
 		
 	public APIDefinitionSQL(Class<? extends CFWObject> clazz,
 							  String apiName, 
 						      String actionName, 
-						      String[] inputFieldnames,
-						      String[] outputFieldnames,
-						      ReturnFormat format) {
+						      String[] inputFieldnames) {
 
-		super(clazz, apiName, actionName, inputFieldnames, outputFieldnames);
-		this.format = format;
+		super(clazz, apiName, actionName, inputFieldnames, null);
 		APIDefinitionSQL sqlAPIDef = this;
 		
 		this.setRequestHandler(new APIRequestHandler() {
@@ -81,17 +80,23 @@ public class APIDefinitionSQL extends APIDefinition{
 					
 					ResultSet result = executor.execute(sqlAPIDef, object);
 					 
-					if(format.equals(ReturnFormat.JSON)) {
+					String format = request.getParameter(APIFORMAT);
+					if(format.equals("")) {
+						format = "JSON";
+					}
+					if(format.toUpperCase().equals(ReturnFormat.JSON.toString())) {
 						json.getContent().append(CFWDB.resultSetToJSON(result));
-					}else if(format.equals(ReturnFormat.CSV)){		
+						
+					}else if(format.toUpperCase().equals(ReturnFormat.CSV.toString())){		
 						PlaintextResponse plaintext = new PlaintextResponse();
 						plaintext.getContent().append(CFWDB.resultSetToCSV(result, ";"));
 						
-					}else if(format.equals(ReturnFormat.XML)){		
+					}else if(format.toUpperCase().equals(ReturnFormat.XML.toString())){		
 						PlaintextResponse plaintext = new PlaintextResponse();
-						
 						plaintext.getContent().append(CFWDB.resultSetToXML(result));
 					}
+					
+					CFWDB.close(result);
 					
 				}else {
 					response.setStatus(HttpStatus.BAD_REQUEST_400);
@@ -109,6 +114,23 @@ public class APIDefinitionSQL extends APIDefinition{
 		this.executor = executor;
 	}
 	
-	
+	/*****************************************************************
+	 * Add Additional Field
+	 *****************************************************************/
+	public CFWObject createObjectInstance() {
+		CFWObject objectInstance = super.createObjectInstance();
+		
+		CFWField<String> apiFormat = CFWField.newString(FormFieldType.SELECT, APIFORMAT)
+				.setDescription("The return format of the api call.")
+				.setOptions(ReturnFormat.values());
+		
+		objectInstance.addField(apiFormat);
+		
+		if(!CFWArrayUtils.contains(this.getInputFieldnames(), APIFORMAT)) {
+			this.addInputFieldname(APIFORMAT);
+		}
+		
+		return objectInstance;
+	}
 
 }

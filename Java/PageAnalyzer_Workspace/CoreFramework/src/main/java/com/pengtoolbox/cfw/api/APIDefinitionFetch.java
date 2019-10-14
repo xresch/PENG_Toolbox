@@ -9,27 +9,28 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpStatus;
 
 import com.pengtoolbox.cfw.datahandling.CFWField;
+import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWStatement;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.PlaintextResponse;
+import com.pengtoolbox.cfw.utils.CFWArrayUtils;
 
 public class APIDefinitionFetch extends APIDefinition{
 	
-	private ReturnFormat format;
+	private static final String APIFORMAT = "APIFORMAT";
 	
 	public APIDefinitionFetch(Class<? extends CFWObject> clazz,
 							  String apiName, 
 						      String actionName, 
 						      String[] inputFieldnames,
-						      String[] outputFieldnames,
-						      ReturnFormat format) {
+						      String[] outputFieldnames) {
 
 		super(clazz, apiName, actionName, inputFieldnames, outputFieldnames);
-		this.format = format;
-		
-		this.setDescription("Standard API to fetch "+clazz.getSimpleName()+" data as "+format.toString()+". The provided parameters will be used to create a select statement with a WHERE ... AND clause. To retrieve everything leaf all the parameters empty.");
+
+		this.setDescription("Standard API to fetch "+clazz.getSimpleName()+" data. The provided parameters will be used to create a select statement with a WHERE ... AND clause. To retrieve everything leaf all the parameters empty.");
 		
 		this.setRequestHandler(new APIRequestHandler() {
 			
@@ -88,14 +89,18 @@ public class APIDefinitionFetch extends APIDefinition{
 							statement.and(currentField.getName(), currentField.getValue(), false);
 						}
 					}
-					 
-					if(format.equals(ReturnFormat.JSON)) {
+					
+					String format = request.getParameter(APIFORMAT);
+					if(format.equals("")) {
+						format = "JSON";
+					}
+					if(format.toUpperCase().equals(ReturnFormat.JSON.toString())) {
 						json.getContent().append(statement.getAsJSON());
-					}else if(format.equals(ReturnFormat.CSV)){		
+					}else if(format.toUpperCase().equals(ReturnFormat.CSV.toString())){		
 						PlaintextResponse plaintext = new PlaintextResponse();
 						
 						plaintext.getContent().append(statement.getAsCSV());
-					}else if(format.equals(ReturnFormat.XML)){		
+					}else if(format.toUpperCase().equals(ReturnFormat.XML.toString())){		
 						PlaintextResponse plaintext = new PlaintextResponse();
 						
 						plaintext.getContent().append(statement.getAsXML());
@@ -110,5 +115,26 @@ public class APIDefinitionFetch extends APIDefinition{
 			}
 		});		
 	}
+	
+	/*****************************************************************
+	 * Add Additional Field
+	 *****************************************************************/
+	public CFWObject createObjectInstance() {
+		CFWObject instance = super.createObjectInstance();
+		
+		CFWField<String> apiFormat = CFWField.newString(FormFieldType.SELECT, APIFORMAT)
+				.setDescription("The return format of the api call.")
+				.setOptions(ReturnFormat.values());
+		
+		instance.addField(apiFormat);
+		if(!CFWArrayUtils.contains(this.getInputFieldnames(), APIFORMAT)) {
+			this.addInputFieldname(APIFORMAT);
+		}
+		
+		return instance;
+	}
+	
+	
+	
 
 }

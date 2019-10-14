@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
@@ -17,7 +18,6 @@ import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 
 /*************************************************************************
@@ -156,12 +156,12 @@ public class APIUserMgmtSevlet extends HttpServlet {
 		
 		if(user != null) {
 			
-			BTForm editUserForm = user.toForm("cfwEditUserForm"+ID, "Update User");
+			CFWForm editUserForm = user.toForm("cfwEditUserForm"+ID, "Update User");
 			
 			editUserForm.setFormHandler(new BTFormHandler() {
 				
 				@Override
-				public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
+				public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
 					
 					if(origin.mapRequestParameters(request)) {
 						
@@ -187,12 +187,12 @@ public class APIUserMgmtSevlet extends HttpServlet {
 		
 		if(group != null) {
 			
-			BTForm editGroupForm = group.toForm("cfwEditGroupForm"+ID, "Update Group");
+			CFWForm editGroupForm = group.toForm("cfwEditGroupForm"+ID, "Update Group");
 			
 			editGroupForm.setFormHandler(new BTFormHandler() {
 				
 				@Override
-				public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
+				public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
 					
 					if(origin.mapRequestParameters(request)) {
 						

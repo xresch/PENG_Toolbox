@@ -163,7 +163,7 @@ function cfw_apioverview_printOverview(data){
 				//----------------------------
 				// Create Parameter Table
 				
-				if(sub.params != undefined){
+				if(sub.params != undefined && sub.params.length > 0){
 					content.append('<h3>Parameters:</h3>');
 					
 					var cfwTable = CFW.ui.createTable();
@@ -192,7 +192,7 @@ function cfw_apioverview_printOverview(data){
 				}
 				//----------------------------
 				// Create Return Value
-				if(sub.returnValues != undefined){
+				if(sub.returnValues != undefined && sub.returnValues.length > 0){
 					content.append('<h3>Return Values:</h3>');
 					
 					var returnTable = CFW.ui.createTable();

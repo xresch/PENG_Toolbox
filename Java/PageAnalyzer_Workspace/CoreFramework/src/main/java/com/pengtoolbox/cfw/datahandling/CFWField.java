@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.HierarchicalHTMLItem;
+import com.pengtoolbox.cfw.utils.CFWArrayUtils;
 import com.pengtoolbox.cfw.utils.TextUtils;
 import com.pengtoolbox.cfw.validation.BooleanValidator;
 import com.pengtoolbox.cfw.validation.EpochOrTimeValidator;
@@ -174,22 +174,19 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		// Check Type
 		//---------------------------------------------
 		FormFieldType formFieldType = this.type;
-		if(this.parent instanceof BTForm) {
+		if(this.parent instanceof CFWForm) {
 			
 			// Use normal fieldType if apiFieldType is not defined
-			if(((BTForm)this.parent).isAPIForm() && this.apiFieldType != null) {
+			if(((CFWForm)this.parent).isAPIForm() && this.apiFieldType != null) {
 				formFieldType = this.apiFieldType;
 			}
 			
-			if ( ((BTForm)this.parent).isEmptyForm() && !this.name.contentEquals("cfw-formID") ){
+			if ( ((CFWForm)this.parent).isEmptyForm() && !this.name.contentEquals("cfw-formID") ){
 				// Set Value to num
 				value = null;
 				
 				if(this.options != null) {
-					Object[] copy = new Object[options.length + 1];
-					System.arraycopy(options, 0, copy, 0, options.length);
-					options = copy;
-					options[options.length-1] = null;
+					options = CFWArrayUtils.add(options, null);
 				}
 			}
 			
@@ -361,8 +358,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		html.append("<textarea class=\"form-control\" "+this.getAttributesString()+"></textarea>");
 
 		
-		if(this.parent instanceof BTForm) {
-			BTForm form = ((BTForm)this.parent);
+		if(this.parent instanceof CFWForm) {
+			CFWForm form = ((CFWForm)this.parent);
 			
 			form.javascript.append("cfw_initializeSummernote('"+form.getFormID()+"', '"+name+"');\r\n");
 		}
@@ -398,8 +395,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		html.append("<input id=\""+name+"-datepicker\" type=\"date\" onchange=\"cfw_updateTimeField('"+name+"')\" class=\"form-control\" placeholder=\"Date\" >\r\n" + 
 				"	<input id=\""+name+"\" type=\"hidden\" class=\"form-control\" "+this.getAttributesString()+">\r\n");
 		
-		if(this.parent instanceof BTForm) {
-			((BTForm)this.parent).javascript.append("cfw_initializeTimefield('"+name+"', "+epochTime+");\r\n");
+		if(this.parent instanceof CFWForm) {
+			((CFWForm)this.parent).javascript.append("cfw_initializeTimefield('"+name+"', "+epochTime+");\r\n");
 		}
 
 		
@@ -436,8 +433,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					+ "	   <input id=\""+name+"\" type=\"hidden\" class=\"form-control\" "+this.getAttributesString()+">\r\n" 
 					+ "</div>\r\n");
 		
-		if(this.parent instanceof BTForm) {
-			((BTForm)this.parent).javascript.append("cfw_initializeTimefield('"+name+"', "+epochTime+");\r\n");
+		if(this.parent instanceof CFWForm) {
+			((CFWForm)this.parent).javascript.append("cfw_initializeTimefield('"+name+"', "+epochTime+");\r\n");
 		}
 				
 	}
@@ -886,7 +883,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		while(parameters.hasMoreElements()) {
 			String key = parameters.nextElement();
 			
-			if(!key.equals(BTForm.FORM_ID)) {
+			if(!key.equals(CFWForm.FORM_ID)) {
 				if (fields.containsKey(key)) {
 					CFWField field = fields.get(key);
 					

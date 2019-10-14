@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
@@ -15,7 +16,6 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 import com.pengtoolbox.cfw.tests.assets.mockups.CFWObjectMockup;
 
@@ -39,7 +39,7 @@ public class FormTestServlet extends HttpServlet
 		//------------------------------
 		// Test Form
 		//------------------------------
-        BTForm form = new BTForm("directForm", "Save");
+        CFWForm form = new CFWForm("directForm", "Save");
         form.addChild(CFWField.newString(FormFieldType.TEXT, "Firstname"));
         form.addChild(CFWField.newString(FormFieldType.TEXT, "Lastname"));
         
@@ -75,13 +75,13 @@ public class FormTestServlet extends HttpServlet
 		// Form with Handler
 		//------------------------------
         content.append("<h2>Map Requests and Validate</h2>");
-        BTForm handledForm2 = new CFWObjectMockup().toForm("handlerForm2", "Handle Again!!!");
+        CFWForm handledForm2 = new CFWObjectMockup().toForm("handlerForm2", "Handle Again!!!");
         
         handledForm2.setFormHandler(new BTFormHandler() {
 			@Override
-			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
+			public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
 				// TODO Auto-generated method stub
-				String formID = request.getParameter(BTForm.FORM_ID);
+				String formID = request.getParameter(CFWForm.FORM_ID);
 				origin.mapRequestParameters(request);
 				JSONResponse json = new JSONResponse();
 		    	json.addAlert(MessageType.SUCCESS, "BTFormHandler: Post recieved from "+formID+"!!!");
@@ -95,7 +95,7 @@ public class FormTestServlet extends HttpServlet
 	
     protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException{
     	    	
-    	String formID = request.getParameter(BTForm.FORM_ID);
+    	String formID = request.getParameter(CFWForm.FORM_ID);
     	
     	JSONResponse json = new JSONResponse();
     	json.addAlert(MessageType.SUCCESS, "Post recieved from "+formID+"!!!");

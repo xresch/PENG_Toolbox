@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw.api;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -11,13 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
+import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 
 public class CFWAPIServlet extends HttpServlet
@@ -150,26 +151,14 @@ public class CFWAPIServlet extends HttpServlet
 		
 		//--------------------------------------
 		// Create User Form
-		CFWObject object;
-		try {
-			object = definition.getObjectInstance();
-		} catch (Exception e) {
-			new CFWLog(logger)
-			.method("handleRequest")
-			.severe("Could not create instance for '"+definition.getObjectClass().getSimpleName()+"'. Check if you have a constructor without parameters.", e);
-	
-			json.setSuccess(false);
-			return;
-		
-		} 
-		
-		BTForm sampleForm = object.toForm("cfwAPIFormExample"+apiName+action, "Submit", definition.getInputFieldnames());	
+		CFWObject instance = definition.createObjectInstance();
+		CFWForm sampleForm = instance.toForm("cfwAPIFormExample"+apiName+action, "Submit", definition.getInputFieldnames());
 		sampleForm.isAPIForm(true);
 		sampleForm.setResultCallback(callbackMethod);
 		sampleForm.setFormHandler(new BTFormHandler() {
 			
 			@Override
-			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
+			public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
 				
 				definition.getRequestHandler().handleRequest(request, response, definition);
 				

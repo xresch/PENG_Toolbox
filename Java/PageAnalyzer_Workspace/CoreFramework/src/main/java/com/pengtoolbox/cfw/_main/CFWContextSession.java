@@ -2,7 +2,7 @@ package com.pengtoolbox.cfw._main;
 
 import java.util.Collection;
 
-import com.pengtoolbox.cfw.response.bootstrap.BTForm;
+import com.pengtoolbox.cfw.datahandling.CFWForm;
 
 public class CFWContextSession {
 	
@@ -10,15 +10,15 @@ public class CFWContextSession {
 		return CFW.Context.Request.getSessionData();
 	}
 	
-	public static void addForm(BTForm form){
+	public static void addForm(CFWForm form){
 		CFW.Context.Request.getSessionData().addForm(form);
 	}
 	
-	public static BTForm getForm(String formID) {
+	public static CFWForm getForm(String formID) {
 		return CFW.Context.Request.getSessionData().getForm(formID);
 	}
 	
-	public static Collection<BTForm> getForms() {
+	public static Collection<CFWForm> getForms() {
 		return CFW.Context.Request.getSessionData().getForms();
 	}
 

@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
-import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 
 /*************************************************************************************
  * This servlet is used to handle forms that have a BTFormHandler defined.

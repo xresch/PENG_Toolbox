@@ -99,8 +99,7 @@ public class CFWRegistryAPI {
 		
 		json.append("["); 
 		for(APIDefinition definition : definitionArray.values()) {
-			json.append(definition.getJSON());
-			json.append(",");
+			json.append(definition.getJSON()).append(",");
 		}
 		
 		//--------------------------

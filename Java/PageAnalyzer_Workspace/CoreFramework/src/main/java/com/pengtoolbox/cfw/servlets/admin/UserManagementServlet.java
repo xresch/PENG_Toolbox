@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
+import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -21,7 +22,6 @@ import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 import com.pengtoolbox.cfw.validation.NotNullOrEmptyValidator;
@@ -79,7 +79,7 @@ public class UserManagementServlet extends HttpServlet
 		createUserForm.setFormHandler(new BTFormHandler() {
 			
 			@Override
-			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
+			public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
 				
 				if(form.mapRequestParameters(request)) {
 					CreateUserForm casted = (CreateUserForm)form;
@@ -106,12 +106,12 @@ public class UserManagementServlet extends HttpServlet
 		//--------------------------------------
 		// Create Group Form
 		
-		BTForm createGroupForm = new Group("").toForm("cfwCreateGroupForm", "Create Group");
+		CFWForm createGroupForm = new Group("").toForm("cfwCreateGroupForm", "Create Group");
 		
 		createGroupForm.setFormHandler(new BTFormHandler() {
 			
 			@Override
-			public void handleForm(HttpServletRequest request, HttpServletResponse response, BTForm form, CFWObject origin) {
+			public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
 								
 				if(origin != null) {
 					
@@ -126,7 +126,7 @@ public class UserManagementServlet extends HttpServlet
 		});
 	}
 	
-	class CreateUserForm extends BTForm{
+	class CreateUserForm extends CFWForm{
 				
 		protected CFWField<String> username = CFWField.newString(FormFieldType.TEXT, "Username")
 				.addValidator(new LengthValidator(1, 255));

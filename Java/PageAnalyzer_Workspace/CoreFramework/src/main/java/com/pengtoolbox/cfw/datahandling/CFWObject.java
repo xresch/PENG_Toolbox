@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 
 public class CFWObject {
 	
@@ -45,9 +44,9 @@ public class CFWObject {
 		return CFWField.mapResultSetColumnsToFields(result, fields);
 	}
 	
-	public BTForm toForm(String formID, String submitLabel) {
+	public CFWForm toForm(String formID, String submitLabel) {
 		
-		BTForm form = new BTForm(formID, submitLabel);
+		CFWForm form = new CFWForm(formID, submitLabel);
 		form.setOrigin(this);
 		
 		for(CFWField field : fields.values()) {
@@ -57,9 +56,9 @@ public class CFWObject {
 		return form;
 	}
 	
-	public BTForm toForm(String formID, String submitLabel, String ...fieldNames) {
+	public CFWForm toForm(String formID, String submitLabel, String ...fieldNames) {
 		
-		BTForm form = new BTForm(formID, submitLabel);
+		CFWForm form = new CFWForm(formID, submitLabel);
 		form.setOrigin(this);
 		
 		for(String fieldName : fieldNames) {

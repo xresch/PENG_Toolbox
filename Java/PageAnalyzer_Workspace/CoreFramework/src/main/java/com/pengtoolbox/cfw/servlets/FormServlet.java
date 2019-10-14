@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTForm;
 
 /*************************************************************************************
  * This servlet is used to handle forms that have a BTFormHandler defined.
@@ -35,7 +35,7 @@ public class FormServlet extends HttpServlet
 		String id = request.getParameter("id");
 		String summernoteID = request.getParameter("summernoteid");
 		
-		BTForm form = CFW.Context.Session.getForm(id);
+		CFWForm form = CFW.Context.Session.getForm(id);
 		
     	JSONResponse json = new JSONResponse();
     	if(form == null) {
@@ -68,8 +68,8 @@ public class FormServlet extends HttpServlet
 	
     protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
 	{
-    	String formID = request.getParameter(BTForm.FORM_ID);
-    	BTForm form = CFW.Context.Session.getForm(formID);
+    	String formID = request.getParameter(CFWForm.FORM_ID);
+    	CFWForm form = CFW.Context.Session.getForm(formID);
     	
     	JSONResponse json = new JSONResponse();
     	if(form == null) {
