@@ -238,7 +238,7 @@ public class CFWDBGroupPermissionMap {
 			return null;
 		}
 		
-		String selectPermissionsForGroup = "SELECT * FROM "+Permission.TABLE_NAME+" P "
+		String selectPermissionsForGroup = "SELECT P.* FROM "+Permission.TABLE_NAME+" P "
 				+ " INNER JOIN "+CFWDBGroupPermissionMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_PERMISSION = P.PK_ID "
 				+ " WHERE M.FK_ID_GROUP = ?";

@@ -231,7 +231,7 @@ public class CFWDB {
 		if(counter > 0) {
 			new CFWLog(logger)
 			.method("forceCloseRemainingConnections")
-			.warn("There where "+counter+" database connections that where not properly closed. They where closed forcefully.");
+			.warn(""+counter+" database connection(s) not closed properly.");
 		}
 	}
 	

@@ -101,13 +101,13 @@ public class RequestHandler extends HandlerWrapper
     	//##################################
     	request.setAttribute(CFW.REQUEST_ATTR_ENDNANOS, System.nanoTime());
     	
-    	//if(request.getAttribute(PA.REQUEST_ATTR_TEMPLATE) instanceof AbstractTemplateHTML){
+    	CFWDB.forceCloseRemainingConnections();
+    	
     	CFW.Localization.writeLocalized(request, response);
     	
     	log.end();
     	
         baseRequest.setHandled(true);
-        CFWDB.forceCloseRemainingConnections();
         Context.Request.clearRequestContext();
     }
 }
