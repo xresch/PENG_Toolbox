@@ -16,6 +16,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFW.Context;
 import com.pengtoolbox.cfw._main.CFWApplication;
 import com.pengtoolbox.cfw._main.SessionData;
+import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
  
 public class RequestHandler extends HandlerWrapper
@@ -106,7 +107,7 @@ public class RequestHandler extends HandlerWrapper
     	log.end();
     	
         baseRequest.setHandled(true);
-        
+        CFWDB.forceCloseRemainingConnections();
         Context.Request.clearRequestContext();
     }
 }

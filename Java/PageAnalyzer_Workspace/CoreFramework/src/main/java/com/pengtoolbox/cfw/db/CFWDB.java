@@ -11,6 +11,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -21,10 +22,7 @@ import org.h2.tools.Server;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFW.Properties;
 import com.pengtoolbox.cfw._main.CFWProperties;
-import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
-import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
@@ -39,6 +37,7 @@ public class CFWDB {
 
 	private static Logger logger = CFWLog.getLogger(CFWDB.class.getName());
 	
+	private static InheritableThreadLocal<ArrayList<Connection>> myOpenConnections = new InheritableThreadLocal<ArrayList<Connection>>();
 	private static InheritableThreadLocal<Connection> transactionConnection = new InheritableThreadLocal<Connection>();
 
 	/********************************************************************************************
@@ -193,6 +192,78 @@ public class CFWDB {
 		
 	}
 	
+	/********************************************************************************************
+	 * Add a connection that was openend to the list of open connections.
+	 * When connections remain after the Servlet returns, they will be closed 
+	 * by the RequestHandler using hardCloseRemainingConnections().
+	 * 
+	 * @throws SQLException 
+	 ********************************************************************************************/
+	public static void forceCloseRemainingConnections() {	
+		
+		if(myOpenConnections.get() == null) {
+			//all good, return
+			return;
+		}
+		
+		ArrayList<Connection> connArray = myOpenConnections.get();
+		
+		int counter = 0;
+		
+		//Create new array to avoid ConcurrentModificationException
+		for(Connection con : connArray.toArray(new Connection[] {})) {
+			
+			System.out.println("ForceClose: "+con.getClass());
+			counter++;
+			try {
+				if(!con.isClosed()) {
+					System.out.println("forced: "+con.getCatalog());
+					con.close();
+				}
+				connArray.remove(con);
+			} catch (SQLException e) {
+				new CFWLog(logger)
+					.method("forceCloseRemainingConnections")
+					.severe("Error on forced closing of DB connection.", e);
+			}
+		}
+		
+		if(counter > 0) {
+			new CFWLog(logger)
+			.method("forceCloseRemainingConnections")
+			.warn("There where "+counter+" database connections that where not properly closed. They where closed forcefully.");
+		}
+	}
+	
+	/********************************************************************************************
+	 * Add a connection that was openend to the list of open connections.
+	 * When connections remain after the Servlet returns, they will be closed 
+	 * by the RequestHandler using forceCloseRemainingConnections().
+	 * 
+	 * @throws SQLException 
+	 ********************************************************************************************/
+	private static void addOpenConnection(Connection connection) {	
+		if(myOpenConnections.get() == null) {
+			myOpenConnections.set(new ArrayList<Connection>());
+		}
+		
+		myOpenConnections.get().add(connection);
+	}
+	
+	/********************************************************************************************
+	 * Removes a connection that was openend from the list of open connections.
+	 * When connections remain after the Servlet returns, they will be closed 
+	 * by the RequestHandler using hardCloseRemainingConnections().
+	 * 
+	 * @throws SQLException 
+	 ********************************************************************************************/
+	private static void removeOpenConnection(Connection connection) {	
+		
+		if(myOpenConnections.get() == null) {
+			return;
+		}
+		myOpenConnections.get().remove(connection);
+	}
 	
 	/********************************************************************************************
 	 * Get a connection from the connection pool or returns the current connection used for the 
@@ -209,7 +280,9 @@ public class CFWDB {
 			if(transactionConnection.get() != null) {
 				return transactionConnection.get();
 			}else {
-				return connectionPool.getConnection();
+				Connection connection = connectionPool.getConnection();
+				addOpenConnection(connection);
+				return connection;
 			}
 		}else {
 			throw new SQLException("DB not initialized, call CFWDB.initialize() first.");
@@ -226,7 +299,7 @@ public class CFWDB {
 		if(transactionConnection.get() != null) {
 			new CFWLog(logger)
 				.method("beginTransaction")
-				.severe("A transaction was already started. Use commitTransaction() before starting another one.");
+				.severe("A transaction was already started for this thread. Use commitTransaction() before starting another one.");
 			return;
 		}
 		
@@ -234,6 +307,7 @@ public class CFWDB {
 			Connection con = CFWDB.getConnection();
 			con.setAutoCommit(false);
 			transactionConnection.set(con);
+			addOpenConnection(con);
 			new CFWLog(logger).method("beginTransaction").finer("DB transaction started.");
 			
 		} catch (SQLException e) {
@@ -273,6 +347,7 @@ public class CFWDB {
 			transactionConnection.set(null);
 			if(con != null) { 
 				try {
+					removeOpenConnection(con);
 					con.setAutoCommit(true);
 					con.close();
 				} catch (SQLException e) {
@@ -317,6 +392,7 @@ public class CFWDB {
 				try {
 					con.setAutoCommit(true);
 					con.close();
+					removeOpenConnection(con);
 				} catch (SQLException e) {
 					new CFWLog(logger)
 						.method("rollbackTransaction")
@@ -365,7 +441,10 @@ public class CFWDB {
 			log.severe("Database Error: "+e.getMessage(), e);
 		} finally {
 			try {
-				if(conn != null && transactionConnection.get() == null) { conn.close(); }
+				if(conn != null && transactionConnection.get() == null) { 
+					removeOpenConnection(conn);
+					conn.close(); 
+				}
 				if(prepared != null) { prepared.close(); }
 			} catch (SQLException e) {
 				log.severe("Issue closing resources.", e);
@@ -414,7 +493,10 @@ public class CFWDB {
 			log.severe("Database Error: "+e.getMessage(), e);
 		} finally {
 			try {
-				if(conn != null && transactionConnection.get() == null) { conn.close(); }
+				if(conn != null && transactionConnection.get() == null) { 
+					removeOpenConnection(conn);
+					conn.close(); 
+				}
 				if(prepared != null) { prepared.close(); }
 			} catch (SQLException e) {
 				log.severe("Issue closing resources.", e);
@@ -506,10 +588,29 @@ public class CFWDB {
 	 * @param request HttpServletRequest containing session data used for logging information(null allowed).
 	 * @param resultSet which should be closed.
 	 ********************************************************************************************/
+	public static void close(Connection conn){
+		
+		try {
+			if(!conn.isClosed()) {
+				removeOpenConnection(conn);
+				conn.close();
+			}
+		} catch (SQLException e) {
+			new CFWLog(logger)
+				.method("close")
+				.severe("Exception occured while closing connection. ", e);
+		}
+	}
+	/********************************************************************************************
+	 * 
+	 * @param request HttpServletRequest containing session data used for logging information(null allowed).
+	 * @param resultSet which should be closed.
+	 ********************************************************************************************/
 	public static void close(ResultSet resultSet){
 		
 		try {
 			if(resultSet != null && transactionConnection.get() == null) {
+				removeOpenConnection(resultSet.getStatement().getConnection());
 				resultSet.getStatement().getConnection().close();
 				resultSet.close();
 			}

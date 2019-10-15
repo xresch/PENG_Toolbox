@@ -292,7 +292,6 @@ public class CFWApplication {
 			}
 			session.setAttribute(CFW.SESSION_DATA, data);
 			sessionID = session.getId();
-			System.out.println("SessionID: "+sessionID);
 		}
 		
 		return sessionID;

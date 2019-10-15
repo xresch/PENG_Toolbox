@@ -25,11 +25,11 @@ import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.PlaintextResponse;
 import com.pengtoolbox.cfw.validation.LengthValidator;
-import com.pengtoolbox.pageanalyzer.db.Result.ResultFields;
+import com.pengtoolbox.pageanalyzer.db.PAResult.ResultFields;
 
-public class Result extends CFWObject {
+public class PAResult extends CFWObject {
 	
-	private static Logger logger = CFWLog.getLogger(Result.class.getName());
+	private static Logger logger = CFWLog.getLogger(PAResult.class.getName());
 	
 	public static final String TABLE_NAME = "PA_RESULT";
 	
@@ -81,11 +81,11 @@ public class Result extends CFWObject {
 			.setDescription("The results of the yslow analysis.")
 			.setValue(new Timestamp(new Date().getTime()));
 	
-	public Result() {
+	public PAResult() {
 		initializeFields();
 	}
 	
-	public Result(ResultSet result) throws SQLException {
+	public PAResult(ResultSet result) throws SQLException {
 		initializeFields();
 		this.mapResultSet(result);	
 	}
@@ -123,7 +123,7 @@ public class Result extends CFWObject {
 		
 		//---------------------------
 		// Rename Table
-		String renameTable = "ALTER TABLE IF EXISTS results RENAME TO "+new Result().getTableName();
+		String renameTable = "ALTER TABLE IF EXISTS results RENAME TO "+new PAResult().getTableName();
 		CFWDB.preparedExecute(renameTable);
 	}
 	
@@ -187,7 +187,9 @@ public class Result extends CFWObject {
 				PlaintextResponse plaintext = new PlaintextResponse();
 				
 				String id = request.getParameter("PK_ID");
-				plaintext.getContent().append(PADBResults.getHARFileByID(Integer.parseInt(id)) );
+				if(id != null && !id.isEmpty()) {
+					plaintext.getContent().append(PADBResults.getHARFileByID(Integer.parseInt(id)) );
+				}
 				
 			}
 		});
@@ -228,7 +230,7 @@ public class Result extends CFWObject {
 		return id.getValue();
 	}
 	
-	public Result id(int id) {
+	public PAResult id(int id) {
 		this.id.setValue(id);
 		return this;
 	}
@@ -237,7 +239,7 @@ public class Result extends CFWObject {
 		return foreignKeyUser.getValue();
 	}
 	
-	public Result foreignKeyUser(int foreignKeyUser) {
+	public PAResult foreignKeyUser(int foreignKeyUser) {
 		this.foreignKeyUser.setValue(foreignKeyUser);
 		return this;
 	}
@@ -246,7 +248,7 @@ public class Result extends CFWObject {
 		return name.getValue();
 	}
 	
-	public Result name(String name) {
+	public PAResult name(String name) {
 		this.name.setValue(name);
 		return this;
 	}
@@ -255,7 +257,7 @@ public class Result extends CFWObject {
 		return username.getValue();
 	}
 	
-	public Result username(String username) {
+	public PAResult username(String username) {
 		this.username.setValue(username);
 		return this;
 	}
@@ -264,7 +266,7 @@ public class Result extends CFWObject {
 		return pageURL.getValue();
 	}
 	
-	public Result pageURL(String pageURL) {
+	public PAResult pageURL(String pageURL) {
 		this.pageURL.setValue(pageURL);
 		return this;
 	}
@@ -273,7 +275,7 @@ public class Result extends CFWObject {
 		return result.getValue();
 	}
 	
-	public Result result(String result) {
+	public PAResult result(String result) {
 		this.result.setValue(result);
 		return this;
 	}
@@ -282,7 +284,7 @@ public class Result extends CFWObject {
 		return harfile.getValue();
 	}
 	
-	public Result harfile(String harfile) {
+	public PAResult harfile(String harfile) {
 		this.harfile.setValue(harfile);
 		return this;
 	}
@@ -291,7 +293,7 @@ public class Result extends CFWObject {
 		return timeCreated.getValue();
 	}
 	
-	public Result timeCreated(Timestamp timeCreated) {
+	public PAResult timeCreated(Timestamp timeCreated) {
 		this.timeCreated.setValue(timeCreated);
 		return this;
 	}
