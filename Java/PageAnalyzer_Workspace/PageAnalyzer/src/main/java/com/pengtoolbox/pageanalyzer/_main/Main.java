@@ -9,6 +9,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppInterface;
 import com.pengtoolbox.cfw._main.CFWApplication;
+import com.pengtoolbox.cfw.api.CFWAPIServlet;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 import com.pengtoolbox.pageanalyzer.db.Result;
@@ -91,7 +92,6 @@ public class Main extends Application implements CFWAppInterface {
 	        apiHolder.getRegistration().setMultipartConfig(app.getGlobalMultipartConfig());
 	        
 	        apiContext.addServlet(apiHolder, "/analyzehar");
-	        
 	        
 	        //###################################################################
 	        // Create authenticatedServletContext

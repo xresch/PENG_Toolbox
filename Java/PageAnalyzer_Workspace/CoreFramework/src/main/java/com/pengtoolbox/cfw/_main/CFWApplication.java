@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.SessionTrackingMode;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.eclipse.jetty.rewrite.handler.RedirectRegexRule;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
@@ -61,7 +63,7 @@ public class CFWApplication {
 	
 	private ArrayList<ContextHandler> unsecureContextArray = new ArrayList<ContextHandler>();
 	private ArrayList<ContextHandler> secureContextArray = new ArrayList<ContextHandler>();
-	
+		
 	private String defaultURL = "/";
 	static DefaultSessionIdManager idmanager;
 	private SessionHandler sessionHandler;	
@@ -69,6 +71,8 @@ public class CFWApplication {
 	public static Logger logger = CFWLog.getLogger(CFW.class.getName());
 	
 	public WebAppContext applicationContext;
+	
+	private static ServletContextHandler cfwContext;
 	
 	public CFWApplication(String[] args) throws Exception {
 		    	       
@@ -102,6 +106,7 @@ public class CFWApplication {
         // Build Handler Chain
         ContextHandler unsecureContextHandler = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);	
         ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);   
+        servletContext.setSessionHandler(createSessionHandler());
         
         new HandlerChainBuilder(unsecureContextHandler)
 	        .chain(new GzipHandler())
@@ -124,9 +129,9 @@ public class CFWApplication {
         // Create HandlerChain
         //-------------------------------
         ContextHandler secureContext = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);
-       
         ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
-
+        servletContext.setSessionHandler(createSessionHandler());
+        
         new HandlerChainBuilder(secureContext)
         	.chain(new GzipHandler())
 	        .chain(new RequestHandler())
@@ -244,6 +249,7 @@ public class CFWApplication {
 	 ***********************************************************************/
 	public void addCFWServlets(ServletContextHandler servletContextHandler) {
 		
+		cfwContext = servletContextHandler;
 		//-----------------------------------------
 		// Authentication Servlets
 	    if(CFWProperties.AUTHENTICATION_ENABLED) {
@@ -267,6 +273,10 @@ public class CFWApplication {
 	    servletContextHandler.addServlet(PermissionsServlet.class,  "/usermanagement/permissions");
 		servletContextHandler.addServlet(APIUserMgmtSevlet.class, "/usermanagement/data"); 
 	    
+	}
+	
+	public static HttpSession newSessionForCFWContext(HttpServletRequest request) {
+		return cfwContext.getSessionHandler().newHttpSession(request);
 	}
 
 	/**************************************************************************************************

@@ -104,6 +104,30 @@ function cfw_apioverview_createExample(apiName, actionName){
  * Print the overview of the apis .
  * 
  ******************************************************************/
+function cfw_apioverview_printLoginPanel(parent){
+
+	cfwPanel = new CFWPanel('primary');
+	cfwPanel.title = "Login and Usage";
+	
+	url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+	apiURL = url +"/cfw/apilogin";
+	html = '<p>Send a post request to <a target="_blank" href="'+apiURL+'">'+apiURL+'</a> with the following parameters in the post body: </p>';
+	html += '<ul>';
+	html += '  <li><b>username: </b>The username for accessing the api.</li>';
+	html += '  <li><b>password: </b>The password of the user.</li>';
+	html += '<ul>';
+	html += '<p>To use the APIs, add the cookie you have recieved to the HTTP Header "Cookie" of the requests. For example:</p>';
+	html += '<ul>';
+	html += '  <li><b>Cookie: </b>JSESSIONID=node01ab2c3d4e5f61xhc7f6puqsab1</li>';
+	html += '<ul>';
+	cfwPanel.body = $(html);
+	
+	cfwPanel.appendTo(parent);
+}
+/******************************************************************
+ * Print the overview of the apis .
+ * 
+ ******************************************************************/
 function cfw_apioverview_printOverview(data){
 	
 	parent = $("#cfw-container");
@@ -111,7 +135,7 @@ function cfw_apioverview_printOverview(data){
 	parent.append("<h1>API Overview</h1>");
 	
 	if(data.payload != undefined){
-		
+		cfw_apioverview_printLoginPanel(parent);
 		//--------------------------------
 		// Initialization
 		var panels = {}
