@@ -10,6 +10,7 @@ import com.pengtoolbox.cfw.datahandling.CFWRegistryObjects;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.config.CFWDBConfig;
 import com.pengtoolbox.cfw.db.config.Configuration;
+import com.pengtoolbox.cfw.db.spaces.CFWSpace;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroupPermissionMap;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
@@ -155,7 +156,7 @@ public class CFW {
 		CFW.Registry.Objects.addCFWObject(Permission.class);
 		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.UserGroupMap.class);
 		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.GroupPermissionMap.class);
-		
+		CFW.Registry.Objects.addCFWObject(CFWSpace.class);
 		//---------------------------
 		// Application Register
 		appToStart.register();
@@ -165,11 +166,7 @@ public class CFW {
 		ArrayList<CFWObject> objectArray = CFW.Registry.Objects.getCFWObjectInstances();
 		
 		for(CFWObject object : objectArray) {
-			if(object.isAPIExposed()) {
-				
-				CFW.Registry.API.addAll(object.getAPIDefinitions());
-				
-			}
+			CFW.Registry.API.addAll(object.getAPIDefinitions());
 		}
 		//System.out.println("============ API Registry Entries =============");
 		//System.out.println(CFW.Registry.API.getJSONArray());

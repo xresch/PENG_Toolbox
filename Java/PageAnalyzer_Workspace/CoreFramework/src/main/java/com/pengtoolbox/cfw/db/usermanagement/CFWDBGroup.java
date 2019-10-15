@@ -37,7 +37,7 @@ public class CFWDBGroup {
 	
 	/********************************************************************************************
 	 * Creates a new group in the DB.
-	 * @param Group with the values that should be inserted. ID will be set by the Database.
+	 * @param CFWSpace with the values that should be inserted. ID will be set by the Database.
 	 * @return true if successful, false otherwise
 	 * 
 	 ********************************************************************************************/

@@ -9,20 +9,22 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw.api.APIDefinition;
+import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWObject {
 	
 	private static Logger logger = CFWLog.getLogger(CFWObject.class.getName());
+	
 	protected String tableName; 
 	
 	private LinkedHashMap<String, CFWField<?>> fields = new LinkedHashMap<String, CFWField<?>>();
-	public CFWField<?> primaryField = null;
+	public CFWField<Integer> primaryField = null;
 	
 	private ArrayList<ForeignKeyDefinition> foreignKeys = new ArrayList<ForeignKeyDefinition>();
 	
-	private boolean isAPIExposed = true;
-	private boolean generateDefaultAPI = true;
+	private int hierarchyLevels = 0;
+	private  LinkedHashMap<Integer, CFWObject> childObjects;
 	
 	class ForeignKeyDefinition{
 		public String fieldname;
@@ -30,6 +32,7 @@ public class CFWObject {
 		public Class<? extends CFWObject> foreignObject;
 		public String ondelete;
 	}
+	
 	public CFWObject() {
 
 	}
@@ -123,27 +126,11 @@ public class CFWObject {
 		this.tableName = tableName;
 		return this;
 	}
-		
-	
-	public boolean isAPIExposed() {
-		return isAPIExposed;
-	}
-
-	public CFWObject isAPIExposed(boolean isAPIExposed) {
-		this.isAPIExposed = isAPIExposed;
-		return this;
-	}
-	
-	public boolean generateDefaultAPI() {
-		return generateDefaultAPI;
-	}
-
-	public CFWObject generateDefaultAPI(boolean generateDefaultAPI) {
-		this.generateDefaultAPI = generateDefaultAPI;
-		return this;
-	}
-	
-	
+			
+	/*****************************************************************************
+	 * Override this method to register API definitions.
+	 * 
+	 *****************************************************************************/
 	public ArrayList<APIDefinition> getAPIDefinitions() {
 		return null;
 	}
@@ -152,7 +139,7 @@ public class CFWObject {
 		return primaryField;
 	}
 
-	public CFWObject setPrimaryField(CFWField primaryField) {
+	public CFWObject setPrimaryField(CFWField<Integer> primaryField) {
 		this.primaryField = primaryField;
 		return this;
 	}
@@ -180,6 +167,7 @@ public class CFWObject {
 		return foreignKeys;
 	}
 
+	
 	public String getFieldsAsKeyValueString() {
 		
 		StringBuilder builder = new StringBuilder();
@@ -212,6 +200,43 @@ public class CFWObject {
 
 		return builder.toString();
 	}
+	//##############################################################################
+	// HIERARCHY
+	//##############################################################################
+	public boolean isHierarchical() {
+		return (hierarchyLevels > 0);
+	}
+
+	public int getHierarchyLevels() {
+		return hierarchyLevels;
+				
+	}
+
+	public void setHierarchyLevels(int hierarchyLevels) {
+		this.hierarchyLevels = hierarchyLevels;
+		//------------------------------------
+		// Add Parent Fields
+		// P0... P1... Pn...
+		for(int i = 0; i < this.getHierarchyLevels(); i++) {
+			this.addField(CFWField.newInteger(FormFieldType.NONE, "P"+i));
+		}
+		
+		
+	}
+
+	public LinkedHashMap<Integer, CFWObject> getChildObjects() {
+		return childObjects;
+	}
+
+	public void setChildObjects(LinkedHashMap<Integer, CFWObject> childObjects) {
+		this.childObjects = childObjects;
+	}
+	
+
+	public void addChildObject(CFWObject child) {
+		this.childObjects.put(((Integer)child.getPrimaryField().getValue()), child);
+	}
+	
 	
 	//##############################################################################
 	// DATABASE
@@ -225,6 +250,7 @@ public class CFWObject {
 	public void migrateTable() {
 		
 	}
+
 	/****************************************************************
 	 * Create the table for this Object.
 	 * Will be executed after all migrateTable() methods where executed

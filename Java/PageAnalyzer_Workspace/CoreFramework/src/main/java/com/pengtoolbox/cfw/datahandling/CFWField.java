@@ -637,7 +637,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 ******************************************************************************************************/
 	public CFWField<T> setPrimaryKeyAutoIncrement(CFWObject parentObject) {
 		this.columnDefinition = "INT PRIMARY KEY AUTO_INCREMENT";
-		parentObject.setPrimaryField(this);
+		if(this.valueClass == Integer.class) {
+			parentObject.setPrimaryField((CFWField<Integer>)this);
+		}
 		return this;
 	}
 	
