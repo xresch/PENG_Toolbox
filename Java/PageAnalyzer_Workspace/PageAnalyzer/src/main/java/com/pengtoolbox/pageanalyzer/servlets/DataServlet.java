@@ -73,7 +73,7 @@ public class DataServlet extends HttpServlet {
 				case "yslowresult": 	content.append(PageAnalyzerDB.getResultByID(Integer.parseInt(resultID)));
 										break;
 										
-				case "resultlist": 		content.append(PageAnalyzerDB.getResultListForUser(username));
+				case "resultlist": 		content.append(PageAnalyzerDB.getResultListForUser(CFW.Context.Request.getUser()));
 										break;
 				
 				case "allresults": 		content.append(PageAnalyzerDB.getAllResults());

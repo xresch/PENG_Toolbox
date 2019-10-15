@@ -396,6 +396,7 @@ function printComparison(parent, data){
 	// Create Rows
 	//-----------------------------------------
 	
+	var resultNameRow = {"Metric": "Result Name"}; compareTableData.push(resultNameRow);
 	var urlRow = {"Metric": "URL"}; compareTableData.push(urlRow);
 	var scoreRow = {"Metric": "Score"}; compareTableData.push(scoreRow);
 	var gradeRow = {"Metric": "Grade"}; compareTableData.push(gradeRow);
@@ -410,10 +411,15 @@ function printComparison(parent, data){
 	for(ruleName in uniqueRuleList){
 		compareTableData.push(uniqueRuleList[ruleName]);
 	}
+
 	for(key in data){
-		
-		var time = data[key].TIME;
+
+		var time = data[key].TIME_CREATED;
 		var result = data[key].JSON_RESULT;
+		
+		//----------------------------
+		// Name Row
+		resultNameRow[time]	= '<p>'+data[key].NAME+'</p>';
 		
 		//----------------------------
 		// URL Row
@@ -925,11 +931,11 @@ function printResultList(parent, data){
 		var currentData = data[i];
 		var rowString = '<tr>';
 		
-		rowString += '<td><input class="resultSelectionCheckbox" type="checkbox" onchange="resultSelectionChanged();" value="'+currentData.RESULT_ID+'" /></td>';
-		rowString += '<td>'+currentData.TIME+'</td>';
+		rowString += '<td><input class="resultSelectionCheckbox" type="checkbox" onchange="resultSelectionChanged();" value="'+currentData.PK_ID+'" /></td>';
+		rowString += '<td>'+currentData.TIME_CREATED+'</td>';
 		
-		if(data[0] != null && data[0].USER_ID != undefined){
-			rowString += '<td>'+currentData.USER_ID+'</td>';;
+		if(data[0] != null && data[0].USERNAME != undefined){
+			rowString += '<td>'+currentData.USERNAME+'</td>';;
 		}
 		
 		resultName = (currentData.NAME == "null") ? "" : currentData.NAME;
@@ -939,11 +945,11 @@ function printResultList(parent, data){
 		rowString += '<td>'+url+'</td>';
 		
 		// View Result Icon
-		rowString += '<td><a class="btn btn-primary btn-sm" alt="View Result" title="View Result" href="./resultview?resultid='+currentData.RESULT_ID+'"><i class="fa fa-eye"></i></a></td>';
+		rowString += '<td><a class="btn btn-primary btn-sm" alt="View Result" title="View Result" href="./resultview?resultid='+currentData.PK_ID+'"><i class="fa fa-eye"></i></a></td>';
 		
 		// Gantt Chart Icon
 		if (CFW.hasPermission("Download HAR")){
-			rowString += '<td><a class="btn btn-primary btn-sm" alt="View Gantt Chart" title="View Gantt Chart" href="./ganttchart?resultid='+currentData.RESULT_ID+'"><i class="fas fa-sliders-h"></i></a></td>';
+			rowString += '<td><a class="btn btn-primary btn-sm" alt="View Gantt Chart" title="View Gantt Chart" href="./ganttchart?resultid='+currentData.PK_ID+'"><i class="fas fa-sliders-h"></i></a></td>';
 		}
 		// Link Icon
 		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Open URL" title="Open URL" href="'+url+'"><i class="fa fa-link"></i></a></td>';
@@ -958,16 +964,16 @@ function printResultList(parent, data){
 		}
 		
 
-		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Download Result" title="Download Result" href=./data?type=yslowresult&resultid='+currentData.RESULT_ID+' download="'+resultName+'_yslow_results.json"><i class="fa fa-save"></i></a></td>';
+		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Download Result" title="Download Result" href=./data?type=yslowresult&resultid='+currentData.PK_ID+' download="'+resultName+'_yslow_results.json"><i class="fa fa-save"></i></a></td>';
 		
 		//Download HAR
 		if (CFW.hasPermission("Download HAR")){
-			rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Dowload HAR" title="Dowload HAR" href=./data?type=har&resultid='+currentData.RESULT_ID+' download="'+resultName+'.har"><i class="fa fa-download"> HAR</i></a></td>';
+			rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Dowload HAR" title="Dowload HAR" href=./data?type=har&resultid='+currentData.PK_ID+' download="'+resultName+'.har"><i class="fa fa-download"> HAR</i></a></td>';
 		}
 		
 		//Delete Result
 		if (CFW.hasPermission("Delete Result")){
-			rowString += '<td><button class="btn btn-danger btn-sm" alt="Delete Result" title="Delete Result" onclick="CFW.ui.confirmExecute(\'Do you want to delete the results?\', \'Delete\', \'deleteResults('+currentData.RESULT_ID+')\')"><i class="fa fa-trash"></i></button></td>';
+			rowString += '<td><button class="btn btn-danger btn-sm" alt="Delete Result" title="Delete Result" onclick="CFW.ui.confirmExecute(\'Do you want to delete the results?\', \'Delete\', \'deleteResults('+currentData.PK_ID+')\')"><i class="fa fa-trash"></i></button></td>';
 		}
 		rowString += "</tr>";
 		

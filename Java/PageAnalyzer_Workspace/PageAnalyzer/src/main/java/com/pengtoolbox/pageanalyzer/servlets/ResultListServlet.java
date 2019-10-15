@@ -41,7 +41,7 @@ public class ResultListServlet extends HttpServlet
 
 		
 		if(CFW.Context.Request.hasPermission(PAPermissions.VIEW_HISTORY)) {
-			String jsonResults = PageAnalyzerDB.getResultListForUser(CFW.Context.Request.getUser().username());
+			String jsonResults = PageAnalyzerDB.getResultListForUser(CFW.Context.Request.getUser());
 			
 			//TODO: Check User
 			

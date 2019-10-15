@@ -188,6 +188,14 @@ public class CFW {
 		//---------------------------
 		// Iterate over Registered Objects
     	ArrayList<CFWObject> objectArray = CFW.Registry.Objects.getCFWObjectInstances();
+    	
+    	for(CFWObject object : objectArray) {
+    		if(object.getTableName() != null) {
+    			object.migrateTable();
+    			
+    		}
+    	}
+    	
     	for(CFWObject object : objectArray) {
     		if(object.getTableName() != null) {
     			object.createTable();

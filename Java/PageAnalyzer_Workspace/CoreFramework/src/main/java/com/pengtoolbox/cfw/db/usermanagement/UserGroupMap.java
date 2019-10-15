@@ -7,11 +7,11 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
-import com.pengtoolbox.cfw.api.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
+import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class UserGroupMap extends CFWObject {
@@ -34,7 +34,7 @@ public class UserGroupMap extends CFWObject {
 			.setValue(-999);
 	
 	private CFWField<Integer> foreignKeyUser = CFWField.newInteger(FormFieldType.HIDDEN, UserGroupMapFields.FK_ID_USER)
-			.setForeignKeyCascade(this, User.class, GroupFields.PK_ID)
+			.setForeignKeyCascade(this, User.class, UserFields.PK_ID)
 			.setDescription("The id of the user.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);

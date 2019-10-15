@@ -9,10 +9,9 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppInterface;
 import com.pengtoolbox.cfw._main.CFWApplication;
-import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
-import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
+import com.pengtoolbox.pageanalyzer.db.Result;
 import com.pengtoolbox.pageanalyzer.response.PageAnalyzerFooter;
 import com.pengtoolbox.pageanalyzer.response.PageAnalyzerMenu;
 import com.pengtoolbox.pageanalyzer.response.PageAnalyzerUserMenuItem;
@@ -52,6 +51,8 @@ public class Main extends Application implements CFWAppInterface {
     	CFW.Registry.Components.setDefaultMenu(PageAnalyzerMenu.class);
     	CFW.Registry.Components.setDefaultUserMenuItem(PageAnalyzerUserMenuItem.class);
     	CFW.Registry.Components.setDefaultFooter(PageAnalyzerFooter.class);
+    	
+    	CFW.Registry.Objects.addCFWObject(Result.class);
 		
 	}
 
@@ -59,7 +60,7 @@ public class Main extends Application implements CFWAppInterface {
 	public void initializeDB() {
 		//------------------------------------
 		// Initialize Database
-    	PageAnalyzerDB.initialize();
+    	//PageAnalyzerDB.initialize();
     	PAPermissions.initializePermissions();
 		
 	}

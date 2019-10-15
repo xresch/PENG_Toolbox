@@ -218,8 +218,19 @@ public class CFWObject {
 	//##############################################################################
 	
 	/****************************************************************
-	 * Create the table for this Object.
+	 * Executed before createTable() is executed. Can be overriden
+	 * to migrate existing tables to use CFWObjects instead.
 	 * @return CFWQuery for method chaining
+	 ****************************************************************/
+	public void migrateTable() {
+		
+	}
+	/****************************************************************
+	 * Create the table for this Object.
+	 * Will be executed after all migrateTable() methods where executed
+	 * of all objects in the Registry. 
+	 * 
+	 * @return true if successful, false otherwise
 	 ****************************************************************/
 	public boolean createTable() {
 		return new CFWStatement(this).createTable();
@@ -286,6 +297,16 @@ public class CFWObject {
 	 ****************************************************************/
 	public CFWStatement select(String ...fieldnames) {
 		return new CFWStatement(this).select(fieldnames);
+	}
+	
+	/****************************************************************
+	 * Begins a SELECT statement including all fields except the 
+	 * ones specified by the parameter.
+	 * @param fieldnames
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement selectWithout(String ...fieldnames) {
+		return new CFWStatement(this).selectWithout(fieldnames);
 	}
 	
 	/****************************************************************
