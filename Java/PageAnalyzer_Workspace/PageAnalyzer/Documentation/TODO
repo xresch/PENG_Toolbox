@@ -1,8 +1,5 @@
 TODO
 ====
-- Custom Logo Setting
-- Custom Bootstrap Setting
-- 
 
 - Truncate too long toasts.
 - Show previous toasts all toasts button
@@ -28,6 +25,8 @@ TODO
 
 DONE
 ====
+- Custom Logo Setting
+- Custom Bootstrap Setting
 - E-Tags for assembly files
 - Check is user active
 - Config Table
