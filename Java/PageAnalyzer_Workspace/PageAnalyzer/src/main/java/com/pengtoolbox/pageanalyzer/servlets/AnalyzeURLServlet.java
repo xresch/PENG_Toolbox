@@ -16,7 +16,7 @@ import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
-import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
+import com.pengtoolbox.pageanalyzer.db.PADBResults;
 import com.pengtoolbox.pageanalyzer.phantomjs.PhantomJSInterface;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
@@ -100,7 +100,7 @@ public class AnalyzeURLServlet extends HttpServlet
 				//--------------------------------------
 				// Save Results to DB
 				if(saveResults != null && saveResults.trim().toLowerCase().equals("on")) {
-					PageAnalyzerDB.saveResults(request, resultName, results, harContents);
+					PADBResults.saveResults(request, resultName, results, harContents);
 				}
 				
 				//--------------------------------------

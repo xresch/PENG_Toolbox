@@ -14,6 +14,7 @@ import org.eclipse.jetty.server.handler.HandlerWrapper;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFW.Context;
+import com.pengtoolbox.cfw._main.CFWApplication;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
  
@@ -77,7 +78,9 @@ public class RequestHandler extends HandlerWrapper
     	HttpSession session = request.getSession();
     	
     	if(session.getAttribute(CFW.SESSION_DATA) == null) {
-    		session.setAttribute(CFW.SESSION_DATA, new SessionData());
+    		SessionData data = new SessionData();
+    		session.setAttribute(CFW.SESSION_DATA, data);
+    		CFWApplication.propagateSessionDataToOtherContexts(request, data);
     		
     	};
     	

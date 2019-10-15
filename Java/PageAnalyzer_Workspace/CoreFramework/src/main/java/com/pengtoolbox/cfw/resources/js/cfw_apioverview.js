@@ -115,11 +115,11 @@ function cfw_apioverview_printLoginPanel(parent){
 	html += '<ul>';
 	html += '  <li><b>username: </b>The username for accessing the api.</li>';
 	html += '  <li><b>password: </b>The password of the user.</li>';
-	html += '<ul>';
+	html += '</ul>';
 	html += '<p>To use the APIs, add the cookie you have recieved to the HTTP Header "Cookie" of the requests. For example:</p>';
 	html += '<ul>';
 	html += '  <li><b>Cookie: </b>JSESSIONID=node01ab2c3d4e5f61xhc7f6puqsab1</li>';
-	html += '<ul>';
+	html += '</ul>';
 	cfwPanel.body = $(html);
 	
 	cfwPanel.appendTo(parent);

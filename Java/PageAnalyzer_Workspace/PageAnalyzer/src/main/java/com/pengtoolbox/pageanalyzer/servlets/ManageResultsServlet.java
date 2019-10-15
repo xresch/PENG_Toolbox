@@ -15,7 +15,7 @@ import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
-import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
+import com.pengtoolbox.pageanalyzer.db.PADBResults;
 
 public class ManageResultsServlet extends HttpServlet
 {
@@ -40,7 +40,7 @@ public class ManageResultsServlet extends HttpServlet
 		
 		if(CFW.Context.Request.hasPermission(PAPermissions.MANAGE_RESULTS)) {
 					
-			String jsonResults = PageAnalyzerDB.getAllResults();
+			String jsonResults = PADBResults.getAllResults();
 			
 			//TODO: Check User
 			

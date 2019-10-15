@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.login;
+package com.pengtoolbox.cfw.api;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -15,6 +15,7 @@ import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.login.LoginFacade;
 import com.pengtoolbox.cfw.response.PlaintextResponse;
 
 public class APILoginServlet extends HttpServlet
@@ -76,11 +77,10 @@ public class APILoginServlet extends HttpServlet
 
 					//--------------------------------
 					// Create session in other context
-					HttpSession newSession = CFWApplication.newSessionForCFWContext(request);
-					newSession.setAttribute(CFW.SESSION_DATA, data);
+					String sessionID = CFWApplication.propagateSessionDataToOtherContexts(request, data);
 					
 					if(CFW.Context.Request.hasPermission(Permission.CFW_API)) {
-						plaintext.getContent().append("JSESSIONID="+newSession.getId());
+						plaintext.getContent().append("JSESSIONID="+sessionID);
 					}else {
 						plaintext.getContent().append("ERROR: Access Denied.");
 					}

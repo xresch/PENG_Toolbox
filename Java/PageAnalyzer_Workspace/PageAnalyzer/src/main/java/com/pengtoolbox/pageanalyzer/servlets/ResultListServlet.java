@@ -16,7 +16,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
-import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
+import com.pengtoolbox.pageanalyzer.db.PADBResults;
 
 public class ResultListServlet extends HttpServlet
 {
@@ -41,7 +41,7 @@ public class ResultListServlet extends HttpServlet
 
 		
 		if(CFW.Context.Request.hasPermission(PAPermissions.VIEW_HISTORY)) {
-			String jsonResults = PageAnalyzerDB.getResultListForUser(CFW.Context.Request.getUser());
+			String jsonResults = PADBResults.getResultListForUser(CFW.Context.Request.getUser());
 			
 			//TODO: Check User
 			

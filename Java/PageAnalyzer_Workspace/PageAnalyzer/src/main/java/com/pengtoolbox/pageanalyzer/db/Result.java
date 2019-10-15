@@ -7,8 +7,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
+import com.pengtoolbox.cfw.api.APIDefinitionSQL;
+import com.pengtoolbox.cfw.api.APIRequestHandler;
+import com.pengtoolbox.cfw.api.APISQLExecutor;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -16,6 +23,7 @@ import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.PlaintextResponse;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 import com.pengtoolbox.pageanalyzer.db.Result.ResultFields;
 
@@ -146,7 +154,7 @@ public class Result extends CFWObject {
 				};
 
 		//----------------------------------
-		// fetchJSON
+		// fetchData
 		APIDefinitionFetch fetchDataAPI = 
 				new APIDefinitionFetch(
 						this.getClass(),
@@ -157,6 +165,62 @@ public class Result extends CFWObject {
 				);
 		
 		apis.add(fetchDataAPI);
+		
+		//----------------------------------
+		// getHar
+		APIDefinition getHar = 
+				new APIDefinition(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"getHar",
+						new String[] {ResultFields.PK_ID.toString()},
+						new String[] {ResultFields.JSON_HAR_FILE.toString()}
+				);
+		
+		getHar.setDescription("Returns the HAR as json for the specified result ID.");
+		
+		getHar.setRequestHandler(new APIRequestHandler() {
+			
+			@Override
+			public void handleRequest(HttpServletRequest request, HttpServletResponse response, APIDefinition definition) {
+				// TODO Auto-generated method stub
+				PlaintextResponse plaintext = new PlaintextResponse();
+				
+				String id = request.getParameter("PK_ID");
+				plaintext.getContent().append(PADBResults.getHARFileByID(Integer.parseInt(id)) );
+				
+			}
+		});
+			
+		apis.add(getHar);
+		
+		//----------------------------------
+		// getResult
+		APIDefinition getResult = 
+				new APIDefinition(
+						this.getClass(),
+						this.getClass().getSimpleName(),
+						"getResult",
+						new String[] {ResultFields.PK_ID.toString()},
+						new String[] {ResultFields.JSON_HAR_FILE.toString()}
+				);
+		
+		getResult.setDescription("Returns the results as json for the specified result ID.");
+		
+		getResult.setRequestHandler(new APIRequestHandler() {
+			
+			@Override
+			public void handleRequest(HttpServletRequest request, HttpServletResponse response, APIDefinition definition) {
+				// TODO Auto-generated method stub
+				PlaintextResponse plaintext = new PlaintextResponse();
+				
+				String id = request.getParameter("PK_ID");
+				plaintext.getContent().append(PADBResults.getResultByID(Integer.parseInt(id)) );
+				
+			}
+		});
+			
+		apis.add(getResult);
 		return apis;
 	}
 

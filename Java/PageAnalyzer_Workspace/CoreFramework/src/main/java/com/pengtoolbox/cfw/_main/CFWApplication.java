@@ -38,12 +38,12 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import com.pengtoolbox.cfw.api.APILoginServlet;
 import com.pengtoolbox.cfw.api.CFWAPIServlet;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
 import com.pengtoolbox.cfw.handlers.HTTPSRedirectHandler;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.login.APILoginServlet;
 import com.pengtoolbox.cfw.login.LoginServlet;
 import com.pengtoolbox.cfw.servlets.AssemblyServlet;
 import com.pengtoolbox.cfw.servlets.ConfigurationServlet;
@@ -61,9 +61,11 @@ public class CFWApplication {
 	private Server server;
 	private MultipartConfigElement globalMultipartConfig;
 	
-	private ArrayList<ContextHandler> unsecureContextArray = new ArrayList<ContextHandler>();
-	private ArrayList<ContextHandler> secureContextArray = new ArrayList<ContextHandler>();
-		
+	private static ArrayList<ContextHandler> unsecureContextArray = new ArrayList<ContextHandler>();
+	private static ArrayList<ContextHandler> secureContextArray = new ArrayList<ContextHandler>();
+	
+	private static ArrayList<ServletContextHandler> servletContextArray = new ArrayList<ServletContextHandler>();	
+	
 	private String defaultURL = "/";
 	static DefaultSessionIdManager idmanager;
 	private SessionHandler sessionHandler;	
@@ -114,6 +116,7 @@ public class CFWApplication {
 	        .chain(servletContext);
         
         unsecureContextArray.add(unsecureContextHandler);
+        servletContextArray.add(servletContext);
         return servletContext;
 	}
 	
@@ -139,7 +142,7 @@ public class CFWApplication {
 	        .chain(servletContext);
        
         secureContextArray.add(secureContext);
-        
+        servletContextArray.add(servletContext);
         return servletContext;
 	}
 	
@@ -275,23 +278,39 @@ public class CFWApplication {
 	    
 	}
 	
-	public static HttpSession newSessionForCFWContext(HttpServletRequest request) {
-		return cfwContext.getSessionHandler().newHttpSession(request);
+	/**************************************************************************************************
+	 * Propagates all sessions and session data to all available session context handlers.
+	 * @throws Exception
+	 **************************************************************************************************/
+	public static String propagateSessionDataToOtherContexts(HttpServletRequest request, SessionData data) {
+		
+		String sessionID = "";
+		for(ServletContextHandler handler : servletContextArray) {
+			HttpSession session = handler.getSessionHandler().getSession(request.getSession().getId());
+			if(session == null) {
+				session = handler.getSessionHandler().newHttpSession(request);
+			}
+			session.setAttribute(CFW.SESSION_DATA, data);
+			sessionID = session.getId();
+			System.out.println("SessionID: "+sessionID);
+		}
+		
+		return sessionID;
 	}
 
 	/**************************************************************************************************
-		 * Create an error handler.
-		 * @throws Exception
-		 **************************************************************************************************/
-		public static ErrorHandler createErrorHandler() throws Exception {
-	//	    ErrorPageErrorHandler errorHandler = new ErrorPageErrorHandler();
-	//	    errorHandler.addErrorPage(404, "/missing.html");
-	//	    context.setErrorHandler(errorHandler);
-		    
-			// Extend ErrorHandler and overwrite methods to create custom error page
-		    ErrorHandler handler = new ErrorHandler();
-		    return handler;
-		}
+	 * Create an error handler.
+	 * @throws Exception
+	 **************************************************************************************************/
+	public static ErrorHandler createErrorHandler() throws Exception {
+//	    ErrorPageErrorHandler errorHandler = new ErrorPageErrorHandler();
+//	    errorHandler.addErrorPage(404, "/missing.html");
+//	    context.setErrorHandler(errorHandler);
+	    
+		// Extend ErrorHandler and overwrite methods to create custom error page
+	    ErrorHandler handler = new ErrorHandler();
+	    return handler;
+	}
 
 	/***********************************************************************
 	 * Setup and returns a SessionHandler
@@ -441,6 +460,7 @@ public class CFWApplication {
 		
 		return server;
 	}
+
 
 	
 	

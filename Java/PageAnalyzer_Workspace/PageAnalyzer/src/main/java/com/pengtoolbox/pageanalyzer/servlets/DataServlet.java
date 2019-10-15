@@ -16,7 +16,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
-import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
+import com.pengtoolbox.pageanalyzer.db.PADBResults;
 
 /*************************************************************************
  * 
@@ -70,24 +70,24 @@ public class DataServlet extends HttpServlet {
 		}else {
 
 			switch(type.toLowerCase()) {
-				case "yslowresult": 	content.append(PageAnalyzerDB.getResultByID(Integer.parseInt(resultID)));
+				case "yslowresult": 	content.append(PADBResults.getResultByID(Integer.parseInt(resultID)));
 										break;
 										
-				case "resultlist": 		content.append(PageAnalyzerDB.getResultListForUser(CFW.Context.Request.getUser()));
+				case "resultlist": 		content.append(PADBResults.getResultListForUser(CFW.Context.Request.getUser()));
 										break;
 				
-				case "allresults": 		content.append(PageAnalyzerDB.getAllResults());
+				case "allresults": 		content.append(PADBResults.getAllResults());
 										break;
 										
 				case "har": 			if(CFW.Context.Request.hasPermission(PAPermissions.DOWNLOAD_HAR)) {
-											content.append(PageAnalyzerDB.getHARFileByID(Integer.parseInt(resultID)));
+											content.append(PADBResults.getHARFileByID(Integer.parseInt(resultID)));
 										}else {
 											CFW.Context.Request.addAlertMessage(MessageType.ERROR, "You don't have the required permission to download HAR files.");
 										}
 										break;
 				
 				case "compareyslow": 	String resultIDs = request.getParameter("resultids");
-										content.append(PageAnalyzerDB.getResultListForComparison(resultIDs));
+										content.append(PADBResults.getResultListForComparison(resultIDs));
 										break;
 										
 				default: 				CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The type '"+type+"' is not supported.");

@@ -14,7 +14,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
-import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
+import com.pengtoolbox.pageanalyzer.db.PADBResults;
 
 public class DeleteResultServlet extends HttpServlet
 {
@@ -49,7 +49,7 @@ public class DeleteResultServlet extends HttpServlet
 		String resultIDs = request.getParameter("resultids");
 		
 		if(resultIDs.matches("(\\d,?)+")) {
-			boolean result = PageAnalyzerDB.deleteResults(resultIDs);
+			boolean result = PADBResults.deleteResults(resultIDs);
 			content.append("{\"result\": "+result+"}");
 		}else {
 			content.append("{\"result\": false, \"error\": \"The result could not be deleted: ResultID is not a number.\"}");

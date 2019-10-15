@@ -16,7 +16,7 @@ import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
-import com.pengtoolbox.pageanalyzer.db.PageAnalyzerDB;
+import com.pengtoolbox.pageanalyzer.db.PADBResults;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
 //@MultipartConfig(maxFileSize=1024*1024*100, maxRequestSize=1024*1024*100)
@@ -104,7 +104,7 @@ public class HARUploadServlet extends HttpServlet
 				//--------------------------------------
 				// Save Results to DB
 				if(saveResultsString.trim().toLowerCase().equals("on")) {
-					PageAnalyzerDB.saveResults(request, resultName, results, harContents);
+					PADBResults.saveResults(request, resultName, results, harContents);
 				}
 				
 				//--------------------------------------

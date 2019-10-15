@@ -7,14 +7,15 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.pageanalyzer.db.Result.ResultFields;
 
-public class PageAnalyzerDB {
+public class PADBResults {
 
-	public static Logger logger = CFWLog.getLogger(PageAnalyzerDB.class.getName());
+	public static Logger logger = CFWLog.getLogger(PADBResults.class.getName());
 	
 	
 	/********************************************************************************************
@@ -144,7 +145,9 @@ public class PageAnalyzerDB {
 		// Execute
 		
 		if( CFW.Context.Request.getUserPermissions() != null
-			&& CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)) {
+			&& ( CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)
+				|| CFW.Context.Request.getUserPermissions().containsKey(Permission.CFW_API))	
+			) {
 			Result result = (Result)new Result() 
 					.select(ResultFields.JSON_RESULT.toString())
 					.where(ResultFields.PK_ID.toString(), resultID)
@@ -166,6 +169,7 @@ public class PageAnalyzerDB {
 
 	}
 	
+	
 	/********************************************************************************************
 	 * Returns the YSlow results as json string for the given resultID.
 	 * 
@@ -181,8 +185,9 @@ public class PageAnalyzerDB {
 		//----------------------------------
 		// Execute
 		if( CFW.Context.Request.getUserPermissions() != null
-		 && CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)) {
-			
+			&& ( CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)
+				|| CFW.Context.Request.getUserPermissions().containsKey(Permission.CFW_API))	
+			) {
 			Result result = (Result)new Result() 
 					.select(ResultFields.JSON_HAR_FILE.toString())
 					.where(ResultFields.PK_ID.toString(), resultID)
