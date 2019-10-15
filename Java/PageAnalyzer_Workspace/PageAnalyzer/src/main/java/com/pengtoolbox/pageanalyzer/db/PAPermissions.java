@@ -18,7 +18,6 @@ public class PAPermissions {
 		
 		Group adminGroup = CFW.DB.Groups.selectByName(CFW.DB.Groups.CFW_GROUP_ADMIN);
 		Group userGroup = CFW.DB.Groups.selectByName(CFW.DB.Groups.CFW_GROUP_USER);
-		Group foreignGroup = CFW.DB.Groups.selectByName(CFW.DB.Groups.CFW_GROUP_FOREIGN_USER);
 		
 		//-----------------------------------
 		// Manage Results
@@ -46,7 +45,6 @@ public class PAPermissions {
 			analyzeHAR = CFW.DB.Permissions.selectByName(ANALYZE_HAR);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(analyzeHAR, adminGroup, true);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(analyzeHAR, userGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(analyzeHAR, foreignGroup, true);
 		}
 		//-----------------------------------
 		// Download HAR
@@ -60,7 +58,6 @@ public class PAPermissions {
 			downloadHAR = CFW.DB.Permissions.selectByName(DOWNLOAD_HAR);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(downloadHAR, adminGroup, true);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(downloadHAR, userGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(downloadHAR, foreignGroup, true);
 		}
 		
 		//-----------------------------------
@@ -75,7 +72,6 @@ public class PAPermissions {
 			analyzeURL = CFW.DB.Permissions.selectByName(ANALYZE_URL);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(analyzeURL, adminGroup, true);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(analyzeURL, userGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(analyzeURL, foreignGroup, true);
 		}
 		
 		//-----------------------------------
@@ -90,7 +86,6 @@ public class PAPermissions {
 			viewHistory = CFW.DB.Permissions.selectByName(VIEW_HISTORY);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewHistory, adminGroup, true);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewHistory, userGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewHistory, foreignGroup, true);
 		}
 		
 		//-----------------------------------
@@ -105,7 +100,6 @@ public class PAPermissions {
 			deleteResult = CFW.DB.Permissions.selectByName(DELETE_RESULT);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(deleteResult, adminGroup, true);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(deleteResult, userGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(deleteResult, foreignGroup, true);
 		}
 		//-----------------------------------
 		// View Documentation
@@ -119,7 +113,6 @@ public class PAPermissions {
 			viewDocu = CFW.DB.Permissions.selectByName(VIEW_DOCU);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewDocu, adminGroup, true);
 			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewDocu, userGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewDocu, foreignGroup, true);
 		}
 	}
 	

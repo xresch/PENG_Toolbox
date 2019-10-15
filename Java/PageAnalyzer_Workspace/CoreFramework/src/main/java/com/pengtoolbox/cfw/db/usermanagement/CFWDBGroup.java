@@ -16,7 +16,6 @@ public class CFWDBGroup {
 	
 	public static String CFW_GROUP_SUPERUSER = "Superuser";
 	public static String CFW_GROUP_ADMIN = "Administrator";
-	public static String CFW_GROUP_FOREIGN_USER = "Foreign User";
 	public static String CFW_GROUP_USER = "User";
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBGroup.class.getName());

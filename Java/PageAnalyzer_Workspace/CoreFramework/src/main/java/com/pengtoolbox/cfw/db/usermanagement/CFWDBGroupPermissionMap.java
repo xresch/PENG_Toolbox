@@ -27,10 +27,17 @@ public class CFWDBGroupPermissionMap {
 	 ********************************************************************************************/
 	public static boolean addPermissionToGroup(Permission permission, Group group, boolean isDeletable) {
 		
-		if(permission == null || group == null ) {
+		if(permission == null) {
 			new CFWLog(logger)
 				.method("addPermissionToGroup")
-				.warn("Permission and group cannot be null.");
+				.warn("Permission cannot be null.");
+			return false;
+		}
+		
+		if(group == null) {
+			new CFWLog(logger)
+				.method("addPermissionToGroup")
+				.warn("Group cannot be null.");
 			return false;
 		}
 		

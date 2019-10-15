@@ -165,16 +165,6 @@ public class Group extends CFWObject {
 		userGroup.isRenamable(false);
 		CFW.DB.Groups.update(userGroup);
 		
-		//-----------------------------------------
-		// Create Group Foreign
-		//-----------------------------------------
-		Group foreignuserGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_FOREIGN_USER);
-		
-		if(!(foreignuserGroup == null)) {
-			foreignuserGroup.isRenamable(true);
-			foreignuserGroup.isDeletable(true);
-			CFW.DB.Groups.update(foreignuserGroup);
-		}
 	}
 	
 	/**************************************************************************************

@@ -13,7 +13,6 @@ import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.api.APIDefinitionSQL;
 import com.pengtoolbox.cfw.api.APISQLExecutor;
-import com.pengtoolbox.cfw.api.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
@@ -194,7 +193,6 @@ public class User extends CFWObject {
 					.setInitialPassword(initialPassword, initialPassword)
 					.isDeletable(true)
 					.isRenamable(false)
-					.status("ACTIVE")
 					.isForeign(false)
 				);
 			}
@@ -215,10 +213,9 @@ public class User extends CFWObject {
 			
 		    CFW.DB.Users.create(
 				new User("admin")
+				.setInitialPassword("admin", "admin")
 				.isDeletable(false)
 				.isRenamable(false)
-				.setInitialPassword("admin", "admin")
-				.status("ACTIVE")
 				.isForeign(false)
 			);
 		}
@@ -253,7 +250,7 @@ public class User extends CFWObject {
 		// Upgrade Step: Superuser permissions undeletable
 		//-----------------------------------------
 		HashMap<String, Permission> permissions = CFW.DB.GroupPermissionMap.selectPermissionsForGroup(superuserGroup);
-		
+
 		for(Permission p : permissions.values()) {
 			CFW.DB.GroupPermissionMap.updateIsDeletable(p.id(), superuserGroup.id(), false);
 		}
