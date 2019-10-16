@@ -110,10 +110,9 @@ function cfw_apioverview_createExample(apiName, actionName){
  * 
  ******************************************************************/
 function cfw_apioverview_printLoginPanel(parent){
-
-	cfwPanel = new CFWPanel('primary');
-	cfwPanel.title = "Login and Usage";
 	
+	//---------------------------
+	// Create Panel Content
 	url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
 	apiURL = url +"/cfw/apilogin";
 	html = '<p>Send a post request to <a target="_blank" href="'+apiURL+'">'+apiURL+'</a> with the following parameters in the post body: </p>';
@@ -122,12 +121,27 @@ function cfw_apioverview_printLoginPanel(parent){
 	html += '  <li><b>password: </b>The password of the user.</li>';
 	html += '</ul>';
 	html += '<p>To use the APIs, add the cookie you have recieved to the HTTP Header "Cookie" of the requests. For example:</p>';
-	html += '<ul>';
-	html += '  <li><b>Cookie: </b>JSESSIONID=node01ab2c3d4e5f61xhc7f6puqsab1</li>';
-	html += '</ul>';
-	cfwPanel.body = $(html);
+	html += '<pre class="cfwApiOverviewCode"><code>Cookie: JSESSIONID=node01ab2c3d4e5f61xhc7f6puqsab1</code></pre>';
 	
+	html += '<p>Here is an example login request using curl that will return the SessionID string:</p>';
+	html += '<pre class="cfwApiOverviewCode"><code>curl -X POST --data \'username=apiUser&password=apiUserPW\' \'http://localhost:8888/cfw/apilogin</code></pre>\'';
+	
+	html += '<p>Afterwards you can use the SessionID to access the API, here is an example. You can create examples for each API using the :</p>';
+	html += '<pre class="cfwApiOverviewCode"><code>curl -H "Cookie: JSESSIONID=node01ab2c3d4e5f61xhc7f6puqsab1" -X GET \'http://localhost:8888/pageanalyzer/app/api?apiName=User&actionName=fetchData\'</code></pre>';
+	
+	//---------------------------
+	// Create Panel
+	cfwPanel = new CFWPanel('primary');
+	cfwPanel.title = "Login and Usage";
+	cfwPanel.body = $(html);
 	cfwPanel.appendTo(parent);
+	
+	//---------------------------
+	// Highlight Code Blocks
+	codeblocks = $(".cfwApiOverviewCode");
+	hljs.highlightBlock(codeblocks.get(0));
+	hljs.highlightBlock(codeblocks.get(1));
+	hljs.highlightBlock(codeblocks.get(2));
 }
 /******************************************************************
  * Print the overview of the apis .
