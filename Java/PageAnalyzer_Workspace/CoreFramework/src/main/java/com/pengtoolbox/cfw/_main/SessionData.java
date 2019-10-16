@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import com.pengtoolbox.cfw.datahandling.CFWForm;
-import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
@@ -20,7 +20,7 @@ public class SessionData {
 	
 	private boolean isLoggedIn = false;
 	private User user = null;
-	private HashMap<String, Group> userGroups = new HashMap<String, Group>();
+	private HashMap<String, Role> userRoles = new HashMap<String, Role>();
 	private HashMap<String, Permission> userPermissions = new HashMap<String, Permission>();
 	private static LinkedHashMap<String,CFWForm> formMap = new LinkedHashMap<String,CFWForm>();
 	
@@ -60,7 +60,7 @@ public class SessionData {
 	public void setUser(User user) {
 		if(user != null) {
 			this.user = user;
-			this.userGroups = CFW.DB.Users.selectGroupsForUser(user);
+			this.userRoles = CFW.DB.Users.selectRolesForUser(user);
 			this.userPermissions = CFW.DB.Users.selectPermissionsForUser(user);
 		}
 	}
@@ -71,8 +71,8 @@ public class SessionData {
 	
 	
 	
-	public HashMap<String, Group> getUserGroups() {
-		return userGroups;
+	public HashMap<String, Role> getUserRoles() {
+		return userRoles;
 	}
 
 	public HashMap<String, Permission> getUserPermissions() {

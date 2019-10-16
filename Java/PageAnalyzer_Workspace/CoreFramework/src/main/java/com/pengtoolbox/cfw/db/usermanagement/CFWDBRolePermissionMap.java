@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWStatement;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.GroupPermissionMap.GroupPermissionMapFields;
+import com.pengtoolbox.cfw.db.usermanagement.RolePermissionMap.RolePermissionMapFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
@@ -16,85 +16,85 @@ import com.pengtoolbox.cfw.logging.CFWLog;
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class CFWDBGroupPermissionMap {
+public class CFWDBRolePermissionMap {
 
 	public static String TABLE_NAME = "CFW_GROUP_PERMISSION_MAP";
 	
-	public static Logger logger = CFWLog.getLogger(CFWDBGroupPermissionMap.class.getName());
+	public static Logger logger = CFWLog.getLogger(CFWDBRolePermissionMap.class.getName());
 	
 
 	/********************************************************************************************
-	 * Adds the permission to the specified group.
+	 * Adds the permission to the specified role.
 	 * @param permission
-	 * @param group
+	 * @param role
 	 * @return return true if user was added, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean addPermissionToGroup(Permission permission, Group group, boolean isDeletable) {
+	public static boolean addPermissionToRole(Permission permission, Role role, boolean isDeletable) {
 		
 		if(permission == null) {
 			new CFWLog(logger)
-				.method("addPermissionToGroup")
+				.method("addPermissionToRole")
 				.warn("Permission cannot be null.");
 			return false;
 		}
 		
-		if(group == null) {
+		if(role == null) {
 			new CFWLog(logger)
-				.method("addPermissionToGroup")
-				.warn("Group cannot be null.");
+				.method("addPermissionToRole")
+				.warn("Role cannot be null.");
 			return false;
 		}
 		
-		if(permission.id() < 0 || group.id() < 0) {
+		if(permission.id() < 0 || role.id() < 0) {
 			new CFWLog(logger)
-				.method("addPermissionToGroup")
-				.warn("Permission-ID and group-ID are not set correctly.");
+				.method("addPermissionToRole")
+				.warn("Permission-ID and role-ID are not set correctly.");
 			return false;
 		}
 		
-		if(checkIsPermissionInGroup(permission, group)) {
+		if(checkIsPermissionInRole(permission, role)) {
 			new CFWLog(logger)
-				.method("addPermissionToGroup")
-				.warn("The permission '"+permission.name()+"' is already part of the group '"+group.name()+"'.");
+				.method("addPermissionToRole")
+				.warn("The permission '"+permission.name()+"' is already part of the role '"+role.name()+"'.");
 			return false;
 		}
 		
-		return addPermissionToGroup(permission.id(), group.id(), isDeletable);
+		return addPermissionToRole(permission.id(), role.id(), isDeletable);
 	}
 	/********************************************************************************************
-	 * Adds the permission to the specified group.
+	 * Adds the permission to the specified role.
 	 * @param permissionID
-	 * @param groupID
+	 * @param roleID
 	 * @return return true if permission was added, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean addPermissionToGroup(int permissionID, int groupID, boolean isDeletable) {
+	public static boolean addPermissionToRole(int permissionID, int roleID, boolean isDeletable) {
 		
 		
-		if(permissionID < 0 || groupID < 0) {
+		if(permissionID < 0 || roleID < 0) {
 			new CFWLog(logger)
-				.method("addPermissionToGroup")
-				.warn("Permission-ID or group-ID are not set correctly.");
+				.method("addPermissionToRole")
+				.warn("Permission-ID or role-ID are not set correctly.");
 			return false;
 		}
 		
-		if(checkIsPermissionInGroup(permissionID, groupID)) {
+		if(checkIsPermissionInRole(permissionID, roleID)) {
 			new CFWLog(logger)
-				.method("addPermissionToGroup")
-				.warn("The permission '"+permissionID+"' is already part of the group '"+groupID+"'.");
+				.method("addPermissionToRole")
+				.warn("The permission '"+permissionID+"' is already part of the role '"+roleID+"'.");
 			return false;
 		}
 		
 		String insertPermissionSQL = "INSERT INTO "+TABLE_NAME+" ("
-				  + GroupPermissionMapFields.FK_ID_PERMISSION +", "
-				  + GroupPermissionMapFields.FK_ID_GROUP +", "
-				  + GroupPermissionMapFields.IS_DELETABLE +" "
+				  + RolePermissionMapFields.FK_ID_PERMISSION +", "
+				  + RolePermissionMapFields.FK_ID_GROUP +", "
+				  + RolePermissionMapFields.IS_DELETABLE +" "
 				  + ") VALUES (?,?,?);";
 		
 		return CFWDB.preparedExecute(insertPermissionSQL, 
 				permissionID,
-				groupID,
+				roleID,
 				isDeletable
 				);
 	}
@@ -102,102 +102,102 @@ public class CFWDBGroupPermissionMap {
 	/********************************************************************************************
 	 * Update if the permission can be deleted.
 	 * @param user
-	 * @param group
+	 * @param role
 	 * @return return true if user was removed, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean updateIsDeletable(int permissionID, int groupID, boolean isDeletable) {
-		String removeUserFromGroupSQL = "UPDATE "+TABLE_NAME
-				+" SET "+ GroupPermissionMapFields.IS_DELETABLE +" = ? "
+	public static boolean updateIsDeletable(int permissionID, int roleID, boolean isDeletable) {
+		String removeUserFromRoleSQL = "UPDATE "+TABLE_NAME
+				+" SET "+ RolePermissionMapFields.IS_DELETABLE +" = ? "
 				+" WHERE "
-				  + GroupPermissionMapFields.FK_ID_PERMISSION +" = ? "
+				  + RolePermissionMapFields.FK_ID_PERMISSION +" = ? "
 				  + " AND "
-				  + GroupPermissionMapFields.FK_ID_GROUP +" = ? "
+				  + RolePermissionMapFields.FK_ID_GROUP +" = ? "
 				  + ";";
 		
-		return CFWDB.preparedExecute(removeUserFromGroupSQL, 
+		return CFWDB.preparedExecute(removeUserFromRoleSQL, 
 				isDeletable,
 				permissionID,
-				groupID
+				roleID
 				);
 	}
 	/********************************************************************************************
-	 * Adds the permission to the specified group.
+	 * Adds the permission to the specified role.
 	 * @param permission
-	 * @param group
+	 * @param role
 	 * @return return true if user was added, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean removePermissionFromGroup(Permission permission, Group group) {
+	public static boolean removePermissionFromRole(Permission permission, Role role) {
 		
-		if(permission == null || group == null ) {
+		if(permission == null || role == null ) {
 			new CFWLog(logger)
-				.method("addPermissionToGroup")
-				.warn("Permission and group cannot be null.");
+				.method("addPermissionToRole")
+				.warn("Permission and role cannot be null.");
 			return false;
 		}
 		
-		if(permission.id() < 0 || group.id() < 0) {
+		if(permission.id() < 0 || role.id() < 0) {
 			new CFWLog(logger)
-				.method("addPermissionToGroup")
-				.warn("Permission-ID and group-ID are not set correctly.");
+				.method("addPermissionToRole")
+				.warn("Permission-ID and role-ID are not set correctly.");
 			return false;
 		}
 		
-		if(!checkIsPermissionInGroup(permission, group)) {
+		if(!checkIsPermissionInRole(permission, role)) {
 			new CFWLog(logger)
-				.method("addPermissionToGroup")
-				.warn("The permission '"+permission.name()+"' is not part of the group '"+group.name()+"' and cannot be removed.");
+				.method("addPermissionToRole")
+				.warn("The permission '"+permission.name()+"' is not part of the role '"+role.name()+"' and cannot be removed.");
 			return false;
 		}
 		
-		return removePermissionFromGroup(permission.id(), group.id());
+		return removePermissionFromRole(permission.id(), role.id());
 	}
 	/********************************************************************************************
-	 * Remove a permission from the group.
+	 * Remove a permission from the role.
 	 * @param permission
-	 * @param group
+	 * @param role
 	 * @return return true if permission was removed, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean removePermissionFromGroup(int permissionID, int groupID) {
+	public static boolean removePermissionFromRole(int permissionID, int roleID) {
 		
-		if(!checkIsPermissionInGroup(permissionID, groupID)) {
+		if(!checkIsPermissionInRole(permissionID, roleID)) {
 			new CFWLog(logger)
-				.method("removePermissionFromGroup")
-				.warn("The permission '"+permissionID+"' is not part of the group '"+ groupID+"' and cannot be removed.");
+				.method("removePermissionFromRole")
+				.warn("The permission '"+permissionID+"' is not part of the role '"+ roleID+"' and cannot be removed.");
 			return false;
 		}
 		
-		String removePermissionFromGroupSQL = "DELETE FROM "+TABLE_NAME
+		String removePermissionFromRoleSQL = "DELETE FROM "+TABLE_NAME
 				+" WHERE "
-				  + GroupPermissionMapFields.FK_ID_PERMISSION +" = ? "
+				  + RolePermissionMapFields.FK_ID_PERMISSION +" = ? "
 				  + " AND "
-				  + GroupPermissionMapFields.FK_ID_GROUP +" = ? "
+				  + RolePermissionMapFields.FK_ID_GROUP +" = ? "
 				  + " AND "
-				  + GroupPermissionMapFields.IS_DELETABLE +" = TRUE "
+				  + RolePermissionMapFields.IS_DELETABLE +" = TRUE "
 				  + ";";
 		
-		return CFWDB.preparedExecute(removePermissionFromGroupSQL, 
+		return CFWDB.preparedExecute(removePermissionFromRoleSQL, 
 				permissionID,
-				groupID
+				roleID
 				);
 	}
 	
 	/****************************************************************
-	 * Check if the permission is in the given group.
+	 * Check if the permission is in the given role.
 	 * 
 	 * @param permission to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
-	public static boolean checkIsPermissionInGroup(Permission permission, Group group) {
+	public static boolean checkIsPermissionInRole(Permission permission, Role role) {
 		
-		if(permission != null && group != null) {
-			return checkIsPermissionInGroup(permission.id(), group.id());
+		if(permission != null && role != null) {
+			return checkIsPermissionInRole(permission.id(), role.id());
 		}else {
 			new CFWLog(logger)
-				.method("checkIsPermissionInGroup")
-				.severe("The user and group cannot be null. User: '"+permission+"', Group: '"+group+"'");
+				.method("checkIsPermissionInRole")
+				.severe("The user and role cannot be null. User: '"+permission+"', Role: '"+role+"'");
 			
 		}
 		return false;
@@ -209,13 +209,13 @@ public class CFWDBGroupPermissionMap {
 	 * @param permission to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
-	public static boolean checkIsPermissionInGroup(int permissionid, int groupid) {
+	public static boolean checkIsPermissionInRole(int permissionid, int roleid) {
 		
-		String checkIsPermissionInGroup = "SELECT COUNT(*) FROM "+TABLE_NAME
-				+" WHERE "+GroupPermissionMapFields.FK_ID_PERMISSION+" = ?"
-				+" AND "+GroupPermissionMapFields.FK_ID_GROUP+" = ?";
+		String checkIsPermissionInRole = "SELECT COUNT(*) FROM "+TABLE_NAME
+				+" WHERE "+RolePermissionMapFields.FK_ID_PERMISSION+" = ?"
+				+" AND "+RolePermissionMapFields.FK_ID_GROUP+" = ?";
 		
-		ResultSet result = CFW.DB.preparedExecuteQuery(checkIsPermissionInGroup, permissionid, groupid);
+		ResultSet result = CFW.DB.preparedExecuteQuery(checkIsPermissionInRole, permissionid, roleid);
 		
 		try {
 			if(result != null && result.next()) {
@@ -224,8 +224,8 @@ public class CFWDBGroupPermissionMap {
 			}
 		} catch (Exception e) {
 			new CFWLog(logger)
-			.method("checkIsPermissionInGroup")
-			.severe("Exception occured while checking of group exists.", e);
+			.method("checkIsPermissionInRole")
+			.severe("Exception occured while checking of role exists.", e);
 			
 			return false;
 		}finally {
@@ -237,26 +237,26 @@ public class CFWDBGroupPermissionMap {
 	}
 	
 	/***************************************************************
-	 * Retrieve the permissions for the specified group.
-	 * @param group
-	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
+	 * Retrieve the permissions for the specified role.
+	 * @param role
+	 * @return Hashmap with roles(key=role name, value=role object), or null on exception
 	 ****************************************************************/
-	public static HashMap<String, Permission> selectPermissionsForGroup(Group group) {
+	public static HashMap<String, Permission> selectPermissionsForRole(Role role) {
 		
-		if( group == null) {
+		if( role == null) {
 			new CFWLog(logger)
 				.method("create")
 				.severe("The user cannot be null");
 			return null;
 		}
 		
-		String selectPermissionsForGroup = "SELECT P.* FROM "+Permission.TABLE_NAME+" P "
-				+ " INNER JOIN "+CFWDBGroupPermissionMap.TABLE_NAME+" M "
+		String selectPermissionsForRole = "SELECT P.* FROM "+Permission.TABLE_NAME+" P "
+				+ " INNER JOIN "+CFWDBRolePermissionMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_PERMISSION = P.PK_ID "
 				+ " WHERE M.FK_ID_GROUP = ?";
 		
-		ResultSet result = CFWDB.preparedExecuteQuery(selectPermissionsForGroup, 
-				group.id());
+		ResultSet result = CFWDB.preparedExecuteQuery(selectPermissionsForRole, 
+				role.id());
 		
 		HashMap<String, Permission> permissionMap = new HashMap<String, Permission>(); 
 		
@@ -267,8 +267,8 @@ public class CFWDBGroupPermissionMap {
 			}
 		} catch (SQLException e) {
 			new CFWLog(logger)
-			.method("selectGroupsForUser")
-			.severe("Error while selecting permissions for the group '"+group.name()+"'.", e);
+			.method("selectRolesForUser")
+			.severe("Error while selecting permissions for the role '"+role.name()+"'.", e);
 			return null;
 		}finally {
 			CFWDB.close(result);
@@ -280,8 +280,8 @@ public class CFWDBGroupPermissionMap {
 	
 	/***************************************************************
 	 * Retrieve the permissions for the specified user.
-	 * @param group
-	 * @return Hashmap with permissions(key=group name), or null on exception
+	 * @param role
+	 * @return Hashmap with permissions(key=role name), or null on exception
 	 ****************************************************************/
 	public static HashMap<String, Permission> selectPermissionsForUser(User user) {
 		
@@ -295,8 +295,8 @@ public class CFWDBGroupPermissionMap {
 			}
 		} catch (SQLException e) {
 			new CFWLog(logger)
-			.method("selectGroupsForUser")
-			.severe("Error while selecting permissions for the group '"+user.username()+"'.", e);
+			.method("selectRolesForUser")
+			.severe("Error while selecting permissions for the role '"+user.username()+"'.", e);
 			return null;
 		}finally {
 			CFWDB.close(result);
@@ -308,8 +308,8 @@ public class CFWDBGroupPermissionMap {
 	
 	/***************************************************************
 	 * Retrieve the permissions for the specified user.
-	 * @param group
-	 * @return Hashmap with permissions(key=group name), or null on exception
+	 * @param role
+	 * @return Hashmap with permissions(key=role name), or null on exception
 	 ****************************************************************/
 	public static ResultSet selectPermissionsForUserResultSet(User user) {
 		
@@ -321,7 +321,7 @@ public class CFWDBGroupPermissionMap {
 		}
 		
 		return new CFWStatement(user)
-				.queryCache(CFWDBGroupPermissionMap.class, "selectPermissionsForUserResultSet")
+				.queryCache(CFWDBRolePermissionMap.class, "selectPermissionsForUserResultSet")
 				.custom(
 					"SELECT P.* "
 					+"FROM CFW_PERMISSION P "
@@ -336,13 +336,13 @@ public class CFWDBGroupPermissionMap {
 	
 	/***************************************************************
 	 * Retrieve the permissions for the specified user.
-	 * @param group
-	 * @return Hashmap with permissions(key=group name), or null on exception
+	 * @param role
+	 * @return Hashmap with permissions(key=role name), or null on exception
 	 ****************************************************************/
 	public static ResultSet getPermissionOverview() {
 		
 		return new CFWStatement(new Permission())
-				.queryCache(CFWDBGroupPermissionMap.class, "getPermissionOverview")
+				.queryCache(CFWDBRolePermissionMap.class, "getPermissionOverview")
 				.custom(
 					"SELECT U.USERNAME, G.NAME AS GROUPNAME, P.NAME AS PERMISSION"
 					+" FROM CFW_USER U"
@@ -356,30 +356,30 @@ public class CFWDBGroupPermissionMap {
 	}
 	
 	/***************************************************************
-	 * Returns a list of all groups and if the user is part of them 
+	 * Returns a list of all roles and if the user is part of them 
 	 * as a json array.
-	 * @param group
-	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
+	 * @param role
+	 * @return Hashmap with roles(key=role name, value=role object), or null on exception
 	 ****************************************************************/
-	public static String getPermissionMapForGroupAsJSON(String groupID) {
+	public static String getPermissionMapForRoleAsJSON(String roleID) {
 		
 		//----------------------------------
 		// Check input format
-		if(groupID == null ^ !groupID.matches("\\d+")) {
+		if(roleID == null ^ !roleID.matches("\\d+")) {
 			new CFWLog(logger)
-			.method("getPermissionMapForGroupAsJSON")
-			.severe("The groupID '"+groupID+"' is not a number.");
+			.method("getPermissionMapForRoleAsJSON")
+			.severe("The roleID '"+roleID+"' is not a number.");
 			return "[]";
 		}
 		
 		String sqlString = "SELECT P.PK_ID, P.NAME, P.DESCRIPTION, M.FK_ID_GROUP AS ITEM_ID, M.IS_DELETABLE FROM "+Permission.TABLE_NAME+" P "
-				+ " LEFT JOIN "+CFWDBGroupPermissionMap.TABLE_NAME+" M "
+				+ " LEFT JOIN "+CFWDBRolePermissionMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_PERMISSION = P.PK_ID"
 				+ " AND M.FK_ID_GROUP = ?"
 				+ " ORDER BY LOWER(P.NAME)";;
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(sqlString, 
-				groupID);
+				roleID);
 		
 		String json = CFWDB.resultSetToJSON(result);
 		CFWDB.close(result);	
@@ -387,43 +387,43 @@ public class CFWDBGroupPermissionMap {
 
 	}
 	/***************************************************************
-	 * Remove the user from the group if it is a member of the group, 
+	 * Remove the user from the role if it is a member of the role, 
 	 * add it otherwise.
 	 ****************************************************************/
-	public static boolean tooglePermissionInGroup(String permissionID, String groupID) {
+	public static boolean tooglePermissionInRole(String permissionID, String roleID) {
 		
 		//----------------------------------
 		// Check input format
 		if(permissionID == null ^ !permissionID.matches("\\d+")) {
 			new CFWLog(logger)
-			.method("toogleUserInGroup")
+			.method("toogleUserInRole")
 			.severe("The userID '"+permissionID+"' is not a number.");
 			return false;
 		}
 		
 		//----------------------------------
 		// Check input format
-		if(groupID == null ^ !groupID.matches("\\d+")) {
+		if(roleID == null ^ !roleID.matches("\\d+")) {
 			new CFWLog(logger)
-			.method("toogleUserInGroup")
-			.severe("The groupID '"+permissionID+"' is not a number.");
+			.method("toogleUserInRole")
+			.severe("The roleID '"+permissionID+"' is not a number.");
 			return false;
 		}
 		
-		return tooglePermissionInGroup(Integer.parseInt(permissionID), Integer.parseInt(groupID));
+		return tooglePermissionInRole(Integer.parseInt(permissionID), Integer.parseInt(roleID));
 		
 	}
 	
 	/***************************************************************
-	 * Remove the user from the group if it is a member of the group, 
+	 * Remove the user from the role if it is a member of the role, 
 	 * add it otherwise.
 	 ****************************************************************/
-	public static boolean tooglePermissionInGroup(int userID, int groupID) {
+	public static boolean tooglePermissionInRole(int userID, int roleID) {
 		
-		if(checkIsPermissionInGroup(userID, groupID)) {
-			return removePermissionFromGroup(userID, groupID);
+		if(checkIsPermissionInRole(userID, roleID)) {
+			return removePermissionFromRole(userID, roleID);
 		}else {
-			return addPermissionToGroup(userID, groupID, true);
+			return addPermissionToRole(userID, roleID, true);
 		}
 
 	}

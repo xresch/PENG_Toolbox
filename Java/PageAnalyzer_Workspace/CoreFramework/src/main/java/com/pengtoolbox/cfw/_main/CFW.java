@@ -11,12 +11,12 @@ import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.config.CFWDBConfig;
 import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.db.spaces.CFWSpace;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroupPermissionMap;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBRole;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBRolePermissionMap;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserGroupMap;
-import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserRoleMap;
+import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
@@ -39,10 +39,10 @@ public class CFW {
 	public static class DB extends CFWDB {
 		public static class Config extends CFWDBConfig{};
 		public static class Users extends CFWDBUser{};
-		public static class Groups extends CFWDBGroup{};
-		public static class UserGroupMap extends CFWDBUserGroupMap{};
+		public static class Roles extends CFWDBRole{};
+		public static class UserRoleMap extends CFWDBUserRoleMap{};
 		public static class Permissions extends CFWDBPermission{};
-		public static class GroupPermissionMap extends CFWDBGroupPermissionMap{};
+		public static class RolePermissionMap extends CFWDBRolePermissionMap{};
 	}
 	
 	public static class Context {
@@ -157,10 +157,10 @@ public class CFW {
 		// Register  
 		CFW.Registry.Objects.addCFWObject(Configuration.class);
 		CFW.Registry.Objects.addCFWObject(User.class);
-		CFW.Registry.Objects.addCFWObject(Group.class);
+		CFW.Registry.Objects.addCFWObject(Role.class);
 		CFW.Registry.Objects.addCFWObject(Permission.class);
-		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.UserGroupMap.class);
-		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.GroupPermissionMap.class);
+		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.UserRoleMap.class);
+		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.RolePermissionMap.class);
 		CFW.Registry.Objects.addCFWObject(CFWSpace.class);
 		//---------------------------
 		// Application Register

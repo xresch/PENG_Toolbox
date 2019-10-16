@@ -9,7 +9,7 @@ import com.pengtoolbox.cfw.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
+import com.pengtoolbox.cfw.db.usermanagement.Role.RoleFields;
 import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
 
 /**************************************************************************************************************
@@ -17,11 +17,11 @@ import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class UserGroupMap extends CFWObject {
+public class UserRoleMap extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_USER_GROUP_MAP";
 	
-	enum UserGroupMapFields{
+	enum UserRoleMapFields{
 		PK_ID, 
 		FK_ID_USER,
 		FK_ID_GROUP,
@@ -29,41 +29,41 @@ public class UserGroupMap extends CFWObject {
 	}
 
 
-	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, UserGroupMapFields.PK_ID)
+	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, UserRoleMapFields.PK_ID)
 			.setPrimaryKeyAutoIncrement(this)
 			.setDescription("The id of the mapping.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
-	private CFWField<Integer> foreignKeyUser = CFWField.newInteger(FormFieldType.HIDDEN, UserGroupMapFields.FK_ID_USER)
+	private CFWField<Integer> foreignKeyUser = CFWField.newInteger(FormFieldType.HIDDEN, UserRoleMapFields.FK_ID_USER)
 			.setForeignKeyCascade(this, User.class, UserFields.PK_ID)
 			.setDescription("The id of the user.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
-	private CFWField<Integer> foreignKeyGroup = CFWField.newInteger(FormFieldType.HIDDEN, UserGroupMapFields.FK_ID_GROUP)
-			.setForeignKeyCascade(this, Group.class, GroupFields.PK_ID)
-			.setDescription("The id of the group.")
+	private CFWField<Integer> foreignKeyRole = CFWField.newInteger(FormFieldType.HIDDEN, UserRoleMapFields.FK_ID_GROUP)
+			.setForeignKeyCascade(this, Role.class, RoleFields.PK_ID)
+			.setDescription("The id of the role.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
-	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.HIDDEN, UserGroupMapFields.IS_DELETABLE)
+	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.HIDDEN, UserRoleMapFields.IS_DELETABLE)
 			.setColumnDefinition("BOOLEAN")
 			.setDescription("Flag to define if the mapping can be deleted or not.")
 			.setValue(true);
 	
-	public UserGroupMap() {
+	public UserRoleMap() {
 		initializeFields();
 	}
 	
-	public UserGroupMap(ResultSet result) throws SQLException {
+	public UserRoleMap(ResultSet result) throws SQLException {
 		initializeFields();
 		this.mapResultSet(result);	
 	}
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.addFields(id, foreignKeyUser, foreignKeyGroup, isDeletable);
+		this.addFields(id, foreignKeyUser, foreignKeyRole, isDeletable);
 	}
 	
 	/**************************************************************************************
@@ -74,17 +74,17 @@ public class UserGroupMap extends CFWObject {
 				
 		String[] inputFields = 
 				new String[] {
-						UserGroupMapFields.PK_ID.toString(), 
-						UserGroupMapFields.FK_ID_USER.toString(),
-						UserGroupMapFields.FK_ID_GROUP.toString(),
+						UserRoleMapFields.PK_ID.toString(), 
+						UserRoleMapFields.FK_ID_USER.toString(),
+						UserRoleMapFields.FK_ID_GROUP.toString(),
 				};
 		
 		String[] outputFields = 
 				new String[] {
-						UserGroupMapFields.PK_ID.toString(), 
-						UserGroupMapFields.FK_ID_USER.toString(),
-						UserGroupMapFields.FK_ID_GROUP.toString(),
-						UserGroupMapFields.IS_DELETABLE.toString(),
+						UserRoleMapFields.PK_ID.toString(), 
+						UserRoleMapFields.FK_ID_USER.toString(),
+						UserRoleMapFields.FK_ID_GROUP.toString(),
+						UserRoleMapFields.IS_DELETABLE.toString(),
 				};
 
 		//----------------------------------
@@ -111,17 +111,17 @@ public class UserGroupMap extends CFWObject {
 		return foreignKeyUser.getValue();
 	}
 	
-	public UserGroupMap foreignKeyUser(int foreignKeyUser) {
+	public UserRoleMap foreignKeyUser(int foreignKeyUser) {
 		this.foreignKeyUser.setValue(foreignKeyUser);
 		return this;
 	}	
 	
-	public int foreignKeyGroup() {
-		return foreignKeyGroup.getValue();
+	public int foreignKeyRole() {
+		return foreignKeyRole.getValue();
 	}
 	
-	public UserGroupMap foreignKeyGroup(int foreignKeyGroup) {
-		this.foreignKeyGroup.setValue(foreignKeyGroup);
+	public UserRoleMap foreignKeyRole(int foreignKeyRole) {
+		this.foreignKeyRole.setValue(foreignKeyRole);
 		return this;
 	}	
 	
@@ -130,7 +130,7 @@ public class UserGroupMap extends CFWObject {
 		return isDeletable.getValue();
 	}
 	
-	public UserGroupMap isDeletable(boolean isDeletable) {
+	public UserRoleMap isDeletable(boolean isDeletable) {
 		this.isDeletable.setValue(isDeletable);
 		return this;
 	}	

@@ -22,8 +22,8 @@ import org.h2.tools.Server;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFW.Properties;
 import com.pengtoolbox.cfw._main.CFWProperties;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBGroup;
-import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBRole;
+import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -114,7 +114,7 @@ public class CFWDB {
 	}
 			
 	/********************************************************************************************
-	 * Groups have to be existing.
+	 * Roles have to be existing.
 	 * 
 	 ********************************************************************************************/
 	private static void createDefaultUsers() {
@@ -170,29 +170,29 @@ public class CFWDB {
 		
 		
 		//-----------------------------------------
-		// Add Admin to group Superuser
+		// Add Admin to role Superuser
 		//-----------------------------------------
-		Group superuserGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_SUPERUSER);
+		Role superuserRole = CFW.DB.Roles.selectByName(CFWDBRole.CFW_ROLE_SUPERUSER);
 		
-		if(!CFW.DB.UserGroupMap.checkIsUserInGroup(adminUser, superuserGroup)) {
-			CFW.DB.UserGroupMap.addUserToGroup(adminUser, superuserGroup, false);
+		if(!CFW.DB.UserRoleMap.checkIsUserInRole(adminUser, superuserRole)) {
+			CFW.DB.UserRoleMap.addUserToRole(adminUser, superuserRole, false);
 		}
 		//Needed for Upgrade
-		CFW.DB.UserGroupMap.updateIsDeletable(adminUser.id(), superuserGroup.id(), false);
+		CFW.DB.UserRoleMap.updateIsDeletable(adminUser.id(), superuserRole.id(), false);
 
-		if(!CFW.DB.UserGroupMap.checkIsUserInGroup(adminUser, superuserGroup)) {
+		if(!CFW.DB.UserRoleMap.checkIsUserInRole(adminUser, superuserRole)) {
 			new CFWLog(logger)
 			.method("createDefaultUsers")
-			.severe("User 'admin' is not assigned to group 'Superuser'.");
+			.severe("User 'admin' is not assigned to role 'Superuser'.");
 		}
 		
 		//-----------------------------------------
 		// Upgrade Step: Superuser permissions undeletable
 		//-----------------------------------------
-		HashMap<String, Permission> permissions = CFW.DB.GroupPermissionMap.selectPermissionsForGroup(superuserGroup);
+		HashMap<String, Permission> permissions = CFW.DB.RolePermissionMap.selectPermissionsForRole(superuserRole);
 		
 		for(Permission p : permissions.values()) {
-			CFW.DB.GroupPermissionMap.updateIsDeletable(p.id(), superuserGroup.id(), false);
+			CFW.DB.RolePermissionMap.updateIsDeletable(p.id(), superuserRole.id(), false);
 		}
 		
 	}
@@ -799,22 +799,22 @@ public class CFWDB {
 	 ********************************************************************************************/
 	public static void createTestData() {
 		
-		Group testgroupA, testgroupB, testgroupC;
+		Role testroleA, testroleB, testroleC;
 		User testuserA, testuserB, testuserC;
 		
 		Permission  permissionA, permissionAA, permissionAAA, 
 					permissionB, permissionBB,
 					permissionC;
 		//------------------------------
-		// Groups
-		CFW.DB.Groups.create(new Group("TestgroupA").description("This is the testgroup A."));
-		testgroupA = CFW.DB.Groups.selectByName("TestgroupA");
+		// Roles
+		CFW.DB.Roles.create(new Role("TestroleA").description("This is the testrole A."));
+		testroleA = CFW.DB.Roles.selectByName("TestroleA");
 		
-		CFW.DB.Groups.create(new Group("TestgroupB").description("This is the testgroup B."));
-		testgroupB = CFW.DB.Groups.selectByName("TestgroupB");
+		CFW.DB.Roles.create(new Role("TestroleB").description("This is the testrole B."));
+		testroleB = CFW.DB.Roles.selectByName("TestroleB");
 		
-		CFW.DB.Groups.create(new Group("TestgroupC").description("This is the testgroup C."));
-		testgroupC = CFW.DB.Groups.selectByName("TestgroupC");
+		CFW.DB.Roles.create(new Role("TestroleC").description("This is the testrole C."));
+		testroleC = CFW.DB.Roles.selectByName("TestroleC");
 		
 		//------------------------------
 		// Users
@@ -824,9 +824,9 @@ public class CFWDB {
 				.firstname("Testika")
 				.lastname("Testonia"));
 		testuserA = CFW.DB.Users.selectByUsernameOrMail("TestuserA");
-		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupA, true);
-		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupB, true);
-		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupC, true);
+		CFW.DB.UserRoleMap.addUserToRole(testuserA, testroleA, true);
+		CFW.DB.UserRoleMap.addUserToRole(testuserA, testroleB, true);
+		CFW.DB.UserRoleMap.addUserToRole(testuserA, testroleC, true);
 		
 		CFW.DB.Users.create(new User("TestuserB")
 				.setNewPassword("TestuserB", "TestuserB")
@@ -834,8 +834,8 @@ public class CFWDB {
 				.firstname("Jane")
 				.lastname("Doe"));
 		testuserB = CFW.DB.Users.selectByUsernameOrMail("TestuserB");
-		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupA, true);
-		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupB, true);
+		CFW.DB.UserRoleMap.addUserToRole(testuserB, testroleA, true);
+		CFW.DB.UserRoleMap.addUserToRole(testuserB, testroleB, true);
 		
 		CFW.DB.Users.create(new User("TestuserC")
 				.setNewPassword("TestuserC", "TestuserC")
@@ -843,33 +843,33 @@ public class CFWDB {
 				.firstname("Paola")
 				.lastname("Pernandez"));	
 		testuserC = CFW.DB.Users.selectByUsernameOrMail("TestuserC");
-		CFW.DB.UserGroupMap.addUserToGroup(testuserC, testgroupC, true);
+		CFW.DB.UserRoleMap.addUserToRole(testuserC, testroleC, true);
 		
 		//------------------------------
 		// Permissions
 		CFW.DB.Permissions.create(new Permission("PermissionA").description("This is the permission A."));
 		permissionA = CFW.DB.Permissions.selectByName("PermissionA");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionA, testgroupA, true);
+		CFW.DB.RolePermissionMap.addPermissionToRole(permissionA, testroleA, true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionAA").description("This is the permission AA."));
 		permissionAA = CFW.DB.Permissions.selectByName("PermissionAA");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAA, testgroupA, true);
+		CFW.DB.RolePermissionMap.addPermissionToRole(permissionAA, testroleA, true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionAAA").description("This is the permission AAA."));
 		permissionAAA = CFW.DB.Permissions.selectByName("PermissionAAA");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionAAA, testgroupA, true);
+		CFW.DB.RolePermissionMap.addPermissionToRole(permissionAAA, testroleA, true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionB").description("This is the permission B."));
 		permissionB = CFW.DB.Permissions.selectByName("PermissionB");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionB, testgroupB, true);
+		CFW.DB.RolePermissionMap.addPermissionToRole(permissionB, testroleB, true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionBB").description("This is the permission BB."));
 		permissionBB = CFW.DB.Permissions.selectByName("PermissionBB");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionBB, testgroupB, true);
+		CFW.DB.RolePermissionMap.addPermissionToRole(permissionBB, testroleB, true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionC").description("This is the permission C."));
 		permissionC = CFW.DB.Permissions.selectByName("PermissionC");
-		CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionC, testgroupC, true);
+		CFW.DB.RolePermissionMap.addPermissionToRole(permissionC, testroleC, true);
 	}
 
 }

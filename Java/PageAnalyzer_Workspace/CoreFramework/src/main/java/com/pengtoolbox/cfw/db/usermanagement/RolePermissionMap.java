@@ -9,59 +9,59 @@ import com.pengtoolbox.cfw.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
+import com.pengtoolbox.cfw.db.usermanagement.Role.RoleFields;
 
 /**************************************************************************************************************
  * 
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class GroupPermissionMap extends CFWObject {
+public class RolePermissionMap extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_GROUP_PERMISSION_MAP";
 	
-	enum GroupPermissionMapFields{
+	enum RolePermissionMapFields{
 		PK_ID, 
 		FK_ID_PERMISSION,
 		FK_ID_GROUP,
 		IS_DELETABLE,
 	}
 
-	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, GroupPermissionMapFields.PK_ID)
+	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, RolePermissionMapFields.PK_ID)
 			.setPrimaryKeyAutoIncrement(this)
 			.setDescription("The id of the mapping.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 		
-	private CFWField<Integer> foreignKeyGroup = CFWField.newInteger(FormFieldType.HIDDEN, GroupPermissionMapFields.FK_ID_GROUP)
-			.setForeignKeyCascade(this, Group.class, GroupFields.PK_ID)
-			.setDescription("The id of the group.")
+	private CFWField<Integer> foreignKeyRole = CFWField.newInteger(FormFieldType.HIDDEN, RolePermissionMapFields.FK_ID_GROUP)
+			.setForeignKeyCascade(this, Role.class, RoleFields.PK_ID)
+			.setDescription("The id of the role.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
-	private CFWField<Integer> foreignKeyPermission = CFWField.newInteger(FormFieldType.HIDDEN, GroupPermissionMapFields.FK_ID_PERMISSION)
-			.setForeignKeyCascade(this, Permission.class, GroupPermissionMapFields.PK_ID)
+	private CFWField<Integer> foreignKeyPermission = CFWField.newInteger(FormFieldType.HIDDEN, RolePermissionMapFields.FK_ID_PERMISSION)
+			.setForeignKeyCascade(this, Permission.class, RolePermissionMapFields.PK_ID)
 			.setDescription("The id of the permission.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
-	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.HIDDEN, GroupPermissionMapFields.IS_DELETABLE)
+	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.HIDDEN, RolePermissionMapFields.IS_DELETABLE)
 			.setColumnDefinition("BOOLEAN")
 			.setDescription("Flag to define if the mapping can be deleted or not.")
 			.setValue(true);
 	
-	public GroupPermissionMap() {
+	public RolePermissionMap() {
 		initializeFields();
 	}
 	
-	public GroupPermissionMap(ResultSet result) throws SQLException {
+	public RolePermissionMap(ResultSet result) throws SQLException {
 		initializeFields();
 		this.mapResultSet(result);	
 	}
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.addFields(id, foreignKeyGroup, foreignKeyPermission,  isDeletable);
+		this.addFields(id, foreignKeyRole, foreignKeyPermission,  isDeletable);
 	}
 	
 	/**************************************************************************************
@@ -72,17 +72,17 @@ public class GroupPermissionMap extends CFWObject {
 				
 		String[] inputFields = 
 				new String[] {
-						GroupPermissionMapFields.PK_ID.toString(), 
-						GroupPermissionMapFields.FK_ID_PERMISSION.toString(),
-						GroupPermissionMapFields.FK_ID_GROUP.toString(),
+						RolePermissionMapFields.PK_ID.toString(), 
+						RolePermissionMapFields.FK_ID_PERMISSION.toString(),
+						RolePermissionMapFields.FK_ID_GROUP.toString(),
 				};
 		
 		String[] outputFields = 
 				new String[] {
-						GroupPermissionMapFields.PK_ID.toString(), 
-						GroupPermissionMapFields.FK_ID_PERMISSION.toString(),
-						GroupPermissionMapFields.FK_ID_GROUP.toString(),
-						GroupPermissionMapFields.IS_DELETABLE.toString(),
+						RolePermissionMapFields.PK_ID.toString(), 
+						RolePermissionMapFields.FK_ID_PERMISSION.toString(),
+						RolePermissionMapFields.FK_ID_GROUP.toString(),
+						RolePermissionMapFields.IS_DELETABLE.toString(),
 				};
 
 		//----------------------------------
@@ -106,12 +106,12 @@ public class GroupPermissionMap extends CFWObject {
 		return id.getValue();
 	}
 
-	public int foreignKeyGroup() {
-		return foreignKeyGroup.getValue();
+	public int foreignKeyRole() {
+		return foreignKeyRole.getValue();
 	}
 	
-	public GroupPermissionMap foreignKeyGroup(int foreignKeyGroup) {
-		this.foreignKeyGroup.setValue(foreignKeyGroup);
+	public RolePermissionMap foreignKeyRole(int foreignKeyRole) {
+		this.foreignKeyRole.setValue(foreignKeyRole);
 		return this;
 	}	
 	
@@ -120,7 +120,7 @@ public class GroupPermissionMap extends CFWObject {
 		return foreignKeyPermission.getValue();
 	}
 	
-	public GroupPermissionMap foreignKeyPermission(int foreignKeyPermission) {
+	public RolePermissionMap foreignKeyPermission(int foreignKeyPermission) {
 		this.foreignKeyPermission.setValue(foreignKeyPermission);
 		return this;
 	}	
@@ -129,7 +129,7 @@ public class GroupPermissionMap extends CFWObject {
 		return isDeletable.getValue();
 	}
 	
-	public GroupPermissionMap isDeletable(boolean isDeletable) {
+	public RolePermissionMap isDeletable(boolean isDeletable) {
 		this.isDeletable.setValue(isDeletable);
 		return this;
 	}	

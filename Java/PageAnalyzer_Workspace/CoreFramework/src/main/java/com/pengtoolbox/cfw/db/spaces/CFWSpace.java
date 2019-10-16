@@ -46,13 +46,13 @@ public class CFWSpace extends CFWObject {
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, SpaceFields.PK_ID.toString())
 			.setPrimaryKeyAutoIncrement(this)
-			.setDescription("The id of the group.")
+			.setDescription("The id of the space.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, SpaceFields.NAME.toString())
 			.setColumnDefinition("VARCHAR(255) UNIQUE")
-			.setDescription("The name of the group.")
+			.setDescription("The name of the space.")
 			.addValidator(new LengthValidator(1, 255))
 			.setChangeHandler(new CFWFieldChangeHandler<String>() {
 				public boolean handle(String oldValue, String newValue) {
@@ -68,17 +68,17 @@ public class CFWSpace extends CFWObject {
 	
 	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, SpaceFields.DESCRIPTION.toString())
 			.setColumnDefinition("CLOB")
-			.setDescription("The description of the group.")
+			.setDescription("The description of the space.")
 			.addValidator(new LengthValidator(-1, 2000000));
 	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, SpaceFields.IS_DELETABLE.toString())
-			.setDescription("Flag to define if the group can be deleted or not.")
+			.setDescription("Flag to define if the space can be deleted or not.")
 			.setColumnDefinition("BOOLEAN")
 			.setValue(true);
 	
 	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, SpaceFields.IS_RENAMABLE.toString())
 			.setColumnDefinition("BOOLEAN DEFAULT TRUE")
-			.setDescription("Flag to define if the group can be renamed or not.")
+			.setDescription("Flag to define if the space can be renamed or not.")
 			.setValue(true)
 			.setChangeHandler(new CFWFieldChangeHandler<Boolean>() {
 				

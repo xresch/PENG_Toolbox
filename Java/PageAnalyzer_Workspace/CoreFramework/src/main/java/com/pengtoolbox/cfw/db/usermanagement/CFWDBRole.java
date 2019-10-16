@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
+import com.pengtoolbox.cfw.db.usermanagement.Role.RoleFields;
 import com.pengtoolbox.cfw.db.usermanagement.Permission.PermissionFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
@@ -14,119 +14,119 @@ import com.pengtoolbox.cfw.logging.CFWLog;
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class CFWDBGroup {
+public class CFWDBRole {
 
 	
-	public static String CFW_GROUP_SUPERUSER = "Superuser";
-	public static String CFW_GROUP_ADMIN = "Administrator";
-	public static String CFW_GROUP_USER = "User";
+	public static String CFW_ROLE_SUPERUSER = "Superuser";
+	public static String CFW_ROLE_ADMIN = "Administrator";
+	public static String CFW_ROLE_USER = "User";
 	
-	public static Logger logger = CFWLog.getLogger(CFWDBGroup.class.getName());
+	public static Logger logger = CFWLog.getLogger(CFWDBRole.class.getName());
 	
 
 	/********************************************************************************************
-	 * Creates multiple groups in the DB.
-	 * @param Groups with the values that should be inserted. ID will be set by the Database.
+	 * Creates multiple roles in the DB.
+	 * @param Roles with the values that should be inserted. ID will be set by the Database.
 	 * @return nothing
 	 * 
 	 ********************************************************************************************/
-	public static void create(Group... groups) {
+	public static void create(Role... roles) {
 		
-		for(Group group : groups) {
-			create(group);
+		for(Role role : roles) {
+			create(role);
 		}
 	}
 	
 	/********************************************************************************************
-	 * Creates a new group in the DB.
+	 * Creates a new role in the DB.
 	 * @param CFWSpace with the values that should be inserted. ID will be set by the Database.
 	 * @return true if successful, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static boolean create(Group group) {
+	public static boolean create(Role role) {
 		
-		if(group == null) {
+		if(role == null) {
 			new CFWLog(logger)
 				.method("create")
-				.warn("The group cannot be null");
+				.warn("The role cannot be null");
 			return false;
 		}
 		
-		if(group.name() == null || group.name().isEmpty()) {
+		if(role.name() == null || role.name().isEmpty()) {
 			new CFWLog(logger)
 				.method("create")
-				.warn("Please specify a name for the group to create.");
+				.warn("Please specify a name for the role to create.");
 			return false;
 		}
 		
-		if(checkGroupExists(group)) {
+		if(checkRoleExists(role)) {
 			new CFWLog(logger)
 				.method("create")
-				.warn("The group '"+group.name()+"' cannot be created as a group with this name already exists.");
+				.warn("The role '"+role.name()+"' cannot be created as a role with this name already exists.");
 			return false;
 		}
 		
-		return group
-				.queryCache(CFWDBGroup.class, "create")
+		return role
+				.queryCache(CFWDBRole.class, "create")
 				.insert();
 	}
 	
 	/***************************************************************
-	 * Select a group by it's name.
-	 * @param id of the group
-	 * @return Returns a group or null if not found or in case of exception.
+	 * Select a role by it's name.
+	 * @param id of the role
+	 * @return Returns a role or null if not found or in case of exception.
 	 ****************************************************************/
-	public static Group selectByName(String name) {
+	public static Role selectByName(String name) {
 		
-		return (Group)new Group()
-				.queryCache(CFWDBGroup.class, "selectByName")
+		return (Role)new Role()
+				.queryCache(CFWDBRole.class, "selectByName")
 				.select()
-				.where(GroupFields.NAME.toString(), name)
+				.where(RoleFields.NAME.toString(), name)
 				.getFirstObject();
 
 	}
 	
 	/***************************************************************
-	 * Select a group by it's ID.
-	 * @param id of the group
-	 * @return Returns a group or null if not found or in case of exception.
+	 * Select a role by it's ID.
+	 * @param id of the role
+	 * @return Returns a role or null if not found or in case of exception.
 	 ****************************************************************/
-	public static Group selectByID(int id ) {
+	public static Role selectByID(int id ) {
 
-		return (Group)new Group()
-				.queryCache(CFWDBGroup.class, "selectByID")
+		return (Role)new Role()
+				.queryCache(CFWDBRole.class, "selectByID")
 				.select()
-				.where(GroupFields.PK_ID.toString(), id)
+				.where(RoleFields.PK_ID.toString(), id)
 				.getFirstObject();
 		
 	}
 	
 	/***************************************************************
-	 * Select a group by it's ID and return it as JSON string.
-	 * @param id of the group
-	 * @return Returns a group or null if not found or in case of exception.
+	 * Select a role by it's ID and return it as JSON string.
+	 * @param id of the role
+	 * @return Returns a role or null if not found or in case of exception.
 	 ****************************************************************/
-	public static String getGroupAsJSON(String id) {
+	public static String getRoleAsJSON(String id) {
 		
-		return new Group()
-				.queryCache(CFWDBGroup.class, "getGroupAsJSON")
+		return new Role()
+				.queryCache(CFWDBRole.class, "getRoleAsJSON")
 				.select()
-				.where(GroupFields.PK_ID.toString(), Integer.parseInt(id))
+				.where(RoleFields.PK_ID.toString(), Integer.parseInt(id))
 				.getAsJSON();
 		
 	}
 	
 	/***************************************************************
-	 * Return a list of all groups
+	 * Return a list of all roles
 	 * 
-	 * @return Returns a resultSet with all groups or null.
+	 * @return Returns a resultSet with all roles or null.
 	 ****************************************************************/
-	public static ResultSet getGroupList() {
+	public static ResultSet getRoleList() {
 		
-		return new Group()
-				.queryCache(CFWDBGroup.class, "getGroupList")
+		return new Role()
+				.queryCache(CFWDBRole.class, "getRoleList")
 				.select()
-				.orderby(GroupFields.NAME.toString())
+				.orderby(RoleFields.NAME.toString())
 				.getResultSet();
 		
 	}
@@ -136,69 +136,69 @@ public class CFWDBGroup {
 	 * 
 	 * @return Returns a result set with all users or null.
 	 ****************************************************************/
-	public static String getGroupListAsJSON() {
-		return new Group()
-				.queryCache(CFWDBGroup.class, "getGroupListAsJSON")
+	public static String getRoleListAsJSON() {
+		return new Role()
+				.queryCache(CFWDBRole.class, "getRoleListAsJSON")
 				.select()
-				.orderby(GroupFields.NAME.toString())
+				.orderby(RoleFields.NAME.toString())
 				.getAsJSON();
 	}
 	
 	/***************************************************************
 	 * Updates the object selecting by ID.
-	 * @param group
+	 * @param role
 	 * @return true or false
 	 ****************************************************************/
-	public static boolean update(Group group) {
+	public static boolean update(Role role) {
 		
-		if(group == null) {
+		if(role == null) {
 			new CFWLog(logger)
 				.method("update")
-				.warn("The group that should be updated cannot be null");
+				.warn("The role that should be updated cannot be null");
 			return false;
 		}
 		
-		if(group.name() == null || group.name().isEmpty()) {
+		if(role.name() == null || role.name().isEmpty()) {
 			new CFWLog(logger)
 				.method("update")
-				.warn("Please specify a name for the group.");
+				.warn("Please specify a name for the role.");
 			return false;
 		}
 				
-		return group
-				.queryCache(CFWDBGroup.class, "update")
+		return role
+				.queryCache(CFWDBRole.class, "update")
 				.update();
 		
 	}
 	
 	/***************************************************************
-	 * Retrieve the permissions for the specified group.
-	 * @param group
-	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
+	 * Retrieve the permissions for the specified role.
+	 * @param role
+	 * @return Hashmap with roles(key=role name, value=role object), or null on exception
 	 ****************************************************************/
-	public static HashMap<String, Permission> selectPermissionsForGroup(Group group) {
-		return CFW.DB.GroupPermissionMap.selectPermissionsForGroup(group);
+	public static HashMap<String, Permission> selectPermissionsForRole(Role role) {
+		return CFW.DB.RolePermissionMap.selectPermissionsForRole(role);
 	}
 	
 	/****************************************************************
-	 * Deletes the group by id.
+	 * Deletes the role by id.
 	 * @param id of the user
 	 * @return true if successful, false otherwise.
 	 ****************************************************************/
 	public static boolean deleteByID(int id) {
 		
-		Group group = selectByID(id);
-		if(group != null && group.isDeletable() == false) {
+		Role role = selectByID(id);
+		if(role != null && role.isDeletable() == false) {
 			new CFWLog(logger)
 			.method("deleteByID")
-			.severe("The group '"+group.name()+"' cannot be deleted as it is marked as not deletable.");
+			.severe("The role '"+role.name()+"' cannot be deleted as it is marked as not deletable.");
 			return false;
 		}
 		
-		return new Group()
-				.queryCache(CFWDBGroup.class, "deleteByID")
+		return new Role()
+				.queryCache(CFWDBRole.class, "deleteByID")
 				.delete()
-				.where(GroupFields.PK_ID.toString(), id)
+				.where(RoleFields.PK_ID.toString(), id)
 				.and(PermissionFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 					
@@ -220,34 +220,34 @@ public class CFWDBGroup {
 			return false;
 		}
 
-		return new Group()
-				.queryCache(CFWDBGroup.class, "deleteMultipleByID")
+		return new Role()
+				.queryCache(CFWDBRole.class, "deleteMultipleByID")
 				.delete()
-				.whereIn(GroupFields.PK_ID.toString(), resultIDs)
-				.and(GroupFields.IS_DELETABLE.toString(), true)
+				.whereIn(RoleFields.PK_ID.toString(), resultIDs)
+				.and(RoleFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 					
 	}
 	
 	/****************************************************************
-	 * Deletes the group by id.
+	 * Deletes the role by id.
 	 * @param id of the user
 	 * @return true if successful, false otherwise.
 	 ****************************************************************/
 	public static boolean deleteByName(String name) {
 		
-		Group group = selectByName(name);
-		if(group != null && group.isDeletable() == false) {
+		Role role = selectByName(name);
+		if(role != null && role.isDeletable() == false) {
 			new CFWLog(logger)
 			.method("deleteByName")
-			.severe("The group '"+group.name()+"' cannot be deleted as it is marked as not deletable.");
+			.severe("The role '"+role.name()+"' cannot be deleted as it is marked as not deletable.");
 			return false;
 		}
 		
-		return new Group()
-				.queryCache(CFWDBGroup.class, "deleteByName")
+		return new Role()
+				.queryCache(CFWDBRole.class, "deleteByName")
 				.delete()
-				.where(GroupFields.NAME.toString(), name)
+				.where(RoleFields.NAME.toString(), name)
 				.and(PermissionFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 					
@@ -255,30 +255,30 @@ public class CFWDBGroup {
 	
 	
 	/****************************************************************
-	 * Check if the group exists by name.
+	 * Check if the role exists by name.
 	 * 
-	 * @param group to check
+	 * @param role to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
-	public static boolean checkGroupExists(Group group) {
-		if(group != null) {
-			return checkGroupExists(group.name());
+	public static boolean checkRoleExists(Role role) {
+		if(role != null) {
+			return checkRoleExists(role.name());
 		}
 		return false;
 	}
 	
 	/****************************************************************
-	 * Check if the group exists by name.
+	 * Check if the role exists by name.
 	 * 
-	 * @param groupname to check
+	 * @param rolename to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
-	public static boolean checkGroupExists(String groupName) {
+	public static boolean checkRoleExists(String roleName) {
 		
-		int count = new Group()
-				.queryCache(CFWDBGroup.class, "checkGroupExists")
+		int count = new Role()
+				.queryCache(CFWDBRole.class, "checkRoleExists")
 				.selectCount()
-				.where(GroupFields.NAME.toString(), groupName)
+				.where(RoleFields.NAME.toString(), roleName)
 				.getCount();
 		
 		return (count > 0);

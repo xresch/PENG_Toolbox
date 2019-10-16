@@ -234,30 +234,30 @@ public class User extends CFWObject {
 		}
 		
 		//-----------------------------------------
-		// Add Admin to group Superuser
+		// Add Admin to role Superuser
 		//-----------------------------------------
-		Group superuserGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_SUPERUSER);
+		Role superuserRole = CFW.DB.Roles.selectByName(CFWDBRole.CFW_ROLE_SUPERUSER);
 		
-		if(!CFW.DB.UserGroupMap.checkIsUserInGroup(adminUser, superuserGroup)) {
-			CFW.DB.UserGroupMap.addUserToGroup(adminUser, superuserGroup, false);
+		if(!CFW.DB.UserRoleMap.checkIsUserInRole(adminUser, superuserRole)) {
+			CFW.DB.UserRoleMap.addUserToRole(adminUser, superuserRole, false);
 		}
 		
 		//Needed for Upgrade
-		CFW.DB.UserGroupMap.updateIsDeletable(adminUser.id(), superuserGroup.id(), false);
+		CFW.DB.UserRoleMap.updateIsDeletable(adminUser.id(), superuserRole.id(), false);
 
-		if(!CFW.DB.UserGroupMap.checkIsUserInGroup(adminUser, superuserGroup)) {
+		if(!CFW.DB.UserRoleMap.checkIsUserInRole(adminUser, superuserRole)) {
 			new CFWLog(logger)
 			.method("createDefaultUsers")
-			.severe("User 'admin' is not assigned to group 'Superuser'.");
+			.severe("User 'admin' is not assigned to role 'Superuser'.");
 		}
 		
 		//-----------------------------------------
 		// Upgrade Step: Superuser permissions undeletable
 		//-----------------------------------------
-		HashMap<String, Permission> permissions = CFW.DB.GroupPermissionMap.selectPermissionsForGroup(superuserGroup);
+		HashMap<String, Permission> permissions = CFW.DB.RolePermissionMap.selectPermissionsForRole(superuserRole);
 
 		for(Permission p : permissions.values()) {
-			CFW.DB.GroupPermissionMap.updateIsDeletable(p.id(), superuserGroup.id(), false);
+			CFW.DB.RolePermissionMap.updateIsDeletable(p.id(), superuserRole.id(), false);
 		}
 		
 	}
@@ -324,7 +324,7 @@ public class User extends CFWObject {
 			@Override
 			public ResultSet execute(APIDefinitionSQL definition, CFWObject object) {
 				
-				return CFW.DB.GroupPermissionMap.selectPermissionsForUserResultSet((User)object);
+				return CFW.DB.RolePermissionMap.selectPermissionsForUserResultSet((User)object);
 			}
 		};
 			
@@ -347,7 +347,7 @@ public class User extends CFWObject {
 			@Override
 			public ResultSet execute(APIDefinitionSQL definition, CFWObject object) {
 							
-				return CFW.DB.GroupPermissionMap.getPermissionOverview();
+				return CFW.DB.RolePermissionMap.getPermissionOverview();
 			}
 		};
 			

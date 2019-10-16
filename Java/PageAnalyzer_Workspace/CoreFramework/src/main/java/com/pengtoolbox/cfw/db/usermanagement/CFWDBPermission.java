@@ -31,7 +31,7 @@ public class CFWDBPermission {
 	}
 	/********************************************************************************************
 	 * Creates a new permission in the DB.
-	 * All newly created permissions are by default assigned to the Superuser Group.
+	 * All newly created permissions are by default assigned to the Superuser Role.
 	 * 
 	 * @param permission with the values that should be inserted. ID will be set by the Database.
 	 * @return true if successful, false otherwise
@@ -67,9 +67,9 @@ public class CFWDBPermission {
 		//----------------------------------------
 		// Add new permission to superuser
 		Permission permissionFromDB = CFW.DB.Permissions.selectByName(permission.name());
-		Group superuser = CFW.DB.Groups.selectByName(CFW.DB.Groups.CFW_GROUP_SUPERUSER);
+		Role superuser = CFW.DB.Roles.selectByName(CFW.DB.Roles.CFW_ROLE_SUPERUSER);
 		
-		return CFW.DB.GroupPermissionMap.addPermissionToGroup(permissionFromDB, superuser, false);
+		return CFW.DB.RolePermissionMap.addPermissionToRole(permissionFromDB, superuser, false);
 				
 	}
 	
@@ -133,11 +133,11 @@ public class CFWDBPermission {
 	
 	/***************************************************************
 	 * Retrieve the permissions for the specified user.
-	 * @param group
-	 * @return Hashmap with permissions(key=group name), or null on exception
+	 * @param role
+	 * @return Hashmap with permissions(key=role name), or null on exception
 	 ****************************************************************/
 	public static HashMap<String, Permission> selectPermissionsForUser(User user) {
-		return CFW.DB.GroupPermissionMap.selectPermissionsForUser(user);
+		return CFW.DB.RolePermissionMap.selectPermissionsForUser(user);
 	}
 	
 	

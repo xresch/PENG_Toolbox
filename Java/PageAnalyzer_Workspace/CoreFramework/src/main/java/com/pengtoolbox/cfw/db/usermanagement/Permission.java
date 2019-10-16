@@ -89,7 +89,7 @@ public class Permission extends CFWObject{
 	}
 	
 	/**************************************************************************************
-	 * Groups have to exists
+	 * Roles have to exists
 	 **************************************************************************************/
 	public void initDBSecond() {
 		

@@ -15,7 +15,7 @@ import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.datahandling.CFWFormHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
@@ -91,7 +91,7 @@ public class UserManagementServlet extends HttpServlet
 						if(CFW.DB.Users.create(newUser)) {
 							
 							User userFromDB = CFW.DB.Users.selectByUsernameOrMail(newUser.username());
-							if (CFW.DB.UserGroupMap.addUserToGroup(userFromDB, CFW.DB.Groups.CFW_GROUP_USER, true)) {
+							if (CFW.DB.UserRoleMap.addUserToRole(userFromDB, CFW.DB.Roles.CFW_ROLE_USER, true)) {
 								CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "User created successfully!");
 								return;
 							}
@@ -103,11 +103,11 @@ public class UserManagementServlet extends HttpServlet
 		});
 		
 		//--------------------------------------
-		// Create Group Form
+		// Create Role Form
 		
-		CFWForm createGroupForm = new Group("").toForm("cfwCreateGroupForm", "Create Group");
+		CFWForm createRoleForm = new Role("").toForm("cfwCreateRoleForm", "Create Role");
 		
-		createGroupForm.setFormHandler(new CFWFormHandler() {
+		createRoleForm.setFormHandler(new CFWFormHandler() {
 			
 			@Override
 			public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
@@ -116,8 +116,8 @@ public class UserManagementServlet extends HttpServlet
 					
 					origin.mapRequestParameters(request);
 					
-					if(CFW.DB.Groups.create((Group)origin)) {
-						CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Group created successfully!");
+					if(CFW.DB.Roles.create((Role)origin)) {
+						CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Role created successfully!");
 					}
 				}
 				

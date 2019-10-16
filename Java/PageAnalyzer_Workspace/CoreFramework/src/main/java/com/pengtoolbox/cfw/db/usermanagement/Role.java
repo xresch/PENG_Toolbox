@@ -20,11 +20,11 @@ import com.pengtoolbox.cfw.validation.LengthValidator;
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class Group extends CFWObject {
+public class Role extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_GROUP";
 	
-	public enum GroupFields{
+	public enum RoleFields{
 		PK_ID,
 		NAME,
 		DESCRIPTION,
@@ -32,17 +32,17 @@ public class Group extends CFWObject {
 		IS_RENAMABLE,
 	}
 
-	private static Logger logger = CFWLog.getLogger(Group.class.getName());
+	private static Logger logger = CFWLog.getLogger(Role.class.getName());
 	
-	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, GroupFields.PK_ID.toString())
+	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, RoleFields.PK_ID.toString())
 			.setPrimaryKeyAutoIncrement(this)
-			.setDescription("The id of the group.")
+			.setDescription("The id of the role.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
-	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, GroupFields.NAME.toString())
+	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, RoleFields.NAME.toString())
 			.setColumnDefinition("VARCHAR(255) UNIQUE")
-			.setDescription("The name of the group.")
+			.setDescription("The name of the role.")
 			.addValidator(new LengthValidator(1, 255))
 			.setChangeHandler(new CFWFieldChangeHandler<String>() {
 				public boolean handle(String oldValue, String newValue) {
@@ -56,19 +56,19 @@ public class Group extends CFWObject {
 				}
 			});
 	
-	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, GroupFields.DESCRIPTION.toString())
+	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, RoleFields.DESCRIPTION.toString())
 			.setColumnDefinition("CLOB")
-			.setDescription("The description of the group.")
+			.setDescription("The description of the role.")
 			.addValidator(new LengthValidator(-1, 2000000));
 	
-	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, GroupFields.IS_DELETABLE.toString())
-			.setDescription("Flag to define if the group can be deleted or not.")
+	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, RoleFields.IS_DELETABLE.toString())
+			.setDescription("Flag to define if the role can be deleted or not.")
 			.setColumnDefinition("BOOLEAN")
 			.setValue(true);
 	
-	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, GroupFields.IS_RENAMABLE.toString())
+	private CFWField<Boolean> isRenamable = CFWField.newBoolean(FormFieldType.NONE, RoleFields.IS_RENAMABLE.toString())
 			.setColumnDefinition("BOOLEAN DEFAULT TRUE")
-			.setDescription("Flag to define if the group can be renamed or not.")
+			.setDescription("Flag to define if the role can be renamed or not.")
 			.setValue(true)
 			.setChangeHandler(new CFWFieldChangeHandler<Boolean>() {
 				
@@ -84,16 +84,16 @@ public class Group extends CFWObject {
 				}
 			});;
 	
-	public Group() {
+	public Role() {
 		initializeFields();
 	}
 	
-	public Group(String name) {
+	public Role(String name) {
 		initializeFields();
 		this.name.setValue(name);
 	}
 	
-	public Group(ResultSet result) throws SQLException {
+	public Role(ResultSet result) throws SQLException {
 		initializeFields();
 		this.mapResultSet(result);	
 	}
@@ -108,66 +108,66 @@ public class Group extends CFWObject {
 	 **************************************************************************************/
 	public void initDB() {
 		//-----------------------------------------
-		// Create Group Superuser
+		// Create Role Superuser
 		//-----------------------------------------
-		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.CFW_GROUP_SUPERUSER)) {
-			CFW.DB.Groups.create(new Group(CFWDBGroup.CFW_GROUP_SUPERUSER)
+		if(!CFW.DB.Roles.checkRoleExists(CFWDBRole.CFW_ROLE_SUPERUSER)) {
+			CFW.DB.Roles.create(new Role(CFWDBRole.CFW_ROLE_SUPERUSER)
 				.description("Superusers have all the privileges in the system. They are above administrators. ")
 				.isDeletable(false)
 			);
 		}
 		
-		Group superuserGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_SUPERUSER);
+		Role superuserRole = CFW.DB.Roles.selectByName(CFWDBRole.CFW_ROLE_SUPERUSER);
 		
-		if(superuserGroup == null) {
+		if(superuserRole == null) {
 			new CFWLog(logger)
-			.method("createDefaultGroups")
-			.severe("User group '"+CFWDBGroup.CFW_GROUP_SUPERUSER+"' was not found in the database.");
+			.method("createDefaultRoles")
+			.severe("User role '"+CFWDBRole.CFW_ROLE_SUPERUSER+"' was not found in the database.");
 		}
 		
-		superuserGroup.isRenamable(false);
-		CFW.DB.Groups.update(superuserGroup);
+		superuserRole.isRenamable(false);
+		CFW.DB.Roles.update(superuserRole);
 		
 		//-----------------------------------------
-		// Create Group Admin
+		// Create Role Admin
 		//-----------------------------------------
-		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.CFW_GROUP_ADMIN)) {
-			CFW.DB.Groups.create(new Group(CFWDBGroup.CFW_GROUP_ADMIN)
+		if(!CFW.DB.Roles.checkRoleExists(CFWDBRole.CFW_ROLE_ADMIN)) {
+			CFW.DB.Roles.create(new Role(CFWDBRole.CFW_ROLE_ADMIN)
 				.description("Administrators have the privileges to manage the application.")
 				.isDeletable(false)
 			);
 		}
 		
-		Group adminGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_ADMIN);
+		Role adminRole = CFW.DB.Roles.selectByName(CFWDBRole.CFW_ROLE_ADMIN);
 		
-		if(adminGroup == null) {
+		if(adminRole == null) {
 			new CFWLog(logger)
-			.method("createDefaultGroups")
-			.severe("User group '"+CFWDBGroup.CFW_GROUP_ADMIN+"' was not found in the database.");
+			.method("createDefaultRoles")
+			.severe("User role '"+CFWDBRole.CFW_ROLE_ADMIN+"' was not found in the database.");
 		}
 		
-		adminGroup.isRenamable(false);
-		CFW.DB.Groups.update(adminGroup);
+		adminRole.isRenamable(false);
+		CFW.DB.Roles.update(adminRole);
 		//-----------------------------------------
 		// Create User
 		//-----------------------------------------
-		if(!CFW.DB.Groups.checkGroupExists(CFWDBGroup.CFW_GROUP_USER)) {
-			CFW.DB.Groups.create(new Group(CFWDBGroup.CFW_GROUP_USER)
-				.description("Default User group. New users will automatically be added to this group if they are not managed by a foreign source.")
+		if(!CFW.DB.Roles.checkRoleExists(CFWDBRole.CFW_ROLE_USER)) {
+			CFW.DB.Roles.create(new Role(CFWDBRole.CFW_ROLE_USER)
+				.description("Default User role. New users will automatically be added to this role if they are not managed by a foreign source.")
 				.isDeletable(false)
 			);
 		}
 		
-		Group userGroup = CFW.DB.Groups.selectByName(CFWDBGroup.CFW_GROUP_USER);
+		Role userRole = CFW.DB.Roles.selectByName(CFWDBRole.CFW_ROLE_USER);
 		
-		if(userGroup == null) {
+		if(userRole == null) {
 			new CFWLog(logger)
-			.method("createDefaultGroups")
-			.severe("User group '"+CFWDBGroup.CFW_GROUP_USER+"' was not found in the database.");
+			.method("createDefaultRoles")
+			.severe("User role '"+CFWDBRole.CFW_ROLE_USER+"' was not found in the database.");
 		}
 		
-		userGroup.isRenamable(false);
-		CFW.DB.Groups.update(userGroup);
+		userRole.isRenamable(false);
+		CFW.DB.Roles.update(userRole);
 		
 	}
 	
@@ -180,17 +180,17 @@ public class Group extends CFWObject {
 		
 		String[] inputFields = 
 				new String[] {
-						GroupFields.PK_ID.toString(), 
-						GroupFields.NAME.toString(),
+						RoleFields.PK_ID.toString(), 
+						RoleFields.NAME.toString(),
 				};
 		
 		String[] outputFields = 
 				new String[] {
-						GroupFields.PK_ID.toString(), 
-						GroupFields.NAME.toString(),
-						GroupFields.DESCRIPTION.toString(),
-						GroupFields.IS_DELETABLE.toString(),
-						GroupFields.IS_RENAMABLE.toString(),		
+						RoleFields.PK_ID.toString(), 
+						RoleFields.NAME.toString(),
+						RoleFields.DESCRIPTION.toString(),
+						RoleFields.IS_DELETABLE.toString(),
+						RoleFields.IS_RENAMABLE.toString(),		
 				};
 
 		//----------------------------------
@@ -213,7 +213,7 @@ public class Group extends CFWObject {
 		return id.getValue();
 	}
 	
-	public Group id(int id) {
+	public Role id(int id) {
 		this.id.setValue(id);
 		return this;
 	}
@@ -222,7 +222,7 @@ public class Group extends CFWObject {
 		return name.getValue();
 	}
 	
-	public Group name(String name) {
+	public Role name(String name) {
 		this.name.setValue(name);
 		return this;
 	}
@@ -231,7 +231,7 @@ public class Group extends CFWObject {
 		return description.getValue();
 	}
 
-	public Group description(String description) {
+	public Role description(String description) {
 		this.description.setValue(description);
 		return this;
 	}
@@ -240,7 +240,7 @@ public class Group extends CFWObject {
 		return isDeletable.getValue();
 	}
 	
-	public Group isDeletable(boolean isDeletable) {
+	public Role isDeletable(boolean isDeletable) {
 		this.isDeletable.setValue(isDeletable);
 		return this;
 	}	
@@ -249,7 +249,7 @@ public class Group extends CFWObject {
 		return isRenamable.getValue();
 	}
 	
-	public Group isRenamable(boolean isRenamable) {
+	public Role isRenamable(boolean isRenamable) {
 		this.isRenamable.setValue(isRenamable);
 		return this;
 	}	

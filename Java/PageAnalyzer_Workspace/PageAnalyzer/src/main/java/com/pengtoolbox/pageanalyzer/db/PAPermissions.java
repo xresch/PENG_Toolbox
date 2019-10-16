@@ -1,7 +1,7 @@
 package com.pengtoolbox.pageanalyzer.db;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 
 public class PAPermissions {
@@ -16,8 +16,8 @@ public class PAPermissions {
 	
 	public static void initializePermissions() {
 		
-		Group adminGroup = CFW.DB.Groups.selectByName(CFW.DB.Groups.CFW_GROUP_ADMIN);
-		Group userGroup = CFW.DB.Groups.selectByName(CFW.DB.Groups.CFW_GROUP_USER);
+		Role adminRole = CFW.DB.Roles.selectByName(CFW.DB.Roles.CFW_ROLE_ADMIN);
+		Role userRole = CFW.DB.Roles.selectByName(CFW.DB.Roles.CFW_ROLE_USER);
 		
 		//-----------------------------------
 		// Manage Results
@@ -30,7 +30,7 @@ public class PAPermissions {
 			CFW.DB.Permissions.create(manageResults);
 			
 			manageResults = CFW.DB.Permissions.selectByName(MANAGE_RESULTS);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(manageResults, adminGroup, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(manageResults, adminRole, true);
 		}
 		
 		//-----------------------------------
@@ -43,8 +43,8 @@ public class PAPermissions {
 			
 			CFW.DB.Permissions.create(analyzeHAR);
 			analyzeHAR = CFW.DB.Permissions.selectByName(ANALYZE_HAR);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(analyzeHAR, adminGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(analyzeHAR, userGroup, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(analyzeHAR, adminRole, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(analyzeHAR, userRole, true);
 		}
 		//-----------------------------------
 		// Download HAR
@@ -56,8 +56,8 @@ public class PAPermissions {
 			
 			CFW.DB.Permissions.create(downloadHAR);
 			downloadHAR = CFW.DB.Permissions.selectByName(DOWNLOAD_HAR);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(downloadHAR, adminGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(downloadHAR, userGroup, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(downloadHAR, adminRole, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(downloadHAR, userRole, true);
 		}
 		
 		//-----------------------------------
@@ -70,8 +70,8 @@ public class PAPermissions {
 			
 			CFW.DB.Permissions.create(analyzeURL);
 			analyzeURL = CFW.DB.Permissions.selectByName(ANALYZE_URL);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(analyzeURL, adminGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(analyzeURL, userGroup, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(analyzeURL, adminRole, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(analyzeURL, userRole, true);
 		}
 		
 		//-----------------------------------
@@ -84,8 +84,8 @@ public class PAPermissions {
 			
 			CFW.DB.Permissions.create(viewHistory);
 			viewHistory = CFW.DB.Permissions.selectByName(VIEW_HISTORY);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewHistory, adminGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewHistory, userGroup, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(viewHistory, adminRole, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(viewHistory, userRole, true);
 		}
 		
 		//-----------------------------------
@@ -98,8 +98,8 @@ public class PAPermissions {
 			
 			CFW.DB.Permissions.create(deleteResult);
 			deleteResult = CFW.DB.Permissions.selectByName(DELETE_RESULT);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(deleteResult, adminGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(deleteResult, userGroup, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(deleteResult, adminRole, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(deleteResult, userRole, true);
 		}
 		//-----------------------------------
 		// View Documentation
@@ -111,8 +111,8 @@ public class PAPermissions {
 			
 			CFW.DB.Permissions.create(viewDocu);
 			viewDocu = CFW.DB.Permissions.selectByName(VIEW_DOCU);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewDocu, adminGroup, true);
-			CFW.DB.GroupPermissionMap.addPermissionToGroup(viewDocu, userGroup, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(viewDocu, adminRole, true);
+			CFW.DB.RolePermissionMap.addPermissionToRole(viewDocu, userRole, true);
 		}
 	}
 	

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.response.AbstractResponse;
@@ -73,9 +73,9 @@ public class CFWContextRequest {
 		return null;
 	}
 	
-	public static HashMap<String, Group> getUserGroups() {
+	public static HashMap<String, Role> getUserRoles() {
 		if(sessionData.get() != null) {
-			return sessionData.get().getUserGroups();
+			return sessionData.get().getUserRoles();
 		}
 		return null;
 	}

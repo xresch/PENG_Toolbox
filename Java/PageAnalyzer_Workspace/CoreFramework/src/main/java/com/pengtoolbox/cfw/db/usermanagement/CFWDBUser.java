@@ -139,7 +139,7 @@ public class CFWDBUser {
 	 * Return a list of all users.
 	 * Don't forget to close the db connection using CFWDB.close().
 	 * 
-	 * @return Returns a resultSet with all groups or null.
+	 * @return Returns a resultSet with all roles or null.
 	 ****************************************************************/
 	public static ResultSet getUserList() {
 		
@@ -155,7 +155,7 @@ public class CFWDBUser {
 	 * Return a list of all users.
 	 * Don't forget to close the db connection using CFWDB.close().
 	 * 
-	 * @return Returns a resultSet with all groups or null.
+	 * @return Returns a resultSet with all roles or null.
 	 ****************************************************************/
 	public static String getUserListAsJSON() {
 		
@@ -198,38 +198,38 @@ public class CFWDBUser {
 //	}
 	
 	/***************************************************************
-	 * Retrieve the groups for the specified user.
-	 * @param group
-	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
+	 * Retrieve the roles for the specified user.
+	 * @param role
+	 * @return Hashmap with roles(key=role name, value=role object), or null on exception
 	 ****************************************************************/
-	public static HashMap<String, Group> selectGroupsForUser(int userID) {
+	public static HashMap<String, Role> selectRolesForUser(int userID) {
 		
-		return CFW.DB.UserGroupMap.selectGroupsForUser(userID);
+		return CFW.DB.UserRoleMap.selectRolesForUser(userID);
 	
 	}
 	/***************************************************************
-	 * Retrieve the groups for the specified user.
-	 * @param group
-	 * @return Hashmap with groups(key=group name, value=group object), or null on exception
+	 * Retrieve the roles for the specified user.
+	 * @param role
+	 * @return Hashmap with roles(key=role name, value=role object), or null on exception
 	 ****************************************************************/
-	public static HashMap<String, Group> selectGroupsForUser(User user) {
+	public static HashMap<String, Role> selectRolesForUser(User user) {
 		
-		return CFW.DB.UserGroupMap.selectGroupsForUser(user);
+		return CFW.DB.UserRoleMap.selectRolesForUser(user);
 	
 	}
 	
 	/***************************************************************
 	 * Retrieve the permissions for the specified user.
-	 * @param group
-	 * @return Hashmap with permissions(key=group name), or null on exception
+	 * @param role
+	 * @return Hashmap with permissions(key=role name), or null on exception
 	 ****************************************************************/
 	public static HashMap<String, Permission> selectPermissionsForUser(User user) {
-		return CFW.DB.GroupPermissionMap.selectPermissionsForUser(user);
+		return CFW.DB.RolePermissionMap.selectPermissionsForUser(user);
 	}
 	
 	/***************************************************************
 	 * Updates the object selecting by ID.
-	 * @param group
+	 * @param role
 	 * @return true or false
 	 ****************************************************************/
 	public static boolean update(User user) {
@@ -323,7 +323,7 @@ public class CFWDBUser {
 	/****************************************************************
 	 * Check if the user exists by it's username.
 	 * 
-	 * @param group to check
+	 * @param role to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkUsernameExists(User user) {
@@ -336,7 +336,7 @@ public class CFWDBUser {
 	/****************************************************************
 	 * Check if the user exists by it's username.
 	 * 
-	 * @param group to check
+	 * @param role to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkUsernameExists(String username) {
@@ -354,7 +354,7 @@ public class CFWDBUser {
 	/****************************************************************
 	 * Check if the email of the user is already in use.
 	 * 
-	 * @param group to check
+	 * @param role to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkEmailExists(User user) {
@@ -367,7 +367,7 @@ public class CFWDBUser {
 	/****************************************************************
 	 * Check if the email of the user is already in use.
 	 * 
-	 * @param group to check
+	 * @param role to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
 	public static boolean checkEmailExists(String email) {

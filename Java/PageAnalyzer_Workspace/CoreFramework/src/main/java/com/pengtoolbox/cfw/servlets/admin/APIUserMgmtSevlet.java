@@ -15,7 +15,7 @@ import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.datahandling.CFWFormHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
-import com.pengtoolbox.cfw.db.usermanagement.Group;
+import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
@@ -55,7 +55,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 		String ID = request.getParameter("id");
 		String IDs = request.getParameter("ids");
 		
-		String userID, groupID, permissionID;
+		String userID, roleID, permissionID;
 		//-------------------------------------------
 		// Fetch Data
 		//-------------------------------------------
@@ -79,16 +79,16 @@ public class APIUserMgmtSevlet extends HttpServlet {
 							case "user": 			content.append(CFW.DB.Users.getUserAsJSON(ID));
 					  								break;			
 					  							
-							case "usergroupmap": 	content.append(CFW.DB.UserGroupMap.getGroupMapForUserAsJSON(ID));
+							case "userrolemap": 	content.append(CFW.DB.UserRoleMap.getRoleMapForUserAsJSON(ID));
 					  								break;		
 					  							
-							case "groups": 			content.append(CFW.DB.Groups.getGroupListAsJSON());
+							case "roles": 			content.append(CFW.DB.Roles.getRoleListAsJSON());
 							  			   			break;
 							
-							case "group": 			content.append(CFW.DB.Groups.getGroupAsJSON(ID));
+							case "role": 			content.append(CFW.DB.Roles.getRoleAsJSON(ID));
 													break;	
 													
-							case "grouppermissionmap": 	content.append(CFW.DB.GroupPermissionMap.getPermissionMapForGroupAsJSON(ID));
+							case "rolepermissionmap": 	content.append(CFW.DB.RolePermissionMap.getPermissionMapForRoleAsJSON(ID));
 														break;	
 								
 							case "permissions":		content.append(CFW.DB.Permissions.getPermissionListAsJSON());
@@ -104,7 +104,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 							case "users": 		jsonResponse.setSuccess(CFW.DB.Users.deleteMultipleByID(IDs));
 										  		break;
 										  
-							case "groups": 		jsonResponse.setSuccess(CFW.DB.Groups.deleteMultipleByID(IDs));
+							case "roles": 		jsonResponse.setSuccess(CFW.DB.Roles.deleteMultipleByID(IDs));
 												break;  
 												
 							case "permissions": jsonResponse.setSuccess(CFW.DB.Permissions.deleteMultipleByID(IDs));
@@ -117,14 +117,14 @@ public class APIUserMgmtSevlet extends HttpServlet {
 					
 					case "update": 			
 						switch(item.toLowerCase()) {
-							case "usergroupmap": 		userID = request.getParameter("itemid");
-														groupID = request.getParameter("listitemid");
-														jsonResponse.setSuccess(CFW.DB.UserGroupMap.toogleUserInGroup(userID, groupID));
+							case "userrolemap": 		userID = request.getParameter("itemid");
+														roleID = request.getParameter("listitemid");
+														jsonResponse.setSuccess(CFW.DB.UserRoleMap.toogleUserInRole(userID, roleID));
 														break;
 														
-							case "grouppermissionmap": 	groupID = request.getParameter("itemid");
+							case "rolepermissionmap": 	roleID = request.getParameter("itemid");
 														permissionID = request.getParameter("listitemid");
-														jsonResponse.setSuccess(CFW.DB.GroupPermissionMap.tooglePermissionInGroup(permissionID, groupID));
+														jsonResponse.setSuccess(CFW.DB.RolePermissionMap.tooglePermissionInRole(permissionID, roleID));
 														break;
 			
 							default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
@@ -137,7 +137,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 							case "edituser": 	createEditUserForm(jsonResponse, ID);
 												break;
 							
-							case "editgroup": 	createEditGroupForm(jsonResponse, ID);
+							case "editrole": 	createEditRoleForm(jsonResponse, ID);
 							break;
 							
 							case "resetpw": 	createResetPasswordForm(jsonResponse, ID);
@@ -191,22 +191,22 @@ public class APIUserMgmtSevlet extends HttpServlet {
 		
 	}
 	
-	private void createEditGroupForm(JSONResponse json, String ID) {
+	private void createEditRoleForm(JSONResponse json, String ID) {
 		
-		Group group = CFW.DB.Groups.selectByID(Integer.parseInt(ID));
+		Role role = CFW.DB.Roles.selectByID(Integer.parseInt(ID));
 		
-		if(group != null) {
+		if(role != null) {
 			
-			CFWForm editGroupForm = group.toForm("cfwEditGroupForm"+ID, "Update Group");
+			CFWForm editRoleForm = role.toForm("cfwEditRoleForm"+ID, "Update Role");
 			
-			editGroupForm.setFormHandler(new CFWFormHandler() {
+			editRoleForm.setFormHandler(new CFWFormHandler() {
 				
 				@Override
 				public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
 					
 					if(origin.mapRequestParameters(request)) {
 						
-						if(CFW.DB.Groups.update((Group)origin)) {
+						if(CFW.DB.Roles.update((Role)origin)) {
 							CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Updated!");
 						}
 							
@@ -215,7 +215,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 				}
 			});
 			
-			editGroupForm.appendToPayload(json);
+			editRoleForm.appendToPayload(json);
 			json.setSuccess(true);
 			
 		}
