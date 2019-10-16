@@ -65,9 +65,11 @@ public class HTMLResponse extends AbstractHTMLResponse {
 		buildedPage.append("<html id=\"cfw-html\">\n");
 		
 			buildedPage.append("<head>\n");
+				
 				buildedPage.append("<meta charset=\"utf-8\">");
 				buildedPage.append("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
 		    	buildedPage.append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">");
+		    	buildedPage.append("<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/resources/images/favicon.ico\"/>");
 				buildedPage.append("<title>").append(this.pageTitle).append("</title>");
 				buildedPage.append(head);
 				if(assemblyCSS.hasFiles()) {
