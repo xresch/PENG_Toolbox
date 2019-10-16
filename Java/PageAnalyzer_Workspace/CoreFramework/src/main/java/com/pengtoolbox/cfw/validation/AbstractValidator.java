@@ -1,24 +1,24 @@
 package com.pengtoolbox.cfw.validation;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.utils.Ternary;
 
-/**************************************************************************************
+
+/**************************************************************************************************************
  * The AbstractArgumentValidator provides some default implementation of the 
  * methods defined by the IArgumentValidator interface.
  * 
- * @author Reto Scheiwiller, 2015
- *
- **************************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public abstract class AbstractValidator implements IValidator {
 
-	protected IValidatable validateable;
+	protected IValidatable<?> validateable;
 	private String invalidMessage="";
 	private String tag="";
 	private boolean isNullAllowed = true;
 	
-	public AbstractValidator(IValidatable validatable){
+	public AbstractValidator(IValidatable<?> validatable){
 		this.validateable = validatable;
 		validatable.addValidator(this);
 	}
@@ -28,13 +28,13 @@ public abstract class AbstractValidator implements IValidator {
 	
 	
 	@Override
-	public IValidator setValidateable(IValidatable argument) {
+	public IValidator setValidateable(IValidatable<?> argument) {
 		this.validateable = argument;
 		return this;
 	}
 
 	@Override
-	public IValidatable getValidatable() {
+	public IValidatable<?> getValidatable() {
 		return validateable;
 	}
 	
@@ -51,7 +51,7 @@ public abstract class AbstractValidator implements IValidator {
 		
 	@Override
 	public boolean validate() {
-		IValidatable validatable = this.getValidatable();
+		IValidatable<?> validatable = this.getValidatable();
 		if(validatable != null) {
 			return validate(validatable.getValue());
 		}else {

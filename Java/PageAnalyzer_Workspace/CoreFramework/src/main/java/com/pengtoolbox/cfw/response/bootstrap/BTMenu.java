@@ -3,11 +3,12 @@ package com.pengtoolbox.cfw.response.bootstrap;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.config.Configuration;
 
-/**********************************************************************************
- * Class for creating a menu for the web application.
- * @author Reto Scheiwiller
+
+/**************************************************************************************************************
  * 
- **********************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class BTMenu extends HierarchicalHTMLItem {
 	
 	private String label = "&nbsp;";

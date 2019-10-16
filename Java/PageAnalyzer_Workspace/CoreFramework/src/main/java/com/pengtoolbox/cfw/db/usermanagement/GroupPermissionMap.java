@@ -3,17 +3,19 @@ package com.pengtoolbox.cfw.db.usermanagement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
-import com.pengtoolbox.cfw.api.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
-import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class GroupPermissionMap extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_GROUP_PERMISSION_MAP";
@@ -25,8 +27,6 @@ public class GroupPermissionMap extends CFWObject {
 		IS_DELETABLE,
 	}
 
-	private static Logger logger = CFWLog.getLogger(GroupPermissionMap.class.getName());
-	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, GroupPermissionMapFields.PK_ID)
 			.setPrimaryKeyAutoIncrement(this)
 			.setDescription("The id of the mapping.")

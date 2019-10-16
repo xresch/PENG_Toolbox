@@ -6,6 +6,11 @@ import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWProperties {
 
 	public static final Properties configProperties = new Properties();

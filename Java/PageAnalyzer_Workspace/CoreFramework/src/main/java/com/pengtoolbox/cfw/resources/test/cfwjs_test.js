@@ -2,7 +2,7 @@
 /********************************************************************
  * CFW.JS Tests
  * ============
- * Test javascript for the cfw_test.js
+ * Test javascript for testing.
  *
  *@author Reto Scheiwiller, 2019
  ********************************************************************/

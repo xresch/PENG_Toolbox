@@ -1,27 +1,11 @@
 package com.pengtoolbox.cfw.caching;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.List;
-import java.util.logging.Level;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWProperties;
-import com.pengtoolbox.cfw.logging.CFWLog;
-
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class StringCache {
-
-	private static final HashMap<String,String> stringMap = new HashMap<String,String>();
 	
 	static String[] cachedStrings = new String[50];
 	static int stringCounter = 0;

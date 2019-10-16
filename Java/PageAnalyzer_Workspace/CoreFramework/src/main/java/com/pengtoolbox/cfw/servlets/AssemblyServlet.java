@@ -1,21 +1,21 @@
 package com.pengtoolbox.cfw.servlets;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.caching.FileAssembly;
 import com.pengtoolbox.cfw.response.PlaintextResponse;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class AssemblyServlet extends HttpServlet
 {
 

@@ -16,6 +16,11 @@ import com.pengtoolbox.cfw.response.AbstractHTMLResponse;
 import com.pengtoolbox.cfw.response.AbstractResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWLog {
 	
 	protected Logger logger;

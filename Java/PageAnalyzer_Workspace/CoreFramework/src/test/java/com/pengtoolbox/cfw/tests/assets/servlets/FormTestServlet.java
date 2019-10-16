@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw.datahandling.CFWForm;
+import com.pengtoolbox.cfw.datahandling.CFWFormHandler;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
@@ -16,7 +17,6 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 import com.pengtoolbox.cfw.tests.assets.mockups.CFWObjectMockup;
 
 public class FormTestServlet extends HttpServlet
@@ -77,7 +77,7 @@ public class FormTestServlet extends HttpServlet
         content.append("<h2>Map Requests and Validate</h2>");
         CFWForm handledForm2 = new CFWObjectMockup().toForm("handlerForm2", "Handle Again!!!");
         
-        handledForm2.setFormHandler(new BTFormHandler() {
+        handledForm2.setFormHandler(new CFWFormHandler() {
 			@Override
 			public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
 				// TODO Auto-generated method stub

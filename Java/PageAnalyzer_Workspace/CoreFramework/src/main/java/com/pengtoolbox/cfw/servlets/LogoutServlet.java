@@ -12,6 +12,11 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class LogoutServlet extends HttpServlet
 {
 

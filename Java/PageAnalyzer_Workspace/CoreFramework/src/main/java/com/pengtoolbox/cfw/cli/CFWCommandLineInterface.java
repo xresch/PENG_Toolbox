@@ -3,28 +3,23 @@ package com.pengtoolbox.cfw.cli;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Set;
-import java.util.logging.Logger;
 
-import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.FileCanReadValidator;
 import com.pengtoolbox.cfw.validation.ValidationEngine;
 
 
-/**************************************************************************************
+/**************************************************************************************************************
  * Provides the basic functionalities for the handling of 
  * command line arguments.
  * It provides default arguments for a configuration file and handling of log levels.
  * 
- * @author Reto Scheiwiller, 2018
- *
- **************************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public abstract class CFWCommandLineInterface {
 	
 	public static final String CONFIG_FILE = "-config.file";
 	public static final String STOP = "-stop";
-	
-	private static Logger logger = CFWLog.getLogger(CFW.class.getName());
 	
 	protected static LinkedHashMap<String,String> loadedArguments = new LinkedHashMap<String,String>();
 	protected static LinkedHashMap<String,ArgumentDefinition> supportedArgumentsMap = new LinkedHashMap<String,ArgumentDefinition>();

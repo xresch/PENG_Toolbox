@@ -2,19 +2,20 @@ package com.pengtoolbox.cfw.validation;
 
 import com.pengtoolbox.cfw.utils.Ternary;
 
-/**************************************************************************************
+
+/**************************************************************************************************************
  * The StringLengthArgumentValidator will validate if the value of the ArgumentDefinition
  * has a certain lenght in a minimum and maximum range.
  * 
- * @author Reto Scheiwiller, 2015
- *
- **************************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class LengthValidator extends AbstractValidator {
 
 	private int minLength;
 	private int maxLength;
 
-	public LengthValidator(IValidatable validatable, int minLength, int maxLength) {
+	public LengthValidator(IValidatable<?> validatable, int minLength, int maxLength) {
 		super(validatable);
 		this.minLength = minLength;
 		this.maxLength = maxLength;

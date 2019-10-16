@@ -14,6 +14,11 @@ import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.AbstractResponse;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWLocalization {
 	
 	public static Logger logger = CFWLog.getLogger(CFWLocalization.class.getName());
@@ -107,6 +112,7 @@ public class CFWLocalization {
 			}else {
 				String jsonString = CFW.Files.getFileContent(null, LANGUAGE_FOLDER_PATH, filename);
 				Gson gson = new Gson();
+				@SuppressWarnings("unchecked")
 				Map<String,String> languageMap = gson.fromJson(jsonString, Map.class);
 				
 				if(CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING) && !languageCache.containsKey(filename) ) {

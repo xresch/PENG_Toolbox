@@ -12,6 +12,11 @@ import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import com.pengtoolbox.cfw._main.CFWProperties;
 
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class HTTPSRedirectHandler extends SecuredRedirectHandler {
 
 	@Override

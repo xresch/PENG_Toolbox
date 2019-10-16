@@ -11,6 +11,11 @@ import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.GroupPermissionMap.GroupPermissionMapFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWDBGroupPermissionMap {
 
 	public static String TABLE_NAME = "CFW_GROUP_PERMISSION_MAP";

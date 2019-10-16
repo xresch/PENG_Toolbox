@@ -18,7 +18,12 @@ import com.pengtoolbox.cfw._main.CFWApplication;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
- 
+
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class RequestHandler extends HandlerWrapper
 {
 	private static Logger logger = CFWLog.getLogger(RequestHandler.class.getName());

@@ -3,6 +3,11 @@ package com.pengtoolbox.cfw.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWJson {
 	
 	public static Gson gsonInstance = new GsonBuilder().serializeNulls().create();

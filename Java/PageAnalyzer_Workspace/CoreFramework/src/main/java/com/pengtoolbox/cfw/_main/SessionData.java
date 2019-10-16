@@ -11,6 +11,11 @@ import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class SessionData {
 	
 	private boolean isLoggedIn = false;

@@ -12,6 +12,11 @@ import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWObject {
 	
 	private static Logger logger = CFWLog.getLogger(CFWObject.class.getName());
@@ -52,7 +57,7 @@ public class CFWObject {
 		CFWForm form = new CFWForm(formID, submitLabel);
 		form.setOrigin(this);
 		
-		for(CFWField field : fields.values()) {
+		for(CFWField<?> field : fields.values()) {
 			form.addField(field);
 		}
 		
@@ -78,7 +83,7 @@ public class CFWObject {
 	}
 	
 	
-	public void addField(CFWField field) {
+	public void addField(CFWField<?> field) {
 		
 		if(!fields.containsKey(field.getName())) {
 			fields.put(field.getName(), field);
@@ -88,23 +93,23 @@ public class CFWObject {
 			.severe("The field with name '"+field.getName()+"' was already added to this object. Check the naming of the field.");}
 	}
 	
-	public void addAllFields(CFWField[] fields) {
-		for(CFWField field : fields) {
+	public void addAllFields(CFWField<?>[] fields) {
+		for(CFWField<?> field : fields) {
 			this.addField(field);
 		}
 	}
 	
-	public void addFields(CFWField ...fields) {
-		for(CFWField field : fields) {
+	public void addFields(CFWField<?> ...fields) {
+		for(CFWField<?> field : fields) {
 			this.addField(field);
 		}
 	}
 	
-	public CFWField getField(String name) {
+	public CFWField<?> getField(String name) {
 		return fields.get(name);
 	}
 	
-	public CFWField getFieldIgnoreCase(String name) {
+	public CFWField<?> getFieldIgnoreCase(String name) {
 		
 		for(String current : fields.keySet()) {
 			if(current.toLowerCase().equals(name.toLowerCase())) {
@@ -135,7 +140,7 @@ public class CFWObject {
 		return null;
 	}
 
-	public CFWField getPrimaryField() {
+	public CFWField<?> getPrimaryField() {
 		return primaryField;
 	}
 

@@ -1,19 +1,18 @@
 package com.pengtoolbox.cfw.response;
 
-import java.util.logging.Logger;
-
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public abstract class AbstractResponse {
 
 	protected StringBuffer content = new StringBuffer();
 	protected HttpServletRequest request;
-	
-	private static Logger logger = CFWLog.getLogger(AbstractResponse.class.getName());
 	
 	public AbstractResponse(){
 		this.request = CFW.Context.Request.getRequest();

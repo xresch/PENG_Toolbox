@@ -3,7 +3,6 @@ package com.pengtoolbox.cfw._main;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,11 +10,15 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
-import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.AbstractResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWContextRequest {
 	
 	private static InheritableThreadLocal<HttpServletRequest> httpRequest = new InheritableThreadLocal<HttpServletRequest>();
@@ -25,9 +28,7 @@ public class CFWContextRequest {
 	private static InheritableThreadLocal<SessionData> sessionData = new InheritableThreadLocal<SessionData>();
 	
 	private static InheritableThreadLocal<HashMap<String,AlertMessage>> messageArray = new InheritableThreadLocal<HashMap<String,AlertMessage>>();
-	
-	private static Logger logger = CFWLog.getLogger(CFWContextRequest.class.getName());
-	
+		
 	public static void clearRequestContext() {
 		httpRequest.set(null);
 		responseContent.set(null);

@@ -6,6 +6,11 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public abstract class HierarchicalHTMLItem {
 	
 	protected ArrayList<HierarchicalHTMLItem> children = new ArrayList<HierarchicalHTMLItem> ();

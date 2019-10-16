@@ -21,6 +21,11 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.EmailValidator;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class User extends CFWObject {
 	
 	private static Logger logger = CFWLog.getLogger(User.class.getName());

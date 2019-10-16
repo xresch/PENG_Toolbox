@@ -3,6 +3,11 @@ package com.pengtoolbox.cfw.logging;
 import org.eclipse.jetty.util.log.AbstractLogger;
 import org.eclipse.jetty.util.log.Logger;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class JettyLogger extends AbstractLogger {
 
 	@Override

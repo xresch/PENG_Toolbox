@@ -1,7 +1,6 @@
 package com.pengtoolbox.cfw.servlets.admin;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,28 +10,30 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
-import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.datahandling.CFWForm;
+import com.pengtoolbox.cfw.datahandling.CFWFormHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
-import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 import com.pengtoolbox.cfw.validation.NotNullOrEmptyValidator;
 import com.pengtoolbox.cfw.validation.PasswordValidator;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class UserManagementServlet extends HttpServlet
 {
 
 	private static final long serialVersionUID = 1L;
-	
-	private static Logger logger = CFWLog.getLogger(UserManagementServlet.class.getName());
 	
 	public UserManagementServlet() {
 	
@@ -44,8 +45,6 @@ public class UserManagementServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		CFWLog log = new CFWLog(logger).method("doGet");
-				
 		createForms();
 		
 		HTMLResponse html = new HTMLResponse("User Management");
@@ -76,7 +75,7 @@ public class UserManagementServlet extends HttpServlet
 		// Create User Form
 		CreateUserForm createUserForm = new CreateUserForm("cfwCreateUserForm", "Create User");
 		
-		createUserForm.setFormHandler(new BTFormHandler() {
+		createUserForm.setFormHandler(new CFWFormHandler() {
 			
 			@Override
 			public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
@@ -108,7 +107,7 @@ public class UserManagementServlet extends HttpServlet
 		
 		CFWForm createGroupForm = new Group("").toForm("cfwCreateGroupForm", "Create Group");
 		
-		createGroupForm.setFormHandler(new BTFormHandler() {
+		createGroupForm.setFormHandler(new CFWFormHandler() {
 			
 			@Override
 			public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {

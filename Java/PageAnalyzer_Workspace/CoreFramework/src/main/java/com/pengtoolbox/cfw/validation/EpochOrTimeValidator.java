@@ -4,17 +4,16 @@ import java.sql.Timestamp;
 
 import com.pengtoolbox.cfw.utils.Ternary;
 
-/**************************************************************************************
- * The BooleanArgumentValidator will validate if the value of the ArgumentDefinition
- * is a string representation of "true" or "false".
+
+/**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, 2015
- *
- **************************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class EpochOrTimeValidator extends AbstractValidator {
 
 	
-	public EpochOrTimeValidator(IValidatable validateable) {
+	public EpochOrTimeValidator(IValidatable<?> validateable) {
 		super(validateable);
 		// TODO Auto-generated constructor stub
 	}

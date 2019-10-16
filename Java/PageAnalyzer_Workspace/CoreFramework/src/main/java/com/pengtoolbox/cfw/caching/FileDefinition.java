@@ -2,6 +2,11 @@ package com.pengtoolbox.cfw.caching;
 
 import com.pengtoolbox.cfw._main.CFW;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class FileDefinition {
 
 	public enum HandlingType {FILE, JAR_RESOURCE, STRING}

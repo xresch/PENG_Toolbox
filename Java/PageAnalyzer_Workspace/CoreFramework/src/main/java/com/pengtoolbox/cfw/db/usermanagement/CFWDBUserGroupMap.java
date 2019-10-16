@@ -7,10 +7,14 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
 import com.pengtoolbox.cfw.db.usermanagement.UserGroupMap.UserGroupMapFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWDBUserGroupMap {
 
 	public static String TABLE_NAME = "CFW_USER_GROUP_MAP";

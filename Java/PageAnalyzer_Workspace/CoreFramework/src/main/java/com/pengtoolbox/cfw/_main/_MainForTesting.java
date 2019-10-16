@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
 import com.pengtoolbox.cfw.db.config.Configuration;
-import com.pengtoolbox.cfw.exceptions.ShutdownException;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.tests.assets.mockups.TestMenu;
 import com.pengtoolbox.cfw.tests.assets.servlets.FormTestServlet;

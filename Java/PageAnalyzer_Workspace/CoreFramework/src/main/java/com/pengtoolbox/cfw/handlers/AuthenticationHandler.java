@@ -2,7 +2,6 @@ package com.pengtoolbox.cfw.handlers;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -14,12 +13,15 @@ import org.eclipse.jetty.server.handler.HandlerWrapper;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw._main.SessionData;
-import com.pengtoolbox.cfw.logging.CFWLog;
- 
+
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class AuthenticationHandler extends HandlerWrapper
 {
-	private static Logger logger = CFWLog.getLogger(AuthenticationHandler.class.getName());
-			
+
     public void handle( String target,
                         Request baseRequest,
                         HttpServletRequest request,

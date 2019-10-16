@@ -14,6 +14,11 @@ import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWSpace extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_SPACE";

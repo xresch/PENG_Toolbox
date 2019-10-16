@@ -56,6 +56,11 @@ import com.pengtoolbox.cfw.servlets.admin.UserManagementServlet;
 import com.pengtoolbox.cfw.servlets.userprofile.ChangePasswordServlet;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWApplication {
 	
 	private Server server;
@@ -73,8 +78,6 @@ public class CFWApplication {
 	public static Logger logger = CFWLog.getLogger(CFW.class.getName());
 	
 	public WebAppContext applicationContext;
-	
-	private static ServletContextHandler cfwContext;
 	
 	public CFWApplication(String[] args) throws Exception {
 		    	       
@@ -252,7 +255,6 @@ public class CFWApplication {
 	 ***********************************************************************/
 	public void addCFWServlets(ServletContextHandler servletContextHandler) {
 		
-		cfwContext = servletContextHandler;
 		//-----------------------------------------
 		// Authentication Servlets
 	    if(CFWProperties.AUTHENTICATION_ENABLED) {

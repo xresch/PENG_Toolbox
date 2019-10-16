@@ -11,6 +11,11 @@ import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.config.Configuration.ConfigFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWDBConfig {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBConfig.class.getName());

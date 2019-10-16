@@ -3,20 +3,16 @@ package com.pengtoolbox.cfw.validation;
 import java.io.File;
 import java.io.IOException;
 
-import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.utils.Ternary;
 
-
-/**************************************************************************************
- * The FileCanWriteArgumentValidator will validate if the value of the ArgumentDefinition
- * is a filepath and the application can write to this path.
+/**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, 2015
- *
- **************************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class FileCanWriteValidator extends AbstractValidator {
 
-	public FileCanWriteValidator(IValidatable validatable) {
+	public FileCanWriteValidator(IValidatable<?> validatable) {
 		super(validatable);
 		// TODO Auto-generated constructor stub
 	}

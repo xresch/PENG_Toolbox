@@ -3,6 +3,11 @@ package com.pengtoolbox.cfw.login;
 import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class LoginFacade {
 
 	private static LoginFacade INSTANCE;

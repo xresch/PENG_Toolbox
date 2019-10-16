@@ -2,13 +2,16 @@ package com.pengtoolbox.cfw.caching;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.UUID;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.config.Configuration;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class FileAssembly {
 	
 	/** Static field to store the assembled results by their file names. */

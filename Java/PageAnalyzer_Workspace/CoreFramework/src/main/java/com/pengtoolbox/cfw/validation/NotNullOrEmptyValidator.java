@@ -1,17 +1,13 @@
 package com.pengtoolbox.cfw.validation;
 
-import com.pengtoolbox.cfw.cli.ArgumentDefinition;
-
-/**************************************************************************************
- * The BooleanArgumentValidator will validate if the value of the ArgumentDefinition
- * is a string representation of "true" or "false".
+/**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, 2015
- *
- **************************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class NotNullOrEmptyValidator extends AbstractValidator {
 
-	public NotNullOrEmptyValidator(IValidatable validatable) {
+	public NotNullOrEmptyValidator(IValidatable<?> validatable) {
 		super(validatable);
 		// TODO Auto-generated constructor stub
 	}

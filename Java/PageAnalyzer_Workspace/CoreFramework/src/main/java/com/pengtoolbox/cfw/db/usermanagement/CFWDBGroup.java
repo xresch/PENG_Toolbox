@@ -1,16 +1,19 @@
 package com.pengtoolbox.cfw.db.usermanagement;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
 import com.pengtoolbox.cfw.db.usermanagement.Permission.PermissionFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWDBGroup {
 
 	

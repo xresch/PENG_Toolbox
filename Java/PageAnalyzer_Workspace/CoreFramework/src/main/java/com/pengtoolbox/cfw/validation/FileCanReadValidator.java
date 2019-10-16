@@ -5,17 +5,16 @@ import java.io.File;
 import com.pengtoolbox.cfw.utils.Ternary;
 
 
-/**************************************************************************************
- * The FileCanReadArgumentValidator will validate if the value is a filepath or a file
- * is readable.
+
+/**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, 2015
- *
- **************************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class FileCanReadValidator extends AbstractValidator {
 
 	
-	public FileCanReadValidator(IValidatable validatable) {
+	public FileCanReadValidator(IValidatable<?> validatable) {
 		super(validatable);
 	}
 

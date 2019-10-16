@@ -2,16 +2,15 @@ package com.pengtoolbox.cfw.validation;
 
 import com.pengtoolbox.cfw.utils.Ternary;
 
-/**************************************************************************************
- * The RegexValidator will validate if value.toString() is matching the given 
- * regular expression.
+
+/**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, 2015
- *
- **************************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class EmailValidator extends AbstractValidator {
 	
-	public EmailValidator(IValidatable validatable){
+	public EmailValidator(IValidatable<?> validatable){
 		super(validatable);
 	}
 	

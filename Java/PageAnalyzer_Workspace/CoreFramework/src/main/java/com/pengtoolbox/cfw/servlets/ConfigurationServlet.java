@@ -10,9 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.datahandling.CFWForm;
+import com.pengtoolbox.cfw.datahandling.CFWFormHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
@@ -20,8 +21,12 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class ConfigurationServlet extends HttpServlet
 {
 
@@ -82,7 +87,7 @@ public class ConfigurationServlet extends HttpServlet
 			configForm.addField(field);
 		}
 		
-		configForm.setFormHandler(new BTFormHandler() {
+		configForm.setFormHandler(new CFWFormHandler() {
 			
 			@Override
 			public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
@@ -93,7 +98,7 @@ public class ConfigurationServlet extends HttpServlet
 			    	
 			    	boolean success = true;
 			    	
-			    	for(CFWField field : form.getFields().values() ) {
+			    	for(CFWField<?> field : form.getFields().values() ) {
 			    		String value = (field.getValue() != null) ? field.getValue().toString() : "";
 			    		success = success && CFW.DB.Config.updateValue(Integer.parseInt(field.getName()), value);
 			    	}

@@ -13,6 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw.response.JSONResponse;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class JSONServlet extends HttpServlet
 {
     /**

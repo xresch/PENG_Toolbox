@@ -10,7 +10,6 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
-import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWStatement;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -18,6 +17,11 @@ import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.PlaintextResponse;
 import com.pengtoolbox.cfw.utils.CFWArrayUtils;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class APIDefinitionFetch extends APIDefinition{
 	
 	private static final String APIFORMAT = "APIFORMAT";
@@ -36,6 +40,7 @@ public class APIDefinitionFetch extends APIDefinition{
 		
 		this.setRequestHandler(new APIRequestHandler() {
 			
+			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
 			public void handleRequest(HttpServletRequest request, HttpServletResponse response, APIDefinition definition) {
 				

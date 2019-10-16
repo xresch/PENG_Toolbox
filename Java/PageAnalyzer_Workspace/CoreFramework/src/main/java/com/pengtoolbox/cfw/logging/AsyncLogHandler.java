@@ -6,11 +6,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.FileHandler;
 import java.util.logging.LogRecord;
 
-/*****************************************************************
-* Handler that provides async log handling, extends FileHandler.
-*
-* (c) 2018 Reto Scheiwiller, all rights reserved
-******************************************************************/
+/**************************************************************************************************************
+ * Handler that provides async log handling, extends FileHandler.
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class AsyncLogHandler extends FileHandler implements Runnable{
 
 	private static ArrayBlockingQueue<LogRecord> logQueue = new ArrayBlockingQueue<>(5000);

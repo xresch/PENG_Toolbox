@@ -1,23 +1,16 @@
 package com.pengtoolbox.cfw.api;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.eclipse.jetty.http.HttpStatus;
-
-import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.datahandling.CFWField;
-import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.datahandling.CFWStatement;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.JSONResponse;
-import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWRegistryAPI {
 	
 	public static Logger logger = CFWLog.getLogger(CFWRegistryAPI.class.getName());
@@ -70,7 +63,8 @@ public class CFWRegistryAPI {
 	 * @param definition
 	 ***********************************************************************/
 	public static void remove(APIDefinition definition)  {
-		definitionArray.remove(definition);
+		String fullname = getFullyQualifiedName(definition);
+		definitionArray.remove(fullname);
 	}
 	
 	/***********************************************************************

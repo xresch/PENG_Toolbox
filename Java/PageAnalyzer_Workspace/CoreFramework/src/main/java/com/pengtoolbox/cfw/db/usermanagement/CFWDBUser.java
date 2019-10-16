@@ -9,6 +9,11 @@ import com.pengtoolbox.cfw.db.usermanagement.Permission.PermissionFields;
 import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWDBUser {
 
 	public static Logger logger = CFWLog.getLogger(CFWDBUser.class.getName());

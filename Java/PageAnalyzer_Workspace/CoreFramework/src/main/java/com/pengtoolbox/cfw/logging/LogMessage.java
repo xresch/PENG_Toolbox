@@ -4,15 +4,16 @@ import java.util.LinkedHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-/************************************************************
+
+/**************************************************************************************************************
  * This class represents a log message.
  * It helps to make the logging asynchronous.
  * 
- * @author Reto Scheiwiller
- ************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class LogMessage {
 	
-	private long tempStartNanos = -1;
 	protected long starttimeNanos = -1;
 	protected long endtimeNanos = -1;
 	protected long durationMillis = -1;
@@ -36,7 +37,6 @@ public class LogMessage {
 	
 	protected LogMessage(CFWLog log) {
 		
-		this.tempStartNanos = log.tempStartNanos;
 		this.starttimeNanos = log.starttimeNanos;
 		this.endtimeNanos = log.endtimeNanos;
 		this.durationMillis = log.durationMillis;

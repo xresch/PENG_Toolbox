@@ -1,7 +1,6 @@
 package com.pengtoolbox.cfw.login;
 
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -11,12 +10,14 @@ import javax.naming.directory.SearchControls;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.db.usermanagement.User;
-import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class LDAPLoginProvider implements LoginProvider {
-	
-	private static Logger logger = CFWLog.getLogger(LoginServlet.class.getName());
-		
+
 	public LDAPLoginProvider() {}
 	
 	@Override

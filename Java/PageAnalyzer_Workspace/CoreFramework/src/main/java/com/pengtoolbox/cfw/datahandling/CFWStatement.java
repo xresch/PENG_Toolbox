@@ -12,6 +12,11 @@ import com.pengtoolbox.cfw.datahandling.CFWObject.ForeignKeyDefinition;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWStatement {
 	
 	private static Logger logger = CFWLog.getLogger(CFWStatement.class.getName());
@@ -80,7 +85,7 @@ public class CFWStatement {
 		
 		//------------------------------------
 		// Create Columns
-		for(CFWField field : fields.values()) {
+		for(CFWField<?> field : fields.values()) {
 			if(field.getColumnDefinition() != null) {
 				String addColumnIsRenamable = "ALTER TABLE "+object.getTableName()
 				 +" ADD COLUMN IF NOT EXISTS "+field.getName()+" "+field.getColumnDefinition();
@@ -194,7 +199,7 @@ public class CFWStatement {
 			StringBuilder placeholders = new StringBuilder("(");
 			
 			for(String fieldname : fieldnames) {
-				CFWField field = fields.get(fieldname);
+				CFWField<?> field = fields.get(fieldname);
 				if(field != object.getPrimaryField()) {
 					if(!isQueryCached()) {
 						columnNames.append(field.getName()).append(",");
@@ -238,7 +243,7 @@ public class CFWStatement {
 		StringBuilder placeholders = new StringBuilder();
 		
 		for(String fieldname : fieldnames) {
-			CFWField field = fields.get(fieldname);
+			CFWField<?> field = fields.get(fieldname);
 			if(!field.equals(object.getPrimaryField())) {
 				
 				if(!isQueryCached()) {
@@ -281,9 +286,8 @@ public class CFWStatement {
 		for(String name : fields.keySet()) {
 			//add if name is not in fieldnames
 			if(Arrays.binarySearch(fieldnames, name) < 0) {
-				CFWField field = fields.get(name);
+				CFWField<?> field = fields.get(name);
 				if(!field.equals(object.getPrimaryField())) {
-					
 					
 					if(!isQueryCached()) {
 						columnNames.append(field.getName()).append(",");
@@ -292,9 +296,6 @@ public class CFWStatement {
 					values.add(field.getValue());
 				}
 			}
-		}
-		for(String fieldname : fieldnames) {
-			
 		}
 		
 		if(!isQueryCached()) {

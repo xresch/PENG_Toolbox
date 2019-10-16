@@ -8,18 +8,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 
-/*************************************************************************************
- * This servlet is used to handle forms that have a BTFormHandler defined.
+/**************************************************************************************************************
  * 
- * @author Reto
- *
- *************************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class PermissionsServlet extends HttpServlet
 {
     /**

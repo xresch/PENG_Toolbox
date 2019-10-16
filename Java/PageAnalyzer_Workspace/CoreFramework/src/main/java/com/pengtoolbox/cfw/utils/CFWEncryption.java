@@ -1,7 +1,6 @@
 package com.pengtoolbox.cfw.utils;
 
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
@@ -9,6 +8,11 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWEncryption {
 
 	// internal salt to make it even more complicated to recreate a password

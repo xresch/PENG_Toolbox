@@ -1,7 +1,6 @@
 package com.pengtoolbox.cfw.api;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -13,14 +12,19 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.datahandling.CFWForm;
+import com.pengtoolbox.cfw.datahandling.CFWFormHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWAPIServlet extends HttpServlet
 {
 
@@ -35,8 +39,7 @@ public class CFWAPIServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		CFWLog log = new CFWLog(logger).method("doGet");
-	
+
 		if(CFW.Context.Request.hasPermission(Permission.CFW_API)) {
 			String name = request.getParameter("apiName");
 			String action = request.getParameter("actionName");
@@ -71,6 +74,7 @@ public class CFWAPIServlet extends HttpServlet
 			// Create Overview Page
 			createOverview(request, response);
 		}else {
+			@SuppressWarnings("unused")
 			HTMLResponse html = new HTMLResponse("Error");
 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied.");
 		}
@@ -83,9 +87,8 @@ public class CFWAPIServlet extends HttpServlet
 	 * @param response
 	 ****************************************************************************************************/
 	private void createOverview(HttpServletRequest request, HttpServletResponse response) {
-		HTMLResponse html = new HTMLResponse("API");
 		
-		StringBuffer content = html.getContent();
+		HTMLResponse html = new HTMLResponse("API");
 		
 		if(CFW.Context.Request.hasPermission(Permission.CFW_API)) {
 			
@@ -155,7 +158,7 @@ public class CFWAPIServlet extends HttpServlet
 		CFWForm sampleForm = instance.toForm("cfwAPIFormExample"+apiName+action, "Submit", definition.getInputFieldnames());
 		sampleForm.isAPIForm(true);
 		sampleForm.setResultCallback(callbackMethod);
-		sampleForm.setFormHandler(new BTFormHandler() {
+		sampleForm.setFormHandler(new CFWFormHandler() {
 			
 			@Override
 			public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {

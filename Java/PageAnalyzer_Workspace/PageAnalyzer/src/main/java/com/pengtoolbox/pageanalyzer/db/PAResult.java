@@ -204,7 +204,7 @@ public class PAResult extends CFWObject {
 						this.getClass().getSimpleName(),
 						"getResult",
 						new String[] {ResultFields.PK_ID.toString()},
-						new String[] {ResultFields.JSON_HAR_FILE.toString()}
+						new String[] {ResultFields.JSON_RESULT.toString()}
 				);
 		
 		getResult.setDescription("Returns the results as json for the specified result ID.");

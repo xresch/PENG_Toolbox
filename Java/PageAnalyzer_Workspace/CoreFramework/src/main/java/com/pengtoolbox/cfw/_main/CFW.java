@@ -25,6 +25,11 @@ import com.pengtoolbox.cfw.utils.CFWJson;
 import com.pengtoolbox.cfw.utils.CFWTime;
 import com.pengtoolbox.cfw.validation.CFWValidation;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFW {
 	
 	//##############################################################################

@@ -1,18 +1,16 @@
 package com.pengtoolbox.cfw.validation;
 
-import com.pengtoolbox.cfw.cli.ArgumentDefinition;
-
-/**************************************************************************************
+/**************************************************************************************************************
  * The LogLevelArgumentValidator will validate if the value of the ArgumentDefinition
  * is a valid log4j2 log level.
  * 
- * @author Reto Scheiwiller, 2015
- *
- **************************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class LogLevelValidator extends AbstractValidator {
 
 	
-	public LogLevelValidator(IValidatable validatable) {
+	public LogLevelValidator(IValidatable<?> validatable) {
 		super(validatable);
 		// TODO Auto-generated constructor stub
 	}

@@ -9,6 +9,11 @@ import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.utils.CFWArrayUtils;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class APIDefinition {
 	
 	public static Logger logger = CFWLog.getLogger(APIDefinition.class.getName());
@@ -162,7 +167,7 @@ public class APIDefinition {
 			
 			int counter = 0;
 			for(String name : inputFieldnames) {
-				CFWField field = instance.getField(name);
+				CFWField<?> field = instance.getField(name);
 				//ignore unavailable fields that where added to the base CFWOBject
 				if(field != null) {
 					counter++;
@@ -185,7 +190,7 @@ public class APIDefinition {
 			
 			int counter = 0;
 			for(String name : outputFieldnames) {
-				CFWField field = instance.getField(name);
+				CFWField<?> field = instance.getField(name);
 				if(field != null) {
 					counter++;
 					json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())

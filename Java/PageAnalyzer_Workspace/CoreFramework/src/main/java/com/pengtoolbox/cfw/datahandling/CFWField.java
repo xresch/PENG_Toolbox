@@ -26,16 +26,11 @@ import com.pengtoolbox.cfw.validation.IValidatable;
 import com.pengtoolbox.cfw.validation.IValidator;
 import com.pengtoolbox.cfw.validation.IntegerValidator;
 
-/**********************************************************************************
- * Class for creating a menu for the web application.
+/**************************************************************************************************************
  * 
- * When adding more supported types, you have to update as well:
- *   - CFWDB.prepareStatement()
- *   -
- *   
- * @author Reto Scheiwiller
- * 
- **********************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T> {
 	
 	private static Logger logger = CFWLog.getLogger(CFWField.class.getName());
@@ -46,11 +41,14 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private Object value;
 	private String description = null;
 	private Class<T> valueClass;
-	private CFWFieldChangeHandler changeHandler = null;
 	private ArrayList<String> invalidMessages;
 	
 	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
 
+	
+	@SuppressWarnings("rawtypes")
+	private CFWFieldChangeHandler changeHandler = null;
+	
 	//--------------------------------
 	// Form
 	private FormFieldType type;
@@ -74,6 +72,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	//###################################################################################
 	// CONSTRUCTORS
 	//###################################################################################
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private CFWField(Class clazz, FormFieldType type, String fieldName) {
 		this.valueClass = clazz;
 		this.type = type;
@@ -88,7 +87,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	//===========================================
 	// String
 	//===========================================
-	public static CFWField<String> newString(FormFieldType type, Enum fieldName){
+	public static CFWField<String> newString(FormFieldType type, Enum<?> fieldName){
 		return newString(type, fieldName.toString());
 	}
 	public static CFWField<String> newString(FormFieldType type, String fieldName){
@@ -99,7 +98,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	//===========================================
 	// Integer
 	//===========================================
-	public static CFWField<Integer> newInteger(FormFieldType type, Enum fieldName){
+	public static CFWField<Integer> newInteger(FormFieldType type, Enum<?> fieldName){
 		return newInteger(type, fieldName.toString());
 	}
 	public static CFWField<Integer> newInteger(FormFieldType type, String fieldName){
@@ -111,7 +110,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	//===========================================
 	// Boolean
 	//===========================================
-	public static CFWField<Boolean> newBoolean(FormFieldType type, Enum fieldName){
+	public static CFWField<Boolean> newBoolean(FormFieldType type, Enum<?> fieldName){
 		return newBoolean(type, fieldName.toString());
 	}
 	public static CFWField<Boolean> newBoolean(FormFieldType type, String fieldName){
@@ -123,7 +122,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	//===========================================
 	// Timestamp
 	//===========================================
-	public static CFWField<Timestamp> newTimestamp(FormFieldType type, Enum fieldName){
+	public static CFWField<Timestamp> newTimestamp(FormFieldType type, Enum<?> fieldName){
 		return newTimestamp(type, fieldName.toString());
 	}
 	public static CFWField<Timestamp> newTimestamp(FormFieldType type, String fieldName){
@@ -135,7 +134,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	//===========================================
 	// Date
 	//===========================================
-	public static CFWField<Date> newDate(FormFieldType type, Enum fieldName){
+	public static CFWField<Date> newDate(FormFieldType type, Enum<?> fieldName){
 		return newDate(type, fieldName.toString());
 	}
 	
@@ -148,7 +147,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	//===========================================
 	// Array
 	//===========================================
-	public static CFWField<Object[]> newArray(FormFieldType type, Enum fieldName){
+	public static CFWField<Object[]> newArray(FormFieldType type, Enum<?> fieldName){
 		return newArray(type, fieldName.toString());
 	}
 	public static CFWField<Object[]> newArray(FormFieldType type, String fieldName){
@@ -635,6 +634,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * 
 	 * @return instance for chaining
 	 ******************************************************************************************************/
+	@SuppressWarnings("unchecked")
 	public CFWField<T> setPrimaryKeyAutoIncrement(CFWObject parentObject) {
 		this.columnDefinition = "INT PRIMARY KEY AUTO_INCREMENT";
 		if(this.valueClass == Integer.class) {
@@ -643,7 +643,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return this;
 	}
 	
-	public CFWField<T> setForeignKeyCascade(CFWObject parent, Class<? extends CFWObject> foreignObject, Enum foreignField) {
+	public CFWField<T> setForeignKeyCascade(CFWObject parent, Class<? extends CFWObject> foreignObject, Enum<?> foreignField) {
 		return setForeignKeyCascade(parent, foreignObject, foreignField.toString());
 	}
 	
@@ -728,6 +728,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @param value to apply.
 	 * return true on success, false otherwise
 	 ******************************************************************************************************/
+	@SuppressWarnings("unchecked")
 	private boolean changeValue(Object value) {
 		
 		if(this.isDisabled()) { 
@@ -842,6 +843,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return this;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public T getValue() {
 		return (T)value;
 	}
@@ -855,7 +857,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return valueClass;
 	}
 
-	public CFWFieldChangeHandler getChangeHandler() {
+	public CFWFieldChangeHandler<?> getChangeHandler() {
 		return changeHandler;
 	}
 	
@@ -866,7 +868,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @param changeHandler
 	 * @return instance of chaining
 	 ******************************************************************************************************/
-	public CFWField<T> setChangeHandler(CFWFieldChangeHandler changeHandler) {
+	public CFWField<T> setChangeHandler(CFWFieldChangeHandler<?> changeHandler) {
 		this.changeHandler = changeHandler;
 		return this;
 	}
@@ -876,6 +878,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @param url used for the request.
 	 * @return true if successful, false otherwise
 	 ******************************************************************************************************/
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static boolean mapAndValidateParamsToFields(HttpServletRequest request, HashMap<String,CFWField<?>> fields) {
 		
 		Enumeration<String> parameters = request.getParameterNames();

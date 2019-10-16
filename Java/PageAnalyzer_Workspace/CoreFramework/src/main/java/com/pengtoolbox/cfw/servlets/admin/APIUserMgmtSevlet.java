@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWForm;
+import com.pengtoolbox.cfw.datahandling.CFWFormHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
@@ -18,14 +19,13 @@ import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 
-/*************************************************************************
+
+/**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, 2018
- * 
- * Distributed under the MIT license
- *************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class APIUserMgmtSevlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
@@ -158,7 +158,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 			
 			CFWForm editUserForm = user.toForm("cfwEditUserForm"+ID, "Update User");
 			
-			editUserForm.setFormHandler(new BTFormHandler() {
+			editUserForm.setFormHandler(new CFWFormHandler() {
 				
 				@Override
 				public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
@@ -189,7 +189,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 			
 			CFWForm editGroupForm = group.toForm("cfwEditGroupForm"+ID, "Update Group");
 			
-			editGroupForm.setFormHandler(new BTFormHandler() {
+			editGroupForm.setFormHandler(new CFWFormHandler() {
 				
 				@Override
 				public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {

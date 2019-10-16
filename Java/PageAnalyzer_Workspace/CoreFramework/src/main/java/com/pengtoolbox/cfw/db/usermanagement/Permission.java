@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
-import com.pengtoolbox.cfw.api.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
@@ -16,6 +15,11 @@ import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class Permission extends CFWObject{
 	
 	public static final String TABLE_NAME = "CFW_PERMISSION";

@@ -1,17 +1,15 @@
-package com.pengtoolbox.cfw.response.bootstrap;
+package com.pengtoolbox.cfw.datahandling;
 
-import com.pengtoolbox.cfw._main.SessionData;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**************************************************************************************************************
  * 
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public abstract class UserMenuItem extends MenuItem {
-
-	public UserMenuItem(SessionData data) {
-		super(data.getUser().username());
-		this.alignDropdownRight(true);
-	}
+public abstract class CFWFormHandler {
+	
+	public abstract void handleForm( HttpServletRequest request,HttpServletResponse response, CFWForm form, CFWObject origin);
 
 }

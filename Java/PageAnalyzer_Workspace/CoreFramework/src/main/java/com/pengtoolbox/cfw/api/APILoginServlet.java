@@ -7,7 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWApplication;
@@ -18,6 +17,12 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginFacade;
 import com.pengtoolbox.cfw.response.PlaintextResponse;
 
+
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class APILoginServlet extends HttpServlet
 {
 

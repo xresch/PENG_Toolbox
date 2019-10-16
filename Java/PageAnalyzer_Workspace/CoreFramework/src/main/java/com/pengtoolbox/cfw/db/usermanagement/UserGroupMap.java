@@ -3,7 +3,6 @@ package com.pengtoolbox.cfw.db.usermanagement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
@@ -12,8 +11,12 @@ import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.usermanagement.Group.GroupFields;
 import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
-import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class UserGroupMap extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_USER_GROUP_MAP";
@@ -25,8 +28,7 @@ public class UserGroupMap extends CFWObject {
 		IS_DELETABLE
 	}
 
-	private static Logger logger = CFWLog.getLogger(UserGroupMap.class.getName());
-	
+
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, UserGroupMapFields.PK_ID)
 			.setPrimaryKeyAutoIncrement(this)
 			.setDescription("The id of the mapping.")

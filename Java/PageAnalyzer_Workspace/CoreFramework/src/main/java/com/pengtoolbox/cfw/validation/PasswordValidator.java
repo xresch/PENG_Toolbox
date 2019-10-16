@@ -1,15 +1,14 @@
 package com.pengtoolbox.cfw.validation;
 
-/**************************************************************************************
- * The RegexValidator will validate if value.toString() is matching the given 
- * regular expression.
+
+/**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, 2015
- *
- **************************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class PasswordValidator extends AbstractValidator {
 	
-	public PasswordValidator(IValidatable validatable){
+	public PasswordValidator(IValidatable<?> validatable){
 		super(validatable);
 	}
 	

@@ -3,18 +3,20 @@ package com.pengtoolbox.cfw.db.config;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
-import com.pengtoolbox.cfw.api.ReturnFormat;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class Configuration extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_CONFIG";
@@ -35,8 +37,6 @@ public class Configuration extends CFWObject {
 		OPTIONS
 	}
 
-	private static Logger logger = CFWLog.getLogger(Configuration.class.getName());
-	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, ConfigFields.PK_ID.toString())
 									.setPrimaryKeyAutoIncrement(this)
 									.apiFieldType(FormFieldType.NUMBER)

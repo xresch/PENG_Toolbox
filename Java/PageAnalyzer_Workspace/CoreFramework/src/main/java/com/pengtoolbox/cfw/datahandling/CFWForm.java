@@ -10,14 +10,14 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.response.bootstrap.BTFormHandler;
 import com.pengtoolbox.cfw.response.bootstrap.HierarchicalHTMLItem;
 
-/**********************************************************************************
- * Class for creating a form for the web application.
- * @author Reto Scheiwiller
- * 
- **********************************************************************************/
+
+/**************************************************************************************************************
+ * Class for creating a form using CFWFields or a CFWObject as a template.
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWForm extends HierarchicalHTMLItem {
 	
 	public static final String FORM_ID = "cfw-formID";
@@ -32,7 +32,7 @@ public class CFWForm extends HierarchicalHTMLItem {
 	// Contains the fields with field name as key
 	public LinkedHashMap<String, CFWField<?>> fields = new LinkedHashMap<String, CFWField<?>>();
 	
-	private BTFormHandler formHandler = null;
+	private CFWFormHandler formHandler = null;
 	private boolean isAPIForm = false;
 	private boolean isEmptyForm = false;
 	
@@ -109,7 +109,7 @@ public class CFWForm extends HierarchicalHTMLItem {
 	}
 
 	
-	public void addField(CFWField field) {
+	public void addField(CFWField<?> field) {
 		
 		if(!fields.containsKey(field.getName())) {
 			fields.put(field.getName(), field);
@@ -121,8 +121,8 @@ public class CFWForm extends HierarchicalHTMLItem {
 		this.addChild(field);
 	}
 	
-	public void addFields(CFWField[] fields) {
-		for(CFWField field : fields) {
+	public void addFields(CFWField<?>[] fields) {
+		for(CFWField<?> field : fields) {
 			this.addField(field);
 		}
 	}
@@ -143,18 +143,18 @@ public class CFWForm extends HierarchicalHTMLItem {
 		return this;
 	}
 	
-	public CFWForm setFormHandler(BTFormHandler formHandler) {
+	public CFWForm setFormHandler(CFWFormHandler formHandler) {
 		fireChange();
 		postURL = "/cfw/formhandler";
 		this.formHandler = formHandler;
 		return this;
 	}
 	
-	public BTFormHandler getFormHandler() {
+	public CFWFormHandler getFormHandler() {
 		return formHandler;
 	}
 	
-	public CFWField getField(String name) {
+	public CFWField<?> getField(String name) {
 		return fields.get(name);
 	}
 	
@@ -180,7 +180,7 @@ public class CFWForm extends HierarchicalHTMLItem {
 		return isAPIForm;
 	}
 	
-	public void isEmptyForm(boolean isAPIForm) {
+	public void isEmptyForm(boolean isEmptyForm) {
 		this.isEmptyForm = isEmptyForm;
 	}
 	

@@ -9,9 +9,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWProperties;
-import com.pengtoolbox.cfw.caching.FileAssembly;
-import com.pengtoolbox.cfw.utils.CFWFiles;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class JARResourceServlet extends HttpServlet
 {
 

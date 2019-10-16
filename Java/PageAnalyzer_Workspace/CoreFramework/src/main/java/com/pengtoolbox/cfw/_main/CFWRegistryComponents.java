@@ -8,9 +8,12 @@ import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.response.bootstrap.UserMenuItem;
 
-/***********************************************************************
- * Setup class for the Core Framework
- ***********************************************************************/
+
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CFWRegistryComponents {
 	private static Logger logger = CFWLog.getLogger(CFW.class.getName());
 	
