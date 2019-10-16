@@ -111,6 +111,30 @@ function cfw_usermgmt_editUser(userID){
 }
 
 /******************************************************************
+ * ResetPassword
+ ******************************************************************/
+function cfw_usermgmt_resetPassword(userID){
+	
+	var url = "./usermanagement/data";
+	var allDiv = $('<div id="cfw-usermgmt">');	
+
+	//-----------------------------------
+	// User Details
+	//-----------------------------------
+	var detailsDiv = $('<div id="cfw-usermgmt-details">');
+	allDiv.append(detailsDiv);
+		
+	
+	CFW.ui.showModal("Reset Password", allDiv);
+	
+	//-----------------------------------
+	// Load Form
+	//-----------------------------------
+	CFW.http.createForm(CFW_USRMGMT_URL, {action: "getform", item: "resetpw", id: userID}, detailsDiv);
+	
+}
+
+/******************************************************************
  * Create Group
  ******************************************************************/
 function cfw_usermgmt_createGroup(){
@@ -197,7 +221,7 @@ function cfw_usermgmt_printUserList(data){
 	
 	//--------------------------------
 	// Table
-	cfwTable.addHeaders(['ID', 'Username', "eMail", "Firstname", "Lastname", "Status", "Date Created", "&nbsp;", "&nbsp;"]);
+	cfwTable.addHeaders(['ID', 'Username', "eMail", "Firstname", "Lastname", "Status", "Date Created", "&nbsp;", "&nbsp;", "&nbsp;"]);
 	
 	if(data.payload != undefined){
 		
@@ -219,11 +243,22 @@ function cfw_usermgmt_printUserList(data){
 			htmlString += '<td><span class="badge badge-'+((current.STATUS.toLowerCase() == "active")? 'success' : 'danger') +'">'+current.STATUS+'</td>';
 			htmlString += '<td>'+current.DATE_CREATED+'</td>';
 			
+			//Reset Password Button
+			if(current.IS_FOREIGN.toUpperCase() == "FALSE"){
+				htmlString += '<td><button class="btn btn-warning btn-sm" alt="Reset Password" title="Reset Password" '
+					+'onclick="cfw_usermgmt_resetPassword('+current.PK_ID+');">'
+					+ '<i class="fas fa-unlock-alt"></i>'
+					+ '</button></td>';
+			}else{
+				htmlString += '<td></td>';
+			}
+			
 			//Edit Button
+			
 			htmlString += '<td><button class="btn btn-primary btn-sm" alt="Edit" title="Edit" '
 				+'onclick="cfw_usermgmt_editUser('+current.PK_ID+');">'
 				+ '<i class="fa fa-pen"></i>'
-				+ '</button></td>';
+				+ '</button>&nbsp;</td>';
 			
 			//Delete Button
 			if(current.IS_DELETABLE.toLowerCase() == "true"){

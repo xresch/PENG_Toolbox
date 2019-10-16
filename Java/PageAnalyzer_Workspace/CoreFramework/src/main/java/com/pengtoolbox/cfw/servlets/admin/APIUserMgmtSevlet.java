@@ -10,15 +10,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.datahandling.CFWFormHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.db.usermanagement.Group;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
+import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
+import com.pengtoolbox.cfw.servlets.admin.UserManagementServlet.CreateUserForm;
+import com.pengtoolbox.cfw.validation.LengthValidator;
+import com.pengtoolbox.cfw.validation.NotNullOrEmptyValidator;
+import com.pengtoolbox.cfw.validation.PasswordValidator;
 
 
 /**************************************************************************************************************
@@ -133,6 +140,9 @@ public class APIUserMgmtSevlet extends HttpServlet {
 							case "editgroup": 	createEditGroupForm(jsonResponse, ID);
 							break;
 							
+							case "resetpw": 	createResetPasswordForm(jsonResponse, ID);
+							break;
+							
 							default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 												break;
 						}
@@ -210,5 +220,77 @@ public class APIUserMgmtSevlet extends HttpServlet {
 			
 		}
 		
+	}
+	
+	private void createResetPasswordForm(JSONResponse json, String ID) {
+		
+		User user = CFW.DB.Users.selectByID(Integer.parseInt(ID));
+		
+		if(user != null) {
+			
+			CFWForm resetPasswordForm = new ResetPasswordForm("cfwResetPasswordForm"+ID, "Reset User Password", user);
+			
+			resetPasswordForm.appendToPayload(json);
+			json.setSuccess(true);
+		}else {
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Unknown user ID:"+ID);
+		}
+	}
+	
+	class ResetPasswordForm extends CFWForm{
+		
+		protected CFWField<Integer> userid = CFWField.newInteger(FormFieldType.HIDDEN, "UserID")
+				.addValidator(new LengthValidator(1, 255));
+		
+		protected CFWField<String> username = CFWField.newString(FormFieldType.TEXT, "Username")
+				.addValidator(new LengthValidator(1, 255));
+		
+		protected CFWField<String> password = CFWField.newString(FormFieldType.PASSWORD, "Password")
+				.addValidator(new LengthValidator(-1, 255))
+				.addValidator(new PasswordValidator());
+		
+		protected CFWField<String> repeatedPassword = CFWField.newString(FormFieldType.PASSWORD, "Repeat Password")
+				.addValidator(new NotNullOrEmptyValidator());
+		
+		public ResetPasswordForm(String formID, String submitLabel, User affectedUser) {
+			super(formID, submitLabel);
+			this.addField(userid);
+			this.addField(username);
+			this.addField(password);
+			this.addField(repeatedPassword);
+			
+			userid.setValue(affectedUser.id());
+			username.setValue(affectedUser.username());
+			username.isDisabled(true);
+			
+			this.setFormHandler(new CFWFormHandler() {
+				
+				@Override
+				public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
+					
+					if(form.mapRequestParameters(request)) {
+						ResetPasswordForm casted = (ResetPasswordForm)form;
+						User user = new User(casted.getUsername())
+								.id(casted.getUserID())
+								.setNewPassword(casted.getPassword(), casted.getRepeatedPassword());
+						
+						if(user != null) {
+							boolean success = user.update(UserFields.PASSWORD_HASH.toString(), 
+										UserFields.PASSWORD_SALT.toString());
+							if(success) {
+								CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Password Updated!");
+								return;
+							}
+						}
+					}
+					
+				}
+			});
+
+		}
+		public int getUserID() { return userid.getValue(); }
+		public String getUsername() { return username.getValue(); }
+		public String getPassword() { return password.getValue(); }
+		public String getRepeatedPassword() { return repeatedPassword.getValue(); }
 	}
 }

@@ -161,7 +161,9 @@ public class CFWDBUser {
 		
 		return new User()
 				.queryCache(CFWDBUser.class, "getUserList")
-				.select()
+				.selectWithout(UserFields.PASSWORD_HASH.toString(),
+								UserFields.PASSWORD_SALT.toString()
+								)
 				.orderby(UserFields.USERNAME.toString())
 				.getAsJSON();
 		

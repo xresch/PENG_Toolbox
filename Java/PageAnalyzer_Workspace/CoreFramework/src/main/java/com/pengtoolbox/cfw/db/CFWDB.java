@@ -99,7 +99,7 @@ public class CFWDB {
 		
 		if(Properties.RESET_ADMIN_PW) {
 			User admin = CFW.DB.Users.selectByUsernameOrMail("admin");
-			admin.setInitialPassword("admin", "admin");
+			admin.setNewPassword("admin", "admin");
 			
 			if(CFW.DB.Users.update(admin)) {
 				new CFWLog(logger)
@@ -127,7 +127,7 @@ public class CFWDB {
 			if(!CFW.DB.Users.checkUsernameExists("anonymous")) {
 			    CFW.DB.Users.create(
 					new User("anonymous")
-					.setInitialPassword(initialPassword, initialPassword)
+					.setNewPassword(initialPassword, initialPassword)
 					.isDeletable(true)
 					.isRenamable(false)
 					.status("ACTIVE")
@@ -153,7 +153,7 @@ public class CFWDB {
 				new User("admin")
 				.isDeletable(false)
 				.isRenamable(false)
-				.setInitialPassword("admin", "admin")
+				.setNewPassword("admin", "admin")
 				.status("ACTIVE")
 				.isForeign(false)
 			);
@@ -819,7 +819,7 @@ public class CFWDB {
 		//------------------------------
 		// Users
 		CFW.DB.Users.create(new User("TestuserA")
-				.setInitialPassword("TestuserA", "TestuserA")
+				.setNewPassword("TestuserA", "TestuserA")
 				.email("testuserA@cfwtest.com")
 				.firstname("Testika")
 				.lastname("Testonia"));
@@ -829,7 +829,7 @@ public class CFWDB {
 		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupC, true);
 		
 		CFW.DB.Users.create(new User("TestuserB")
-				.setInitialPassword("TestuserB", "TestuserB")
+				.setNewPassword("TestuserB", "TestuserB")
 				.email("testuserB@cfwtest.com")
 				.firstname("Jane")
 				.lastname("Doe"));
@@ -838,7 +838,7 @@ public class CFWDB {
 		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupB, true);
 		
 		CFW.DB.Users.create(new User("TestuserC")
-				.setInitialPassword("TestuserC", "TestuserC")
+				.setNewPassword("TestuserC", "TestuserC")
 				.email("testuserC@cfwtest.com")
 				.firstname("Paola")
 				.lastname("Pernandez"));	

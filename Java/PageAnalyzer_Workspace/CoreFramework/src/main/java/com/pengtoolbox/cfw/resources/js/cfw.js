@@ -1142,7 +1142,7 @@ function cfw_createForm(url, params, targetElement, callback){
 
 	$.get(url, params)
 		  .done(function(response) {
-		      $(targetElement).html(response.payload.html);
+		      $(targetElement).append(response.payload.html);
 		      formID = $(targetElement).find('form').attr("id");
               eval("intializeForm_"+formID+"();");
               if(callback != undefined){

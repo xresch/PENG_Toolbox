@@ -195,7 +195,7 @@ public class User extends CFWObject {
 			if(!CFW.DB.Users.checkUsernameExists("anonymous")) {
 			    CFW.DB.Users.create(
 					new User("anonymous")
-					.setInitialPassword(initialPassword, initialPassword)
+					.setNewPassword(initialPassword, initialPassword)
 					.isDeletable(true)
 					.isRenamable(false)
 					.isForeign(false)
@@ -218,7 +218,7 @@ public class User extends CFWObject {
 			
 		    CFW.DB.Users.create(
 				new User("admin")
-				.setInitialPassword("admin", "admin")
+				.setNewPassword("admin", "admin")
 				.isDeletable(false)
 				.isRenamable(false)
 				.isForeign(false)
@@ -405,7 +405,7 @@ public class User extends CFWObject {
 	}
 	
 
-	public User setInitialPassword(String password, String repeatedPassword) {
+	public User setNewPassword(String password, String repeatedPassword) {
 		
 		if(!password.equals(repeatedPassword)) {
 			new CFWLog(logger)

@@ -84,7 +84,7 @@ public class CFWLocalization {
 						//TODO: Localize message
 						new CFWLog(logger)
 						.method("writeLocalized")
-						.warn("Localization Parameter was missing the right bound");
+						.finer("Localization Parameter was missing the right bound");
 					
 						break;
 					}

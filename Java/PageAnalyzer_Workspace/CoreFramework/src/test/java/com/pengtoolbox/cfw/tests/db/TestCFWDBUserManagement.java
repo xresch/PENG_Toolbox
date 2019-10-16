@@ -48,18 +48,18 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//------------------------------
 		// Users
-		CFW.DB.Users.create(new User("TestuserA").setInitialPassword("TestuserA", "TestuserA"));
+		CFW.DB.Users.create(new User("TestuserA").setNewPassword("TestuserA", "TestuserA"));
 		testuserA = CFW.DB.Users.selectByUsernameOrMail("TestuserA");
 		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupA, true);
 		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupB, true);
 		CFW.DB.UserGroupMap.addUserToGroup(testuserA, testgroupC, true);
 		
-		CFW.DB.Users.create(new User("TestuserB").setInitialPassword("TestuserB", "TestuserB"));
+		CFW.DB.Users.create(new User("TestuserB").setNewPassword("TestuserB", "TestuserB"));
 		testuserB = CFW.DB.Users.selectByUsernameOrMail("TestuserB");
 		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupA, true);
 		CFW.DB.UserGroupMap.addUserToGroup(testuserB, testgroupB, true);
 		
-		CFW.DB.Users.create(new User("TestuserC").setInitialPassword("TestuserC", "TestuserC"));	
+		CFW.DB.Users.create(new User("TestuserC").setNewPassword("TestuserC", "TestuserC"));	
 		testuserC = CFW.DB.Users.selectByUsernameOrMail("TestuserC");
 		CFW.DB.UserGroupMap.addUserToGroup(testuserC, testgroupC, true);
 		
@@ -109,7 +109,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
         
 		//--------------------------------------
 		// Check Initial Password
-        User testUser = new User("PasswordTestUser").setInitialPassword("correctPassword", "correctPassword");
+        User testUser = new User("PasswordTestUser").setNewPassword("correctPassword", "correctPassword");
         
         CFW.DB.Users.create(testUser);
         testUser = CFW.DB.Users.selectByUsernameOrMail("PasswordTestUser");
@@ -118,7 +118,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		Assertions.assertFalse(testUser.passwordValidation("wrongPassword"), "The password is wrong.");
 		Assertions.assertFalse(testUser.passwordValidation(" correctPassword "), "The password is wrong.");
 		
-		testUser.setInitialPassword("wrongPW", "test");
+		testUser.setNewPassword("wrongPW", "test");
 		Assertions.assertTrue(testUser.passwordValidation("correctPassword"), "The password was not changed.");
 		
 		//--------------------------------------

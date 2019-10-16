@@ -85,7 +85,7 @@ public class UserManagementServlet extends HttpServlet
 					User newUser = new User(casted.getUsername())
 							.status(casted.getStatus())
 							.isForeign(casted.getIsForeign())
-							.setInitialPassword(casted.getPassword(), casted.getRepeatedPassword());
+							.setNewPassword(casted.getPassword(), casted.getRepeatedPassword());
 					
 					if(newUser != null) {
 						if(CFW.DB.Users.create(newUser)) {
