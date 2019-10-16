@@ -9,6 +9,7 @@ import com.pengtoolbox.cfw.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.Role.RoleFields;
 
 /**************************************************************************************************************
@@ -18,12 +19,12 @@ import com.pengtoolbox.cfw.db.usermanagement.Role.RoleFields;
  **************************************************************************************************************/
 public class RolePermissionMap extends CFWObject {
 	
-	public static final String TABLE_NAME = "CFW_GROUP_PERMISSION_MAP";
+	public static final String TABLE_NAME = "CFW_ROLE_PERMISSION_MAP";
 	
 	enum RolePermissionMapFields{
 		PK_ID, 
 		FK_ID_PERMISSION,
-		FK_ID_GROUP,
+		FK_ID_ROLE,
 		IS_DELETABLE,
 	}
 
@@ -33,7 +34,7 @@ public class RolePermissionMap extends CFWObject {
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 		
-	private CFWField<Integer> foreignKeyRole = CFWField.newInteger(FormFieldType.HIDDEN, RolePermissionMapFields.FK_ID_GROUP)
+	private CFWField<Integer> foreignKeyRole = CFWField.newInteger(FormFieldType.HIDDEN, RolePermissionMapFields.FK_ID_ROLE)
 			.setForeignKeyCascade(this, Role.class, RoleFields.PK_ID)
 			.setDescription("The id of the role.")
 			.apiFieldType(FormFieldType.NUMBER)
@@ -65,6 +66,31 @@ public class RolePermissionMap extends CFWObject {
 	}
 	
 	/**************************************************************************************
+	 * Migrate Table
+	 **************************************************************************************/
+	public void migrateTable() {
+		
+		//---------------------------
+		// Rename Columns
+		String renameResultID = "ALTER TABLE IF EXISTS CFW_GROUP_PERMISSION_MAP ALTER COLUMN FK_ID_GROUP RENAME TO "+RolePermissionMapFields.FK_ID_ROLE;
+		CFWDB.preparedExecute(renameResultID);
+		
+		//---------------------------
+		// Rename Foreign Key
+		String renameForeignKey = "ALTER TABLE IF EXISTS CFW_GROUP_PERMISSION_MAP RENAME CONSTRAINT FK_CFW_GROUP_PERMISSION_MAP_FK_ID_GROUP TO FK_"+this.getTableName()+"_"+RolePermissionMapFields.FK_ID_ROLE;
+		CFWDB.preparedExecute(renameForeignKey);
+		
+		//---------------------------
+		// Rename Foreign Key
+		String renameForeignKey2 = "ALTER TABLE IF EXISTS CFW_GROUP_PERMISSION_MAP RENAME CONSTRAINT FK_CFW_GROUP_PERMISSION_MAP_FK_ID_PERMISSION TO FK_"+this.getTableName()+"_"+RolePermissionMapFields.FK_ID_PERMISSION;
+		CFWDB.preparedExecute(renameForeignKey2);
+		//---------------------------
+		// Rename Table
+		String renameTable = "ALTER TABLE IF EXISTS CFW_GROUP_PERMISSION_MAP RENAME TO "+this.getTableName();
+		CFWDB.preparedExecute(renameTable);
+		
+	}
+	/**************************************************************************************
 	 * 
 	 **************************************************************************************/
 	public ArrayList<APIDefinition> getAPIDefinitions() {
@@ -74,14 +100,14 @@ public class RolePermissionMap extends CFWObject {
 				new String[] {
 						RolePermissionMapFields.PK_ID.toString(), 
 						RolePermissionMapFields.FK_ID_PERMISSION.toString(),
-						RolePermissionMapFields.FK_ID_GROUP.toString(),
+						RolePermissionMapFields.FK_ID_ROLE.toString(),
 				};
 		
 		String[] outputFields = 
 				new String[] {
 						RolePermissionMapFields.PK_ID.toString(), 
 						RolePermissionMapFields.FK_ID_PERMISSION.toString(),
-						RolePermissionMapFields.FK_ID_GROUP.toString(),
+						RolePermissionMapFields.FK_ID_ROLE.toString(),
 						RolePermissionMapFields.IS_DELETABLE.toString(),
 				};
 

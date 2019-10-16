@@ -17,7 +17,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
  **************************************************************************************************************/
 public class CFWDBUserRoleMap {
 
-	public static String TABLE_NAME = "CFW_USER_GROUP_MAP";
+	public static String TABLE_NAME = new UserRoleMap().getTableName();
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBUserRoleMap.class.getName());
 	
@@ -77,7 +77,7 @@ public class CFWDBUserRoleMap {
 	public static boolean addUserToRole(int userid, int roleid, boolean isDeletable) {
 		String insertRoleSQL = "INSERT INTO "+TABLE_NAME+" ("
 				  + UserRoleMapFields.FK_ID_USER +", "
-				  + UserRoleMapFields.FK_ID_GROUP +", "
+				  + UserRoleMapFields.FK_ID_ROLE +", "
 				  + UserRoleMapFields.IS_DELETABLE +" "
 				  + ") VALUES (?,?,?);";
 		
@@ -126,7 +126,7 @@ public class CFWDBUserRoleMap {
 				+" WHERE "
 				  + UserRoleMapFields.FK_ID_USER +" = ? "
 				  + " AND "
-				  + UserRoleMapFields.FK_ID_GROUP +" = ? "
+				  + UserRoleMapFields.FK_ID_ROLE +" = ? "
 				  + " AND "
 				  + UserRoleMapFields.IS_DELETABLE +" = TRUE "
 				  + ";";
@@ -150,7 +150,7 @@ public class CFWDBUserRoleMap {
 				+" WHERE "
 				  + UserRoleMapFields.FK_ID_USER +" = ? "
 				  + " AND "
-				  + UserRoleMapFields.FK_ID_GROUP +" = ? "
+				  + UserRoleMapFields.FK_ID_ROLE +" = ? "
 				  + ";";
 		
 		return CFWDB.preparedExecute(removeUserFromRoleSQL, 
@@ -189,7 +189,7 @@ public class CFWDBUserRoleMap {
 		
 		String checkIsUserInRole = "SELECT COUNT(*) FROM "+TABLE_NAME
 				+" WHERE "+UserRoleMapFields.FK_ID_USER+" = ?"
-				+" AND "+UserRoleMapFields.FK_ID_GROUP+" = ?";
+				+" AND "+UserRoleMapFields.FK_ID_ROLE+" = ?";
 		
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkIsUserInRole, userid, roleid);
 		
@@ -238,7 +238,7 @@ public class CFWDBUserRoleMap {
 		
 		String selectRolesForUser = "SELECT * FROM "+Role.TABLE_NAME+" G "
 				+ " INNER JOIN "+CFWDBUserRoleMap.TABLE_NAME+" M "
-				+ " ON M.FK_ID_GROUP = G.PK_ID "
+				+ " ON M.FK_ID_ROLE = G.PK_ID "
 				+ " WHERE M.FK_ID_USER = ?";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectRolesForUser, 
@@ -283,7 +283,7 @@ public class CFWDBUserRoleMap {
 		
 		String selectRolesForUser = "SELECT G.PK_ID, G.NAME, G.DESCRIPTION, M.FK_ID_USER AS ITEM_ID, M.IS_DELETABLE FROM "+Role.TABLE_NAME+" G "
 				+ " LEFT JOIN "+CFWDBUserRoleMap.TABLE_NAME+" M "
-				+ " ON M.FK_ID_GROUP = G.PK_ID "
+				+ " ON M.FK_ID_ROLE = G.PK_ID "
 				+ " AND M.FK_ID_USER = ?"
 				+ " ORDER BY LOWER(G.NAME)";
 		

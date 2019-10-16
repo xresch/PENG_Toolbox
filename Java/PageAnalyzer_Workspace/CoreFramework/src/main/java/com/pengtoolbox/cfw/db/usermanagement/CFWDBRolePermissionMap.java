@@ -18,7 +18,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
  **************************************************************************************************************/
 public class CFWDBRolePermissionMap {
 
-	public static String TABLE_NAME = "CFW_GROUP_PERMISSION_MAP";
+	private static final String TABLE_NAME = new RolePermissionMap().getTableName();
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBRolePermissionMap.class.getName());
 	
@@ -88,7 +88,7 @@ public class CFWDBRolePermissionMap {
 		
 		String insertPermissionSQL = "INSERT INTO "+TABLE_NAME+" ("
 				  + RolePermissionMapFields.FK_ID_PERMISSION +", "
-				  + RolePermissionMapFields.FK_ID_GROUP +", "
+				  + RolePermissionMapFields.FK_ID_ROLE +", "
 				  + RolePermissionMapFields.IS_DELETABLE +" "
 				  + ") VALUES (?,?,?);";
 		
@@ -112,7 +112,7 @@ public class CFWDBRolePermissionMap {
 				+" WHERE "
 				  + RolePermissionMapFields.FK_ID_PERMISSION +" = ? "
 				  + " AND "
-				  + RolePermissionMapFields.FK_ID_GROUP +" = ? "
+				  + RolePermissionMapFields.FK_ID_ROLE +" = ? "
 				  + ";";
 		
 		return CFWDB.preparedExecute(removeUserFromRoleSQL, 
@@ -173,7 +173,7 @@ public class CFWDBRolePermissionMap {
 				+" WHERE "
 				  + RolePermissionMapFields.FK_ID_PERMISSION +" = ? "
 				  + " AND "
-				  + RolePermissionMapFields.FK_ID_GROUP +" = ? "
+				  + RolePermissionMapFields.FK_ID_ROLE +" = ? "
 				  + " AND "
 				  + RolePermissionMapFields.IS_DELETABLE +" = TRUE "
 				  + ";";
@@ -213,7 +213,7 @@ public class CFWDBRolePermissionMap {
 		
 		String checkIsPermissionInRole = "SELECT COUNT(*) FROM "+TABLE_NAME
 				+" WHERE "+RolePermissionMapFields.FK_ID_PERMISSION+" = ?"
-				+" AND "+RolePermissionMapFields.FK_ID_GROUP+" = ?";
+				+" AND "+RolePermissionMapFields.FK_ID_ROLE+" = ?";
 		
 		ResultSet result = CFW.DB.preparedExecuteQuery(checkIsPermissionInRole, permissionid, roleid);
 		
@@ -253,7 +253,7 @@ public class CFWDBRolePermissionMap {
 		String selectPermissionsForRole = "SELECT P.* FROM "+Permission.TABLE_NAME+" P "
 				+ " INNER JOIN "+CFWDBRolePermissionMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_PERMISSION = P.PK_ID "
-				+ " WHERE M.FK_ID_GROUP = ?";
+				+ " WHERE M.FK_ID_ROLE = ?";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectPermissionsForRole, 
 				role.id());
@@ -325,8 +325,8 @@ public class CFWDBRolePermissionMap {
 				.custom(
 					"SELECT P.* "
 					+"FROM CFW_PERMISSION P "
-					+"JOIN CFW_GROUP_PERMISSION_MAP AS GP ON GP.FK_ID_PERMISSION = P.PK_ID "
-					+"JOIN CFW_USER_GROUP_MAP AS UG ON UG.FK_ID_GROUP = GP.FK_ID_GROUP "
+					+"JOIN CFW_ROLE_PERMISSION_MAP AS GP ON GP.FK_ID_PERMISSION = P.PK_ID "
+					+"JOIN CFW_USER_ROLE_MAP AS UG ON UG.FK_ID_ROLE = GP.FK_ID_ROLE "
 					+"WHERE UG.FK_ID_USER = ?;", 
 					user.id())
 				.getResultSet();
@@ -344,11 +344,11 @@ public class CFWDBRolePermissionMap {
 		return new CFWStatement(new Permission())
 				.queryCache(CFWDBRolePermissionMap.class, "getPermissionOverview")
 				.custom(
-					"SELECT U.USERNAME, G.NAME AS GROUPNAME, P.NAME AS PERMISSION"
+					"SELECT U.USERNAME, G.NAME AS ROLENAME, P.NAME AS PERMISSION"
 					+" FROM CFW_USER U"
-					+" LEFT JOIN CFW_USER_GROUP_MAP AS UG ON UG.FK_ID_USER = U.PK_ID"
-					+" LEFT JOIN CFW_GROUP AS G ON UG.FK_ID_GROUP = G.PK_ID"
-					+" LEFT JOIN CFW_GROUP_PERMISSION_MAP AS GP ON GP.FK_ID_GROUP = G.PK_ID"
+					+" LEFT JOIN CFW_USER_ROLE_MAP AS UG ON UG.FK_ID_USER = U.PK_ID"
+					+" LEFT JOIN CFW_ROLE AS G ON UG.FK_ID_ROLE = G.PK_ID"
+					+" LEFT JOIN CFW_ROLE_PERMISSION_MAP AS GP ON GP.FK_ID_ROLE = G.PK_ID"
 					+" LEFT JOIN CFW_PERMISSION AS P ON GP.FK_ID_PERMISSION = P.PK_ID"
 					+" ORDER BY LOWER(U.USERNAME), LOWER(G.NAME), LOWER(P.NAME)")
 				.getResultSet();
@@ -372,10 +372,10 @@ public class CFWDBRolePermissionMap {
 			return "[]";
 		}
 		
-		String sqlString = "SELECT P.PK_ID, P.NAME, P.DESCRIPTION, M.FK_ID_GROUP AS ITEM_ID, M.IS_DELETABLE FROM "+Permission.TABLE_NAME+" P "
+		String sqlString = "SELECT P.PK_ID, P.NAME, P.DESCRIPTION, M.FK_ID_ROLE AS ITEM_ID, M.IS_DELETABLE FROM "+Permission.TABLE_NAME+" P "
 				+ " LEFT JOIN "+CFWDBRolePermissionMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_PERMISSION = P.PK_ID"
-				+ " AND M.FK_ID_GROUP = ?"
+				+ " AND M.FK_ID_ROLE = ?"
 				+ " ORDER BY LOWER(P.NAME)";;
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(sqlString, 
