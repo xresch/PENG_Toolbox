@@ -12,6 +12,7 @@ import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
@@ -22,7 +23,7 @@ import com.pengtoolbox.cfw.validation.LengthValidator;
  **************************************************************************************************************/
 public class Role extends CFWObject {
 	
-	public static final String TABLE_NAME = "CFW_GROUP";
+	public static final String TABLE_NAME = "CFW_ROLE";
 	
 	public enum RoleFields{
 		PK_ID,
@@ -101,6 +102,18 @@ public class Role extends CFWObject {
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
 		this.addFields(id, name, description, isDeletable, isRenamable);
+	}
+	
+	/**************************************************************************************
+	 * Migrate Table
+	 **************************************************************************************/
+	public void migrateTable() {
+		
+		//---------------------------
+		// Rename Table
+		String renameTable = "ALTER TABLE IF EXISTS CFW_GROUP RENAME TO "+this.getTableName();
+		CFWDB.preparedExecute(renameTable);
+		
 	}
 	
 	/**************************************************************************************

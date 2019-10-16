@@ -12,7 +12,7 @@ import com.pengtoolbox.cfw._main.CFWApplication;
 import com.pengtoolbox.cfw.api.CFWAPIServlet;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
-import com.pengtoolbox.pageanalyzer.db.PAResult;
+import com.pengtoolbox.pageanalyzer.db.Result;
 import com.pengtoolbox.pageanalyzer.response.PageAnalyzerFooter;
 import com.pengtoolbox.pageanalyzer.response.PageAnalyzerMenu;
 import com.pengtoolbox.pageanalyzer.response.PageAnalyzerUserMenuItem;
@@ -53,7 +53,7 @@ public class Main extends Application implements CFWAppInterface {
     	CFW.Registry.Components.setDefaultUserMenuItem(PageAnalyzerUserMenuItem.class);
     	CFW.Registry.Components.setDefaultFooter(PageAnalyzerFooter.class);
     	
-    	CFW.Registry.Objects.addCFWObject(PAResult.class);
+    	CFW.Registry.Objects.addCFWObject(Result.class);
 		
 	}
 

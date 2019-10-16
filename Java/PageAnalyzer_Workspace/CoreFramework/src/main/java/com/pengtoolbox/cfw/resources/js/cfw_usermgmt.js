@@ -30,7 +30,7 @@ function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 				cfwTable.addHeaders(['&nbsp;','Name','Description']);
 				var resultCount = data.payload.length;
 				if(resultCount == 0){
-					CFW.ui.addAlert("info", "Hmm... seems there aren't any groups in the list.");
+					CFW.ui.addAlert("info", "Hmm... seems there aren't any roles in the list.");
 				}
 
 				for(var i = 0; i < resultCount; i++){
@@ -58,7 +58,7 @@ function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 				cfwTable.appendTo(parent);
 				
 			}else{
-				CFW.ui.addAlert('error', '<span>The data for the userID '+userID+' could not be loaded.</span>');
+				CFW.ui.addAlert('error', '<span>The '+mapName+' data for the id '+itemID+' could not be loaded.</span>');
 			}	
 		}
 	);
@@ -93,13 +93,13 @@ function cfw_usermgmt_editUser(userID){
 	allDiv.append(detailsDiv);
 	
 	//-----------------------------------
-	// Groups
+	// Roles
 	//-----------------------------------
-	var groupDiv = $('<div id="cfw-usermgmt-groups">');
-	groupDiv.append('<h2>Groups</h2>');
-	allDiv.append(groupDiv);
+	var roleDiv = $('<div id="cfw-usermgmt-roles">');
+	roleDiv.append('<h2>Roles</h2>');
+	allDiv.append(roleDiv);
 	
-	cfw_usermgmt_createToggleTable(groupDiv, "usergroupmap", userID)
+	cfw_usermgmt_createToggleTable(roleDiv, "userrolemap", userID)
 	
 	CFW.ui.showModal("Edit User", allDiv, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'users'})");
 	
@@ -135,46 +135,46 @@ function cfw_usermgmt_resetPassword(userID){
 }
 
 /******************************************************************
- * Create Group
+ * Create Role
  ******************************************************************/
-function cfw_usermgmt_createGroup(){
+function cfw_usermgmt_createRole(){
 	
-	var html = $('<div id="cfw-usermgmt-createGroup">');	
+	var html = $('<div id="cfw-usermgmt-createRole">');	
 
-	CFW.http.getForm('cfwCreateGroupForm', html);
+	CFW.http.getForm('cfwCreateRoleForm', html);
 	
-	CFW.ui.showModal("Create Group", html, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'groups'})");
+	CFW.ui.showModal("Create Role", html, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'roles'})");
 	
 }
 /******************************************************************
- * Edit Group
+ * Edit Role
  ******************************************************************/
-function cfw_usermgmt_editGroup(groupID){
+function cfw_usermgmt_editRole(roleID){
 	
 	var allDiv = $('<div id="cfw-usermgmt">');	
 
 	//-----------------------------------
-	// Group Details
+	// Role Details
 	//-----------------------------------
 	var detailsDiv = $('<div id="cfw-usermgmt-details">');
-	detailsDiv.append('<h2>Group Details</h2>');
+	detailsDiv.append('<h2>Role Details</h2>');
 	allDiv.append(detailsDiv);
 	
 	//-----------------------------------
-	// Groups
+	// Roles
 	//-----------------------------------
-	var groupDiv = $('<div id="cfw-usermgmt-groups">');
-	groupDiv.append('<h2>Groups</h2>');
-	allDiv.append(groupDiv);
+	var roleDiv = $('<div id="cfw-usermgmt-roles">');
+	roleDiv.append('<h2>Roles</h2>');
+	allDiv.append(roleDiv);
 	
-	cfw_usermgmt_createToggleTable(groupDiv, "grouppermissionmap", groupID)
+	cfw_usermgmt_createToggleTable(roleDiv, "rolepermissionmap", roleID)
 	
-	CFW.ui.showModal("Edit Group", allDiv, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'groups'})");
+	CFW.ui.showModal("Edit Role", allDiv, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'roles'})");
 	
 	//-----------------------------------
 	// Load Form
 	//-----------------------------------
-	CFW.http.createForm(CFW_USRMGMT_URL, {action: "getform", item: "editgroup", id: groupID}, detailsDiv);
+	CFW.http.createForm(CFW_USRMGMT_URL, {action: "getform", item: "editrole", id: roleID}, detailsDiv);
 	
 }
 
@@ -283,19 +283,19 @@ function cfw_usermgmt_printUserList(data){
 }
 
 /******************************************************************
- * Print the list of groups;
+ * Print the list of roles;
  * 
  * @param data as returned by CFW.http.getJSON()
  * @return 
  ******************************************************************/
-function cfw_usermgmt_printGroupList(data){
+function cfw_usermgmt_printRoleList(data){
 	
 	parent = $("#tab-content");
 	
 	//--------------------------------
 	// Button
-	var createButton = $('<button class="btn btn-success mb-2" alt="Create" title="Delete" onclick="cfw_usermgmt_createGroup()">'
-							+ '<i class="fas fa-plus-circle"></i> Create Group'
+	var createButton = $('<button class="btn btn-success mb-2" alt="Create" title="Delete" onclick="cfw_usermgmt_createRole()">'
+							+ '<i class="fas fa-plus-circle"></i> Create Role'
 					   + '</button>');
 	
 	parent.append(createButton);
@@ -310,7 +310,7 @@ function cfw_usermgmt_printGroupList(data){
 		
 		var resultCount = data.payload.length;
 		if(resultCount == 0){
-			CFW.ui.addAlert("info", "Hmm... seems there aren't any groups in the list.");
+			CFW.ui.addAlert("info", "Hmm... seems there aren't any roles in the list.");
 		}
 
 		htmlString = "";
@@ -323,14 +323,14 @@ function cfw_usermgmt_printGroupList(data){
 			
 			//Edit Button
 			htmlString += '<td><button class="btn btn-primary btn-sm" alt="Edit" title="Edit" '
-				+'onclick="cfw_usermgmt_editGroup('+current.PK_ID+');">'
+				+'onclick="cfw_usermgmt_editRole('+current.PK_ID+');">'
 				+ '<i class="fa fa-pen"></i>'
 				+ '</button></td>';
 			
 			//Delete Button
 			if(current.IS_DELETABLE.toLowerCase() == "true"){
 				htmlString += '<td><button class="btn btn-danger btn-sm" alt="Delete" title="Delete" '
-					+'onclick="CFW.ui.confirmExecute(\'Do you want to delete the group?\', \'Delete\', \'cfw_usermgmt_delete(\\\'groups\\\','+current.PK_ID+');\')">'
+					+'onclick="CFW.ui.confirmExecute(\'Do you want to delete the role?\', \'Delete\', \'cfw_usermgmt_delete(\\\'roles\\\','+current.PK_ID+');\')">'
 					+ '<i class="fa fa-trash"></i>'
 					+ '</button></td>';
 			}else{
@@ -379,7 +379,7 @@ function cfw_usermgmt_printPermissionList(data){
 			//Delete Button
 			if(current.IS_DELETABLE.toLowerCase() == "true"){
 				htmlString += '<td><button class="btn btn-danger btn-sm" alt="Delete" title="Delete" '
-					+'onclick="CFW.ui.confirmExecute(\'Do you want to delete the group?\', \'Delete\', \'cfw_usermgmt_delete(\\\'permissions\\\','+current.PK_ID+');\')">'
+					+'onclick="CFW.ui.confirmExecute(\'Do you want to delete the role?\', \'Delete\', \'cfw_usermgmt_delete(\\\'permissions\\\','+current.PK_ID+');\')">'
 					+ '<i class="fa fa-trash"></i>'
 					+ '</button></td>';
 			}else{
@@ -402,7 +402,7 @@ function cfw_usermgmt_printPermissionList(data){
  * 
  * @param options Array with arguments:
  * 	{
- * 		tab: 'users|groups|permissions', 
+ * 		tab: 'users|roles|permissions', 
  *  }
  * @return 
  ******************************************************************/
@@ -421,7 +421,7 @@ function cfw_usermgmt_draw(options){
 			case "users":			CFW.http.fetchAndCacheData(url, {action: "fetch", item: "users"}, "users", cfw_usermgmt_printUserList);
 									break;
 									
-			case "groups":			CFW.http.fetchAndCacheData(url, {action: "fetch", item: "groups"}, "groups", cfw_usermgmt_printGroupList);
+			case "roles":			CFW.http.fetchAndCacheData(url, {action: "fetch", item: "roles"}, "roles", cfw_usermgmt_printRoleList);
 									break;
 									
 			case "permissions":		CFW.http.fetchAndCacheData(url, {action: "fetch", item: "permissions"}, "permissions", cfw_usermgmt_printPermissionList);

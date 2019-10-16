@@ -88,6 +88,7 @@ public class Permission extends CFWObject{
 		this.addFields(id, name, description, isDeletable);
 	}
 	
+
 	/**************************************************************************************
 	 * Roles have to exists
 	 **************************************************************************************/

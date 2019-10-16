@@ -11,7 +11,7 @@ import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.pageanalyzer.db.PAResult.ResultFields;
+import com.pengtoolbox.pageanalyzer.db.Result.ResultFields;
 
 public class PADBResults {
 
@@ -42,7 +42,7 @@ public class PADBResults {
 			
 		}
 
-		return new PAResult()
+		return new Result()
 			.name(resultName)
 			.pageURL(pageURL)
 			.result(jsonResult)
@@ -60,7 +60,7 @@ public class PADBResults {
 	 ********************************************************************************************/
 	public static String getResultListForUser(User user) {
 					
-		return new PAResult() 
+		return new Result() 
 				.selectWithout(
 						ResultFields.USERNAME.toString(),
 						ResultFields.JSON_RESULT.toString(), 
@@ -80,7 +80,7 @@ public class PADBResults {
 		
 		if(CFW.Context.Request.hasPermission(PAPermissions.MANAGE_RESULTS)) {
 			
-			return new PAResult() 
+			return new Result() 
 					.selectWithout(ResultFields.JSON_RESULT.toString(), 
 								   ResultFields.JSON_HAR_FILE.toString())
 					.orderbyDesc(ResultFields.TIME_CREATED.toString())
@@ -114,13 +114,13 @@ public class PADBResults {
 				
 		if( CFW.Context.Request.getUserPermissions() != null
 		 && CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)) {
-			return new PAResult() 
+			return new Result() 
 					.selectWithout(ResultFields.JSON_HAR_FILE.toString())
 					.whereIn(ResultFields.PK_ID.toString(), resultIDArray.split(","))
 					.orderbyDesc(ResultFields.TIME_CREATED.toString())
 					.getAsJSON();
 		}else {
-			return new PAResult() 
+			return new Result() 
 					.selectWithout(ResultFields.JSON_HAR_FILE.toString())
 					.whereIn(ResultFields.PK_ID.toString(), resultIDArray.split(","))
 					.and(ResultFields.FK_ID_USER.toString(), userID)
@@ -148,7 +148,7 @@ public class PADBResults {
 			&& ( CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)
 				|| CFW.Context.Request.getUserPermissions().containsKey(Permission.CFW_API))	
 			) {
-			PAResult result = (PAResult)new PAResult() 
+			Result result = (Result)new Result() 
 					.select(ResultFields.JSON_RESULT.toString())
 					.where(ResultFields.PK_ID.toString(), resultID)
 					.orderbyDesc(ResultFields.TIME_CREATED.toString())
@@ -161,7 +161,7 @@ public class PADBResults {
 			}
 			
 		}else {
-			PAResult result = (PAResult)new PAResult() 
+			Result result = (Result)new Result() 
 					.select(ResultFields.JSON_RESULT.toString())
 					.where(ResultFields.PK_ID.toString(), resultID)
 					.and(ResultFields.FK_ID_USER.toString(), userID)
@@ -195,7 +195,7 @@ public class PADBResults {
 			&& ( CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)
 				|| CFW.Context.Request.getUserPermissions().containsKey(Permission.CFW_API))	
 			) {
-			PAResult result = (PAResult)new PAResult() 
+			Result result = (Result)new Result() 
 					.select(ResultFields.JSON_HAR_FILE.toString())
 					.where(ResultFields.PK_ID.toString(), resultID)
 					.orderbyDesc(ResultFields.TIME_CREATED.toString())
@@ -204,7 +204,7 @@ public class PADBResults {
 			return result.harfile();
 			
 		}else {
-			PAResult result = (PAResult)new PAResult() 
+			Result result = (Result)new Result() 
 					.select(ResultFields.JSON_HAR_FILE.toString())
 					.where(ResultFields.PK_ID.toString(), resultID)
 					.and(ResultFields.FK_ID_USER.toString(), userID)
@@ -230,7 +230,7 @@ public class PADBResults {
 			return false;
 		}
 		
-		return new PAResult() 
+		return new Result() 
 			.delete()
 			.whereIn(ResultFields.PK_ID.toString(), resultIDArray.split(","))
 			.executeDelete();

@@ -10,12 +10,9 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
-import com.pengtoolbox.cfw.api.APIDefinitionSQL;
 import com.pengtoolbox.cfw.api.APIRequestHandler;
-import com.pengtoolbox.cfw.api.APISQLExecutor;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -25,11 +22,8 @@ import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.PlaintextResponse;
 import com.pengtoolbox.cfw.validation.LengthValidator;
-import com.pengtoolbox.pageanalyzer.db.PAResult.ResultFields;
 
-public class PAResult extends CFWObject {
-	
-	private static Logger logger = CFWLog.getLogger(PAResult.class.getName());
+public class Result extends CFWObject {
 	
 	public static final String TABLE_NAME = "PA_RESULT";
 	
@@ -81,11 +75,11 @@ public class PAResult extends CFWObject {
 			.setDescription("The results of the yslow analysis.")
 			.setValue(new Timestamp(new Date().getTime()));
 	
-	public PAResult() {
+	public Result() {
 		initializeFields();
 	}
 	
-	public PAResult(ResultSet result) throws SQLException {
+	public Result(ResultSet result) throws SQLException {
 		initializeFields();
 		this.mapResultSet(result);	
 	}
@@ -123,7 +117,7 @@ public class PAResult extends CFWObject {
 		
 		//---------------------------
 		// Rename Table
-		String renameTable = "ALTER TABLE IF EXISTS results RENAME TO "+new PAResult().getTableName();
+		String renameTable = "ALTER TABLE IF EXISTS results RENAME TO "+new Result().getTableName();
 		CFWDB.preparedExecute(renameTable);
 	}
 	
@@ -230,7 +224,7 @@ public class PAResult extends CFWObject {
 		return id.getValue();
 	}
 	
-	public PAResult id(int id) {
+	public Result id(int id) {
 		this.id.setValue(id);
 		return this;
 	}
@@ -239,7 +233,7 @@ public class PAResult extends CFWObject {
 		return foreignKeyUser.getValue();
 	}
 	
-	public PAResult foreignKeyUser(int foreignKeyUser) {
+	public Result foreignKeyUser(int foreignKeyUser) {
 		this.foreignKeyUser.setValue(foreignKeyUser);
 		return this;
 	}
@@ -248,7 +242,7 @@ public class PAResult extends CFWObject {
 		return name.getValue();
 	}
 	
-	public PAResult name(String name) {
+	public Result name(String name) {
 		this.name.setValue(name);
 		return this;
 	}
@@ -257,7 +251,7 @@ public class PAResult extends CFWObject {
 		return username.getValue();
 	}
 	
-	public PAResult username(String username) {
+	public Result username(String username) {
 		this.username.setValue(username);
 		return this;
 	}
@@ -266,7 +260,7 @@ public class PAResult extends CFWObject {
 		return pageURL.getValue();
 	}
 	
-	public PAResult pageURL(String pageURL) {
+	public Result pageURL(String pageURL) {
 		this.pageURL.setValue(pageURL);
 		return this;
 	}
@@ -275,7 +269,7 @@ public class PAResult extends CFWObject {
 		return result.getValue();
 	}
 	
-	public PAResult result(String result) {
+	public Result result(String result) {
 		this.result.setValue(result);
 		return this;
 	}
@@ -284,7 +278,7 @@ public class PAResult extends CFWObject {
 		return harfile.getValue();
 	}
 	
-	public PAResult harfile(String harfile) {
+	public Result harfile(String harfile) {
 		this.harfile.setValue(harfile);
 		return this;
 	}
@@ -293,7 +287,7 @@ public class PAResult extends CFWObject {
 		return timeCreated.getValue();
 	}
 	
-	public PAResult timeCreated(Timestamp timeCreated) {
+	public Result timeCreated(Timestamp timeCreated) {
 		this.timeCreated.setValue(timeCreated);
 		return this;
 	}
