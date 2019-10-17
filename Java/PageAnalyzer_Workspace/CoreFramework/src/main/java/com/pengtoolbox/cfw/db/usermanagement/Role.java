@@ -133,11 +133,7 @@ public class Role extends CFWObject {
 		//#####################################
 		// v2.0 to v2.1
 		//#####################################
-		
-		//---------------------------
-		// Rename Table
-		CFWStatement.renameTable("CFW_GROUP", this.getTableName());
-		
+				
 		//---------------------------
 		// Add defaults to new column category
 		ArrayList<CFWObject> roleArray = 
@@ -151,7 +147,6 @@ public class Role extends CFWObject {
 				.update();
 			
 		}
-
 		
 	}
 	

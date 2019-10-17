@@ -65,29 +65,29 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//------------------------------
 		// Permissions
-		CFW.DB.Permissions.create(new Permission("PermissionA"));
+		CFW.DB.Permissions.create(new Permission("PermissionA", "user"));
 		permissionA = CFW.DB.Permissions.selectByName("PermissionA");
 		System.out.println("=============== PermissionA ===================\n"+permissionA.getFieldsAsKeyValueString());
 		System.out.println("=============== RoleA ===================\n"+testroleA.getFieldsAsKeyValueString());
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionA.id(), testroleA.id(), true);
 		
-		CFW.DB.Permissions.create(new Permission("PermissionAA"));
+		CFW.DB.Permissions.create(new Permission("PermissionAA", "user"));
 		permissionAA = CFW.DB.Permissions.selectByName("PermissionAA");
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionAA.id(), testroleA.id(), true);
 		
-		CFW.DB.Permissions.create(new Permission("PermissionAAA"));
+		CFW.DB.Permissions.create(new Permission("PermissionAAA", "user"));
 		permissionAAA = CFW.DB.Permissions.selectByName("PermissionAAA");
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionAAA.id(), testroleA.id(), true);
 		
-		CFW.DB.Permissions.create(new Permission("PermissionB"));
+		CFW.DB.Permissions.create(new Permission("PermissionB", "user"));
 		permissionB = CFW.DB.Permissions.selectByName("PermissionB");
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionB.id(), testroleB.id(), true);
 		
-		CFW.DB.Permissions.create(new Permission("PermissionBB"));
+		CFW.DB.Permissions.create(new Permission("PermissionBB", "user"));
 		permissionBB = CFW.DB.Permissions.selectByName("PermissionBB");
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionBB.id(), testroleB.id(), true);
 		
-		CFW.DB.Permissions.create(new Permission("PermissionC"));
+		CFW.DB.Permissions.create(new Permission("PermissionC", "user"));
 		permissionC = CFW.DB.Permissions.selectByName("PermissionC");
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionC.id(), testroleC.id(), true);
 	}
@@ -453,7 +453,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//--------------------------------------
 		// CREATE
-		CFW.DB.Permissions.create(new Permission(permissionname)
+		CFW.DB.Permissions.create(new Permission(permissionname, "user")
 				.description("Testdescription")
 				.isDeletable(false)
 				);
@@ -516,7 +516,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//--------------------------------------
 		// Preparation
-		Permission newPermission = new Permission("newPermission");
+		Permission newPermission = new Permission("newPermission", "user");
 		CFW.DB.Permissions.create(newPermission);
 		CFW.DB.RolePermissionMap.removePermissionFromRole(newPermission.id(), testroleA.id());
 		

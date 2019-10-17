@@ -847,27 +847,27 @@ public class CFWDB {
 		
 		//------------------------------
 		// Permissions
-		CFW.DB.Permissions.create(new Permission("PermissionA").description("This is the permission A."));
+		CFW.DB.Permissions.create(new Permission("PermissionA", "user").description("This is the permission A."));
 		permissionA = CFW.DB.Permissions.selectByName("PermissionA");
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionA, testroleA, true);
 		
-		CFW.DB.Permissions.create(new Permission("PermissionAA").description("This is the permission AA."));
+		CFW.DB.Permissions.create(new Permission("PermissionAA", "user").description("This is the permission AA."));
 		permissionAA = CFW.DB.Permissions.selectByName("PermissionAA");
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionAA, testroleA, true);
 		
-		CFW.DB.Permissions.create(new Permission("PermissionAAA").description("This is the permission AAA."));
+		CFW.DB.Permissions.create(new Permission("PermissionAAA", "user").description("This is the permission AAA."));
 		permissionAAA = CFW.DB.Permissions.selectByName("PermissionAAA");
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionAAA, testroleA, true);
 		
-		CFW.DB.Permissions.create(new Permission("PermissionB").description("This is the permission B."));
+		CFW.DB.Permissions.create(new Permission("PermissionB", "user").description("This is the permission B."));
 		permissionB = CFW.DB.Permissions.selectByName("PermissionB");
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionB, testroleB, true);
 		
-		CFW.DB.Permissions.create(new Permission("PermissionBB").description("This is the permission BB."));
+		CFW.DB.Permissions.create(new Permission("PermissionBB", "user").description("This is the permission BB."));
 		permissionBB = CFW.DB.Permissions.selectByName("PermissionBB");
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionBB, testroleB, true);
 		
-		CFW.DB.Permissions.create(new Permission("PermissionC").description("This is the permission C."));
+		CFW.DB.Permissions.create(new Permission("PermissionC", "user").description("This is the permission C."));
 		permissionC = CFW.DB.Permissions.selectByName("PermissionC");
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionC, testroleC, true);
 	}

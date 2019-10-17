@@ -29,6 +29,7 @@ public class Permission extends CFWObject{
 	
 	enum PermissionFields{
 		PK_ID, 
+		CATEGORY,
 		NAME,
 		DESCRIPTION,
 		IS_DELETABLE,
@@ -41,6 +42,13 @@ public class Permission extends CFWObject{
 									.setDescription("The id of the permission.")
 									.apiFieldType(FormFieldType.NUMBER)
 									.setValue(-999);
+	
+	private CFWField<String> category = CFWField.newString(FormFieldType.NONE, PermissionFields.CATEGORY.toString())
+									.setColumnDefinition("VARCHAR(32)")
+									.setDescription("The catogery of the permission, either 'user' or 'space'.")
+									.apiFieldType(FormFieldType.SELECT)
+									.setOptions(new String[] {"user", "space"})
+									.addValidator(new LengthValidator(-1, 32));
 	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, PermissionFields.NAME.toString())
 									.setColumnDefinition("VARCHAR(255) UNIQUE")
@@ -72,9 +80,10 @@ public class Permission extends CFWObject{
 		initializeFields();
 	}
 	
-	public Permission(String name) {
+	public Permission(String name, String category) {
 		initializeFields();
 		this.name.setValue(name);
+		this.category.setValue(category);
 	}
 	
 	public Permission(ResultSet result) throws SQLException {
@@ -85,9 +94,34 @@ public class Permission extends CFWObject{
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
 		this.setPrimaryField(id);
-		this.addFields(id, name, description, isDeletable);
+		this.addFields(id, category, name, description, isDeletable);
 	}
 	
+	
+	/**************************************************************************************
+	 * 
+	 **************************************************************************************/
+	public void updateTable() {
+				
+		//#####################################
+		// v2.0 to v2.1
+		//#####################################
+				
+		//---------------------------
+		// Add defaults to new column category
+		ArrayList<CFWObject> permissionArray = 
+				this.select()
+					.where(PermissionFields.CATEGORY.toString(), null)
+					.getObjectList();
+
+		for(CFWObject permissionObject : permissionArray) {
+			Permission permission = (Permission) permissionObject;
+			permission.category("user")
+				.update();
+			
+		}
+		
+	}
 
 	/**************************************************************************************
 	 * Roles have to exists
@@ -98,7 +132,7 @@ public class Permission extends CFWObject{
 		//
 		//-----------------------------------------
 		if(!CFW.DB.Permissions.checkPermissionExists(Permission.CFW_USER_MANAGEMENT)) {
-			CFW.DB.Permissions.create(new Permission(Permission.CFW_USER_MANAGEMENT)
+			CFW.DB.Permissions.create(new Permission(Permission.CFW_USER_MANAGEMENT, "user")
 				.description("Gives the user the ability to view, create, update and delete users.")
 				.isDeletable(false)
 			);
@@ -116,7 +150,7 @@ public class Permission extends CFWObject{
 		// 
 		//-----------------------------------------
 		if(!CFW.DB.Permissions.checkPermissionExists(Permission.CFW_CONFIG_MANAGEMENT)) {
-			CFW.DB.Permissions.create(new Permission(Permission.CFW_CONFIG_MANAGEMENT)
+			CFW.DB.Permissions.create(new Permission(Permission.CFW_CONFIG_MANAGEMENT, "user")
 				.description("Gives the user the ability to view and update the configurations in the database.")
 				.isDeletable(false)
 			);
@@ -134,7 +168,7 @@ public class Permission extends CFWObject{
 		// 
 		//-----------------------------------------
 		if(!CFW.DB.Permissions.checkPermissionExists(Permission.CFW_API)) {
-			CFW.DB.Permissions.create(new Permission(Permission.CFW_API)
+			CFW.DB.Permissions.create(new Permission(Permission.CFW_API, "user")
 				.description("User can access the API.")
 				.isDeletable(false)
 			);
@@ -164,6 +198,7 @@ public class Permission extends CFWObject{
 		String[] outputFields = 
 				new String[] {
 						PermissionFields.PK_ID.toString(), 
+						PermissionFields.CATEGORY.toString(),
 						PermissionFields.NAME.toString(),
 						PermissionFields.DESCRIPTION.toString(),
 						PermissionFields.IS_DELETABLE.toString(),	
@@ -197,6 +232,15 @@ public class Permission extends CFWObject{
 	
 	public String name() {
 		return name.getValue();
+	}
+	
+	public String category() {
+		return category.getValue();
+	}
+	
+	public Permission category(String category) {
+		this.category.setValue(category);
+		return this;
 	}
 	
 	public Permission name(String name) {

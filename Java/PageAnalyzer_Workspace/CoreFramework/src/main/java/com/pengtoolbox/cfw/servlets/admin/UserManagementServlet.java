@@ -115,8 +115,10 @@ public class UserManagementServlet extends HttpServlet
 				if(origin != null) {
 					
 					origin.mapRequestParameters(request);
+					Role role = (Role)origin;
+					role.category("user");
 					
-					if(CFW.DB.Roles.create((Role)origin)) {
+					if( CFW.DB.Roles.create(role) ) {
 						CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Role created successfully!");
 					}
 				}

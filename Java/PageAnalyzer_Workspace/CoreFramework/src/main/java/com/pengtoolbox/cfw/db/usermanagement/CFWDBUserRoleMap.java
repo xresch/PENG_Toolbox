@@ -218,7 +218,7 @@ public class CFWDBUserRoleMap {
 	 * @param role
 	 * @return Hashmap with roles(key=role name, value=role object), or null on exception
 	 ****************************************************************/
-	public static HashMap<String, Role> selectRolesForUser(User user) {
+	public static HashMap<String, Role> selectAllRolesForUser(User user) {
 		if( user == null) {
 			new CFWLog(logger)
 				.method("create")
@@ -226,14 +226,15 @@ public class CFWDBUserRoleMap {
 			return null;
 		}
 		
-		return selectRolesForUser(user.id());
+		return selectAllRolesForUser(user.id());
 	}
+	
 	/***************************************************************
 	 * Select user roles by the user id.
 	 * @param role
 	 * @return Hashmap with roles(key=role name, value=role object), or null on exception
 	 ****************************************************************/
-	public static HashMap<String, Role> selectRolesForUser(int userID) {
+	public static HashMap<String, Role> selectAllRolesForUser(int userID) {
 		
 		
 		String selectRolesForUser = "SELECT * FROM "+Role.TABLE_NAME+" G "
@@ -270,7 +271,7 @@ public class CFWDBUserRoleMap {
 	 * @param role
 	 * @return Hashmap with roles(key=role name, value=role object), or null on exception
 	 ****************************************************************/
-	public static String getRoleMapForUserAsJSON(String userID) {
+	public static String getUserRoleMapForUserAsJSON(String userID) {
 		
 		//----------------------------------
 		// Check input format
@@ -284,10 +285,12 @@ public class CFWDBUserRoleMap {
 		String selectRolesForUser = "SELECT G.PK_ID, G.NAME, G.DESCRIPTION, M.FK_ID_USER AS ITEM_ID, M.IS_DELETABLE FROM "+Role.TABLE_NAME+" G "
 				+ " LEFT JOIN "+CFWDBUserRoleMap.TABLE_NAME+" M "
 				+ " ON M.FK_ID_ROLE = G.PK_ID "
+				+ " AND G.CATEGORY = ?"
 				+ " AND M.FK_ID_USER = ?"
 				+ " ORDER BY LOWER(G.NAME)";
 		
 		ResultSet result = CFWDB.preparedExecuteQuery(selectRolesForUser, 
+				"user",
 				userID);
 		String json = CFWDB.resultSetToJSON(result);
 		CFWDB.close(result);	

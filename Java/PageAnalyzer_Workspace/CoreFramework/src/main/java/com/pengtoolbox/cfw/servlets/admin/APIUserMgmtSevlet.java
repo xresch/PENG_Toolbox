@@ -79,7 +79,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 							case "user": 			content.append(CFW.DB.Users.getUserAsJSON(ID));
 					  								break;			
 					  							
-							case "userrolemap": 	content.append(CFW.DB.UserRoleMap.getRoleMapForUserAsJSON(ID));
+							case "userrolemap": 	content.append(CFW.DB.UserRoleMap.getUserRoleMapForUserAsJSON(ID));
 					  								break;		
 					  							
 							case "roles": 			content.append(CFW.DB.Roles.getUserRoleListAsJSON());
@@ -91,7 +91,7 @@ public class APIUserMgmtSevlet extends HttpServlet {
 							case "rolepermissionmap": 	content.append(CFW.DB.RolePermissionMap.getPermissionMapForRoleAsJSON(ID));
 														break;	
 								
-							case "permissions":		content.append(CFW.DB.Permissions.getPermissionListAsJSON());
+							case "permissions":		content.append(CFW.DB.Permissions.getUserPermissionListAsJSON());
 		  			   								break;  
 		  			   							
 							default: 				CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");

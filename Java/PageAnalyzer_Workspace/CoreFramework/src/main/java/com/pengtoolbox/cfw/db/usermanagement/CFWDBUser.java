@@ -204,7 +204,7 @@ public class CFWDBUser {
 	 ****************************************************************/
 	public static HashMap<String, Role> selectRolesForUser(int userID) {
 		
-		return CFW.DB.UserRoleMap.selectRolesForUser(userID);
+		return CFW.DB.UserRoleMap.selectAllRolesForUser(userID);
 	
 	}
 	/***************************************************************
@@ -214,7 +214,7 @@ public class CFWDBUser {
 	 ****************************************************************/
 	public static HashMap<String, Role> selectRolesForUser(User user) {
 		
-		return CFW.DB.UserRoleMap.selectRolesForUser(user);
+		return CFW.DB.UserRoleMap.selectAllRolesForUser(user);
 	
 	}
 	

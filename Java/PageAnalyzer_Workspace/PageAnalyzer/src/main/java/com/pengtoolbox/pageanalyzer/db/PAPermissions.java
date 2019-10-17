@@ -23,7 +23,7 @@ public class PAPermissions {
 		// Manage Results
 		if(!CFW.DB.Permissions.checkPermissionExists(MANAGE_RESULTS)) {
 			Permission manageResults = 
-					new Permission(MANAGE_RESULTS)
+					new Permission(MANAGE_RESULTS, "user")
 						.description("Manage all Page Analyzer results results in the DB.")
 						.isDeletable(false);
 			
@@ -37,7 +37,7 @@ public class PAPermissions {
 		// Analyze HAR
 		if(!CFW.DB.Permissions.checkPermissionExists(ANALYZE_HAR)) {
 			Permission analyzeHAR = 
-					new Permission(ANALYZE_HAR)
+					new Permission(ANALYZE_HAR, "user")
 						.description("Upload and analyze HAR files.")
 						.isDeletable(false);
 			
@@ -50,7 +50,7 @@ public class PAPermissions {
 		// Download HAR
 		if(!CFW.DB.Permissions.checkPermissionExists(DOWNLOAD_HAR)) {
 			Permission downloadHAR = 
-					new Permission(DOWNLOAD_HAR)
+					new Permission(DOWNLOAD_HAR, "user")
 						.description("Download HAR files from the result history and analyze Gantt Charts.")
 						.isDeletable(false);
 			
@@ -64,7 +64,7 @@ public class PAPermissions {
 		// Analyze URL
 		if(!CFW.DB.Permissions.checkPermissionExists(ANALYZE_URL)) {
 			Permission analyzeURL = 
-					new Permission(ANALYZE_URL)
+					new Permission(ANALYZE_URL, "user")
 						.description("Analyze a web application by using a URL.")
 						.isDeletable(false);
 			
@@ -78,7 +78,7 @@ public class PAPermissions {
 		// View History
 		if(!CFW.DB.Permissions.checkPermissionExists(VIEW_HISTORY)) {
 			Permission viewHistory = 
-					new Permission(VIEW_HISTORY)
+					new Permission(VIEW_HISTORY, "user")
 						.description("View the history of the saved results.")
 						.isDeletable(false);
 			
@@ -92,7 +92,7 @@ public class PAPermissions {
 		// Delete Result
 		if(!CFW.DB.Permissions.checkPermissionExists(DELETE_RESULT)) {
 			Permission deleteResult = 
-					new Permission(DELETE_RESULT)
+					new Permission(DELETE_RESULT, "user")
 						.description("Delete results from the result history.")
 						.isDeletable(false);
 			
@@ -105,7 +105,7 @@ public class PAPermissions {
 		// View Documentation
 		if(!CFW.DB.Permissions.checkPermissionExists(VIEW_DOCU)) {
 			Permission viewDocu = 
-					new Permission(VIEW_DOCU)
+					new Permission(VIEW_DOCU, "user")
 						.description("View the documentation page of the page analyzer.")
 						.isDeletable(false);
 			

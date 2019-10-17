@@ -104,15 +104,16 @@ public class CFWDBPermission {
 	}
 	
 	/***************************************************************
-	 * Return a list of all permissions
+	 * Return a list of all user permissions
 	 * 
 	 * @return Returns a resultSet with all permissions or null.
 	 ****************************************************************/
-	public static ResultSet getPermissionList() {
+	public static ResultSet getUserPermissionList() {
 		
 		return new Permission()
-				.queryCache(CFWDBPermission.class, "getPermissionList")
+				.queryCache(CFWDBPermission.class, "getUserPermissionList")
 				.select()
+				.where(PermissionFields.CATEGORY.toString(), "user")
 				.orderby(PermissionFields.NAME.toString())
 				.getResultSet();
 		
@@ -123,10 +124,11 @@ public class CFWDBPermission {
 	 * 
 	 * @return Returns a result set with all users or null.
 	 ****************************************************************/
-	public static String getPermissionListAsJSON() {
+	public static String getUserPermissionListAsJSON() {
 		return new Permission()
-				.queryCache(CFWDBPermission.class, "getPermissionListAsJSON")
+				.queryCache(CFWDBPermission.class, "getUserPermissionListAsJSON")
 				.select()
+				.where(PermissionFields.CATEGORY.toString(), "user")
 				.orderby(PermissionFields.NAME.toString())
 				.getAsJSON();
 	}
@@ -139,7 +141,6 @@ public class CFWDBPermission {
 	public static HashMap<String, Permission> selectPermissionsForUser(User user) {
 		return CFW.DB.RolePermissionMap.selectPermissionsForUser(user);
 	}
-	
 	
 	/***************************************************************
 	 * Updates the object selecting by ID.
