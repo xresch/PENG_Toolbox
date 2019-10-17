@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.usermanagement.Role.RoleFields;
-import com.pengtoolbox.cfw.db.usermanagement.Permission.PermissionFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
@@ -202,7 +201,7 @@ public class CFWDBRole {
 				.queryCache(CFWDBRole.class, "deleteByID")
 				.delete()
 				.where(RoleFields.PK_ID.toString(), id)
-				.and(PermissionFields.IS_DELETABLE.toString(), true)
+				.and(RoleFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 					
 	}
@@ -251,7 +250,7 @@ public class CFWDBRole {
 				.queryCache(CFWDBRole.class, "deleteByName")
 				.delete()
 				.where(RoleFields.NAME.toString(), name)
-				.and(PermissionFields.IS_DELETABLE.toString(), true)
+				.and(RoleFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 					
 	}

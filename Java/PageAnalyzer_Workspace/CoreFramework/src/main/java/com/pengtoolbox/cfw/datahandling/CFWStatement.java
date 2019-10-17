@@ -76,6 +76,13 @@ public class CFWStatement {
 	 * @return CFWStatement for method chaining
 	 ****************************************************************/
 	public boolean createTable() {
+		//------------------------------------
+		// Create Table
+		if(object.getPrimaryField() == null) {
+			new CFWLog(logger)
+				.method("createTable")
+				.severe("CFWObjects need a primary field to create a table out of them. ", new IllegalStateException());
+		}
 		
 		//------------------------------------
 		// Create Table

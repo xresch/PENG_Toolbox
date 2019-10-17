@@ -93,7 +93,6 @@ public class Permission extends CFWObject{
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.setPrimaryField(id);
 		this.addFields(id, category, name, description, isDeletable);
 	}
 	

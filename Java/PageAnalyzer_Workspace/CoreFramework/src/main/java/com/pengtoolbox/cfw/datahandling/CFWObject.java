@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -144,8 +145,14 @@ public class CFWObject {
 		return primaryField;
 	}
 
-	public CFWObject setPrimaryField(CFWField<Integer> primaryField) {
-		this.primaryField = primaryField;
+	protected CFWObject setPrimaryField(CFWField<Integer> primaryField) {
+		if(this.primaryField == null) {
+			this.primaryField = primaryField;
+		}else {
+			new CFWLog(logger)
+				.method("setPrimaryField")
+				.severe("Attempt to set a second primary key on CFWObject. ", new IllegalStateException());
+		}
 		return this;
 	}
 	
@@ -223,7 +230,10 @@ public class CFWObject {
 		// Add Parent Fields
 		// P0... P1... Pn...
 		for(int i = 0; i < this.getHierarchyLevels(); i++) {
-			this.addField(CFWField.newInteger(FormFieldType.NONE, "P"+i));
+			this.addField(
+					CFWField.newInteger(FormFieldType.NONE, "P"+i)
+					.setDescription("ID of parent number "+i+" in the same table.")
+					);
 		}
 		
 		
