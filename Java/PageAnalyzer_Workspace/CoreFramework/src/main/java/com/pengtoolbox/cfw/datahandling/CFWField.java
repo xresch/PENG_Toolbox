@@ -937,7 +937,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					CFWField current = fields.get(colName);
 					
 					if     ( String.class.isAssignableFrom(current.getValueClass()) )  { current.setValueValidated(result.getString(colName)); }
-					else if( Integer.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getInt(colName)); }
+					else if( Integer.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getObject(colName)); }
 					else if( Boolean.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getBoolean(colName)); }
 					else if( Timestamp.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getTimestamp(colName)); }
 					else if( Date.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getDate(colName)); }

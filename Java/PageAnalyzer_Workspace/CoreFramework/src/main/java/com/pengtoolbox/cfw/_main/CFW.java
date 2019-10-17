@@ -16,6 +16,7 @@ import com.pengtoolbox.cfw.db.spaces.SpaceGroup;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBRole;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBRolePermissionMap;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBSpace;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserRoleMap;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
@@ -45,6 +46,7 @@ public class CFW {
 		public static class UserRoleMap extends CFWDBUserRoleMap{};
 		public static class Permissions extends CFWDBPermission{};
 		public static class RolePermissionMap extends CFWDBRolePermissionMap{};
+		public static class Spaces extends CFWDBSpace{};
 		public static class SpaceGroups extends CFWDBSpaceGroup{};
 	}
 	

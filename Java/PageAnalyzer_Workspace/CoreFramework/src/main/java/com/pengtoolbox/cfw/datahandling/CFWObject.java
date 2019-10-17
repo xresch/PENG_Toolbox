@@ -22,15 +22,20 @@ public class CFWObject {
 	
 	private static Logger logger = CFWLog.getLogger(CFWObject.class.getName());
 	
-	protected String tableName; 
-	
+	//------------------------
+	// General
 	private LinkedHashMap<String, CFWField<?>> fields = new LinkedHashMap<String, CFWField<?>>();
-	public CFWField<Integer> primaryField = null;
+	private int hierarchyLevels = 0;
+	private  CFWObject parent;
+	private  LinkedHashMap<Integer, CFWObject> childObjects;
 	
+	//---------------------------
+	// Database
+	protected String tableName; 
+	public CFWField<Integer> primaryField = null;
 	private ArrayList<ForeignKeyDefinition> foreignKeys = new ArrayList<ForeignKeyDefinition>();
 	
-	private int hierarchyLevels = 0;
-	private  LinkedHashMap<Integer, CFWObject> childObjects;
+
 	
 	class ForeignKeyDefinition{
 		public String fieldname;
@@ -220,8 +225,7 @@ public class CFWObject {
 	}
 
 	public int getHierarchyLevels() {
-		return hierarchyLevels;
-				
+		return hierarchyLevels;		
 	}
 
 	public void setHierarchyLevels(int hierarchyLevels) {
@@ -231,11 +235,10 @@ public class CFWObject {
 		// P0... P1... Pn...
 		for(int i = 0; i < this.getHierarchyLevels(); i++) {
 			this.addField(
-					CFWField.newInteger(FormFieldType.NONE, "P"+i)
+				CFWField.newInteger(FormFieldType.NONE, "P"+i)
 					.setDescription("ID of parent number "+i+" in the same table.")
-					);
+			);
 		}
-		
 		
 	}
 
@@ -243,13 +246,73 @@ public class CFWObject {
 		return childObjects;
 	}
 
-	public void setChildObjects(LinkedHashMap<Integer, CFWObject> childObjects) {
+	public void getChildObjects(LinkedHashMap<Integer, CFWObject> childObjects) {
 		this.childObjects = childObjects;
 	}
 	
-
-	public void addChildObject(CFWObject child) {
+	private CFWObject addChildObject(CFWObject child) {
 		this.childObjects.put(((Integer)child.getPrimaryField().getValue()), child);
+		return this;
+	}
+	
+	public void removeChildObject(CFWObject child) {
+		this.childObjects.remove(((Integer)child.getPrimaryField().getValue()));
+	}
+		
+	public CFWObject getParent() {
+		return parent;
+	}
+	/****************************************************************
+	 * Set the parent object of this object and adds it to the 
+	 * The childs db entry has to be updated manually afterwards.
+	 * 
+	 * @return true if succesful, false otherwise.
+	 * 
+	 ****************************************************************/
+	@SuppressWarnings("unchecked")
+	public boolean setParent(CFWObject parent) {
+		this.parent = parent;
+				
+		//-------------------------------
+		// Check if last parent was already
+		// set.
+		System.out.println("ParentValue:"+parent.fields.get("P"+(hierarchyLevels-1)).getValue());
+		if( parent.fields.get("P"+(hierarchyLevels-1)).getValue() != null) {
+			new CFWLog(logger)
+				.method("setParent")
+				.severe("Cannot set the parent as the maximum hierarchy depth is reached.", new IllegalStateException());
+		}
+
+		
+		//-------------------------------
+		// Propagate values from parentObject
+		// to child object.
+		Integer parentValue = null;
+		
+		int i = 0;
+		for(; i < this.hierarchyLevels; i++) {
+			parentValue = ((CFWField<Integer>)parent.getField("P"+i)).getValue();
+			System.out.println("P"+i+":"+parent.fields.get("P"+i).getValue());
+			if(parentValue != null) {
+				((CFWField<Integer>)this.getField("P"+i)).setValue(parentValue);
+			}else {
+				break;
+			}
+		}
+		
+		//-----------------------------------------------------
+		// set this object as the next parent. Only if the last
+		// parent in the hierarchy was not already set.
+		if(parentValue == null) {
+			((CFWField<Integer>)this.getField("P"+i)).setValue(parent.primaryField.getValue());
+		}else {
+			new CFWLog(logger)
+				.method("setParent")
+				.severe("Cannot set the parent as the maximum hierarchy depth is reached.", new IllegalStateException());
+			return false;
+		}
+		
+		return true;
 	}
 	
 	

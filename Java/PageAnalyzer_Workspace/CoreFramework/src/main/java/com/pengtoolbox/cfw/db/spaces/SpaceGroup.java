@@ -5,12 +5,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.db.usermanagement.CFWDBRole;
+import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
@@ -23,6 +26,8 @@ public class SpaceGroup extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_SPACE_GROUP";
 	
+	public static final String CFW_SPACEGROUP_TESTSPACE = "	TestSpace";
+
 	public enum SpaceGroupFields{
 		PK_ID,
 		NAME,
@@ -36,7 +41,6 @@ public class SpaceGroup extends CFWObject {
 			.setDescription("The id of the space group.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
-	
 	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, SpaceGroupFields.NAME.toString())
 			.setColumnDefinition("VARCHAR(255) UNIQUE")
@@ -84,6 +88,14 @@ public class SpaceGroup extends CFWObject {
 	 **************************************************************************************/
 	public void initDB() {
 			
+		//-----------------------------------------
+		// Create TestSpace
+		//-----------------------------------------
+		if(!CFW.DB.SpaceGroups.checkSpaceGroupExists(SpaceGroup.CFW_SPACEGROUP_TESTSPACE)) {
+			CFW.DB.SpaceGroups.create(new SpaceGroup(SpaceGroup.CFW_SPACEGROUP_TESTSPACE)
+				.description("A space group for development.")
+			);
+		}
 	}
 	
 	/**************************************************************************************

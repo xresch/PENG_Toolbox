@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.api.APIDefinition;
 import com.pengtoolbox.cfw.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.datahandling.CFWField;
@@ -76,6 +77,13 @@ public class Space extends CFWObject {
 				}
 			});
 	
+//	private CFWField<Integer> type = CFWField.newInteger(FormFieldType.NONE, SpaceFields.PK_ID.toString())
+//			.setPrimaryKeyAutoIncrement(this)
+//			.setDescription("The id of the space.")
+//			.apiFieldType(FormFieldType.SELECT)
+//			.setOptions(new String[] {"regular", "personal", "global", "system"})
+//			.setValue(-999);
+	
 	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, SpaceFields.DESCRIPTION.toString())
 			.setColumnDefinition("CLOB")
 			.setDescription("The description of the space.")
@@ -108,8 +116,9 @@ public class Space extends CFWObject {
 		initializeFields();
 	}
 	
-	public Space(String name) {
+	public Space(int spacegroupid, String name) {
 		initializeFields();
+		this.foreignKeySpaceGroup.setValue(spacegroupid);
 		this.name.setValue(name);
 	}
 	
@@ -129,6 +138,43 @@ public class Space extends CFWObject {
 	 **************************************************************************************/
 	public void initDB() {
 		
+		int spacegroupid = CFW.DB.SpaceGroups.selectByName(SpaceGroup.CFW_SPACEGROUP_TESTSPACE).id();
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		
+		if(!CFW.DB.Spaces.checkSpaceExists("MySpace")) {
+			CFW.DB.Spaces.create(
+					new Space(spacegroupid, "MySpace")
+						.description("A space for spacing away.")
+						.isDeletable(true)
+						.isRenamable(true)
+			);
+		}
+		
+		Space parentSpace = CFW.DB.Spaces.selectByName("MySpace");
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		for(int i = 0; i < 11; i++) {
+			String spacename = "SubSpace"+i;
+			if(!CFW.DB.Spaces.checkSpaceExists(spacename)) {
+				
+				Space subSpace = new Space(spacegroupid, spacename)
+					.description("A sub space for spacing away.")
+					.isDeletable(true)
+					.isRenamable(true);
+				
+				if(subSpace.setParent(parentSpace)) {
+					CFW.DB.Spaces.create(subSpace);
+					parentSpace = CFW.DB.Spaces.selectByName(spacename);
+					System.out.println(parentSpace.getFieldsAsKeyValueString());
+				}
+			}
+
+		}
+				
 	}
 	
 	/**************************************************************************************
