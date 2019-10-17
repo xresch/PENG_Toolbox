@@ -19,7 +19,7 @@ import com.pengtoolbox.cfw.validation.LengthValidator;
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class CFWSpace extends CFWObject {
+public class Space extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_SPACE";
 	
@@ -42,7 +42,7 @@ public class CFWSpace extends CFWObject {
 		IS_RENAMABLE,
 	}
 
-	private static Logger logger = CFWLog.getLogger(CFWSpace.class.getName());
+	private static Logger logger = CFWLog.getLogger(Space.class.getName());
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, SpaceFields.PK_ID.toString())
 			.setPrimaryKeyAutoIncrement(this)
@@ -94,16 +94,16 @@ public class CFWSpace extends CFWObject {
 				}
 			});;
 	
-	public CFWSpace() {
+	public Space() {
 		initializeFields();
 	}
 	
-	public CFWSpace(String name) {
+	public Space(String name) {
 		initializeFields();
 		this.name.setValue(name);
 	}
 	
-	public CFWSpace(ResultSet result) throws SQLException {
+	public Space(ResultSet result) throws SQLException {
 		initializeFields();
 		this.mapResultSet(result);	
 	}
@@ -163,7 +163,7 @@ public class CFWSpace extends CFWObject {
 		return id.getValue();
 	}
 	
-	public CFWSpace id(int id) {
+	public Space id(int id) {
 		this.id.setValue(id);
 		return this;
 	}
@@ -172,7 +172,7 @@ public class CFWSpace extends CFWObject {
 		return name.getValue();
 	}
 	
-	public CFWSpace name(String name) {
+	public Space name(String name) {
 		this.name.setValue(name);
 		return this;
 	}
@@ -181,7 +181,7 @@ public class CFWSpace extends CFWObject {
 		return description.getValue();
 	}
 
-	public CFWSpace description(String description) {
+	public Space description(String description) {
 		this.description.setValue(description);
 		return this;
 	}
@@ -190,7 +190,7 @@ public class CFWSpace extends CFWObject {
 		return isDeletable.getValue();
 	}
 	
-	public CFWSpace isDeletable(boolean isDeletable) {
+	public Space isDeletable(boolean isDeletable) {
 		this.isDeletable.setValue(isDeletable);
 		return this;
 	}	
@@ -199,7 +199,7 @@ public class CFWSpace extends CFWObject {
 		return isRenamable.getValue();
 	}
 	
-	public CFWSpace isRenamable(boolean isRenamable) {
+	public Space isRenamable(boolean isRenamable) {
 		this.isRenamable.setValue(isRenamable);
 		return this;
 	}	

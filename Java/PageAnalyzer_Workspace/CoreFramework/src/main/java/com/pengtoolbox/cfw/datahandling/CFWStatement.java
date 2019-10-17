@@ -124,6 +124,42 @@ public class CFWStatement {
 		return success;
 		
 	}
+	
+	/****************************************************************
+	 * Renames a table.
+
+	 * @return true if successful, false otherwise.
+	 ****************************************************************/
+	public static boolean renameTable(String oldname, String newname) {
+		
+		String renameTable = "ALTER TABLE IF EXISTS "+oldname+" RENAME TO "+newname;
+		return CFWDB.preparedExecute(renameTable);
+	}
+	
+	/****************************************************************
+	 * Renames a column.
+
+	 * @return true if successful, false otherwise.
+	 ****************************************************************/
+	public static boolean renameColumn(String tablename, String oldname, String newname) {
+		
+		String renameColumn = "ALTER TABLE IF EXISTS "+tablename+" ALTER COLUMN "+oldname+" RENAME TO "+newname;
+		return CFWDB.preparedExecute(renameColumn);
+	}
+	
+	/****************************************************************
+	 * Renames a foreignkey.
+	 *
+	 * @return true if successful, false otherwise.
+	 ****************************************************************/
+	public static boolean renameForeignKey(String oldTablename, String oldFieldname, String newTablename, String newFieldname) {
+		
+		String renameForeignKey = "ALTER TABLE IF EXISTS "+oldTablename+
+				" RENAME CONSTRAINT FK_"+oldTablename+"_"+oldFieldname
+			  + " TO FK_"+newTablename+"_"+newFieldname;
+
+		return CFWDB.preparedExecute(renameForeignKey);
+	}
 		
 	/****************************************************************
 	 * Begins a SELECT * statement.
@@ -341,6 +377,9 @@ public class CFWStatement {
 	 ****************************************************************/
 	public CFWStatement where(String fieldname, Object value, boolean isCaseSensitive) {
 		if(!isQueryCached()) {
+			if(value == null) {
+				return whereIsNull(fieldname);
+			}
 			if(isCaseSensitive) {
 				query.append(" WHERE "+fieldname).append(" = ?");	
 			}else {
@@ -360,6 +399,17 @@ public class CFWStatement {
 			query.append(" WHERE "+fieldname).append(" IN(?)");
 		}
 		values.add(value);
+		return this;
+	}
+	
+	/****************************************************************
+	 * Adds a WHERE <fieldname> IN(?) clause to the query.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWStatement whereIsNull(String fieldname) {
+		if(!isQueryCached()) {
+			query.append(" WHERE "+fieldname).append(" IS NULL");
+		}
 		return this;
 	}
 

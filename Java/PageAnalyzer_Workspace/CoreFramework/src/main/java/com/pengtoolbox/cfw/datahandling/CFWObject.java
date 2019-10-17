@@ -268,6 +268,15 @@ public class CFWObject {
 	}
 	
 	/****************************************************************
+	 * Executed after createTable() and before initDB() is executed. 
+	 * Can be overriden to update tables and table data.
+	 * @return CFWQuery for method chaining
+	 ****************************************************************/
+	public void updateTable() {
+		
+	}
+	
+	/****************************************************************
 	 * Will be executed after all createTable() methods where executed
 	 * of all objects in the Registry. 
 	 * 

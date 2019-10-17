@@ -106,40 +106,43 @@ public class CFWDBRole {
 	 * @param id of the role
 	 * @return Returns a role or null if not found or in case of exception.
 	 ****************************************************************/
-	public static String getRoleAsJSON(String id) {
+	public static String getUserRolesAsJSON(String id) {
 		
 		return new Role()
-				.queryCache(CFWDBRole.class, "getRoleAsJSON")
+				.queryCache(CFWDBRole.class, "getUserRolesAsJSON")
 				.select()
 				.where(RoleFields.PK_ID.toString(), Integer.parseInt(id))
+				.and(RoleFields.CATEGORY.toString(), "user")
 				.getAsJSON();
 		
 	}
 	
 	/***************************************************************
-	 * Return a list of all roles
+	 * Return a list of all user roles
 	 * 
 	 * @return Returns a resultSet with all roles or null.
 	 ****************************************************************/
-	public static ResultSet getRoleList() {
+	public static ResultSet getUserRoleList() {
 		
 		return new Role()
-				.queryCache(CFWDBRole.class, "getRoleList")
+				.queryCache(CFWDBRole.class, "getUserRoleList")
 				.select()
+				.where(RoleFields.CATEGORY.toString(), "user")
 				.orderby(RoleFields.NAME.toString())
 				.getResultSet();
 		
 	}
 	
 	/***************************************************************
-	 * Return a list of all users as json string.
+	 * Return a list of all user roles as json string.
 	 * 
 	 * @return Returns a result set with all users or null.
 	 ****************************************************************/
-	public static String getRoleListAsJSON() {
+	public static String getUserRoleListAsJSON() {
 		return new Role()
-				.queryCache(CFWDBRole.class, "getRoleListAsJSON")
+				.queryCache(CFWDBRole.class, "getUserRoleListAsJSON")
 				.select()
+				.where(RoleFields.CATEGORY.toString(), "user")
 				.orderby(RoleFields.NAME.toString())
 				.getAsJSON();
 	}

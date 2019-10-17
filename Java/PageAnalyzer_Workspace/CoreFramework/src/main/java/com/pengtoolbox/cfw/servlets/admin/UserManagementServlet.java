@@ -105,7 +105,7 @@ public class UserManagementServlet extends HttpServlet
 		//--------------------------------------
 		// Create Role Form
 		
-		CFWForm createRoleForm = new Role("").toForm("cfwCreateRoleForm", "Create Role");
+		CFWForm createRoleForm = new Role().toForm("cfwCreateRoleForm", "Create Role");
 		
 		createRoleForm.setFormHandler(new CFWFormHandler() {
 			

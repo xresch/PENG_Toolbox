@@ -22,7 +22,7 @@ public class TestCFWObject extends DBTestMaster{
 		
 		//------------------------------
 		// Groups
-		CFW.DB.Roles.create(new Role("TestgroupA"));
+		CFW.DB.Roles.create(new Role("TestgroupA", "user"));
 		testgroupA = CFW.DB.Roles.selectByName("TestgroupA");
 		testgroupA.description("TestgroupADescription");
 		

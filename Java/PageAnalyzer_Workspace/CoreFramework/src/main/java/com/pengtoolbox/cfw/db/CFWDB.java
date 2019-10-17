@@ -807,13 +807,13 @@ public class CFWDB {
 					permissionC;
 		//------------------------------
 		// Roles
-		CFW.DB.Roles.create(new Role("TestroleA").description("This is the testrole A."));
+		CFW.DB.Roles.create(new Role("TestroleA", "user").description("This is the testrole A."));
 		testroleA = CFW.DB.Roles.selectByName("TestroleA");
 		
-		CFW.DB.Roles.create(new Role("TestroleB").description("This is the testrole B."));
+		CFW.DB.Roles.create(new Role("TestroleB", "user").description("This is the testrole B."));
 		testroleB = CFW.DB.Roles.selectByName("TestroleB");
 		
-		CFW.DB.Roles.create(new Role("TestroleC").description("This is the testrole C."));
+		CFW.DB.Roles.create(new Role("TestroleC", "user").description("This is the testrole C."));
 		testroleC = CFW.DB.Roles.selectByName("TestroleC");
 		
 		//------------------------------

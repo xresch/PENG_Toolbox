@@ -12,6 +12,7 @@ import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.datahandling.CFWStatement;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.LengthValidator;
@@ -27,6 +28,7 @@ public class Role extends CFWObject {
 	
 	public enum RoleFields{
 		PK_ID,
+		CATEGORY,
 		NAME,
 		DESCRIPTION,
 		IS_DELETABLE,
@@ -40,6 +42,13 @@ public class Role extends CFWObject {
 			.setDescription("The id of the role.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
+	
+	private CFWField<String> category = CFWField.newString(FormFieldType.NONE, RoleFields.CATEGORY.toString())
+			.setColumnDefinition("VARCHAR(32)")
+			.setDescription("The catogery of the role, either 'user' or 'space'.")
+			.apiFieldType(FormFieldType.SELECT)
+			.setOptions(new String[] {"user", "space"})
+			.addValidator(new LengthValidator(-1, 32));
 	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, RoleFields.NAME.toString())
 			.setColumnDefinition("VARCHAR(255) UNIQUE")
@@ -83,15 +92,16 @@ public class Role extends CFWObject {
 					
 					return true;
 				}
-			});;
+			});
 	
 	public Role() {
 		initializeFields();
 	}
 	
-	public Role(String name) {
+	public Role(String name, String category) {
 		initializeFields();
 		this.name.setValue(name);
+		this.category.setValue(category);
 	}
 	
 	public Role(ResultSet result) throws SQLException {
@@ -101,7 +111,7 @@ public class Role extends CFWObject {
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.addFields(id, name, description, isDeletable, isRenamable);
+		this.addFields(id, category, name, description, isDeletable, isRenamable);
 	}
 	
 	/**************************************************************************************
@@ -111,8 +121,37 @@ public class Role extends CFWObject {
 		
 		//---------------------------
 		// Rename Table
-		String renameTable = "ALTER TABLE IF EXISTS CFW_GROUP RENAME TO "+this.getTableName();
-		CFWDB.preparedExecute(renameTable);
+		CFWStatement.renameTable("CFW_GROUP", this.getTableName());
+		
+	}
+	
+	/**************************************************************************************
+	 * 
+	 **************************************************************************************/
+	public void updateTable() {
+				
+		//#####################################
+		// v2.0 to v2.1
+		//#####################################
+		
+		//---------------------------
+		// Rename Table
+		CFWStatement.renameTable("CFW_GROUP", this.getTableName());
+		
+		//---------------------------
+		// Add defaults to new column category
+		ArrayList<CFWObject> roleArray = 
+				this.select()
+					.where(RoleFields.CATEGORY.toString(), null)
+					.getObjectList();
+
+		for(CFWObject roleObject : roleArray) {
+			Role role = (Role) roleObject;
+			role.category("user")
+				.update();
+			
+		}
+
 		
 	}
 	
@@ -124,9 +163,10 @@ public class Role extends CFWObject {
 		// Create Role Superuser
 		//-----------------------------------------
 		if(!CFW.DB.Roles.checkRoleExists(CFWDBRole.CFW_ROLE_SUPERUSER)) {
-			CFW.DB.Roles.create(new Role(CFWDBRole.CFW_ROLE_SUPERUSER)
+			CFW.DB.Roles.create(new Role(CFWDBRole.CFW_ROLE_SUPERUSER, "user")
 				.description("Superusers have all the privileges in the system. They are above administrators. ")
 				.isDeletable(false)
+				.isRenamable(false)
 			);
 		}
 		
@@ -145,9 +185,10 @@ public class Role extends CFWObject {
 		// Create Role Admin
 		//-----------------------------------------
 		if(!CFW.DB.Roles.checkRoleExists(CFWDBRole.CFW_ROLE_ADMIN)) {
-			CFW.DB.Roles.create(new Role(CFWDBRole.CFW_ROLE_ADMIN)
+			CFW.DB.Roles.create(new Role(CFWDBRole.CFW_ROLE_ADMIN, "user")
 				.description("Administrators have the privileges to manage the application.")
 				.isDeletable(false)
+				.isRenamable(false)
 			);
 		}
 		
@@ -162,12 +203,13 @@ public class Role extends CFWObject {
 		adminRole.isRenamable(false);
 		CFW.DB.Roles.update(adminRole);
 		//-----------------------------------------
-		// Create User
+		// Create Role User
 		//-----------------------------------------
 		if(!CFW.DB.Roles.checkRoleExists(CFWDBRole.CFW_ROLE_USER)) {
-			CFW.DB.Roles.create(new Role(CFWDBRole.CFW_ROLE_USER)
+			CFW.DB.Roles.create(new Role(CFWDBRole.CFW_ROLE_USER, "user")
 				.description("Default User role. New users will automatically be added to this role if they are not managed by a foreign source.")
 				.isDeletable(false)
+				.isRenamable(false)
 			);
 		}
 		
@@ -194,12 +236,14 @@ public class Role extends CFWObject {
 		String[] inputFields = 
 				new String[] {
 						RoleFields.PK_ID.toString(), 
+						RoleFields.CATEGORY.toString(),
 						RoleFields.NAME.toString(),
 				};
 		
 		String[] outputFields = 
 				new String[] {
 						RoleFields.PK_ID.toString(), 
+						RoleFields.CATEGORY.toString(),
 						RoleFields.NAME.toString(),
 						RoleFields.DESCRIPTION.toString(),
 						RoleFields.IS_DELETABLE.toString(),
@@ -228,6 +272,15 @@ public class Role extends CFWObject {
 	
 	public Role id(int id) {
 		this.id.setValue(id);
+		return this;
+	}
+	
+	public String category() {
+		return category.getValue();
+	}
+	
+	public Role category(String category) {
+		this.category.setValue(category);
 		return this;
 	}
 	

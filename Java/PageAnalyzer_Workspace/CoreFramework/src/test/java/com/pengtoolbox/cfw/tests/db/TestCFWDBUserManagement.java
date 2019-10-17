@@ -37,13 +37,13 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//------------------------------
 		// Roles
-		CFW.DB.Roles.create(new Role("TestroleA"));
+		CFW.DB.Roles.create(new Role("TestroleA", "user"));
 		testroleA = CFW.DB.Roles.selectByName("TestroleA");
 		
-		CFW.DB.Roles.create(new Role("TestroleB"));
+		CFW.DB.Roles.create(new Role("TestroleB", "user"));
 		testroleB = CFW.DB.Roles.selectByName("TestroleB");
 		
-		CFW.DB.Roles.create(new Role("TestroleC"));
+		CFW.DB.Roles.create(new Role("TestroleC", "user"));
 		testroleC = CFW.DB.Roles.selectByName("TestroleC");
 		
 		//------------------------------
@@ -298,7 +298,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//--------------------------------------
 		// CREATE
-		CFW.DB.Roles.create(new Role(rolename)
+		CFW.DB.Roles.create(new Role(rolename, "user")
 				.description("Testdescription")
 				.isDeletable(false)
 				);
@@ -412,7 +412,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//Cleanup
 		CFW.DB.Roles.deleteByName("TestRoleToDelete");
 		
-		Role roleToDelete = new Role("TestRoleToDelete");
+		Role roleToDelete = new Role("TestRoleToDelete", "user");
 		
 		CFW.DB.Roles.create(roleToDelete);
 		roleToDelete = CFW.DB.Roles.selectByName("TestRoleToDelete");
@@ -581,7 +581,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//Cleanup
 		CFW.DB.Roles.deleteByName("TestRoleToDelete");
 		
-		Role roleToDelete = new Role("TestRoleToDelete");
+		Role roleToDelete = new Role("TestRoleToDelete", "user");
 		
 		CFW.DB.Roles.create(roleToDelete);
 		roleToDelete = CFW.DB.Roles.selectByName("TestRoleToDelete");

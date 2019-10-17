@@ -82,10 +82,10 @@ public class APIUserMgmtSevlet extends HttpServlet {
 							case "userrolemap": 	content.append(CFW.DB.UserRoleMap.getRoleMapForUserAsJSON(ID));
 					  								break;		
 					  							
-							case "roles": 			content.append(CFW.DB.Roles.getRoleListAsJSON());
+							case "roles": 			content.append(CFW.DB.Roles.getUserRoleListAsJSON());
 							  			   			break;
 							
-							case "role": 			content.append(CFW.DB.Roles.getRoleAsJSON(ID));
+							case "role": 			content.append(CFW.DB.Roles.getUserRolesAsJSON(ID));
 													break;	
 													
 							case "rolepermissionmap": 	content.append(CFW.DB.RolePermissionMap.getPermissionMapForRoleAsJSON(ID));

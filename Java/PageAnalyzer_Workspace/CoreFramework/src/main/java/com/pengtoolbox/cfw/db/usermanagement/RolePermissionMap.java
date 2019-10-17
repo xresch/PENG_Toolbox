@@ -9,6 +9,7 @@ import com.pengtoolbox.cfw.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.datahandling.CFWStatement;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.Role.RoleFields;
 
@@ -70,24 +71,30 @@ public class RolePermissionMap extends CFWObject {
 	 **************************************************************************************/
 	public void migrateTable() {
 		
+		//###############################################
+		// Migration from 2.0 to 2.1
+		//###############################################
+		
 		//---------------------------
-		// Rename Columns
-		String renameResultID = "ALTER TABLE IF EXISTS CFW_GROUP_PERMISSION_MAP ALTER COLUMN FK_ID_GROUP RENAME TO "+RolePermissionMapFields.FK_ID_ROLE;
-		CFWDB.preparedExecute(renameResultID);
+		// Rename Column 
+		CFWStatement.renameColumn("CFW_GROUP_PERMISSION_MAP", "FK_ID_GROUP",  RolePermissionMapFields.FK_ID_ROLE.toString());
 		
 		//---------------------------
 		// Rename Foreign Key
-		String renameForeignKey = "ALTER TABLE IF EXISTS CFW_GROUP_PERMISSION_MAP RENAME CONSTRAINT FK_CFW_GROUP_PERMISSION_MAP_FK_ID_GROUP TO FK_"+this.getTableName()+"_"+RolePermissionMapFields.FK_ID_ROLE;
-		CFWDB.preparedExecute(renameForeignKey);
-		
+		CFWStatement.renameForeignKey("CFW_GROUP_PERMISSION_MAP",
+				  "FK_ID_GROUP",
+				  this.getTableName(),
+				  RolePermissionMapFields.FK_ID_ROLE.toString());
 		//---------------------------
 		// Rename Foreign Key
-		String renameForeignKey2 = "ALTER TABLE IF EXISTS CFW_GROUP_PERMISSION_MAP RENAME CONSTRAINT FK_CFW_GROUP_PERMISSION_MAP_FK_ID_PERMISSION TO FK_"+this.getTableName()+"_"+RolePermissionMapFields.FK_ID_PERMISSION;
-		CFWDB.preparedExecute(renameForeignKey2);
+		CFWStatement.renameForeignKey("CFW_GROUP_PERMISSION_MAP",
+									  RolePermissionMapFields.FK_ID_PERMISSION.toString(),
+									  this.getTableName(),
+									  RolePermissionMapFields.FK_ID_PERMISSION.toString());
 		//---------------------------
 		// Rename Table
-		String renameTable = "ALTER TABLE IF EXISTS CFW_GROUP_PERMISSION_MAP RENAME TO "+this.getTableName();
-		CFWDB.preparedExecute(renameTable);
+		CFWStatement.renameTable("CFW_GROUP_PERMISSION_MAP", this.getTableName());
+
 		
 	}
 	/**************************************************************************************

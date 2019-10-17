@@ -10,7 +10,7 @@ import com.pengtoolbox.cfw.datahandling.CFWRegistryObjects;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.config.CFWDBConfig;
 import com.pengtoolbox.cfw.db.config.Configuration;
-import com.pengtoolbox.cfw.db.spaces.CFWSpace;
+import com.pengtoolbox.cfw.db.spaces.Space;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBRole;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBRolePermissionMap;
 import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
@@ -161,7 +161,7 @@ public class CFW {
 		CFW.Registry.Objects.addCFWObject(Permission.class);
 		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.UserRoleMap.class);
 		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.RolePermissionMap.class);
-		CFW.Registry.Objects.addCFWObject(CFWSpace.class);
+		CFW.Registry.Objects.addCFWObject(Space.class);
 		//---------------------------
 		// Application Register
 		appToStart.register();
@@ -201,6 +201,13 @@ public class CFW {
     	for(CFWObject object : objectArray) {
     		if(object.getTableName() != null) {
     			object.createTable();
+    			
+    		}
+    	}
+    	
+    	for(CFWObject object : objectArray) {
+    		if(object.getTableName() != null) {
+    			object.updateTable();
     			
     		}
     	}
