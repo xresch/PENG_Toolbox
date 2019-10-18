@@ -5,7 +5,9 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.datahandling.CFWHierarchyUtil;
+import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.db.spaces.Space;
 import com.pengtoolbox.cfw.db.spaces.SpaceGroup;
 import com.pengtoolbox.cfw.tests._master.DBTestMaster;
 
@@ -88,6 +90,73 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 		CFW.DB.SpaceGroups.deleteByID(updatedConfig.id());
 		Assertions.assertFalse(CFW.DB.SpaceGroups.checkSpaceGroupExists(spacegroupname));
 				
+	}
+	
+	@Test
+	public void testSpaceHierarchy() {
+		
+
+		int spacegroupid = CFW.DB.SpaceGroups.selectByName(SpaceGroup.CFW_SPACEGROUP_TESTSPACE).id();
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Spaces.checkSpaceExists("MySpace")) {
+			CFW.DB.Spaces.create(
+					new Space(spacegroupid, "MySpace")
+						.description("A space for spacing away.")
+						.isDeletable(true)
+						.isRenamable(true)
+			);
+		}
+		
+		Space parentSpace = CFW.DB.Spaces.selectByName("MySpace");
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		for(int i = 0; i < 10; i++) {
+			String spacename = "SubSpace"+i;
+			if(!CFW.DB.Spaces.checkSpaceExists(spacename)) {
+				
+				Space subSpace = new Space(spacegroupid, spacename)
+					.description("A sub space for spacing away.")
+					.isDeletable(true)
+					.isRenamable(true);
+				
+				if(subSpace.setParent(parentSpace)) {
+					CFW.DB.Spaces.create(subSpace);
+					parentSpace = CFW.DB.Spaces.selectByName(spacename);
+					System.out.println(parentSpace.getFieldsAsKeyValueString());
+				}
+			}
+		}
+		//-----------------------------------------
+		// All subelements of MySpace including MySpace
+		//-----------------------------------------
+		parentSpace = CFW.DB.Spaces.selectByName("MySpace");
+		String csv = CFWHierarchyUtil.createFetchHierarchyQuery(parentSpace, new String[] {})
+						.getAsCSV();
+		
+		System.out.println("============= HIERARCHY RESULTS =============");
+		System.out.println(csv);
+		Assertions.assertTrue(csv.contains("MySpace"), "Root element is in list.");
+		Assertions.assertTrue(csv.contains("SubSpace9"), "Last subelement is in list.");
+		
+		//-----------------------------------------
+		// All subelements of SubSpace6 including SubSpace6
+		//-----------------------------------------
+		parentSpace = CFW.DB.Spaces.selectByName("SubSpace6");
+		csv = CFWHierarchyUtil.createFetchHierarchyQuery(parentSpace, new String[] {})
+				.getAsCSV();
+	
+		System.out.println("============= HIERARCHY RESULTS =============");
+		System.out.println(csv);
+		Assertions.assertTrue(csv.contains("SubSpace6"), "List contains selected start element is in list.");
+		Assertions.assertTrue(csv.contains("SubSpace9"), "Last subelement is in list.");
+		Assertions.assertTrue(!csv.contains("MySpace"), "Root element is NOT in list.");
+		Assertions.assertTrue(!csv.contains("SubSpace5"), "Element before start element is NOT in list.");
+		
 	}
 	
 }

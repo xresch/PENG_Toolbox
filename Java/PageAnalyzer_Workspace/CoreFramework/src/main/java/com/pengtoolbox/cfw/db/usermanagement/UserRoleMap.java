@@ -9,7 +9,7 @@ import com.pengtoolbox.cfw.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.datahandling.CFWStatement;
+import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.db.usermanagement.Role.RoleFields;
 import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
 
@@ -78,23 +78,23 @@ public class UserRoleMap extends CFWObject {
 		
 		//---------------------------
 		// Rename Column 
-		CFWStatement.renameColumn("CFW_USER_GROUP_MAP", "FK_ID_GROUP",  UserRoleMapFields.FK_ID_ROLE.toString());
+		CFWSQL.renameColumn("CFW_USER_GROUP_MAP", "FK_ID_GROUP",  UserRoleMapFields.FK_ID_ROLE.toString());
 		
 		//---------------------------
 		// Rename Foreign Key
-		CFWStatement.renameForeignKey("CFW_USER_GROUP_MAP",
+		CFWSQL.renameForeignKey("CFW_USER_GROUP_MAP",
 				  "FK_ID_GROUP",
 				  this.getTableName(),
 				  UserRoleMapFields.FK_ID_ROLE.toString());
 		//---------------------------
 		// Rename Foreign Key
-		CFWStatement.renameForeignKey("CFW_USER_GROUP_MAP",
+		CFWSQL.renameForeignKey("CFW_USER_GROUP_MAP",
 									  UserRoleMapFields.FK_ID_USER.toString(),
 									  this.getTableName(),
 									  UserRoleMapFields.FK_ID_USER.toString());
 		//---------------------------
 		// Rename Table
-		CFWStatement.renameTable("CFW_USER_GROUP_MAP", this.getTableName());
+		CFWSQL.renameTable("CFW_USER_GROUP_MAP", this.getTableName());
 			
 	}
 	/**************************************************************************************

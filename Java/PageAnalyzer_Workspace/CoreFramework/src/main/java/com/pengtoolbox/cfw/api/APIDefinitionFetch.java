@@ -11,7 +11,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.datahandling.CFWStatement;
+import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.PlaintextResponse;
@@ -86,7 +86,7 @@ public class APIDefinitionFetch extends APIDefinition{
 				// Create Response
 				if(success) {
 					
-					CFWStatement statement = object.select(definition.getOutputFieldnames());
+					CFWSQL statement = object.select(definition.getOutputFieldnames());
 					
 					for(int i = 0; i < affectedFields.size(); i++) {
 						CFWField<?> currentField = affectedFields.get(i);

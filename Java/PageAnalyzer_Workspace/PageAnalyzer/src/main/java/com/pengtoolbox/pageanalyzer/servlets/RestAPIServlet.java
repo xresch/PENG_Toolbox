@@ -16,12 +16,12 @@ import com.pengtoolbox.cfw.response.PlaintextResponse;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
-/*************************************************************************
+
+/**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, 2018
- * 
- * Distributed under the MIT license
- *************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class RestAPIServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	

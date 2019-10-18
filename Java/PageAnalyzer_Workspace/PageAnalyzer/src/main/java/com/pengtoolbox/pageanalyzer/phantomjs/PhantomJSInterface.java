@@ -6,6 +6,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw.logging.CFWLog;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class PhantomJSInterface
 {
 	private static Logger logger = CFWLog.getLogger(PhantomJSInterface.class.getName());

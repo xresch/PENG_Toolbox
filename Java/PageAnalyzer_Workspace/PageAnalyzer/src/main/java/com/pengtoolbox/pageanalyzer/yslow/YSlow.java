@@ -1,13 +1,16 @@
 package com.pengtoolbox.pageanalyzer.yslow;
 
-import java.util.HashSet;
-import java.util.Stack;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 import javafx.application.Platform;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class YSlow {
 
 	private static YSlow INSTANCE = null;

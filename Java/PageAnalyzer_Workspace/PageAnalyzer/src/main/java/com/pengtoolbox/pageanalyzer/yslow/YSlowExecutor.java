@@ -2,7 +2,6 @@ package com.pengtoolbox.pageanalyzer.yslow;
 
 import java.io.StringWriter;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -12,7 +11,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
-import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.pageanalyzer._main.Main;
@@ -25,12 +23,17 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import netscape.javascript.JSObject;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class YSlowExecutor extends Application {
 	
 	private WebEngine engine;
 	private static YSlowExecutor INSTANCE;
 	
-	private static Logger logger = Logger.getLogger(YSlowExecutor.class.getName());
+	//private static Logger logger = Logger.getLogger(YSlowExecutor.class.getName());
     
 	/***********************************************************************
 	 * 
@@ -118,7 +121,7 @@ public class YSlowExecutor extends Application {
 	/***********************************************************************
 	 * 
 	 ***********************************************************************/
-	private String debugGetStringFromDocument(Document doc)
+	public String debugGetStringFromDocument(Document doc)
 	{
 	    try
 	    {

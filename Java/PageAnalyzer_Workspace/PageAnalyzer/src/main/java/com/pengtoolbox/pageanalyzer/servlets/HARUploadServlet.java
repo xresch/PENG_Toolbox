@@ -19,6 +19,11 @@ import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 import com.pengtoolbox.pageanalyzer.db.PADBResults;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 //@MultipartConfig(maxFileSize=1024*1024*100, maxRequestSize=1024*1024*100)
 public class HARUploadServlet extends HttpServlet
 {

@@ -10,20 +10,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWProperties;
-import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 import com.pengtoolbox.pageanalyzer.db.PADBResults;
+import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 
-/*************************************************************************
+
+/**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, 2018
- * 
- * Distributed under the MIT license
- *************************************************************************/
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class DataServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
@@ -44,19 +42,19 @@ public class DataServlet extends HttpServlet {
 		String type = request.getParameter("type");
 		String resultID = request.getParameter("resultid");
 
-		//-------------------------------------------
-		// Resolve User ID
-		//-------------------------------------------
-		String username = "";
-		
-		if(CFWProperties.AUTHENTICATION_ENABLED) {
-			SessionData data = CFW.Context.Request.getSessionData(); 
-			if(data.isLoggedIn()) {
-				username = data.getUser().username();
-			}
-		}else {
-			username = "anonymous";
-		}
+//		//-------------------------------------------
+//		// Resolve User ID
+//		//-------------------------------------------
+//		String username = "";
+//		
+//		if(CFWProperties.AUTHENTICATION_ENABLED) {
+//			SessionData data = CFW.Context.Request.getSessionData(); 
+//			if(data.isLoggedIn()) {
+//				username = data.getUser().username();
+//			}
+//		}else {
+//			username = "anonymous";
+//		}
 		
 		//-------------------------------------------
 		// Fetch Data

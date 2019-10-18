@@ -12,7 +12,7 @@ import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.datahandling.CFWStatement;
+import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.validation.LengthValidator;
@@ -121,7 +121,7 @@ public class Role extends CFWObject {
 		
 		//---------------------------
 		// Rename Table
-		CFWStatement.renameTable("CFW_GROUP", this.getTableName());
+		CFWSQL.renameTable("CFW_GROUP", this.getTableName());
 		
 	}
 	

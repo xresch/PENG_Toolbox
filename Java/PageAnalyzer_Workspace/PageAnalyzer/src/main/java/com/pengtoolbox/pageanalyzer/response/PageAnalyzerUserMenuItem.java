@@ -9,6 +9,11 @@ import com.pengtoolbox.cfw.response.bootstrap.UserMenuItem;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class PageAnalyzerUserMenuItem extends UserMenuItem {
 
 	public PageAnalyzerUserMenuItem(SessionData data) {

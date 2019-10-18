@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.datahandling.CFWStatement;
+import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.db.usermanagement.RolePermissionMap.RolePermissionMapFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -320,7 +320,7 @@ public class CFWDBRolePermissionMap {
 			return null;
 		}
 		
-		return new CFWStatement(user)
+		return new CFWSQL(user)
 				.queryCache(CFWDBRolePermissionMap.class, "selectPermissionsForUserResultSet")
 				.custom(
 					"SELECT P.* "
@@ -341,7 +341,7 @@ public class CFWDBRolePermissionMap {
 	 ****************************************************************/
 	public static ResultSet getPermissionOverview() {
 		
-		return new CFWStatement(new Permission())
+		return new CFWSQL(new Permission())
 				.queryCache(CFWDBRolePermissionMap.class, "getPermissionOverview")
 				.custom(
 					"SELECT U.USERNAME, G.NAME AS ROLENAME, P.NAME AS PERMISSION"

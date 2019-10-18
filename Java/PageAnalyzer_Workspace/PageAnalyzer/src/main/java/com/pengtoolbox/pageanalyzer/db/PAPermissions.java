@@ -4,6 +4,11 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class PAPermissions {
 
 	public static String MANAGE_RESULTS 		= "Manage Results";

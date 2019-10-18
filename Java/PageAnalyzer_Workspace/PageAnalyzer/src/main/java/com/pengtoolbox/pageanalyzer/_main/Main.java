@@ -9,7 +9,6 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppInterface;
 import com.pengtoolbox.cfw._main.CFWApplication;
-import com.pengtoolbox.cfw.api.CFWAPIServlet;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 import com.pengtoolbox.pageanalyzer.db.Result;
@@ -35,6 +34,11 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class Main extends Application implements CFWAppInterface {
 	
 	public static Logger logger = CFWLog.getLogger(Main.class.getName());

@@ -14,6 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw.response.HTMLResponse;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class CustomContentServlet extends HttpServlet
 {
     /**

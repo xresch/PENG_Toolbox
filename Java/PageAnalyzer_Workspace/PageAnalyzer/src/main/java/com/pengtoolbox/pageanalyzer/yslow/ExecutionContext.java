@@ -2,6 +2,11 @@ package com.pengtoolbox.pageanalyzer.yslow;
 
 import javafx.scene.web.WebView;
 
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
 public class ExecutionContext {
 	
 	private boolean isResultUpdated = false;

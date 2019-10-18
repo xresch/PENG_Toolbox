@@ -8,9 +8,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.api.APIDefinition;
-import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
@@ -25,14 +23,14 @@ public class CFWObject {
 	//------------------------
 	// General
 	private LinkedHashMap<String, CFWField<?>> fields = new LinkedHashMap<String, CFWField<?>>();
-	private int hierarchyLevels = 0;
-	private  CFWObject parent;
-	private  LinkedHashMap<Integer, CFWObject> childObjects;
+	protected int hierarchyLevels = 0;
+	protected  CFWObject parent;
+	protected  LinkedHashMap<Integer, CFWObject> childObjects;
 	
 	//---------------------------
 	// Database
 	protected String tableName; 
-	public CFWField<Integer> primaryField = null;
+	protected CFWField<Integer> primaryField = null;
 	private ArrayList<ForeignKeyDefinition> foreignKeys = new ArrayList<ForeignKeyDefinition>();
 	
 
@@ -229,17 +227,7 @@ public class CFWObject {
 	}
 
 	public void setHierarchyLevels(int hierarchyLevels) {
-		this.hierarchyLevels = hierarchyLevels;
-		//------------------------------------
-		// Add Parent Fields
-		// P0... P1... Pn...
-		for(int i = 0; i < this.getHierarchyLevels(); i++) {
-			this.addField(
-				CFWField.newInteger(FormFieldType.NONE, "P"+i)
-					.setDescription("ID of parent number "+i+" in the same table.")
-			);
-		}
-		
+		CFWHierarchyUtil.setHierarchyLevels(this, hierarchyLevels);
 	}
 
 	public LinkedHashMap<Integer, CFWObject> getChildObjects() {
@@ -250,10 +238,10 @@ public class CFWObject {
 		this.childObjects = childObjects;
 	}
 	
-	private CFWObject addChildObject(CFWObject child) {
-		this.childObjects.put(((Integer)child.getPrimaryField().getValue()), child);
-		return this;
-	}
+//	private CFWObject addChildObject(CFWObject child) {
+//		this.childObjects.put(((Integer)child.getPrimaryField().getValue()), child);
+//		return this;
+//	}
 	
 	public void removeChildObject(CFWObject child) {
 		this.childObjects.remove(((Integer)child.getPrimaryField().getValue()));
@@ -269,50 +257,8 @@ public class CFWObject {
 	 * @return true if succesful, false otherwise.
 	 * 
 	 ****************************************************************/
-	@SuppressWarnings("unchecked")
 	public boolean setParent(CFWObject parent) {
-		this.parent = parent;
-				
-		//-------------------------------
-		// Check if last parent was already
-		// set.
-		System.out.println("ParentValue:"+parent.fields.get("P"+(hierarchyLevels-1)).getValue());
-		if( parent.fields.get("P"+(hierarchyLevels-1)).getValue() != null) {
-			new CFWLog(logger)
-				.method("setParent")
-				.severe("Cannot set the parent as the maximum hierarchy depth is reached.", new IllegalStateException());
-		}
-
-		
-		//-------------------------------
-		// Propagate values from parentObject
-		// to child object.
-		Integer parentValue = null;
-		
-		int i = 0;
-		for(; i < this.hierarchyLevels; i++) {
-			parentValue = ((CFWField<Integer>)parent.getField("P"+i)).getValue();
-			System.out.println("P"+i+":"+parent.fields.get("P"+i).getValue());
-			if(parentValue != null) {
-				((CFWField<Integer>)this.getField("P"+i)).setValue(parentValue);
-			}else {
-				break;
-			}
-		}
-		
-		//-----------------------------------------------------
-		// set this object as the next parent. Only if the last
-		// parent in the hierarchy was not already set.
-		if(parentValue == null) {
-			((CFWField<Integer>)this.getField("P"+i)).setValue(parent.primaryField.getValue());
-		}else {
-			new CFWLog(logger)
-				.method("setParent")
-				.severe("Cannot set the parent as the maximum hierarchy depth is reached.", new IllegalStateException());
-			return false;
-		}
-		
-		return true;
+		return CFWHierarchyUtil.setParent(parent, this);
 	}
 	
 	
@@ -337,7 +283,7 @@ public class CFWObject {
 	 * @return true if successful, false otherwise
 	 ****************************************************************/
 	public boolean createTable() {
-		return new CFWStatement(this).createTable();
+		return new CFWSQL(this).createTable();
 	}
 	
 	/****************************************************************
@@ -382,16 +328,16 @@ public class CFWObject {
 	 * @param Class of the class using the query.
 	 * @param name of the query
 	 ****************************************************************/
-	public CFWStatement queryCache(Class<?> clazz, String name) {
-		return new CFWStatement(this).queryCache(clazz, name);
+	public CFWSQL queryCache(Class<?> clazz, String name) {
+		return new CFWSQL(this).queryCache(clazz, name);
 	}
 	
 	/****************************************************************
 	 * Begins a SELECT * statement.
 	 * @return CFWQuery for method chaining
 	 ****************************************************************/
-	public CFWStatement select() {
-		return new CFWStatement(this).select();
+	public CFWSQL select() {
+		return new CFWSQL(this).select();
 	}
 	
 	/****************************************************************
@@ -399,8 +345,8 @@ public class CFWObject {
 	 * @param field names
 	 * @return CFWQuery for method chaining
 	 ****************************************************************/
-	public CFWStatement select(ArrayList<String> fieldnames) {
-		return new CFWStatement(this).select(fieldnames.toArray(new String[] {}));
+	public CFWSQL select(ArrayList<String> fieldnames) {
+		return new CFWSQL(this).select(fieldnames.toArray(new String[] {}));
 	}
 	
 	/****************************************************************
@@ -408,8 +354,8 @@ public class CFWObject {
 	 * @param field names
 	 * @return CFWQuery for method chaining
 	 ****************************************************************/
-	public CFWStatement select(String ...fieldnames) {
-		return new CFWStatement(this).select(fieldnames);
+	public CFWSQL select(String ...fieldnames) {
+		return new CFWSQL(this).select(fieldnames);
 	}
 	
 	/****************************************************************
@@ -418,8 +364,8 @@ public class CFWObject {
 	 * @param fieldnames
 	 * @return CFWStatement for method chaining
 	 ****************************************************************/
-	public CFWStatement selectWithout(String ...fieldnames) {
-		return new CFWStatement(this).selectWithout(fieldnames);
+	public CFWSQL selectWithout(String ...fieldnames) {
+		return new CFWSQL(this).selectWithout(fieldnames);
 	}
 	
 	/****************************************************************
@@ -429,7 +375,7 @@ public class CFWObject {
 	 * @return CFWQuery for method chaining
 	 ****************************************************************/
 	public boolean insert() {
-		return new CFWStatement(this).insert();
+		return new CFWSQL(this).insert();
 	}
 	
 	/****************************************************************
@@ -440,7 +386,7 @@ public class CFWObject {
 	 * @return CFWQuery for method chaining
 	 ****************************************************************/
 	public boolean insert(String ...fieldnames) {
-		return new CFWStatement(this).insert(fieldnames);
+		return new CFWSQL(this).insert(fieldnames);
 	}
 	
 	/****************************************************************
@@ -450,7 +396,7 @@ public class CFWObject {
 	 * @return CFWQuery for method chaining
 	 ****************************************************************/
 	public boolean update() {
-		return new CFWStatement(this).update();
+		return new CFWSQL(this).update();
 	}
 	
 	/****************************************************************
@@ -461,15 +407,15 @@ public class CFWObject {
 	 * @return CFWQuery for method chaining
 	 ****************************************************************/
 	public boolean update(String ...fieldnames) {
-		return new CFWStatement(this).update(fieldnames);
+		return new CFWSQL(this).update(fieldnames);
 	}
 	
 	/****************************************************************
 	 * Begins a DELETE statement.
 	 * @return CFWStatement for method chaining
 	 ****************************************************************/
-	public CFWStatement delete() {
-		return new CFWStatement(this).delete();
+	public CFWSQL delete() {
+		return new CFWSQL(this).delete();
 	}
 
 }
