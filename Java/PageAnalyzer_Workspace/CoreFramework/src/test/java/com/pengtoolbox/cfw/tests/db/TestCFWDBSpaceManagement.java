@@ -5,9 +5,10 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.datahandling.CFWHierarchyUtil;
+import com.pengtoolbox.cfw.datahandling.CFWHierarchy;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.spaces.Space;
+import com.pengtoolbox.cfw.db.spaces.Space.SpaceFields;
 import com.pengtoolbox.cfw.db.spaces.SpaceGroup;
 import com.pengtoolbox.cfw.tests._master.DBTestMaster;
 
@@ -135,7 +136,12 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 		// All subelements of MySpace including MySpace
 		//-----------------------------------------
 		parentSpace = CFW.DB.Spaces.selectByName("MySpace");
-		String csv = CFWHierarchyUtil.createFetchHierarchyQuery(parentSpace, new String[] {})
+		String csv = new CFWHierarchy(parentSpace)
+						.createFetchHierarchyQuery(
+								new String[] {
+										SpaceFields.PK_ID.toString(),
+										SpaceFields.NAME.toString(),
+								})
 						.getAsCSV();
 		
 		System.out.println("============= HIERARCHY RESULTS =============");
@@ -147,7 +153,11 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 		// All subelements of SubSpace6 including SubSpace6
 		//-----------------------------------------
 		parentSpace = CFW.DB.Spaces.selectByName("SubSpace6");
-		csv = CFWHierarchyUtil.createFetchHierarchyQuery(parentSpace, new String[] {})
+		csv = new CFWHierarchy(parentSpace).createFetchHierarchyQuery(
+				new String[] {
+						SpaceFields.PK_ID.toString(),
+						SpaceFields.NAME.toString(),
+						})
 				.getAsCSV();
 	
 		System.out.println("============= HIERARCHY RESULTS =============");

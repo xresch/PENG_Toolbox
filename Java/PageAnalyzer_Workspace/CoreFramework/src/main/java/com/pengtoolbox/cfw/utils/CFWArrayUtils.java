@@ -30,5 +30,19 @@ public class CFWArrayUtils {
 		copy[copy.length-1] = string;
 		return copy;
 	}
+	
+	public static String[] merge(String[] firstArray, String[] secondArray) {
+		
+		int fal = firstArray.length;        
+		int sal = secondArray.length;   
+		String[] result = new String[fal + sal];  
+		System.arraycopy(firstArray, 0, result, 0, fal);  
+		System.arraycopy(secondArray, 0, result, fal, sal);  
+		System.out.println("###Merge: "+Arrays.toString(result));    
+		
+		return result;
+	}
+	
+	
 
 }

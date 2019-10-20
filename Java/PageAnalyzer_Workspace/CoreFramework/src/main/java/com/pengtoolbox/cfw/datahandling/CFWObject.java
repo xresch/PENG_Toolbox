@@ -227,7 +227,7 @@ public class CFWObject {
 	}
 
 	public void setHierarchyLevels(int hierarchyLevels) {
-		CFWHierarchyUtil.setHierarchyLevels(this, hierarchyLevels);
+		CFWHierarchy.setHierarchyLevels(this, hierarchyLevels);
 	}
 
 	public LinkedHashMap<Integer, CFWObject> getChildObjects() {
@@ -258,7 +258,7 @@ public class CFWObject {
 	 * 
 	 ****************************************************************/
 	public boolean setParent(CFWObject parent) {
-		return CFWHierarchyUtil.setParent(parent, this);
+		return CFWHierarchy.setParent(parent, this);
 	}
 	
 	

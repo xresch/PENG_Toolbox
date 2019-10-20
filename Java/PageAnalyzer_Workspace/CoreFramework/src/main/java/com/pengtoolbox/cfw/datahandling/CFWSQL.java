@@ -514,6 +514,17 @@ public class CFWSQL {
 	}
 	
 	/****************************************************************
+	 * Adds a UNION ALL to the statement.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWSQL unionAll() {
+		if(!isQueryCached()) {
+			query.append(" UNION ALL ");
+		}
+		return this;
+	}
+	
+	/****************************************************************
 	 * Adds a NULLS FIRST to the statement.
 	 * @return CFWStatement for method chaining
 	 ****************************************************************/
