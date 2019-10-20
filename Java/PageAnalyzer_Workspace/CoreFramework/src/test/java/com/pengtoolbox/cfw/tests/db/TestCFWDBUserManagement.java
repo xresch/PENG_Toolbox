@@ -67,8 +67,8 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// Permissions
 		CFW.DB.Permissions.create(new Permission("PermissionA", "user"));
 		permissionA = CFW.DB.Permissions.selectByName("PermissionA");
-		System.out.println("=============== PermissionA ===================\n"+permissionA.getFieldsAsKeyValueString());
-		System.out.println("=============== RoleA ===================\n"+testroleA.getFieldsAsKeyValueString());
+		System.out.println("=============== PermissionA ===================\n"+permissionA.dumpFieldsAsKeyValueString());
+		System.out.println("=============== RoleA ===================\n"+testroleA.dumpFieldsAsKeyValueString());
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionA.id(), testroleA.id(), true);
 		
 		CFW.DB.Permissions.create(new Permission("PermissionAA", "user"));
@@ -231,10 +231,10 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		User updatedUser = CFW.DB.Users.selectByUsernameOrMail(usernameUpdated);
 		
 		System.out.println("===== USER =====");
-		System.out.println(user.getFieldsAsKeyValueString());
+		System.out.println(user.dumpFieldsAsKeyValueString());
 		
 		System.out.println("===== UPDATED USER =====");
-		System.out.println(updatedUser.getFieldsAsKeyValueString());
+		System.out.println(updatedUser.dumpFieldsAsKeyValueString());
 		
 		Assertions.assertTrue(CFW.DB.Users.checkUsernameExists(updatedUser), "User exists, checkUsernameExists(user) works.");
 		Assertions.assertTrue(updatedUser != null);

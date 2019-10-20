@@ -25,7 +25,7 @@ public class CFWObject {
 	private LinkedHashMap<String, CFWField<?>> fields = new LinkedHashMap<String, CFWField<?>>();
 	protected int hierarchyLevels = 0;
 	protected  CFWObject parent;
-	protected  LinkedHashMap<Integer, CFWObject> childObjects;
+	protected  LinkedHashMap<Integer, CFWObject> childObjects = new LinkedHashMap<Integer, CFWObject>();
 	
 	//---------------------------
 	// Database
@@ -144,8 +144,12 @@ public class CFWObject {
 		return null;
 	}
 
-	public CFWField<?> getPrimaryField() {
+	public CFWField<Integer> getPrimaryField() {
 		return primaryField;
+	}
+	
+	public Integer getPrimaryKey() {
+		return primaryField.getValue();
 	}
 
 	protected CFWObject setPrimaryField(CFWField<Integer> primaryField) {
@@ -183,7 +187,7 @@ public class CFWObject {
 	}
 
 	
-	public String getFieldsAsKeyValueString() {
+	public String dumpFieldsAsKeyValueString() {
 		
 		StringBuilder builder = new StringBuilder();
 		
@@ -202,7 +206,7 @@ public class CFWObject {
 		return builder.toString();
 	}
 	
-	public String getFieldsAsKeyValueHTML() {
+	public String dumpFieldsAsKeyValueHTML() {
 		
 		StringBuilder builder = new StringBuilder();
 		
@@ -211,6 +215,47 @@ public class CFWObject {
 			.append(field.getName())
 			.append(": ")
 			.append(field.getValue());
+		}
+
+		return builder.toString();
+	}
+	
+	public String dumpFieldsAsJSON(String... fieldnames) {
+		
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("{");
+		for(String fieldname : fieldnames) {
+			CFWField<?> field = fields.get(fieldname);
+			builder
+				.append("\"")
+				.append(field.getName())
+				.append("\": \"")
+				.append(field.getValue())
+				.append("\", ");
+		}
+		
+		if(builder.length() > 1) {
+			builder.deleteCharAt(builder.length()-1);
+			builder.deleteCharAt(builder.length()-1);
+		}
+		builder.append("}");
+
+		return builder.toString();
+	}
+	
+	public String dumpFieldsAsPlaintext(String... fieldnames) {
+		
+		StringBuilder builder = new StringBuilder();
+		
+		for(String fieldname : fieldnames) {
+			builder
+				.append(fields.get(fieldname).getValue())
+				.append(" - ");
+		}
+		
+		if(builder.length() > 1) {
+			builder.delete(builder.length()-3, builder.length()-1);
 		}
 
 		return builder.toString();

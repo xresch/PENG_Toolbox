@@ -55,7 +55,7 @@ public class TestCFWDBConfig extends DBTestMaster {
 		Configuration config = CFW.DB.Config.selectByName(configname);
 		
 		System.out.println("===== CONFIG =====");
-		System.out.println(config.getFieldsAsKeyValueString());
+		System.out.println(config.dumpFieldsAsKeyValueString());
 
 		Assertions.assertTrue(config != null);
 		Assertions.assertTrue(config.name().equals(configname));
@@ -76,7 +76,7 @@ public class TestCFWDBConfig extends DBTestMaster {
 		Configuration updatedConfig = CFW.DB.Config.selectByName(confignameUpdated);
 		
 		System.out.println("===== UPDATED CONFIG =====");
-		System.out.println(updatedConfig.getFieldsAsKeyValueString());
+		System.out.println(updatedConfig.dumpFieldsAsKeyValueString());
 		
 		Assertions.assertTrue(config != null);
 		Assertions.assertTrue(config.name().equals(confignameUpdated));

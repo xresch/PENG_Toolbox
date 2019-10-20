@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw.datahandling;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
@@ -28,22 +29,37 @@ public class CFWHierarchy<T extends CFWObject> {
 			  "P30", "P31", "P32"
 			  };
 	
-
+	private CFWSQL partialWhereClauseFilter;
 	private T root;
+	private String[] parentFieldnames;
+	// both maps with primary key and object
 	private LinkedHashMap<Integer, T> objectListFlat = new LinkedHashMap<Integer, T>();
 	private LinkedHashMap<Integer, T> objectHierarchy = new LinkedHashMap<Integer, T>();
 	
 	
 	/*****************************************************************************
 	 * Initializes an instance with the root object.
-	 * The root object has to set the id in it's primaryField for this class to work
-	 * properly.
+	 * The root object has to set the id in it's primaryField.
+	 * If the value is null, all elements will be fetched.
 	 * 
+	 * @param root object 
 	 *****************************************************************************/
 	public CFWHierarchy(T root){
 		this.root = root;
+		parentFieldnames = getParentFieldnames(root);
 	}
 	
+	/*****************************************************************************
+	 * Set the filter to apply on fetching the database.
+	 *
+	 * @param CFWSQL that contains only AND/OR clauses
+	 *****************************************************************************/
+	public CFWHierarchy<T> setFilter(CFWSQL partialWhereClauseFilter) {
+		this.partialWhereClauseFilter = partialWhereClauseFilter;
+		return this;
+	}
+	
+
 	/*****************************************************************************
 	 * Set the hierarchy levels of the object and adds the needed
 	 * parent fields (P0... P1... Pn...) with FormFieldType.NONE.
@@ -89,6 +105,19 @@ public class CFWHierarchy<T extends CFWObject> {
 			new CFWLog(logger)
 				.method("setParent")
 				.severe("The class of the two provided objects is not the same.", new IllegalArgumentException());
+			
+			return false;
+		}
+		
+		//-------------------------------
+		// Argument check
+		Integer parentID = parent.getPrimaryField().getValue();
+		Integer childID = child.getPrimaryField().getValue();
+		
+		if(parentID == childID) {
+			new CFWLog(logger)
+				.method("setParent")
+				.severe("Cannot set an object as it's own parent.", new IllegalArgumentException());
 			
 			return false;
 		}
@@ -146,6 +175,7 @@ public class CFWHierarchy<T extends CFWObject> {
 		return true;
 	}
 	
+	
 	/*****************************************************************************
 	 * Set the parent object of this object and adds it to the 
 	 * The childs db entry has to be updated manually afterwards.
@@ -157,7 +187,77 @@ public class CFWHierarchy<T extends CFWObject> {
 		return Arrays.copyOfRange(labels, 0, object.hierarchyLevels);
 	}
 	
+	/*****************************************************************************
+	 * Set the parent object of this object and adds it to the 
+	 * The childs db entry has to be updated manually afterwards.
+	 * 
+	 * @param object used as first parent, primaryField will be used for selection.
+	 *        Set to null to retrieve the full hierarchy.
+	 * @return true if successful, false otherwise.
+	 * 
+	 *****************************************************************************/
+	public CFWHierarchy<T> fetchAndCreateHierarchy(String... resultFields) {
+		
+		ArrayList<T>objectArray = fetchFlatList(resultFields);
+		
+		for(T object : objectArray) {
+			objectListFlat.put(object.getPrimaryField().getValue(), object);
+			
+			//Find last ParentID that is not null in fields P0 ... Pn
+			for(int i=0; i < parentFieldnames.length; i++) {
+				Integer parentValue = (Integer)object.getField(parentFieldnames[i]).getValue();
+				
+				if(parentValue == null) {
+					
+					if( i == 0 ) {
+						//is a root object
+						objectHierarchy.put(object.getPrimaryField().getValue(), object);
+					}else {
+						//is a child object
+						Integer lastParentID = (Integer)object.getField(parentFieldnames[i-1]).getValue();
+						objectListFlat.get(lastParentID).childObjects.put(object.getPrimaryKey(), object);
+					}
+					
+					break;
+				}
+			}
+		}
+		
+		return this;
+	}
 	
+	/*****************************************************************************
+	 *  
+	 *****************************************************************************/
+	public String dumpHierarchy(String... dumpFields) {
+		return CFWHierarchy.dumpHierarchy("", (LinkedHashMap<Integer, CFWObject>)objectHierarchy, dumpFields);
+	}
+	
+	/*****************************************************************************
+	 *  
+	 *****************************************************************************/
+	public static String dumpHierarchy(String currentPrefix, LinkedHashMap<Integer, CFWObject> objectHierarchy, String... dumpFields) {
+		
+		//-----------------------------------
+		//Create Prefix
+		StringBuilder builder = new StringBuilder();
+		
+		int objectCount = objectHierarchy.values().size();
+		for(int i = 0; i < objectCount; i++) {
+			CFWObject object = (CFWObject)objectHierarchy.values().toArray()[i];
+			builder.append(currentPrefix)
+				   .append("|--> ")
+				   .append(object.dumpFieldsAsPlaintext(dumpFields)).append("\n");
+			
+			if(objectCount > 1 && (i != objectCount-1)) {
+				builder.append(dumpHierarchy(currentPrefix+"|  ", object.childObjects, dumpFields));
+			}else{
+				builder.append(dumpHierarchy(currentPrefix+"  ", object.childObjects, dumpFields));
+			}
+		}
+		
+		return builder.toString();
+	}
 	
 	/*****************************************************************************
 	 * Set the parent object of this object and adds it to the 
@@ -168,9 +268,9 @@ public class CFWHierarchy<T extends CFWObject> {
 	 * @return true if successful, false otherwise.
 	 * 
 	 *****************************************************************************/
-	public ResultSet fetchFlatList(String... resultFields) {
-		return createFetchHierarchyQuery(resultFields)
-					.getResultSet();
+	public ArrayList<T> fetchFlatList(String... resultFields) {
+		return (ArrayList<T>)createFetchHierarchyQuery(resultFields)
+					.getObjectList();
 	}
 	
 	/*****************************************************************************
@@ -188,84 +288,88 @@ public class CFWHierarchy<T extends CFWObject> {
 	}
 	
 	/*****************************************************************************
-	 * Set the parent object of this object and adds it to the 
-	 * The childs db entry has to be updated manually afterwards.
 	 * 
-	 * @param object used as first parent, primaryField will be used for selection.
-	 *        Set to null to retrieve the full hierarchy.
-	 * @return true if successful, false otherwise.
-	 * 
+	 * @param names of the fields to be fetched additionally to the parent fields.
+	 * @param 
+	 * @return CFWSQL pre-created statement
 	 *****************************************************************************/
 	public CFWSQL createFetchHierarchyQuery(String... resultFields) {
 		
 		String parentPrimaryFieldname = root.getPrimaryField().getName();
-		Integer parentPrimaryValue = (Integer)root.getPrimaryField().getValue();
-		String[] parentFieldnames = getParentFieldnames(root);
-				
+		Integer parentPrimaryValue = root.getPrimaryKey();
+		String[] finalResultFields = CFWArrayUtils.merge(parentFieldnames, resultFields);
+		
+		String queryCacheID = root.getClass()+parentPrimaryFieldname+parentPrimaryValue+Arrays.deepToString(finalResultFields);
+		
+		//----------------------------------------------
+		// if primaryValue is null fetch All
+		if(parentPrimaryValue == null) {
+			CFWSQL statement = root.select(finalResultFields)
+					.queryCache(CFWHierarchy.class, queryCacheID);
+			
+			if(partialWhereClauseFilter != null) {
+				statement
+					.custom(" WHERE ")
+					.append(partialWhereClauseFilter);
+			}
+			
+			statement
+				.orderby(parentFieldnames)
+				.nullsFirst();
+			
+			return statement;
+		}
+		
 		//---------------------------------
-		// get all parent fields of the 
-		// first Parent ID
+		// get all parent fields with values
+		// of the parent element
 		CFWObject parent = root.select(parentFieldnames)
 			.where(parentPrimaryFieldname, parentPrimaryValue)
 			.getFirstObject();
 		
-		System.out.println("=================== Parent ==================");
-		System.out.println(parent.getFieldsAsKeyValueString());
-		
-		System.out.println("*** Parent Labels ***");
-		System.out.println(Arrays.toString(getParentFieldnames(root)));
+//		System.out.println("=================== Parent ==================");
+//		System.out.println(parent.getFieldsAsKeyValueString());
+//		
+//		System.out.println("*** Parent Labels ***");
+//		System.out.println(Arrays.toString(getParentFieldnames(root)));
 		
 		//---------------------------------
-		// Get Data
-		
+		// Create Select Statement, union
+		// of root object and it's children
 		Integer parentValue = null;
-		String[] finalResultFields = CFWArrayUtils.merge(parentFieldnames, resultFields);
 		
 		CFWSQL statement = root.select(finalResultFields)
+				.queryCache(CFWHierarchy.class, queryCacheID)
 				.where(parentPrimaryFieldname, parentPrimaryValue)
+				.append(partialWhereClauseFilter)	
 				.union()
 				.select(finalResultFields);
 				
 		int i = 0;
-		
-//		for(; i < parentFieldnames.length; i++) {
-//			parentValue = ((CFWField<Integer>)parent.getFields().get(parentFieldnames[i])).getValue();
-//			
-//			if(parentValue != null) {
-//				if(i > 0) {
-//					statement.and(parentFieldnames[i], parentValue);
-//				}else {
-//					statement.where(parentFieldnames[i], parentValue);
-//				}
-//			}else {
-//				// Set parent primary key as last select
-//				if(i > 0) {
-//					statement.and(parentFieldnames[i], parentPrimaryValue);
-//				}else {
-//					statement.where(parentFieldnames[i], parentPrimaryValue);
-//				}
-//			}
-//		}
 		
 		//--------------------------------------------
 		// Filter by the parent object, which will always
 		// show up in the same P... field.
 		
 		for(; i < parentFieldnames.length; i++) {
-			parentValue = ((CFWField<Integer>)parent.getFields().get(parentFieldnames[i])).getValue();
+			parentValue = (Integer)parent.getField(parentFieldnames[i]).getValue();
 			
 			if(parentValue == null) {
-				statement.where(parentFieldnames[i], parentPrimaryValue);
+				statement
+					.where(parentFieldnames[i], parentPrimaryValue)
+					.append(partialWhereClauseFilter)	;
+
 				break;
 			}
 		}
 		
+		//--------------------------------------------
+		// Set ordering
 		statement.orderby(parentFieldnames)
-		.nullsFirst();
+				 .nullsFirst();
 		
 		return statement;
 		
 	}
 	
-
 }

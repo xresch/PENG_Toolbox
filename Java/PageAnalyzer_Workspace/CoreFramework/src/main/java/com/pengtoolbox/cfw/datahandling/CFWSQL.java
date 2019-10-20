@@ -48,6 +48,14 @@ public class CFWSQL {
 	}
 	
 	/****************************************************************
+	 * Returns the current String representation of the query.
+	 * @param Class of the class using the query.
+	 * @param name of the query
+	 ****************************************************************/
+	public String getQueryString() {
+		return this.query.toString();
+	}
+	/****************************************************************
 	 * Caches the query with the specified name for lower performance
 	 * impact.
 	 * @param Class of the class using the query.
@@ -608,6 +616,20 @@ public class CFWSQL {
 	public CFWSQL custom(String queryPart) {
 		if(!isQueryCached()) {
 			query.append(queryPart);
+		}
+		return this;
+	}
+	
+	/****************************************************************
+	 * Adds a custom part to the query.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWSQL append(CFWSQL partialQuery) {
+		if(partialQuery != null) {
+			if(!isQueryCached()) {
+				query.append(partialQuery.getQueryString());
+			}
+			values.addAll(partialQuery.values);
 		}
 		return this;
 	}

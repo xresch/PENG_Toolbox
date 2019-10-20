@@ -85,7 +85,7 @@ public class FormTestServlet extends HttpServlet
 				origin.mapRequestParameters(request);
 				JSONResponse json = new JSONResponse();
 		    	json.addAlert(MessageType.SUCCESS, "BTFormHandler: Post recieved from "+formID+"!!!");
-		    	json.addAlert(MessageType.SUCCESS, origin.getFieldsAsKeyValueHTML());
+		    	json.addAlert(MessageType.SUCCESS, origin.dumpFieldsAsKeyValueHTML());
 		    	form.mapRequestParameters(request);
 			}
 		});

@@ -52,14 +52,13 @@ public class Space extends CFWObject {
 			.setForeignKeyCascade(this, SpaceGroup.class, SpaceGroupFields.PK_ID)
 			.setDescription("The id of the space group the space is part of.")
 			.apiFieldType(FormFieldType.NUMBER)
-			.setValue(-999);
+			.setValue(null);
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, SpaceFields.PK_ID.toString())
 			.setPrimaryKeyAutoIncrement(this)
 			.setDescription("The id of the space.")
 			.apiFieldType(FormFieldType.NUMBER)
-			.setValue(-999);
-
+			.setValue(null);
 	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, SpaceFields.NAME.toString())
 			.setColumnDefinition("VARCHAR(255) UNIQUE")

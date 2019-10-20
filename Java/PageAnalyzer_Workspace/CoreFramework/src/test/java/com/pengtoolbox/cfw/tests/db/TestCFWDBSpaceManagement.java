@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWHierarchy;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.db.spaces.Space;
 import com.pengtoolbox.cfw.db.spaces.Space.SpaceFields;
 import com.pengtoolbox.cfw.db.spaces.SpaceGroup;
@@ -18,6 +19,49 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 	@BeforeClass
 	public static void fillWithTestData() {
 		
+
+		//----------------------------------------
+		// Create SpaceGroups
+		CFW.DB.SpaceGroups.create(new SpaceGroup("SpaceGroupA"));
+		SpaceGroup SpaceGroupA = CFW.DB.SpaceGroups.selectByName("SpaceGroupA");
+		
+		CFW.DB.SpaceGroups.create(new SpaceGroup("SpaceGroupB"));
+		SpaceGroup SpaceGroupB = CFW.DB.SpaceGroups.selectByName("SpaceGroupB");
+		
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Spaces.checkSpaceExists("FacespaceB")) {
+			CFW.DB.Spaces.create(
+					new Space(SpaceGroupB.id(), "FacespaceB")
+						.description("A spacy space for your face.")
+						.isDeletable(true)
+						.isRenamable(true)
+			);
+		}
+		
+		Space parentSpace = CFW.DB.Spaces.selectByName("FacespaceB");
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		for(int i = 0; i < 10; i++) {
+			String spacename = "Subface"+i;
+			if(!CFW.DB.Spaces.checkSpaceExists(spacename)) {
+				
+				Space subSpace = new Space(SpaceGroupB.id(), spacename)
+					.description("A spacy subspace for other faces.")
+					.isDeletable(true)
+					.isRenamable(true);
+				
+				if(subSpace.setParent(parentSpace)) {
+					CFW.DB.Spaces.create(subSpace);
+					parentSpace = CFW.DB.Spaces.selectByName(spacename);
+					System.out.println(parentSpace.dumpFieldsAsKeyValueString());
+				}
+			}
+		}
 		
 	}
 
@@ -56,7 +100,7 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 		SpaceGroup spacegroup = CFW.DB.SpaceGroups.selectByName(spacegroupname);
 		
 		System.out.println("===== CONFIG =====");
-		System.out.println(spacegroup.getFieldsAsKeyValueString());
+		System.out.println(spacegroup.dumpFieldsAsKeyValueString());
 
 		Assertions.assertTrue(spacegroup != null);
 		Assertions.assertTrue(spacegroup.name().equals(spacegroupname));
@@ -74,7 +118,7 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 		SpaceGroup updatedConfig = CFW.DB.SpaceGroups.selectByName(spacegroupnameUpdated);
 		
 		System.out.println("===== UPDATED CONFIG =====");
-		System.out.println(updatedConfig.getFieldsAsKeyValueString());
+		System.out.println(updatedConfig.dumpFieldsAsKeyValueString());
 		
 		Assertions.assertTrue(spacegroup != null);
 		Assertions.assertTrue(spacegroup.name().equals(spacegroupnameUpdated));
@@ -128,21 +172,27 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 				if(subSpace.setParent(parentSpace)) {
 					CFW.DB.Spaces.create(subSpace);
 					parentSpace = CFW.DB.Spaces.selectByName(spacename);
-					System.out.println(parentSpace.getFieldsAsKeyValueString());
+					System.out.println(parentSpace.dumpFieldsAsKeyValueString());
 				}
 			}
 		}
+		
 		//-----------------------------------------
 		// All subelements of MySpace including MySpace
 		//-----------------------------------------
+		String[] fieldnames = 
+				new String[] {
+					SpaceFields.PK_ID.toString(),
+					SpaceFields.NAME.toString(),
+				};
+				
 		parentSpace = CFW.DB.Spaces.selectByName("MySpace");
-		String csv = new CFWHierarchy(parentSpace)
-						.createFetchHierarchyQuery(
-								new String[] {
-										SpaceFields.PK_ID.toString(),
-										SpaceFields.NAME.toString(),
-								})
-						.getAsCSV();
+		String csv = new CFWHierarchy<Space>(parentSpace)
+				.setFilter(new CFWSQL(parentSpace).and(
+						SpaceFields.FK_ID_SPACEGROUP.toString(), spacegroupid)
+						)
+				.createFetchHierarchyQuery(fieldnames)	
+				.getAsCSV();
 		
 		System.out.println("============= HIERARCHY RESULTS =============");
 		System.out.println(csv);
@@ -151,13 +201,14 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 		
 		//-----------------------------------------
 		// All subelements of SubSpace6 including SubSpace6
+		// filtered by space ID
 		//-----------------------------------------
 		parentSpace = CFW.DB.Spaces.selectByName("SubSpace6");
-		csv = new CFWHierarchy(parentSpace).createFetchHierarchyQuery(
-				new String[] {
-						SpaceFields.PK_ID.toString(),
-						SpaceFields.NAME.toString(),
-						})
+		csv = new CFWHierarchy<Space>(parentSpace)
+				.setFilter(new CFWSQL(parentSpace).and(
+						SpaceFields.FK_ID_SPACEGROUP.toString(), spacegroupid)
+						)
+				.createFetchHierarchyQuery(fieldnames)
 				.getAsCSV();
 	
 		System.out.println("============= HIERARCHY RESULTS =============");
@@ -166,6 +217,31 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 		Assertions.assertTrue(csv.contains("SubSpace9"), "Last subelement is in list.");
 		Assertions.assertTrue(!csv.contains("MySpace"), "Root element is NOT in list.");
 		Assertions.assertTrue(!csv.contains("SubSpace5"), "Element before start element is NOT in list.");
+		
+		
+		//-----------------------------------------
+		// Fetch all with primaryID null
+		//-----------------------------------------
+
+		csv = new CFWHierarchy<Space>(new Space(2, "dummyWithIDNull"))
+				.createFetchHierarchyQuery(fieldnames)
+				.getAsCSV();
+		
+		System.out.println("============= HIERARCHY RESULTS =============");
+		System.out.println(csv);
+		Assertions.assertTrue(csv.contains("MySpace"), "Root element is in list.");
+		Assertions.assertTrue(csv.contains("SubSpace9"), "Last subelement is in list.");
+		
+		//-----------------------------------------
+		// Fetch all with primaryID null
+		//-----------------------------------------
+
+		String hierarchyDump =  new CFWHierarchy<Space>(new Space(2, "dummyWithIDNull"))
+				.fetchAndCreateHierarchy(fieldnames)
+				.dumpHierarchy(fieldnames);
+		
+		System.out.println("============= HIERARCHY DUMP =============");
+		System.out.println(hierarchyDump);
 		
 	}
 	
