@@ -33,8 +33,10 @@ public class CFWSQL {
 	private ResultSet result = null;
 	
 	public CFWSQL(CFWObject object) {
-		this.object = object;
-		this.fields = object.getFields();
+		if(object != null) {
+			this.object = object;
+			this.fields = object.getFields();
+		}
 	} 
 	
 	/****************************************************************
@@ -629,6 +631,7 @@ public class CFWSQL {
 			if(!isQueryCached()) {
 				query.append(partialQuery.getQueryString());
 			}
+			System.out.println("### Values: "+Arrays.toString(partialQuery.values.toArray()));
 			values.addAll(partialQuery.values);
 		}
 		return this;

@@ -205,7 +205,8 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 		//-----------------------------------------
 		parentSpace = CFW.DB.Spaces.selectByName("SubSpace6");
 		csv = new CFWHierarchy<Space>(parentSpace)
-				.setFilter(new CFWSQL(parentSpace).and(
+				.setFilter(
+						new CFWSQL(parentSpace).and(
 						SpaceFields.FK_ID_SPACEGROUP.toString(), spacegroupid)
 						)
 				.createFetchHierarchyQuery(fieldnames)
@@ -224,6 +225,10 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 		//-----------------------------------------
 
 		csv = new CFWHierarchy<Space>(new Space(2, "dummyWithIDNull"))
+				.setFilter(
+					new CFWSQL(null).and(
+					SpaceFields.FK_ID_SPACEGROUP.toString(), spacegroupid)
+				)
 				.createFetchHierarchyQuery(fieldnames)
 				.getAsCSV();
 		
@@ -243,6 +248,10 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 		System.out.println("============= HIERARCHY DUMP =============");
 		System.out.println(hierarchyDump);
 		
+		Assertions.assertTrue(hierarchyDump.matches("[\\S\\s]*--> \\d+ - MySpace[\\S\\s]*"), "Root element is in list.");
+		Assertions.assertTrue(hierarchyDump.matches("[\\S\\s]*--> \\d+ - FacespaceB[\\S\\s]*"), "Root element is in list.");
+		Assertions.assertTrue(hierarchyDump.matches("[\\S\\s]*\\|  \\|                \\|--> \\d+ - SubSpace8[\\S\\s]*"), "Hierarchy is visualized.");
+
 	}
 	
 }

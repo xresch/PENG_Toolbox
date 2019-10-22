@@ -299,17 +299,17 @@ public class CFWHierarchy<T extends CFWObject> {
 		Integer parentPrimaryValue = root.getPrimaryKey();
 		String[] finalResultFields = CFWArrayUtils.merge(parentFieldnames, resultFields);
 		
-		String queryCacheID = root.getClass()+parentPrimaryFieldname+parentPrimaryValue+Arrays.deepToString(finalResultFields);
+		//String queryCacheID = root.getClass()+parentPrimaryFieldname+parentPrimaryValue+Arrays.deepToString(finalResultFields);
 		
 		//----------------------------------------------
 		// if primaryValue is null fetch All
 		if(parentPrimaryValue == null) {
-			CFWSQL statement = root.select(finalResultFields)
-					.queryCache(CFWHierarchy.class, queryCacheID);
+			CFWSQL statement = root.select(finalResultFields);
+					//.queryCache(CFWHierarchy.class, queryCacheID);
 			
 			if(partialWhereClauseFilter != null) {
 				statement
-					.custom(" WHERE ")
+					.custom(" WHERE 1 = 1 ")
 					.append(partialWhereClauseFilter);
 			}
 			
@@ -339,7 +339,7 @@ public class CFWHierarchy<T extends CFWObject> {
 		Integer parentValue = null;
 		
 		CFWSQL statement = root.select(finalResultFields)
-				.queryCache(CFWHierarchy.class, queryCacheID)
+				//.queryCache(CFWHierarchy.class, queryCacheID)
 				.where(parentPrimaryFieldname, parentPrimaryValue)
 				.append(partialWhereClauseFilter)	
 				.union()
