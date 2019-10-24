@@ -279,15 +279,18 @@ public class CFWDB {
 	public static Connection getConnection() throws SQLException {	
 		
 		if(isInitialized) {
-			CFWLog log = new CFWLog(logger).method("getConnection");
-			log.finer("DB Connections Active: "+connectionPool.getActiveConnections());
+			new CFWLog(logger)
+				.method("getConnection")
+				.finer("DB Connections Active: "+connectionPool.getActiveConnections());
 			
 			if(transactionConnection.get() != null) {
 				return transactionConnection.get();
 			}else {
-				Connection connection = connectionPool.getConnection();
-				addOpenConnection(connection);
-				return connection;
+				synchronized (connectionPool) {
+					Connection connection = connectionPool.getConnection();
+					addOpenConnection(connection);
+					return connection;
+				}
 			}
 		}else {
 			throw new SQLException("DB not initialized, call CFWDB.initialize() first.");
@@ -547,7 +550,10 @@ public class CFWDB {
 		} catch (SQLException e) {
 			log.severe("Issue executing prepared statement.", e);
 			try {
-				if(conn != null && transactionConnection == null) { conn.close(); }
+				if(conn != null && transactionConnection == null) { 
+					removeOpenConnection(conn);
+					conn.close(); 
+				}
 				if(prepared != null) { prepared.close(); }
 			} catch (SQLException e2) {
 				log.severe("Issue closing resources.", e2);
@@ -614,10 +620,16 @@ public class CFWDB {
 	public static void close(ResultSet resultSet){
 		
 		try {
-			if(resultSet != null && transactionConnection.get() == null) {
+			if(resultSet != null 
+			&& transactionConnection.get() == null
+			&& !resultSet.getStatement().isClosed()) {
+				
 				removeOpenConnection(resultSet.getStatement().getConnection());
-				resultSet.getStatement().getConnection().close();
-				resultSet.close();
+				
+				if(!resultSet.getStatement().getConnection().isClosed()) {
+					resultSet.getStatement().getConnection().close();
+					resultSet.close();
+				}
 			}
 		} catch (SQLException e) {
 			new CFWLog(logger)
