@@ -23,7 +23,8 @@ public class BTMenu extends HierarchicalHTMLItem {
 	 ***********************************************************************************/
 	protected void createHTML(StringBuilder html) {
 		
-		html.append("\n<div id=\"menubar\">");
+		html.append("\n<div id=\"menubar\" class=\"navbar\">");
+		html.append("  <a class=\"navbar-brand navbarFlexibleSizeHack\">&nbsp;</a>");
 		
 		html.append("<nav class=\"navbar navbar-expand-md fixed-top navbar-dark\">");
 		html.append("  <a class=\"navbar-brand\" href=\"#\">");
