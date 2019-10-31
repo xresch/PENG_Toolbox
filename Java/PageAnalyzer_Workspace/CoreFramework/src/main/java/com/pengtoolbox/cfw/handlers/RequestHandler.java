@@ -83,10 +83,16 @@ public class RequestHandler extends HandlerWrapper
     	//##################################
     	HttpSession session = request.getSession();
     	
+    	// check outside the loop first to avoid synchronizing when it is not needed
     	if(session.getAttribute(CFW.SESSION_DATA) == null) {
-    		SessionData data = new SessionData();
-    		session.setAttribute(CFW.SESSION_DATA, data);
-    		CFWApplication.propagateSessionDataToOtherContexts(request, data);
+    		synchronized(CFW.SESSION_DATA){
+    			if(session.getAttribute(CFW.SESSION_DATA) == null) {
+		    		SessionData data = new SessionData();
+		    		session.setAttribute(CFW.SESSION_DATA, data);
+		    		
+		    		CFWApplication.propagateSessionDataToOtherContexts(request, data);
+    			}
+    		}
     		
     	};
     	

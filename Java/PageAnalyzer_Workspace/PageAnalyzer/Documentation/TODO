@@ -1,8 +1,5 @@
 TODO
 ====
-- LOGO!!!
-- Reset User Password
-- Copyrights
 
 - Truncate too long toasts.
 - Show previous toasts all toasts button
@@ -26,6 +23,9 @@ TODO
 
 DONE
 ====
+- LOGO!!!
+- Reset User Password
+- Copyrights
 - Manage open connections and check on request exit.
 - Fix navbar scrolling height on small device
 - Custom Logo Setting
