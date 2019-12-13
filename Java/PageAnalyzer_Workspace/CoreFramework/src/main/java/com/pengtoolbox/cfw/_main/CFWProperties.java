@@ -83,10 +83,16 @@ public class CFWProperties {
 	public static String LDAP_SEARCHBASE = "";
 	
 	/** The name of the attribute storing the username. (Property=authentication_ldap_user_attribute, Default="") */
-	public static String LDAP_USER_ATTRIBUTE = "";
+	public static String LDAP_ATTRIBUTE_USERNAME = "";
 	
-	/** The name of the attribute storing the email of the user.  (Property=authentication_ldap_mail_attribute, Default="") */
-	public static String LDAP_MAIL_ATTRIBUTE = "";
+	/** The name of the attribute storing the email of the user.  (Property=authentication_ldap_attribute_mail, Default="") */
+	public static String LDAP_ATTRIBUTE_EMAIL = "";
+	
+	/** The name of the attribute storing the firstname of the user.  (Property=authentication_ldap_attribute_firstname, Default="") */
+	public static String LDAP_ATTRIBUTE_FIRSTNAME = "";
+
+	/** The name of the attribute storing the lastname of the user.  (Property=authentication_ldap_attribute_lastname, Default="") */
+	public static String LDAP_ATTRIBUTE_LASTNAME = "";
 	
 	/** The name of the database server. (Property=cfw_h2_server, Default="localhost") */
 	public static String DB_SERVER = "localhost";
@@ -147,8 +153,11 @@ public class CFWProperties {
 		LDAP_USER 						= CFWProperties.configAsString("authentication_ldap_user", LDAP_USER);
 		LDAP_PASSWORD 					= CFWProperties.configAsString("authentication_ldap_password", LDAP_PASSWORD);
 		LDAP_SEARCHBASE 				= CFWProperties.configAsString("authentication_ldap_searchbase", LDAP_SEARCHBASE);
-		LDAP_USER_ATTRIBUTE 			= CFWProperties.configAsString("authentication_ldap_user_attribute", LDAP_USER_ATTRIBUTE);
-		LDAP_MAIL_ATTRIBUTE 			= CFWProperties.configAsString("authentication_ldap_mail_attribute", LDAP_MAIL_ATTRIBUTE);
+		LDAP_ATTRIBUTE_USERNAME 		= CFWProperties.configAsString("authentication_ldap_attribute_username", LDAP_ATTRIBUTE_USERNAME);
+		LDAP_ATTRIBUTE_EMAIL 			= CFWProperties.configAsString("authentication_ldap_attribute_mail", LDAP_ATTRIBUTE_EMAIL);
+		LDAP_ATTRIBUTE_FIRSTNAME		= CFWProperties.configAsString("authentication_ldap_attribute_firstname", LDAP_ATTRIBUTE_FIRSTNAME);
+		LDAP_ATTRIBUTE_LASTNAME			= CFWProperties.configAsString("authentication_ldap_attribute_lastname", LDAP_ATTRIBUTE_LASTNAME);
+		
 		DB_SERVER					= CFWProperties.configAsString("cfw_h2_server", DB_SERVER);
 		DB_PORT						= CFWProperties.configAsInt("cfw_h2_port", DB_PORT);
 		DB_STORE_PATH				= CFWProperties.configAsString("cfw_h2_path", DB_STORE_PATH);

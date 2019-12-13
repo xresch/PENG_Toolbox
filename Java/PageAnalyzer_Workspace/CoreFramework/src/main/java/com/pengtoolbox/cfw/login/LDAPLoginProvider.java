@@ -73,7 +73,7 @@ public class LDAPLoginProvider implements LoginProvider {
 		    ctrls.setReturningAttributes(new String[] {});
 		    ctrls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 	
-		    NamingEnumeration<javax.naming.directory.SearchResult> answers = context.search(CFWProperties.LDAP_SEARCHBASE, "("+CFWProperties.LDAP_USER_ATTRIBUTE+"=" + username + ")", ctrls);
+		    NamingEnumeration<javax.naming.directory.SearchResult> answers = context.search(CFWProperties.LDAP_SEARCHBASE, "("+CFWProperties.LDAP_ATTRIBUTE_USERNAME+"=" + username + ")", ctrls);
 		    if(answers.hasMore()) {
 		    	
 		    	//------------------------------
@@ -83,11 +83,24 @@ public class LDAPLoginProvider implements LoginProvider {
 		    	userInNamespace = result.getNameInNamespace();
 		    	Attributes attr = context.getAttributes(userInNamespace);
 		    	
-		    	Attribute mail = attr.get(CFW.Properties.LDAP_MAIL_ATTRIBUTE);
+		    	Attribute mail = attr.get(CFW.Properties.LDAP_ATTRIBUTE_EMAIL);
 		    	String emailString = null;
 		    	if(mail != null) {
 		    		emailString = mail.get(0).toString();
 		    	}
+		    	
+		    	Attribute firstname = attr.get(CFW.Properties.LDAP_ATTRIBUTE_FIRSTNAME);
+		    	String firstnameString = null;
+		    	if(firstname != null) {
+		    		firstnameString = firstname.get(0).toString();
+		    	}
+		    	
+		    	Attribute lastname = attr.get(CFW.Properties.LDAP_ATTRIBUTE_LASTNAME);
+		    	String lastnameString = null;
+		    	if(lastname != null) {
+		    		lastnameString = lastname.get(0).toString();
+		    	}
+		    	
 		    	//System.out.println("user: "+user);
 		    	//System.out.println("MAIL: "+mail);
 		    	
@@ -99,7 +112,9 @@ public class LDAPLoginProvider implements LoginProvider {
 			    	User newUser = new User(username)
 							.isForeign(true)
 							.status("Active")
-							.email(emailString);
+							.email(emailString)
+							.firstname(firstnameString)
+							.lastname(lastnameString);
 
 					CFW.DB.Users.create(newUser);
 					userFromDB = CFW.DB.Users.selectByUsernameOrMail(username);
@@ -110,10 +125,26 @@ public class LDAPLoginProvider implements LoginProvider {
 		    		
 		    		//-----------------------------
 		    		// Update mail if necessary
-		    		if( (emailString != null && userFromDB.email() == null)
-		    		 || (emailString != null && !userFromDB.email().equals(mail.get(0)) ) ) {
+		    		if( (mail != null && userFromDB.email() == null)
+		    		 || (mail != null && !userFromDB.email().equals(mail.get(0)) ) ) {
 		    			userFromDB.email(emailString);
 		    			userFromDB.update(UserFields.EMAIL.toString());
+		    		}
+		    		
+		    		//-----------------------------
+		    		// Update firstname if necessary
+		    		if( (firstname != null && userFromDB.firstname() == null)
+		    		 || (firstname != null && !userFromDB.firstname().equals(firstname.get(0)) ) ) {
+		    			userFromDB.firstname(firstnameString);
+		    			userFromDB.update(UserFields.FIRSTNAME.toString());
+		    		}
+		    		
+		    		//-----------------------------
+		    		// Update lastname if necessary
+		    		if( (lastname != null && userFromDB.lastname() == null)
+		    		 || (lastname != null && !userFromDB.lastname().equals(lastname.get(0)) ) ) {
+		    			userFromDB.lastname(lastnameString);
+		    			userFromDB.update(UserFields.LASTNAME.toString());
 		    		}
 		    	}
 		    	
