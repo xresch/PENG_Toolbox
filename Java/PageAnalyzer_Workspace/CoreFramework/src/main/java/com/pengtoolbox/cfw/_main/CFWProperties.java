@@ -8,7 +8,7 @@ import java.util.Properties;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWProperties {
@@ -82,8 +82,11 @@ public class CFWProperties {
 	/** The URL used for LDAP authentication. (Property=authentication_ldap_searchbase, Default="") */
 	public static String LDAP_SEARCHBASE = "";
 	
-	/** The URL used for LDAP authentication. (Property=authentication_ldap_user_attribute, Default="") */
+	/** The name of the attribute storing the username. (Property=authentication_ldap_user_attribute, Default="") */
 	public static String LDAP_USER_ATTRIBUTE = "";
+	
+	/** The name of the attribute storing the email of the user.  (Property=authentication_ldap_mail_attribute, Default="") */
+	public static String LDAP_MAIL_ATTRIBUTE = "";
 	
 	/** The name of the database server. (Property=cfw_h2_server, Default="localhost") */
 	public static String DB_SERVER = "localhost";
@@ -145,7 +148,7 @@ public class CFWProperties {
 		LDAP_PASSWORD 					= CFWProperties.configAsString("authentication_ldap_password", LDAP_PASSWORD);
 		LDAP_SEARCHBASE 				= CFWProperties.configAsString("authentication_ldap_searchbase", LDAP_SEARCHBASE);
 		LDAP_USER_ATTRIBUTE 			= CFWProperties.configAsString("authentication_ldap_user_attribute", LDAP_USER_ATTRIBUTE);
-
+		LDAP_MAIL_ATTRIBUTE 			= CFWProperties.configAsString("authentication_ldap_mail_attribute", LDAP_MAIL_ATTRIBUTE);
 		DB_SERVER					= CFWProperties.configAsString("cfw_h2_server", DB_SERVER);
 		DB_PORT						= CFWProperties.configAsInt("cfw_h2_port", DB_PORT);
 		DB_STORE_PATH				= CFWProperties.configAsString("cfw_h2_path", DB_STORE_PATH);
