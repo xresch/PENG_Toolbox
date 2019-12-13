@@ -31,9 +31,7 @@ public class LDAPLoginProvider implements LoginProvider {
 			// Check User in DB			
 			User user = CFW.DB.Users.selectByUsernameOrMail(username);
 			if(user.isForeign()) {
-				if(authenticateAgainstLDAP(username, password) != null) {
-					return user;
-				}
+				return authenticateAgainstLDAP(username, password);
 			}else {
 				if(user.passwordValidation(password)) {
 					return user;
