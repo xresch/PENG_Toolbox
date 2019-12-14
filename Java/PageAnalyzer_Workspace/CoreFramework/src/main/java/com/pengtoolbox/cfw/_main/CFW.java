@@ -23,6 +23,7 @@ import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.mail.CFWMail;
+import com.pengtoolbox.cfw.schedule.CFWSchedule;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWJson;
@@ -70,6 +71,7 @@ public class CFW {
 		public class API extends CFWRegistryAPI {}
 	
 	}
+	public class Schedule extends CFWSchedule {}
 	public class Time extends CFWTime {}
 	public class Validation extends CFWValidation {}
 	
