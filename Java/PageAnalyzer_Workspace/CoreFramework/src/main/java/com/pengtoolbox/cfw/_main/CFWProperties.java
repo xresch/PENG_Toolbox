@@ -3,8 +3,8 @@ package com.pengtoolbox.cfw._main;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Map.Entry;
-import java.util.Properties;
+
+import com.pengtoolbox.cfw.utils.LinkedProperties;
 
 /**************************************************************************************************************
  * 
@@ -13,7 +13,7 @@ import java.util.Properties;
  **************************************************************************************************************/
 public class CFWProperties {
 
-	public static final Properties configProperties = new Properties();
+	public static final LinkedProperties configProperties = new LinkedProperties();
 	
 	/** Application name, will be used for creating the base url (Property=cfw_application_name, Default="myapp") */
 	public static String APPLICATION_NAME = "myapp";
@@ -26,7 +26,6 @@ public class CFWProperties {
 	
 	/** Reset the admin password on the next restart. (Property=cfw_reset_admin_pw, Default=false) */
 	public static boolean RESET_ADMIN_PW = false;
-	
 	
 	/** Enables or disables the HTTP connector. (Property=cfw_http_enabled, Default=true) */
 	public static boolean HTTP_ENABLED = true;
@@ -94,6 +93,36 @@ public class CFWProperties {
 	/** The name of the attribute storing the lastname of the user.  (Property=authentication_ldap_attribute_lastname, Default="") */
 	public static String LDAP_ATTRIBUTE_LASTNAME = "";
 	
+	
+	
+	/** Choose if you want the application to send mails.  (Property=cfw_mail_enabled, Default="false") */
+	public static boolean MAIL_ENABLED = false;
+	
+	/** The smtp host used for sending mails.  (Property=cfw_mail_smtp_host, Default="") */
+	public static String MAIL_SMTP_HOST = "";
+	
+	/** The port of the smtp server.  (Property=cfw_mail_smtp_port=, Default="587") */
+	public static int MAIL_SMTP_PORT = 587;
+	
+	/** The method used to authenticate against the smtp server, either of:  NONE | TLS | SSL.  (Property=cfw_mail_smtp_authentication, Default="") */
+	public static String MAIL_SMTP_AUTHENTICATION = "";
+	
+	/** The email used for login to the smtp server .  (Property=cfw_mail_smtp_login_mail, Default="") */
+	public static String MAIL_SMTP_LOGIN_MAIL = "";
+	
+	/** The password used for login to the smtp server.  (Property=cfw_mail_smtp_login_password, Default="") */
+	public static String MAIL_SMTP_LOGIN_PASSWORD = "";
+	
+	/** The eMail used as the from-address for repliable mails.  (Property=cfw_mail_smtp_frommail_reply, Default="") */
+	public static String MAIL_SMTP_FROMMAIL_REPLY = "";
+	
+	/** The eMail used as the from-address for no-reply mails.  (Property=cfw_mail_smtp_frommail_noreply, Default="") */
+	public static String MAIL_SMTP_FROMMAIL_NOREPLY = "";
+	
+
+	
+	
+	
 	/** The name of the database server. (Property=cfw_h2_server, Default="localhost") */
 	public static String DB_SERVER = "localhost";
 	
@@ -158,13 +187,22 @@ public class CFWProperties {
 		LDAP_ATTRIBUTE_FIRSTNAME		= CFWProperties.configAsString("authentication_ldap_attribute_firstname", LDAP_ATTRIBUTE_FIRSTNAME);
 		LDAP_ATTRIBUTE_LASTNAME			= CFWProperties.configAsString("authentication_ldap_attribute_lastname", LDAP_ATTRIBUTE_LASTNAME);
 		
-		DB_SERVER					= CFWProperties.configAsString("cfw_h2_server", DB_SERVER);
-		DB_PORT						= CFWProperties.configAsInt("cfw_h2_port", DB_PORT);
-		DB_STORE_PATH				= CFWProperties.configAsString("cfw_h2_path", DB_STORE_PATH);
-		DB_NAME						= CFWProperties.configAsString("cfw_h2_db_name", DB_NAME);
-		DB_USERNAME					= CFWProperties.configAsString("cfw_h2_username", DB_USERNAME);
-		DB_PASSWORD					= CFWProperties.configAsString("cfw_h2_password", DB_PASSWORD);
+		DB_SERVER						= CFWProperties.configAsString("cfw_h2_server", DB_SERVER);
+		DB_PORT							= CFWProperties.configAsInt("cfw_h2_port", DB_PORT);
+		DB_STORE_PATH					= CFWProperties.configAsString("cfw_h2_path", DB_STORE_PATH);
+		DB_NAME							= CFWProperties.configAsString("cfw_h2_db_name", DB_NAME);
+		DB_USERNAME						= CFWProperties.configAsString("cfw_h2_username", DB_USERNAME);
+		DB_PASSWORD						= CFWProperties.configAsString("cfw_h2_password", DB_PASSWORD);
 		
+		MAIL_ENABLED					= CFWProperties.configAsBoolean("cfw_mail_enabled", MAIL_ENABLED);
+		MAIL_SMTP_HOST					= CFWProperties.configAsString("cfw_mail_smtp_host", MAIL_SMTP_HOST);
+		MAIL_SMTP_PORT					= CFWProperties.configAsInt("cfw_mail_smtp_port", MAIL_SMTP_PORT);
+		MAIL_SMTP_AUTHENTICATION		= CFWProperties.configAsString("cfw_mail_smtp_authentication", MAIL_SMTP_AUTHENTICATION);
+		MAIL_SMTP_LOGIN_MAIL			= CFWProperties.configAsString("cfw_mail_smtp_login_mail", MAIL_SMTP_LOGIN_MAIL);
+		MAIL_SMTP_LOGIN_PASSWORD		= CFWProperties.configAsString("cfw_mail_smtp_login_password", MAIL_SMTP_LOGIN_PASSWORD);
+		MAIL_SMTP_FROMMAIL_REPLY		= CFWProperties.configAsString("cfw_mail_smtp_frommail_reply", MAIL_SMTP_FROMMAIL_REPLY);
+		MAIL_SMTP_FROMMAIL_NOREPLY		= CFWProperties.configAsString("cfw_mail_smtp_frommail_noreply", MAIL_SMTP_FROMMAIL_NOREPLY);
+
 	}
 	
 	
@@ -178,8 +216,9 @@ public class CFWProperties {
 		System.out.println("################################################");
 		System.out.println("##            LOADED CONFIGURATION            ##");
 		System.out.println("################################################");
-		for (Entry<Object,Object> e : configProperties.entrySet()) {
-			System.out.println(e.getKey()+"='"+e.getValue()+"'");
+
+		for (Object key : configProperties.orderedKeys()) {
+			System.out.println(key+"='"+configProperties.getProperty((String)key)+"'");
 		}
 		System.out.println("################################################");
 	}

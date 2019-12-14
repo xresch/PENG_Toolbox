@@ -22,6 +22,7 @@ import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserRoleMap;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.User;
+import com.pengtoolbox.cfw.mail.CFWMail;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWJson;
@@ -61,6 +62,7 @@ public class CFW {
 	public class HTTP extends CFWHttp {}
 	public class JSON extends CFWJson {}
 	public class Localization extends CFWLocalization {}
+	public class Mail extends CFWMail {}
 	public class Properties extends CFWProperties {}
 	public class Registry {
 		public class Components extends CFWRegistryComponents {} 
