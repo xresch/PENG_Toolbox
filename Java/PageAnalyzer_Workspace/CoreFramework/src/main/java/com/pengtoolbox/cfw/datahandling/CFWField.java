@@ -45,10 +45,10 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	
 	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
 
-	
 	@SuppressWarnings("rawtypes")
 	private CFWFieldChangeHandler changeHandler = null;
 	
+	private CFWAutocompleteHandler autocompleteHandler = null;
 	//--------------------------------
 	// Form
 	private FormFieldType type;
@@ -195,13 +195,30 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		//---------------------------------------------
 		if(formFieldType != FormFieldType.HIDDEN && formFieldType != FormFieldType.NONE) {
 			
+			//---------------------------------------
+			// Create Group and Label
 			html.append("<div class=\"form-group row ml-1\">");
 			html.append("  <label class=\"col-sm-3 col-form-label\" for=\""+name+"\" >");
 			html.append(formLabel+":</label> ");
-			html.append("  <div class=\"col-sm-9\">");
+			
+			//---------------------------------------
+			// Check if Autocomplete
+			if(autocompleteHandler == null) {
+				html.append("  <div class=\"col-sm-9\">");
+			}else {
+				html.append("  <div class=\"col-sm-9 cfw-autocomplete\" >");
+				this.addAttribute("id", name);
+				if(this.parent instanceof CFWForm) {
+					((CFWForm)this.parent).javascript.append("cfw_initializeAutocomplete('"+name+"');\r\n");
+				}
+			}
+			
+			//---------------------------------------
+			// Check if Description available
 			if(description != null && !description.isEmpty()) {
 				html.append("<span class=\"badge badge-info cfw-decorator\" data-toggle=\"tooltip\" data-placement=\"top\" data-delay=\"500\" title=\""+description+"\"><i class=\"fa fa-sm fa-info\"></i></span>");
 			}
+			
 		}
 		
 		//---------------------------------------------
@@ -878,6 +895,11 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return valueClass;
 	}
 
+	/******************************************************************************************************
+	 * Returns the changeHandler.
+	 * 
+	 * @return CFWFieldChangeHandler<?> 
+	 ******************************************************************************************************/
 	public CFWFieldChangeHandler<?> getChangeHandler() {
 		return changeHandler;
 	}
@@ -891,6 +913,27 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 ******************************************************************************************************/
 	public CFWField<T> setChangeHandler(CFWFieldChangeHandler<?> changeHandler) {
 		this.changeHandler = changeHandler;
+		return this;
+	}
+	
+	/******************************************************************************************************
+	 * Returns the changeHandler.
+	 * 
+	 * @return CFWFieldChangeHandler<?> 
+	 ******************************************************************************************************/
+	public CFWAutocompleteHandler getAutocompleteHandler() {
+		return autocompleteHandler;
+	}
+	
+	/******************************************************************************************************
+	 * Add a change handler. Will be executed when the value is changed.
+	 * The change handler can prevent the change of the value by returning false.
+	 * 
+	 * @param autocompleteHandler
+	 * @return instance of chaining
+	 ******************************************************************************************************/
+	public CFWField<T> setAutocompleteHandler(CFWAutocompleteHandler autocompleteHandler) {
+		this.autocompleteHandler = autocompleteHandler;
 		return this;
 	}
 
