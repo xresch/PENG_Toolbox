@@ -82,7 +82,7 @@ public class ConfigurationServlet extends HttpServlet
 			field.setLabel(config.name());
 			field.setValue(config.value());
 			field.setDescription(config.description());
-			field.setOptions(config.options());			
+			field.setOptions(config.options());		
 			
 			configForm.addField(field);
 		}

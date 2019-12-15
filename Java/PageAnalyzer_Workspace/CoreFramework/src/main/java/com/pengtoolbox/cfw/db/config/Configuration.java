@@ -159,7 +159,7 @@ public class Configuration extends CFWObject {
 					.value("/resources/images/applogo.png")
 			);
 		}
-					
+							
 		CFW.DB.Config.updateCache();
 	}
 	

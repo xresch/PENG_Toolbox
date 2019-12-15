@@ -150,6 +150,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public static CFWField<Object[]> newArray(FormFieldType type, Enum<?> fieldName){
 		return newArray(type, fieldName.toString());
 	}
+	
 	public static CFWField<Object[]> newArray(FormFieldType type, String fieldName){
 		return new CFWField<Object[]>(Object[].class, type, fieldName)
 				.setColumnDefinition("ARRAY");
@@ -960,7 +961,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					else if( Boolean.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getBoolean(colName)); }
 					else if( Timestamp.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getTimestamp(colName)); }
 					else if( Date.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getDate(colName)); }
-					else if( Object[].class.isAssignableFrom(current.getValueClass()) )  { 
+					else if( Object[].class.isAssignableFrom(current.getValueClass()))  { 
 						Array array = result.getArray(colName);
 						if(array != null) {
 							current.setValueValidated(result.getArray(colName).getArray()); 
