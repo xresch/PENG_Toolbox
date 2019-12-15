@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWAutocompleteHandler;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
@@ -42,9 +43,13 @@ public class CFWObjectMockup extends CFWObject{
 	
 	private CFWField<String> autocomplete = CFWField.newString(FormFieldType.TEXT, "AUTOCOMPLETE")
 			.setAutocompleteHandler(new CFWAutocompleteHandler() {
+				
 				public String getAutocompleteData(String inputValue) {
-					// TODO Auto-generated method stub
-					return null;
+					String[] array = new String[getMaxResults()];
+					for(int i = 0; i < getMaxResults(); i++ ) {
+						array[i] = "TEST_"+inputValue+"_"+i;
+					}
+					return CFW.JSON.toJSON(array);
 				}
 			});
 	

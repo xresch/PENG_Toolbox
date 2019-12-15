@@ -23,4 +23,14 @@ public abstract class CFWAutocompleteHandler {
 	 *******************************************************************************/
 	public abstract String getAutocompleteData(String inputValue);
 
+	public int getMaxResults() {
+		return maxResults;
+	}
+
+	public void setMaxResults(int maxResults) {
+		this.maxResults = maxResults;
+	}
+
+	
+	
 }

@@ -46,6 +46,7 @@ import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginServlet;
 import com.pengtoolbox.cfw.servlets.AssemblyServlet;
+import com.pengtoolbox.cfw.servlets.AutocompleteServlet;
 import com.pengtoolbox.cfw.servlets.ConfigurationServlet;
 import com.pengtoolbox.cfw.servlets.FormServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
@@ -388,13 +389,10 @@ public class CFWApplication {
 		ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 		servletContextHandler.setSessionHandler(sessionHandler);
 	    //-----------------------------------------
-	    // Form Servlet
+	    // CFW Servlets
 	    servletContextHandler.addServlet(APILoginServlet.class,  "/apilogin");
-	    
-	    //-----------------------------------------
-	    // Form Servlet
 	    servletContextHandler.addServlet(FormServlet.class,  "/formhandler");
-	    
+	    servletContextHandler.addServlet(AutocompleteServlet.class,  "/autocomplete");
 		//-----------------------------------------
 		// Resource Servlets
 		servletContextHandler.addServlet(AssemblyServlet.class, "/assembly"); 
