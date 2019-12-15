@@ -58,7 +58,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private boolean isDisabled = false;
 	
 	public enum FormFieldType{
-		TEXT, TEXTAREA, PASSWORD, NUMBER, EMAIL, HIDDEN, BOOLEAN, SELECT, WYSIWYG, DATEPICKER, DATETIMEPICKER, NONE
+		TEXT, TEXTAREA, PASSWORD, NUMBER, EMAIL, HIDDEN, BOOLEAN, SELECT, WYSIWYG, DATEPICKER, DATETIMEPICKER, TAGS, NONE
 	}
 	
 	//--------------------------------
@@ -242,7 +242,10 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			
 			case DATETIMEPICKER:  	createDateTimePicker(html);
 									break;
-								
+			
+			case TAGS:			  	createTagsField(html);
+									break;
+									
 			case PASSWORD:  		html.append("<input type=\"password\" class=\"form-control\" "+this.getAttributesString()+"/>");
 									break;
 			
@@ -433,6 +436,22 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		
 		if(this.parent instanceof CFWForm) {
 			((CFWForm)this.parent).javascript.append("cfw_initializeTimefield('"+name+"', "+epochTime+");\r\n");
+		}
+				
+	}
+	
+	/***********************************************************************************
+	 * Create DatePicker
+	 ***********************************************************************************/
+	private void createTagsField(StringBuilder html) {
+		
+		
+		//---------------------------------
+		// Create Field
+		html.append("<input id=\""+name+"\" type=\"text\" data-role=\"tagsinput\" class=\"form-control\" "+this.getAttributesString()+"/>");
+		
+		if(this.parent instanceof CFWForm) {
+			((CFWForm)this.parent).javascript.append("cfw_initializeTagsField('"+name+"');\r\n");
 		}
 				
 	}

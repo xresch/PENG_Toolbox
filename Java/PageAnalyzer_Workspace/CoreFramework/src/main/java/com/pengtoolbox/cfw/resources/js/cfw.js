@@ -449,6 +449,32 @@ function cfw_initializeSummernote(formID, editorID){
  * @param epochMillis the initial date in epoch time or null
  * @return nothing
  *************************************************************************************/
+function cfw_initializeTagsField(fieldID){
+	
+	var id = '#'+fieldID;
+	console.log("ID:"+id);
+	var tagsfield = $(id);
+	
+	//$(id).tagsinput();
+	
+	tagsfield.tagsinput({
+		tagClass: 'btn btn-sm btn-primary mb-1',
+		maxTags: 100,
+		//maxChars: 30,
+		trimValue: true,
+		allowDuplicates: false,
+//		onTagExists: function(item, $tag) {
+//			$tag.fadeIn().fadeIn();
+//
+//		}
+	});
+}
+/**************************************************************************************
+ * Initialize a Date and/or Timepicker created with the Java object CFWField.
+ * @param fieldID the name of the field
+ * @param epochMillis the initial date in epoch time or null
+ * @return nothing
+ *************************************************************************************/
 function cfw_initializeTimefield(fieldID, epochMillis){
 	
 	

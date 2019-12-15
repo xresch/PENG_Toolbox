@@ -36,6 +36,9 @@ public class CFWObjectMockup extends CFWObject{
 	private CFWField<String> editor = CFWField.newString(FormFieldType.WYSIWYG, "EDITOR")
 			.setValue("<b>Intial Value:</b> successfull!!!");
 	
+	private CFWField<String> tags = CFWField.newString(FormFieldType.TAGS, "TAGS")
+			.setValue("foo,test,bar,BAR,bla");
+	
 	public CFWObjectMockup() {
 		
 		initialize();
@@ -50,7 +53,7 @@ public class CFWObjectMockup extends CFWObject{
 		options.put(4, "Strawwberry");
 		keyValSelect.setValueLabelOptions(options);
 		
-		this.addFields(firstname, lastname, withValue, description, textarea, number, date, timestamp, select, keyValSelect, editor);
+		this.addFields(firstname, lastname, withValue, description, textarea, number, date, timestamp, select, keyValSelect, editor, tags);
 	}
 
 }
