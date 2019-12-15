@@ -476,12 +476,13 @@ function cfw_initializeTagsField(fieldID){
  * @param fieldID the name of the field
  * @return nothing
  *************************************************************************************/
-function cfw_initializeAutocomplete(formID, fieldName, array){
+function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 		
 	var currentFocus;
 	var inputField = $("#"+fieldName).get(0);
 	var autocompleteID = inputField.id + "-autocomplete-list";
 	
+	// For testing
 	//var array = ["Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua &amp; Barbuda","Argentina","Armenia","Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bermuda","Bhutan","Bolivia","Bosnia &amp; Herzegovina","Botswana","Brazil","British Virgin Islands","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde","Cayman Islands","Central Arfrican Republic","Chad","Chile","China","Colombia","Congo","Cook Islands","Costa Rica","Cote D Ivoire","Croatia","Cuba","Curacao","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Ethiopia","Falkland Islands","Faroe Islands","Fiji","Finland","France","French Polynesia","French West Indies","Gabon","Gambia","Georgia","Germany","Ghana","Gibraltar","Greece","Greenland","Grenada","Guam","Guatemala","Guernsey","Guinea","Guinea Bissau","Guyana","Haiti","Honduras","Hong Kong","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Isle of Man","Israel","Italy","Jamaica","Japan","Jersey","Jordan","Kazakhstan","Kenya","Kiribati","Kosovo","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Macau","Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Montserrat","Morocco","Mozambique","Myanmar","Namibia","Nauro","Nepal","Netherlands","Netherlands Antilles","New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","North Korea","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Qatar","Reunion","Romania","Russia","Rwanda","Saint Pierre &amp; Miquelon","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","St Kitts &amp; Nevis","St Lucia","St Vincent","Sudan","Suriname","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor L'Este","Togo","Tonga","Trinidad &amp; Tobago","Tunisia","Turkey","Turkmenistan","Turks &amp; Caicos","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States of America","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Virgin Islands (US)","Yemen","Zambia","Zimbabwe"];
 	
 	//--------------------------------------------------------------
@@ -497,11 +498,11 @@ function cfw_initializeAutocomplete(formID, fieldName, array){
 		    
 			//----------------------------
 		    // Filter Array
-		    for (var i = 0; i < array.length; i++) {
+		    for (var i = 0; i < array.length && filteredArray.length < maxResults; i++) {
 		      
 			   	var currentValue = array[i];
 			    
-			   	if (currentValue.substr(0, searchString.length).toUpperCase() == searchString.toUpperCase()) {
+			   	if (currentValue.toUpperCase().indexOf(searchString.toUpperCase()) >= 0) {
 			   		filteredArray.push(currentValue);
 			   	}
 			}
@@ -586,7 +587,7 @@ function cfw_initializeAutocomplete(formID, fieldName, array){
 	    
 	    //----------------------------
 	    // Iterate Array
-	    for (var i = 0; i < values.length; i++) {
+	    for (var i = 0; i < values.length && i < maxResults; i++) {
 	      
 		   	var currentValue = values[i];
 		   			
@@ -594,9 +595,17 @@ function cfw_initializeAutocomplete(formID, fieldName, array){
 			// Create Item
 			var item = document.createElement("DIV");
 			
-			/* make the matching letters bold: */
-			item.innerHTML = "<strong>" + currentValue.substr(0, searchString.length) + "</strong>";
-			item.innerHTML += currentValue.substr(searchString.length);
+			// make the matching letters bold:
+			var index = currentValue.toUpperCase().indexOf(searchString.toUpperCase());
+			if(index == 0){
+				item.innerHTML = "<strong>" + currentValue.substr(0, searchString.length) + "</strong>";
+				item.innerHTML += currentValue.substr(searchString.length);
+			}else if(index > 0){
+				var part1 = currentValue.substr(0, index);
+				var part2 = currentValue.substr(index, searchString.length);
+				var part3 = currentValue.substr(index+searchString.length);
+				item.innerHTML = part1 + "<strong>" +part2+ "</strong>" +part3;
+			}
 			
 			item.innerHTML += "<input type='hidden' value='" + currentValue + "'>";
 			

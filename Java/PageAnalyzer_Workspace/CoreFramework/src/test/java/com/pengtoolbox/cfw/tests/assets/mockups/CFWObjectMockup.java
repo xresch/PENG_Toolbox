@@ -42,11 +42,11 @@ public class CFWObjectMockup extends CFWObject{
 			.setValue("foo,test,bar,BAR,bla");
 	
 	private CFWField<String> autocomplete = CFWField.newString(FormFieldType.TEXT, "AUTOCOMPLETE")
-			.setAutocompleteHandler(new CFWAutocompleteHandler() {
+			.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
 				
 				public String getAutocompleteData(String inputValue) {
-					String[] array = new String[getMaxResults()];
-					for(int i = 0; i < getMaxResults(); i++ ) {
+					String[] array = new String[25];
+					for(int i = 0; i < 25; i++ ) {
 						array[i] = "TEST_"+inputValue+"_"+i;
 					}
 					return CFW.JSON.toJSON(array);

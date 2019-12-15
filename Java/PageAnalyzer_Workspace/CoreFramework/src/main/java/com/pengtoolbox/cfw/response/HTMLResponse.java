@@ -49,7 +49,7 @@ public class HTMLResponse extends AbstractHTMLResponse {
 		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "jquery-3.4.1.min.js");
 		//this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "jquery-ui-1.12.3.min.js");
 		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap.bundle.min.js");
-		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap-tagsinput.min.js");
+		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap-tagsinput.js");
 		
 		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "summernote-bs4.min.js");
 		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "highlight.js");

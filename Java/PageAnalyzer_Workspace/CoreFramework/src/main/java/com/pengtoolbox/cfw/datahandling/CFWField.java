@@ -209,7 +209,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				html.append("  <div class=\"col-sm-9 cfw-autocomplete\" >");
 				this.addAttribute("id", name);
 				if(this.parent instanceof CFWForm) {
-					((CFWForm)this.parent).javascript.append("cfw_initializeAutocomplete('"+((CFWForm)this.parent).getFormID()+"','"+name+"');\r\n");
+					String formID = ((CFWForm)this.parent).getFormID();
+					int maxResults = this.getAutocompleteHandler().getMaxResults();
+					((CFWForm)this.parent).javascript.append("cfw_initializeAutocomplete('"+formID+"','"+name+"',"+maxResults+");\r\n");
 				}
 			}
 			
