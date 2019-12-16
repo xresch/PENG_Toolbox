@@ -82,13 +82,12 @@ function cfw_filterTable(searchField){
 	filter = input.value.toUpperCase();
 
 	table.find("tbody tr, >tr").each(function( index ) {
-		  //console.log( index + ": " + $(this).text() );
-		  
+
 		  if ($(this).html().toUpperCase().indexOf(filter) > -1) {
 			  $(this).css("display", "");
 		  } else {
 			  $(this).css("display", "none");
-			}
+		  }
 	});
 
 }
@@ -296,8 +295,6 @@ class CFWPanel{
 class CFWToogleButton{
 	
 	constructor(url, params, isEnabled){
-		console.log(url);
-		console.log(params);
 		this.url = url;
 		this.params = params;
 		this.isLocked = false;
@@ -369,8 +366,7 @@ class CFWToogleButton{
 	 ********************************************/
 	onClick(){
 		var button = this.button;
-		console.log(this.url);
-		console.log(this.params);
+
 		CFW.http.getJSON(this.url, this.params, 
 			function(data){
 				if(data.success){
@@ -479,7 +475,12 @@ function cfw_initializeTagsField(fieldID){
 function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 		
 	var currentFocus;
-	var inputField = $("#"+fieldName).get(0);
+	var $input = $("#"+fieldName);
+	
+	if($input.attr('data-role') == "tagsinput"){
+		$input = $("#"+fieldName+"-tagsinput")
+	}
+	var inputField = $input.get(0);
 	var autocompleteID = inputField.id + "-autocomplete-list";
 	
 	// For testing
@@ -491,11 +492,11 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 	// execute a function when someone writes in the text field:
 	//--------------------------------------------------------------
 	if(array != null || array != undefined){
-		inputField.addEventListener("input", function(e) {
+		$input.on('input', function(e) {
 			
 			var filteredArray = [];
 			var searchString = inputField.value;
-		    
+		    		    
 			//----------------------------
 		    // Filter Array
 		    for (var i = 0; i < array.length && filteredArray.length < maxResults; i++) {
@@ -516,22 +517,36 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 	// DYNAMIC SERVER SIDE AUTOCOMPLETE
 	//--------------------------------------------------------------
 	if(array == null || array == undefined){
-		inputField.addEventListener("input", function(e) {
+		$input.on('input', function(e) {
+			
+			// use a count and set timeout to wait for the user 
+			// finishing his input before sending a request to the
+			// server. Reduces overhead.
+			var currentCount = ++CFW.global.autocompleteCounter;
 
-			cfw_getJSON('/cfw/autocomplete', 
-				{formid: formID, fieldname: fieldName, searchstring: inputField.value }, 
-				function(data) {
-					console.log("formID:"+formID); 
-					console.log(data);
-					showAutocomplete(inputField, data.payload);
-				});
+			setTimeout(
+				function(){
+					
+					if(currentCount != CFW.global.autocompleteCounter){
+						return;
+					}
+					
+					cfw_getJSON('/cfw/autocomplete', 
+						{formid: formID, fieldname: fieldName, searchstring: inputField.value }, 
+						function(data) {
+							showAutocomplete(inputField, data.payload);
+						})
+				},
+				500);
+				
 		});
 	}
 	
+	console.log($(inputField));
 	//--------------------------------------------------------------
 	// execute a function presses a key on the keyboard
 	//--------------------------------------------------------------
-	inputField.addEventListener("keydown", function(e) {
+	$input.on('keydown',  function(e) {
 		var itemList = document.getElementById(autocompleteID);
 		var itemArray;
 		
@@ -555,12 +570,18 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 		//---------------------------
 		// Enter
 		if (e.keyCode == 13) {
-			  /* If the ENTER key is pressed, prevent the form from being submitted. */
-			  e.preventDefault();
-			  if (currentFocus > -1) {
-				    /* and simulate a click on the "active" item. */
-				    if (itemList) itemArray[currentFocus].click();
-			  }
+			/* If the ENTER key is pressed, prevent the form from being submitted. 
+			 * Still do it for tagsinput.js fields*/
+			if($input.attr('placeholder') != "Tags"){
+				e.preventDefault();
+			}
+			if (currentFocus > -1) {
+				/* and simulate a click on the "active" item. */
+				if (itemList) itemArray[currentFocus].click();
+			}else{
+				// Close if nothing selected
+				closeAllAutocomplete();
+			}
 		}
 	});
 	
@@ -709,7 +730,6 @@ function cfw_updateTimeField(fieldID){
 	}
 	
 	var dateString = datepicker.first().val();
-	console.log("dateString: "+dateString);
 	
 	if(timepicker.length > 0){
 		var timeString = timepicker.first().val();
@@ -720,7 +740,6 @@ function cfw_updateTimeField(fieldID){
 	
 	if(dateString.length > 0){
 		$(id).val(Date.parse(dateString));
-		console.log("Epoch: "+Date.parse(dateString));
 	}
 	
 }
@@ -1170,7 +1189,6 @@ function cfw_getURLParams()
         vars[splitted[0]] = splitted[1];
     }
     
-    //console.log(vars);
     return vars;
 }
 
@@ -1472,6 +1490,9 @@ function  cfw_hasPermission(permissionName){
  ********************************************************************/
 
 var CFW = {
+	global: {
+		autocompleteCounter: 0 
+	},
 	config: {
 		toastDelay: 	 3000,
 		toastErrorDelay: 10000

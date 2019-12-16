@@ -39,7 +39,17 @@ public class CFWObjectMockup extends CFWObject{
 			.setValue("<b>Intial Value:</b> successfull!!!");
 	
 	private CFWField<String> tags = CFWField.newString(FormFieldType.TAGS, "TAGS")
-			.setValue("foo,test,bar,BAR,bla");
+			.setValue("foo,test,bar,bla")
+			.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
+				
+				public String getAutocompleteData(String inputValue) {
+					String[] array = new String[25];
+					for(int i = 0; i < 25; i++ ) {
+						array[i] = "Tag_"+inputValue+"_"+i;
+					}
+					return CFW.JSON.toJSON(array);
+				}
+			});
 	
 	private CFWField<String> autocomplete = CFWField.newString(FormFieldType.TEXT, "AUTOCOMPLETE")
 			.setAutocompleteHandler(new CFWAutocompleteHandler(5) {

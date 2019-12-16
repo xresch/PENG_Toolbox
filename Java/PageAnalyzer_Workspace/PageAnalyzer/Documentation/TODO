@@ -1,14 +1,11 @@
 TODO
 ====
-  
+
 - Truncate too long toasts.
 - Show previous toasts all toasts button
 - Spaces!!!
 - Menu Registry with permission checking
 - Form errors add to field.
-
-- Add FormFieldType.TAGS
-- Add FormFieldType.AUTOCOMPLETE
 
 - Add Rule for HTTP2
   - Num requests Http 1.1
@@ -23,6 +20,10 @@ TODO
 
 DONE
 ====
+- Add FormFieldType.TAGS
+- Add FormFieldType.AUTOCOMPLETE
+
+
 - LOGO!!!
 - Reset User Password
 - Copyrights

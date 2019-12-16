@@ -45,8 +45,15 @@
     this.inputSize = Math.max(1, this.placeholderText.length);
 
     this.$container = $('<div class="bootstrap-tagsinput"></div>');
-    this.$input = $('<input type="text" placeholder="' + this.placeholderText + '"/>').appendTo(this.$container);
-
+    this.$input = $('<input id="'+element.id+'-tagsinput" type="text" placeholder="' + this.placeholderText + '"/>').appendTo(this.$container);
+   
+    //--------------------------------
+    // CFW Modification
+    // Copy event handler for autocomplete
+//    console.log($._data(element, 'events'));
+//    this.$input.on('input', $._data(element, 'events').input[0].handler)
+//    this.$input.on('keydown', $._data(element, 'events').keydown[0].handler)
+    
     this.$element.before(this.$container);
 
     this.build(options);
