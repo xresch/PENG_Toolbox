@@ -24,6 +24,8 @@ import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.mail.CFWMail;
 import com.pengtoolbox.cfw.schedule.CFWSchedule;
+import com.pengtoolbox.cfw.stats.StatsMethod;
+import com.pengtoolbox.cfw.stats.StatsMethodSignature;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWJson;
@@ -32,7 +34,7 @@ import com.pengtoolbox.cfw.validation.CFWValidation;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFW {
@@ -172,6 +174,8 @@ public class CFW {
 		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.RolePermissionMap.class);
 		CFW.Registry.Objects.addCFWObject(SpaceGroup.class);
 		CFW.Registry.Objects.addCFWObject(Space.class);
+		CFW.Registry.Objects.addCFWObject(StatsMethodSignature.class);
+		CFW.Registry.Objects.addCFWObject(StatsMethod.class);
 		//---------------------------
 		// Application Register
 		appToStart.register();

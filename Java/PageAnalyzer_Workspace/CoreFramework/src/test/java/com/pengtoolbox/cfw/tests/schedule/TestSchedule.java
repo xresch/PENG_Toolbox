@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.stats.StatsMethodSamplingTask;
 
 public class TestSchedule {
 
@@ -64,7 +65,7 @@ public class TestSchedule {
 	 * for the next scheduled execution.
 	 * @throws InterruptedException
 	 ******************************************************************/
-	@Test
+	//@Test
 	public void testScheduleJumpIncrease() throws InterruptedException {
 		
 		// set the time to a past date time to check if it works
@@ -79,6 +80,28 @@ public class TestSchedule {
 		});
 		
 		while(!isExecuted) {
+			Thread.sleep(500L);
+		}
+	}
+	
+	/******************************************************************
+	 * Check Thread Sampling Task
+	 * @throws InterruptedException
+	 ******************************************************************/
+	@Test
+	public void testThreadSamplingTask() throws InterruptedException {
+		
+		ScheduledFuture<?> future = CFW.Schedule.runPeriodically(0, 1, new StatsMethodSamplingTask());
+		
+		ScheduledFuture<?> terminator = CFW.Schedule.runPeriodically(10, 1, new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("Terminate");
+				future.cancel(true);
+			}
+		});
+		
+		while(!future.isDone()) {
 			Thread.sleep(500L);
 		}
 	}
