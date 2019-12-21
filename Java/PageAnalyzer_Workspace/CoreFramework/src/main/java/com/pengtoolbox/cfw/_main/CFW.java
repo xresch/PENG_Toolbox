@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw._main;
 
 import java.util.ArrayList;
+import java.util.concurrent.ScheduledFuture;
 
 import com.pengtoolbox.cfw.api.CFWRegistryAPI;
 import com.pengtoolbox.cfw.cli.ArgumentsException;
@@ -25,6 +26,7 @@ import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.mail.CFWMail;
 import com.pengtoolbox.cfw.schedule.CFWSchedule;
 import com.pengtoolbox.cfw.stats.StatsMethod;
+import com.pengtoolbox.cfw.stats.StatsMethodSamplingTask;
 import com.pengtoolbox.cfw.stats.StatsMethodSignature;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 import com.pengtoolbox.cfw.utils.CFWFiles;
@@ -151,9 +153,15 @@ public class CFW {
     	initializeDatabase(appToStart);
 		
 	    //--------------------------------
+	    // Start Scheduled Tasks
+    	initializeScheduledTasks(appToStart);
+    	
+	    //--------------------------------
 	    // Start Application
 		CFWApplication app = new CFWApplication(args);
 		appToStart.startApp(app);
+		
+		
 		
 	}
 	
@@ -190,6 +198,8 @@ public class CFW {
 		//System.out.println("============ API Registry Entries =============");
 		//System.out.println(CFW.Registry.API.getJSONArray());
 	}
+	
+	
 	/***********************************************************************
 	 * Starts and initializes the Database. Iterates over all Objects in the 
 	 * Registry and add
@@ -253,4 +263,18 @@ public class CFW {
 		appToStart.initializeDB();
 		
 	}
+	
+	/***********************************************************************
+	 * Starts and initializes the scheduled tasks.
+	 * @param CFWAppInterface application to start
+	 ***********************************************************************/
+	private static void initializeScheduledTasks(CFWAppInterface appToStart) {
+		
+		//---------------------------
+		// CPU Sampling Task
+		int seconds = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_SECONDS);
+		ScheduledFuture<?> future = CFW.Schedule.runPeriodically(0, seconds, new StatsMethodSamplingTask());
+		
+	}
+	
 }

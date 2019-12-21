@@ -1,41 +1,136 @@
 package com.pengtoolbox.cfw.stats;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimerTask;
+import java.util.logging.Logger;
+
+import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.db.config.Configuration;
+import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class StatsMethodSamplingTask extends TimerTask {
-
-	// Contains the stack element signature and the number of occurences.
-	private static HashMap<String, Integer> counterMap = new HashMap<String, Integer>();
+	
+	private static long lastSave = System.currentTimeMillis();
+	private static Logger logger = CFWLog.getLogger(StatsMethodSamplingTask.class.getName());
+	
+	// Contains "parentID -> signatureID" as key and the number of occurences as value.
+	private static LinkedHashMap<String, StatsMethod> counterMap = new LinkedHashMap<String, StatsMethod>();
+	
+	// Contains the stack element signature with ID as in the DB
+	private static HashMap<Object, Object> signatureIDMap = CFWDBStatsMethodSignature.getSignaturesAsKeyValueMap();
 	
 	@Override
 	public void run() {
-
+		long currentTime = System.currentTimeMillis();
+		// minutes to millis
+		int aggregationMillis = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_AGGREGATION) *60000;
+		
+		//-----------------------------------
+		// Check Saving
+		if( (currentTime - lastSave) > aggregationMillis ) {
+			System.out.println("################SAVE################");
+			saveAndResetCounters();
+			lastSave = currentTime;
+		}
+		
+		//-----------------------------------
+		// Check Saving
+		System.out.println(currentTime+"-update");
+		updateCounters();
+		
+		//System.out.println(dumpCounters());
+	}
+	
+	/***********************************************************************************
+	 * Save the current count to the DB and reset the counters.
+	 * 
+	 ***********************************************************************************/
+	private static void saveAndResetCounters() {
+		
+		Timestamp time = new Timestamp(System.currentTimeMillis());
+		int periodMinutes = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_AGGREGATION);
+		
+		for(StatsMethod entry : counterMap.values()) {
+			if(entry.time(time).period(periodMinutes).insert()) {
+				entry.count(0);
+			}	
+		}
+		
+	}
+	
+	/***********************************************************************************
+	 * Traverse all stack traces and update the respective counters.
+	 ***********************************************************************************/
+	private static void updateCounters() {
+		
 		Map<Thread, StackTraceElement[]> traceMap = Thread.getAllStackTraces();
 
+		//---------------------------------------
+		// Iterate all stack trace elements
 		for(StackTraceElement[] elements : traceMap.values()) {
 			
+			Integer parentID = null;
+			
 			for(StackTraceElement element : elements) {
-				String signature = element.toString();
-				signature = signature.substring(signature.lastIndexOf('/')+1);
-				if(counterMap.containsKey(signature)) {
-					counterMap.put(signature, counterMap.get(signature)+1);
+				
+				String signatureString = element.toString();
+				signatureString = signatureString.substring(signatureString.lastIndexOf('/')+1);
+				Integer signatureID = null;
+				
+				//---------------------------------------
+				// Create DB entry for Signature if not exists
+				if(!signatureIDMap.containsKey(signatureString)) {
+					
+					signatureID = new StatsMethodSignature()
+							.signature(signatureString)
+							.insertGetPrimaryKey();
+					
+					if(signatureID != null) {
+						
+						signatureIDMap.put(signatureString, signatureID);
+					}else {
+						new CFWLog(logger)
+							.method("run")
+							.severe("Insert of new signature failed.");
+					}
 				}else {
-					counterMap.put(signature, 1);
+					signatureID = (Integer)signatureIDMap.get(signatureString);
 				}
+				
+				//---------------------------------------
+				// Manage Counter
+				String counterID = parentID + " -> "+signatureID;
+				if(counterMap.containsKey(counterID)) {
+					counterMap.get(counterID).increaseCount();
+					parentID = signatureID;
+				}else {
+															
+					//---------------------------------------
+					// Add counter to map
+					StatsMethod  methodStats = new StatsMethod()
+							.foreignKeySignature(signatureID)
+							.foreignKeyParent(parentID)
+							.count(1);
+					
+					counterMap.put(counterID, methodStats);
+					
+					parentID = signatureID;
+					
+				}
+				
 			}
 		}
-
-		dumpCounters();
 	}
 	
 	public static String dumpCounters() {
 		
 		StringBuilder builder = new StringBuilder();
-		for(Entry<String, Integer> entry : counterMap.entrySet()) {
-			builder.append(entry.getKey()).append(": ").append(entry.getValue());
+		for(Entry<String, StatsMethod> entry : counterMap.entrySet()) {
+			builder.append(entry.getKey()).append(": ").append(entry.getValue().count()).append("\n");
 		}
 		
 		return builder.toString();

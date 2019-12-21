@@ -15,7 +15,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 /**************************************************************************************************************
  * Class used to create SQL statements for a CFWOBject.
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWSQL {
@@ -233,7 +233,7 @@ public class CFWSQL {
 	 * Creates an insert statement including all fields and executes
 	 * the statement with the values assigned to the fields of the
 	 * object.
-	 * @return CFWStatement for method chaining
+	 * @return boolean
 	 ****************************************************************/
 	public boolean insert() {
 
@@ -245,7 +245,7 @@ public class CFWSQL {
 	 * and executes it with the values assigned to the fields of the
 	 * object.
 	 * @param fieldnames
-	 * @return CFWStatement for method chaining
+	 * @return boolean
 	 ****************************************************************/
 	public boolean insert(String ...fieldnames) {
 		
@@ -272,6 +272,51 @@ public class CFWSQL {
 			}
 
 		return this.execute();
+	}
+	
+	/****************************************************************
+	 * Creates an insert statement including all fields and executes
+	 * the statement with the values assigned to the fields of the
+	 * object.
+	 * @return  primary key or null if not successful
+	 ****************************************************************/
+	public Integer insertGetPrimaryKey() {
+
+		return insertGetPrimaryKey(fields.keySet().toArray(new String[] {}));
+	}
+	
+	/****************************************************************
+	 * Creates an insert statement including the specified fields
+	 * and executes it with the values assigned to the fields of the
+	 * object.
+	 * @param fieldnames
+	 * @return  id or null if not successful
+	 ****************************************************************/
+	public Integer insertGetPrimaryKey(String ...fieldnames) {
+		
+			StringBuilder columnNames = new StringBuilder("(");
+			StringBuilder placeholders = new StringBuilder("(");
+			
+			for(String fieldname : fieldnames) {
+				CFWField<?> field = fields.get(fieldname);
+				if(field != object.getPrimaryField()) {
+					if(!isQueryCached()) {
+						columnNames.append(field.getName()).append(",");
+						placeholders.append("?,");
+					}
+					values.add(field.getValue());
+				}
+			}
+			
+			//Replace last comma with closing brace
+			columnNames.deleteCharAt(columnNames.length()-1).append(")");
+			placeholders.deleteCharAt(placeholders.length()-1).append(")");
+			if(!isQueryCached()) {	
+				query.append("INSERT INTO "+object.getTableName()+" "+columnNames
+					  + " VALUES "+placeholders+";");
+			}
+
+		return this.executeInsertGetPrimaryKey();
 	}
 	
 	/****************************************************************
@@ -673,6 +718,40 @@ public class CFWSQL {
 	}
 	
 	/****************************************************************
+	 * Executes the query as an insert and returns the first generated 
+	 * Key of the new record. (what is a primary key in most cases)
+	 * 
+	 * @return integer or null
+	 ****************************************************************/
+	private Integer executeInsertGetPrimaryKey() {
+		
+		//----------------------------
+		// Handle Caching
+		String statement;
+		
+		if(isQueryCached()) {
+			statement = queryCache.get(queryName);
+		}else {
+			statement = query.toString();
+			queryCache.put(queryName, statement);
+		}
+		
+		//----------------------------
+		// Execute Statement 
+		if(statement.trim().startsWith("INSERT")) {
+			return CFWDB.preparedInsertGetKey(statement, object.getPrimaryField().getName(), values.toArray());
+			
+		}else {
+			new CFWLog(logger)
+			.method("executeInsertGetKey")
+			.severe("The query is not an insert statement: "+statement);
+			
+			return null;
+		}
+		
+	}
+	
+	/****************************************************************
 	 * Executes the query and saves the results in the global 
 	 * variable.
 	 * 
@@ -801,6 +880,40 @@ public class CFWSQL {
 		}
 		
 		return objectArray;
+		
+	}
+	
+	/***************************************************************
+	 * Execute the Query and gets the result as a key value map.
+	 ****************************************************************/
+	public HashMap<Object, Object> getKeyValueMap(String keyColumnName, String valueColumnName) {
+		
+		HashMap<Object, Object> keyValueMap = new HashMap<Object, Object>();
+		
+		if(this.execute()) {
+			
+			if(result == null) {
+				return keyValueMap;
+			}
+			
+			try {
+				while(result.next()) {
+					Object key = result.getObject(keyColumnName);
+					Object value = result.getObject(valueColumnName);
+					keyValueMap.put(key, value);
+				}
+			} catch (SQLException e) {
+				new CFWLog(logger)
+				.method("getKeyValueMap")
+				.severe("Error reading object from database.", e);
+				
+			}finally {
+				CFWDB.close(result);
+			}
+			
+		}
+		
+		return keyValueMap;
 		
 	}
 		

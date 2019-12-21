@@ -41,6 +41,7 @@ public class StatsMethodSignature extends CFWObject {
 			.setDescription("The signature of the method.")
 			.addValidator(new LengthValidator(0, 255));
 	
+	
 	public StatsMethodSignature() {
 		initializeFields();
 	}
@@ -116,6 +117,15 @@ public class StatsMethodSignature extends CFWObject {
 	
 	public StatsMethodSignature id(int id) {
 		this.id.setValue(id);
+		return this;
+	}
+	
+	public String signature() {
+		return signature.getValue();
+	}
+	
+	public StatsMethodSignature signature(String signature) {
+		this.signature.setValue(signature);
 		return this;
 	}
 	

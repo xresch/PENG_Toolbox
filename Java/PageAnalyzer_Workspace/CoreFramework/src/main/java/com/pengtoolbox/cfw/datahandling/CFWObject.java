@@ -13,7 +13,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWObject {
@@ -417,7 +417,7 @@ public class CFWObject {
 	 * Creates an insert statement including all fields and executes
 	 * the statement with the values assigned to the fields of the
 	 * object.
-	 * @return CFWQuery for method chaining
+	 * @return boolean
 	 ****************************************************************/
 	public boolean insert() {
 		return new CFWSQL(this).insert();
@@ -428,10 +428,31 @@ public class CFWObject {
 	 * and executes it with the values assigned to the fields of the
 	 * object.
 	 * @param fieldnames
-	 * @return CFWQuery for method chaining
+	 * @return true if successful, false otherwise
 	 ****************************************************************/
 	public boolean insert(String ...fieldnames) {
 		return new CFWSQL(this).insert(fieldnames);
+	}
+	
+	/****************************************************************
+	 * Creates an insert statement including all fields and executes
+	 * the statement with the values assigned to the fields of the
+	 * object.
+	 * @return  primary key or null if not successful
+	 ****************************************************************/
+	public Integer insertGetPrimaryKey() {
+		return new CFWSQL(this).insertGetPrimaryKey();
+	}
+	
+	/****************************************************************
+	 * Creates an insert statement including the specified fields
+	 * and executes it with the values assigned to the fields of the
+	 * object.
+	 * @param fieldnames
+	 * @return  id or null if not successful
+	 ****************************************************************/
+	public Integer insertGetPrimaryKey(String ...fieldnames) {
+		return new CFWSQL(this).insertGetPrimaryKey(fieldnames);
 	}
 	
 	/****************************************************************

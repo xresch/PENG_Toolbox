@@ -52,7 +52,7 @@ public class StatsMethod extends CFWObject {
 	
 	private CFWField<Integer> foreignKeyParent = CFWField.newInteger(FormFieldType.NONE, StatsMethodFields.FK_ID_PARENT)
 			.setForeignKeyCascade(this, StatsMethodSignature.class, StatsMethodFields.PK_ID)
-			.setDescription("The id of the method signature.")
+			.setDescription("The id of the parent method signature.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(null);
 
@@ -62,7 +62,7 @@ public class StatsMethod extends CFWObject {
 			.setValue(null);
 	
 	private CFWField<Integer> period = CFWField.newInteger(FormFieldType.NONE, StatsMethodFields.PERIOD)
-			.setDescription("The period in seconds represented by this statistics.")
+			.setDescription("The aggregation period in minutes represented by this statistics.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
@@ -164,7 +164,7 @@ public class StatsMethod extends CFWObject {
 		return foreignKeySignature.getValue();
 	}
 	
-	public StatsMethod foreignKeySignature(int foreignKeySignature) {
+	public StatsMethod foreignKeySignature(Integer foreignKeySignature) {
 		this.foreignKeySignature.setValue(foreignKeySignature);
 		return this;
 	}
@@ -173,7 +173,7 @@ public class StatsMethod extends CFWObject {
 		return foreignKeyParent.getValue();
 	}
 	
-	public StatsMethod foreignKeyParent(int foreignKeyParent) {
+	public StatsMethod foreignKeyParent(Integer foreignKeyParent) {
 		this.foreignKeyParent.setValue(foreignKeyParent);
 		return this;
 	}
@@ -184,6 +184,11 @@ public class StatsMethod extends CFWObject {
 	
 	public StatsMethod count(int count) {
 		this.count.setValue(count);
+		return this;
+	}
+	
+	public StatsMethod increaseCount() {
+		this.count.setValue(count.getValue()+1);
 		return this;
 	}
 	

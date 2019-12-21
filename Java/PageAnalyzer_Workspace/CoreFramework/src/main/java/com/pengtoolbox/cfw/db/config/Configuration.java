@@ -14,7 +14,7 @@ import com.pengtoolbox.cfw.validation.LengthValidator;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class Configuration extends CFWObject {
@@ -24,6 +24,8 @@ public class Configuration extends CFWObject {
 	public static final String THEME = "Theme";
 	public static final String CODE_THEME = "Code Theme";
 	public static final String MENU_TITLE = "Menu Title";
+	public static final String CPU_SAMPLING_SECONDS = "CPU Sampling Seconds";
+	public static final String CPU_SAMPLING_AGGREGATION = "CPU Sampling Aggregation";
 	
 	public static final String LOGO_PATH = "Logo Path";
 	
@@ -102,7 +104,7 @@ public class Configuration extends CFWObject {
 		//-----------------------------------------
 		if(!CFW.DB.Config.checkConfigExists(Configuration.FILE_CACHING)) {
 			CFW.DB.Config.create(
-				new Configuration("Core Framework", Configuration.FILE_CACHING)
+				new Configuration("Performance", Configuration.FILE_CACHING)
 					.description("Enables the caching of files read from the disk.")
 					.type(FormFieldType.BOOLEAN)
 					.value("true")
@@ -114,7 +116,7 @@ public class Configuration extends CFWObject {
 		//-----------------------------------------
 		if(!CFW.DB.Config.checkConfigExists(Configuration.THEME)) {
 			CFW.DB.Config.create(
-				new Configuration("Core Framework", Configuration.THEME)
+				new Configuration("Design", Configuration.THEME)
 					.description("Set the application look and feel. 'Slate' is the default and recommended theme, all others are not 100% tested. For custom the file has to be placed under ./resources/css/bootstrap-theme-custom.css.")
 					.type(FormFieldType.SELECT)
 					.options(new String[]{"custom", "darkblue", "flatly", "lumen", "materia", "minty", "pulse", "sandstone", "simplex", "slate", "spacelab", "superhero", "united"})
@@ -127,7 +129,7 @@ public class Configuration extends CFWObject {
 		//-----------------------------------------
 		if(!CFW.DB.Config.checkConfigExists(Configuration.CODE_THEME)) {
 			CFW.DB.Config.create(
-				new Configuration("Core Framework", Configuration.CODE_THEME)
+				new Configuration("Design", Configuration.CODE_THEME)
 					.description("Set the style for the code highlighting.")
 					.type(FormFieldType.SELECT)
 					.options(new String[]{"androidstudio", "arduino-light", "magula", "pojoaque", "sunburst", "zenburn"})
@@ -140,7 +142,7 @@ public class Configuration extends CFWObject {
 		//-----------------------------------------
 		if(!CFW.DB.Config.checkConfigExists(Configuration.MENU_TITLE )) {
 			CFW.DB.Config.create(
-				new Configuration("Core Framework", Configuration.MENU_TITLE )
+				new Configuration("Design", Configuration.MENU_TITLE )
 					.description("Set the title displayed in the menu bar. Applies to all new sessions, login/logout required to see the change.")
 					.type(FormFieldType.TEXT)
 					.value("PAGE ANALYZER")
@@ -153,10 +155,37 @@ public class Configuration extends CFWObject {
 		//-----------------------------------------
 		if(!CFW.DB.Config.checkConfigExists(Configuration.LOGO_PATH )) {
 			CFW.DB.Config.create(
-				new Configuration("Core Framework", Configuration.LOGO_PATH )
+				new Configuration("Design", Configuration.LOGO_PATH )
 					.description("The path of the logo displayed in the menu bar. Relativ to the installation directory or a valid URL.")
 					.type(FormFieldType.TEXT)
 					.value("/resources/images/applogo.png")
+			);
+		}
+		
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Config.checkConfigExists(Configuration.CPU_SAMPLING_SECONDS )) {
+			CFW.DB.Config.create(
+				new Configuration("Performance", Configuration.CPU_SAMPLING_SECONDS )
+					.description("The interval in seconds between two CPU samplings. Changes to this value needs a restart to take effect.")
+					.type(FormFieldType.SELECT)
+					.options(new String[]{"1", "5", "10", "30", "60"})
+					.value("10")
+			);
+		}
+		
+		//-----------------------------------------
+		// 
+		//-----------------------------------------
+		if(!CFW.DB.Config.checkConfigExists(Configuration.CPU_SAMPLING_AGGREGATION )) {
+			CFW.DB.Config.create(
+				new Configuration("Performance", Configuration.CPU_SAMPLING_AGGREGATION )
+					.description("The period in minutes used for the aggregation of the statistics and writing them to the database.")
+					.type(FormFieldType.SELECT)
+					.options(new String[]{"10", "30", "60", "120", "360", "1440"})
+					.value("10")
 			);
 		}
 							

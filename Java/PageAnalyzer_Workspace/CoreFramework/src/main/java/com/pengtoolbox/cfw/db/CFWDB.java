@@ -30,7 +30,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWDB {
@@ -465,24 +465,26 @@ public class CFWDB {
 	}
 	
 	/********************************************************************************************
-	 * Returns a ResultSet includin generated keys.
+	 * Executes the insert and returns the generated Key of the new record. (what is a
+	 * primary key in most cases)
 	 * 
 	 * @param sql string with placeholders
+	 * @param generatedKeyName name of the column of the key to retrieve
 	 * @param values the values to be placed in the prepared statement
-	 * @return int first generated key, -1 otherwise
+	 * @return generated key, null if not successful
 	 ********************************************************************************************/
-	public static int preparedInsert(String sql, Object... values){	
+	public static Integer preparedInsertGetKey(String sql, String generatedKeyName, Object... values){	
         
 		CFWLog log = new CFWLog(logger).method("preparedInsert").start();
 		Connection conn = null;
 		PreparedStatement prepared = null;
 
-		int generatedID = -1;
+		Integer generatedID = null;
 		try {
 			//-----------------------------------------
 			// Initialize Variables
 			conn = CFWDB.getConnection();
-			prepared = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+			prepared = conn.prepareStatement(sql, new String[] {generatedKeyName});
 			
 			//-----------------------------------------
 			// Prepare Statement
@@ -495,7 +497,7 @@ public class CFWDB {
 			if(affectedRows > 0) {
 				ResultSet result = prepared.getGeneratedKeys();
 				result.next();
-				generatedID = result.getInt(1);
+				generatedID = result.getInt(generatedKeyName);
 			}
 		} catch (SQLException e) {
 			log.severe("Database Error: "+e.getMessage(), e);

@@ -9,9 +9,12 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.db.CFWDB;
+import com.pengtoolbox.cfw.db.config.Configuration;
 import com.pengtoolbox.cfw.stats.StatsMethodSamplingTask;
+import com.pengtoolbox.cfw.tests._master.WebTestMaster;
 
-public class TestSchedule {
+public class TestSchedule extends WebTestMaster {
 
 	public static boolean isExecuted = false;
 	
@@ -89,11 +92,13 @@ public class TestSchedule {
 	 * @throws InterruptedException
 	 ******************************************************************/
 	@Test
-	public void testThreadSamplingTask() throws InterruptedException {
+	public void testThreadSamplingTask() throws Exception {
 		
-		ScheduledFuture<?> future = CFW.Schedule.runPeriodically(0, 1, new StatsMethodSamplingTask());
+		int seconds = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_SECONDS);
 		
-		ScheduledFuture<?> terminator = CFW.Schedule.runPeriodically(10, 1, new Runnable() {
+		ScheduledFuture<?> future = CFW.Schedule.runPeriodically(0, seconds, new StatsMethodSamplingTask());
+
+		ScheduledFuture<?> terminator = CFW.Schedule.runPeriodically(20000, 1, new Runnable() {
 			@Override
 			public void run() {
 				System.out.println("Terminate");
@@ -104,5 +109,6 @@ public class TestSchedule {
 		while(!future.isDone()) {
 			Thread.sleep(500L);
 		}
+		
 	}
 }
