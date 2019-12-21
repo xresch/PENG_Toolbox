@@ -12,6 +12,7 @@ var TOP_ELEMENTS = [];
 var TOP_ELEMENTS_TOTALCALLS = 0;
 var BOTTOM_ELEMENTS = [];
 var CALL_HIERARCHY = {};
+var GUID = 0;
 
 /******************************************************************
  * Print the overview of the apis.
@@ -122,13 +123,18 @@ function cfw_cpusampling_printOverview(){
  * Print hierarchy div.
  * 
  ******************************************************************/
-function cfw_cpusampling_navigateChildren(e, parentID, elementID){
-		
-	var elementLink = $("#link-of-"+elementID);
-	var elementChildren = $("#children-of-"+elementID);
+function cfw_cpusampling_navigateChildren(e, domElement){
 	
-	var parentLink = $("#link-of-"+parentID);
-	var parentChildren = $("#children-of-"+parentID);
+	var elementLink = $(domElement);
+	var guid = elementLink.attr('data-guid');
+	var parentID = elementLink.attr('data-parentid');
+	var signatureID = elementLink.attr('data-signatureid');
+	
+	var elementChildren = $("#children-of-"+guid);
+	
+	var currentElement = $(elementLink).parent().parent();
+	var parentLink = currentElement.parent().parent().find('a').first();
+	var parentChildren = parentLink.parent().next();
 	
 	//---------------------------
 	// Right Arrow
@@ -136,7 +142,7 @@ function cfw_cpusampling_navigateChildren(e, parentID, elementID){
 	if (e.keyCode == 39) {
 		console.log("RIGHT");
 		  if(elementChildren.children().length == 0){
-			  cfw_cpusampling_printChildren(elementID);
+			  cfw_cpusampling_printChildren(domElement);
 		  }else{
 			  elementChildren.css('display', 'block');
 		  }
@@ -207,7 +213,12 @@ function cfw_cpusampling_navigateChildren(e, parentID, elementID){
  * Print hierarchy div.
  * 
  ******************************************************************/
-function cfw_cpusampling_collapseChildren(parentID){
+function cfw_cpusampling_collapseChildren(domElement){
+	
+	var titleLink = $(domElement);
+	var guid = titleLink.attr('data-guid');
+	var parentID = titleLink.attr('data-parentid');
+	var signatureID = titleLink.attr('data-signatureid');
 	
 	var domTarget = $("#children-of-"+parentID);
 
@@ -222,15 +233,22 @@ function cfw_cpusampling_collapseChildren(parentID){
  * Print hierarchy div.
  * 
  ******************************************************************/
-function cfw_cpusampling_printChildren(parentID){
+function cfw_cpusampling_printChildren(domElement){
 	
-	var titleLink = $("#link-of-"+parentID);
-	var domTarget = $("#children-of-"+parentID);
-	var element = GLOBAL_SIGNATURES[parentID];
+	var titleLink = $(domElement);
+	var guid = titleLink.attr('data-guid');
+	var parentID = titleLink.attr('data-parentid');
+	var signatureID = titleLink.attr('data-signatureid');
+	console.log("guid-"+guid);
+	console.log("parentID-"+parentID);
+	console.log("signatureID-"+signatureID);
+	
+	var domTarget = $("#children-of-"+guid);
+	var element = GLOBAL_SIGNATURES[signatureID];
 	
 	//------------------------------
 	// Change link to collape
-	titleLink.attr('onclick','cfw_cpusampling_collapseChildren('+parentID+')');
+	titleLink.attr('onclick','cfw_cpusampling_collapseChildren(this)');
 	
 	//------------------------------
 	// Print Children
@@ -247,6 +265,7 @@ function cfw_cpusampling_printHierarchyDiv(domTarget, element, parentPercentage,
 		
 	//-------------------------------------
 	// Get Title
+	GUID += 1;
 	var id = 0;
 	var title = "";
 	var children = [];
@@ -263,17 +282,17 @@ function cfw_cpusampling_printHierarchyDiv(domTarget, element, parentPercentage,
 	
 	//-------------------------------------
 	// Create Div
-	var childcontainerID = "children-of-"+id;
+	var childcontainerID = "children-of-"+GUID;
 	
-	var htmlString = '<div>'
+	var htmlString = '<div id="signature-'+id+'">'
 						+ '<div class="card-header text-light bg-primary w-100 p-1">'
 			 				+ '<div class="cfw-cpusampling-percent-block">'
 				 				+ '<div class="cfw-cpusampling-percent bg-success" style="width: '+element.percentage+'%;">'
 				 				+ '</div>'
 			 				+ '</div>'
-					     + '<a tabindex="0" role="button" class="text-light" id="link-of-'+id
-					     	+'" onclick="cfw_cpusampling_printChildren('+id+')"'
-					     	+'" onkeydown="cfw_cpusampling_navigateChildren(event, '+parentID+', '+id+')">'
+					     + '<a tabindex="0" role="button" class="text-light" id="link-of-'+GUID+'" data-signatureid="'+id+'" data-parentid="'+parentID+'" data-guid="'+GUID
+					     	+'" onclick="cfw_cpusampling_printChildren(this)"'
+					     	+'" onkeydown="cfw_cpusampling_navigateChildren(event, this)">'
 					     		+ Math.round(element.percentage)+'% - '+title
 					     	+'</a>'
 					     + '</div>'
