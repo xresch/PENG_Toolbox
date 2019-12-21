@@ -37,6 +37,9 @@ public class PageAnalyzerUserMenuItem extends UserMenuItem {
 			this.addChild(new MenuItem("API").href("./api"));
 		}
 		
+		if(CFW.Context.Request.hasPermission(Permission.CFW_API)) {
+			this.addChild(new MenuItem("CPU Sampling").href("./cpusampling"));
+		}
 		if(!currentUser.isForeign()) {
 			this.addChild(new MenuItem("Change Password").href("./changepassword"));
 		}

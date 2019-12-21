@@ -137,8 +137,7 @@ public class CFWDBStatsMethodSignature {
 				.where(StatsMethodSignatureFields.PK_ID.toString(), id)
 				.executeDelete();
 					
-	}
-	
+	}	
 	
 	/****************************************************************
 	 * Deletes the signature by id.

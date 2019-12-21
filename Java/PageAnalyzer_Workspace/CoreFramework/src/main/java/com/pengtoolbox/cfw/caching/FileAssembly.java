@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.db.config.Configuration;
+import com.pengtoolbox.cfw.config.Configuration;
 
 /**************************************************************************************************************
  * 

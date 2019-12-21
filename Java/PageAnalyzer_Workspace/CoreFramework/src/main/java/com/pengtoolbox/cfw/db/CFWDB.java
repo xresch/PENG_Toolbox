@@ -673,11 +673,16 @@ public class CFWDB {
 					String column = metadata.getColumnLabel(i);
 					json.append("\"").append(column).append("\": ");
 					
-					String value = resultSet.getString(i);
+					Object value = resultSet.getObject(i);
 					if(column.startsWith("JSON")) {
 						json.append(value).append(",");
 					}else {
-						json.append("\"").append(value).append("\",");
+						if(value instanceof Number
+						|| value instanceof Boolean ) {
+							json.append(value).append(",");
+						}else {
+							json.append("\"").append(value).append("\",");
+						}
 					}
 				}
 				json.deleteCharAt(json.length()-1); //remove last comma

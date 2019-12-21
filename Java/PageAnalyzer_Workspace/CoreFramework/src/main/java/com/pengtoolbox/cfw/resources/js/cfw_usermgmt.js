@@ -41,7 +41,7 @@ function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 					var params = {action: "update", item: mapName, itemid: itemID, listitemid: current.PK_ID};
 					var cfwToggleButton = CFW.ui.createToggleButton(CFW_USRMGMT_URL, params, (current.ITEM_ID == itemID));
 					
-					if(current.IS_DELETABLE == "FALSE"){
+					if(!current.IS_DELETABLE){
 						cfwToggleButton.setLocked();
 					}
 					var buttonCell = $("<td>");
@@ -244,7 +244,7 @@ function cfw_usermgmt_printUserList(data){
 			htmlString += '<td>'+current.DATE_CREATED+'</td>';
 			
 			//Reset Password Button
-			if(current.IS_FOREIGN.toUpperCase() == "FALSE"){
+			if(!current.IS_FOREIGN){
 				htmlString += '<td><button class="btn btn-warning btn-sm" alt="Reset Password" title="Reset Password" '
 					+'onclick="cfw_usermgmt_resetPassword('+current.PK_ID+');">'
 					+ '<i class="fas fa-unlock-alt"></i>'
@@ -261,7 +261,7 @@ function cfw_usermgmt_printUserList(data){
 				+ '</button>&nbsp;</td>';
 			
 			//Delete Button
-			if(current.IS_DELETABLE.toLowerCase() == "true"){
+			if(current.IS_DELETABLE){
 				htmlString += '<td><button class="btn btn-danger btn-sm" alt="Delete" title="Delete"  '
 					+'onclick="CFW.ui.confirmExecute(\'Do you want to delete the user?\', \'Delete\', \'cfw_usermgmt_delete(\\\'users\\\','+current.PK_ID+');\')">'
 					+ '<i class="fa fa-trash"></i>'
@@ -328,7 +328,7 @@ function cfw_usermgmt_printRoleList(data){
 				+ '</button></td>';
 			
 			//Delete Button
-			if(current.IS_DELETABLE.toLowerCase() == "true"){
+			if(current.IS_DELETABLE){
 				htmlString += '<td><button class="btn btn-danger btn-sm" alt="Delete" title="Delete" '
 					+'onclick="CFW.ui.confirmExecute(\'Do you want to delete the role?\', \'Delete\', \'cfw_usermgmt_delete(\\\'roles\\\','+current.PK_ID+');\')">'
 					+ '<i class="fa fa-trash"></i>'
@@ -377,7 +377,7 @@ function cfw_usermgmt_printPermissionList(data){
 			htmlString += '<td>'+current.DESCRIPTION+'</td>';
 			
 			//Delete Button
-			if(current.IS_DELETABLE.toLowerCase() == "true"){
+			if(current.IS_DELETABLE){
 				htmlString += '<td><button class="btn btn-danger btn-sm" alt="Delete" title="Delete" '
 					+'onclick="CFW.ui.confirmExecute(\'Do you want to delete the role?\', \'Delete\', \'cfw_usermgmt_delete(\\\'permissions\\\','+current.PK_ID+');\')">'
 					+ '<i class="fa fa-trash"></i>'

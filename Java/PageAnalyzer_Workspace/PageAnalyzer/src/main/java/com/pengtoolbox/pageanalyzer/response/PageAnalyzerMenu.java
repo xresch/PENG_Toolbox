@@ -2,7 +2,7 @@ package com.pengtoolbox.pageanalyzer.response;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.SessionData;
-import com.pengtoolbox.cfw.db.config.Configuration;
+import com.pengtoolbox.cfw.config.Configuration;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;

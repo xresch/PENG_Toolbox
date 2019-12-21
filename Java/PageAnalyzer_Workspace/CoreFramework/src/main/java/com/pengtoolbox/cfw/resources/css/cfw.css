@@ -189,3 +189,20 @@
     background: inherit;
 }
 
+/*************************************************************************
+ * CPU Sampling
+ *************************************************************************/
+ .cfw-cpusampling-percent-block{
+ 	float: left; 
+ 	width: 100px; 
+ 	height: 15px; 
+ 	padding-left: 5px; 
+ 	padding-right: 5px; 
+ 	margin-top: 3px;
+ }
+ 
+ .cfw-cpusampling-percent{
+ 	height: 100%;
+ }
+  
+

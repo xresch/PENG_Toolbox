@@ -748,9 +748,10 @@ function cfw_updateTimeField(fieldID){
  * Sort an object array by the values for the given key.
  * @param array the object array to be sorted
  * @param key the name of the field that should be used for sorting
+ * @param reverse the order 
  * @return sorted array
  *************************************************************************************/
-function cfw_sortArrayByValueOfObject(array, key){
+function cfw_sortArrayByValueOfObject(array, key, reverse){
 	array.sort(function(a, b) {
 		
 			var valueA = a[key];
@@ -759,7 +760,11 @@ function cfw_sortArrayByValueOfObject(array, key){
 			if(isNaN(valueA)) valueA = 9999999;
 			if(isNaN(valueB)) valueB = 9999999;
 			
-		return valueA - valueB;
+		if(reverse){
+			return valueB -valueA;
+		}else{
+			return valueA - valueB;
+		}
 	});
 	
 	return array;

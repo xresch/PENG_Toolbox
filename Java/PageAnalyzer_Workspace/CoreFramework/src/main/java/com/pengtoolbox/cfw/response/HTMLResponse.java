@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.caching.FileDefinition;
-import com.pengtoolbox.cfw.db.config.Configuration;
+import com.pengtoolbox.cfw.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;

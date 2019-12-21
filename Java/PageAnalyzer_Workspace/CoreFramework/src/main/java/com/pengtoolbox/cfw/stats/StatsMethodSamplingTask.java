@@ -9,7 +9,7 @@ import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.db.config.Configuration;
+import com.pengtoolbox.cfw.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class StatsMethodSamplingTask extends TimerTask {
@@ -55,9 +55,11 @@ public class StatsMethodSamplingTask extends TimerTask {
 		int periodMinutes = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_AGGREGATION);
 		
 		for(StatsMethod entry : counterMap.values()) {
-			if(entry.time(time).period(periodMinutes).insert()) {
-				entry.count(0);
-			}	
+			if(entry.count() != 0) {
+				if(entry.time(time).period(periodMinutes).insert()) {
+					entry.count(0);
+				}	
+			}
 		}
 		
 	}
@@ -75,8 +77,8 @@ public class StatsMethodSamplingTask extends TimerTask {
 			
 			Integer parentID = null;
 			
-			for(StackTraceElement element : elements) {
-				
+			for(int i = elements.length-1; i > 0; i--) {
+				StackTraceElement element = elements[i];
 				String signatureString = element.toString();
 				signatureString = signatureString.substring(signatureString.lastIndexOf('/')+1);
 				Integer signatureID = null;

@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.db.config;
+package com.pengtoolbox.cfw.config;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw.config.Configuration.ConfigFields;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.config.Configuration.ConfigFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************

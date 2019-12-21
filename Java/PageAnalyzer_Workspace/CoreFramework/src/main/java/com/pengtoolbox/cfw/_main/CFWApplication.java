@@ -40,6 +40,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 
 import com.pengtoolbox.cfw.api.APILoginServlet;
 import com.pengtoolbox.cfw.api.CFWAPIServlet;
+import com.pengtoolbox.cfw.config.ConfigurationServlet;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
 import com.pengtoolbox.cfw.handlers.HTTPSRedirectHandler;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
@@ -47,7 +48,6 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginServlet;
 import com.pengtoolbox.cfw.servlets.AssemblyServlet;
 import com.pengtoolbox.cfw.servlets.AutocompleteServlet;
-import com.pengtoolbox.cfw.servlets.ConfigurationServlet;
 import com.pengtoolbox.cfw.servlets.FormServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
@@ -55,6 +55,8 @@ import com.pengtoolbox.cfw.servlets.PermissionsServlet;
 import com.pengtoolbox.cfw.servlets.admin.APIUserMgmtSevlet;
 import com.pengtoolbox.cfw.servlets.admin.UserManagementServlet;
 import com.pengtoolbox.cfw.servlets.userprofile.ChangePasswordServlet;
+import com.pengtoolbox.cfw.stats.ServletCPUSampling;
+import com.pengtoolbox.cfw.stats.ServletStatistics;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
 /**************************************************************************************************************
@@ -265,8 +267,10 @@ public class CFWApplication {
 	    
 	    
 		//-----------------------------------------
-		// User Profile Servlets
+		// Various Servlets
 	    servletContextHandler.addServlet(CFWAPIServlet.class,  "/api");
+	    servletContextHandler.addServlet(ServletCPUSampling.class,  "/cpusampling");
+	    servletContextHandler.addServlet(ServletStatistics.class,  "/statistics");
 	    
 		//-----------------------------------------
 		// User Profile Servlets

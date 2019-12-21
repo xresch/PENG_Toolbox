@@ -1,0 +1,308 @@
+
+/**************************************************************************************************************
+ * 
+ * @author Reto Scheiwiller, © 2019 
+ * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
+ **************************************************************************************************************/
+/******************************************************************
+ * Global
+ ******************************************************************/
+var GLOBAL_SIGNATURES = {};
+var TOP_ELEMENTS = [];
+var TOP_ELEMENTS_TOTALCALLS = 0;
+var BOTTOM_ELEMENTS = [];
+var CALL_HIERARCHY = {};
+
+/******************************************************************
+ * Print the overview of the apis.
+ * 
+ ******************************************************************/
+function cfw_cpusampling_prepareData(data){
+	
+	console.log(data);
+	
+	//------------------------------------------
+	// Convert Signatures
+	var signatures = data.payload.signatures;
+	GLOBAL_SIGNATURES = {}
+	
+	for(var i = 0; i < signatures.length; i++){
+		var current = signatures[i];
+		GLOBAL_SIGNATURES[current.PK_ID] = 
+			{ 
+				id:			current.PK_ID, 
+				signature: 	current.SIGNATURE, 
+				children: 	[],
+				totalCalls: 0
+			};
+	}
+	
+	//------------------------------------------
+	// Create Parent Child relations and find
+	// top elements
+	var timeseries = data.payload.timeseries;
+
+	for(var i = 0; i < timeseries.length; i++){
+		var current = timeseries[i];
+		parentID = current.FK_ID_PARENT;
+		if(current.FK_ID_PARENT == "null"){
+			signature = GLOBAL_SIGNATURES[current.FK_ID_SIGNATURE]
+			if(!TOP_ELEMENTS.includes(signature)){
+				TOP_ELEMENTS.push(signature);
+			}
+		}else{
+			GLOBAL_SIGNATURES[parentID].children.push(current);
+		}
+	}
+	
+	//------------------------------------------
+	// Sort, calculate Percentages and find bottoms
+	for(id in GLOBAL_SIGNATURES){
+
+		var current = GLOBAL_SIGNATURES[id];
+		var children = current.children;
+		
+		CFW.array.sortArrayByValueOfObject(children, 'COUNT', true);
+		//------------------------------------
+		// Check Bottom call
+		if(children.length == 0){
+			BOTTOM_ELEMENTS.push(current);
+			continue;
+		}
+		current.totalCalls = 0;
+		
+		//------------------------------------
+		// Get Total Count
+		for(var i = 0; i < children.length; i++){
+			current.totalCalls += children[i].COUNT;
+		}
+		
+		//------------------------------------
+		// Calculate Child percentages
+		for(var i = 0; i < children.length; i++){
+			children[i].percentage = (children[i].COUNT / current.totalCalls) * 100;
+		}
+	}
+	console.log(GLOBAL_SIGNATURES);
+	console.log(TOP_ELEMENTS);
+	console.log(BOTTOM_ELEMENTS);
+	
+	cfw_cpusampling_printOverview();
+}
+
+/******************************************************************
+ * Print the overview of the apis .
+ * 
+ ******************************************************************/
+function cfw_cpusampling_printOverview(){
+	
+	parent = $("#cfw-container");
+	
+	parent.append("<h1>CPU Sampling</h1>");
+	
+	//------------------------------------------
+	// Calculate Percentages for top elements
+	var totalTopCalls = 0;
+	for(id in TOP_ELEMENTS){
+		console.log("totalTopCalls"+totalTopCalls);
+		totalTopCalls += TOP_ELEMENTS[id].totalCalls;
+	}
+	
+	//------------------------------------------
+	// Create Hierarchy
+	for(id in TOP_ELEMENTS){
+		current = TOP_ELEMENTS[id];
+		current.percentage = (current.totalCalls / totalTopCalls)*100;
+		cfw_cpusampling_printHierarchyDiv(parent, current, id)
+	}
+	
+}
+
+/******************************************************************
+ * Print hierarchy div.
+ * 
+ ******************************************************************/
+function cfw_cpusampling_navigateChildren(e, parentID, elementID){
+		
+	var elementLink = $("#link-of-"+elementID);
+	var elementChildren = $("#children-of-"+elementID);
+	
+	var parentLink = $("#link-of-"+parentID);
+	var parentChildren = $("#children-of-"+parentID);
+	
+	//---------------------------
+	// Right Arrow
+	// Open children
+	if (e.keyCode == 39) {
+		console.log("RIGHT");
+		  if(elementChildren.children().length == 0){
+			  cfw_cpusampling_printChildren(elementID);
+		  }else{
+			  elementChildren.css('display', 'block');
+		  }
+		  elementChildren.find("a").first().focus();
+		  return;
+	}
+	
+	//---------------------------
+	// Down Arrow 
+	// Next element
+	if (e.keyCode == 40) {
+		console.log("DOWN");
+		e.preventDefault();
+		
+		//------------------------
+		// Use child if available
+		if ( elementChildren.css('display') != "none" 
+		  && elementChildren.children().length > 0){
+			
+			elementChildren.find('a').first().focus();
+
+		}
+		//------------------------
+		// Use next sibling
+		else{
+			var currentParent = elementLink.parent().parent();
+			var nextLink = currentParent.next().find('a').first();
+			while(nextLink.length == 0 ){
+				currentParent = currentParent.parent().parent();
+				nextLink = currentParent.next().find('a').first();
+			}
+			nextLink.focus();
+		}
+	}
+	
+	//---------------------------
+	// Left Arrow
+	if (e.keyCode == 37) { 
+		  console.log("LEFT");
+		  parentLink.focus();
+		  parentChildren.css('display', 'none');
+		  return;
+	}
+	
+	//---------------------------
+	// Up Arrow 
+	if (e.keyCode == 38) { 
+		console.log("UP");
+		e.preventDefault();
+		
+		var prevLink = elementLink.parent().parent().prev().find('a').last().focus();
+		if(prevLink.length == 0 ){
+			  parentLink.focus();
+		}else{
+			prevLink.focus();
+		}
+
+		return;
+	}
+	
+	//---------------------------
+	// Enter
+	if (e.keyCode == 13) {
+		
+	}
+}
+/******************************************************************
+ * Print hierarchy div.
+ * 
+ ******************************************************************/
+function cfw_cpusampling_collapseChildren(parentID){
+	
+	var domTarget = $("#children-of-"+parentID);
+
+	if(domTarget.css('display') == "none"){
+		domTarget.css('display', 'block');
+	}else{
+		domTarget.css('display', 'none');
+	}
+	
+}
+/******************************************************************
+ * Print hierarchy div.
+ * 
+ ******************************************************************/
+function cfw_cpusampling_printChildren(parentID){
+	
+	var titleLink = $("#link-of-"+parentID);
+	var domTarget = $("#children-of-"+parentID);
+	var element = GLOBAL_SIGNATURES[parentID];
+	
+	//------------------------------
+	// Change link to collape
+	titleLink.attr('onclick','cfw_cpusampling_collapseChildren('+parentID+')');
+	
+	//------------------------------
+	// Print Children
+	domTarget.css('display', 'block');
+	for(var i = 0; i < element.children.length; i++ ){
+		cfw_cpusampling_printHierarchyDiv(domTarget, element.children[i], element.percentage, parentID);
+	}
+}
+/******************************************************************
+ * Print hierarchy div.
+ * 
+ ******************************************************************/
+function cfw_cpusampling_printHierarchyDiv(domTarget, element, parentPercentage, parentID){
+		
+	//-------------------------------------
+	// Get Title
+	var id = 0;
+	var title = "";
+	var children = [];
+	console.log(element);
+	if(element.signature == undefined){
+		id = element.FK_ID_SIGNATURE;
+		title = GLOBAL_SIGNATURES[element.FK_ID_SIGNATURE].signature;
+		children = GLOBAL_SIGNATURES[element.FK_ID_SIGNATURE].children;
+	}else{
+		id = element.id;
+		title = element.signature;
+		children = element.children;
+	}	
+	
+	//-------------------------------------
+	// Create Div
+	var childcontainerID = "children-of-"+id;
+	
+	var htmlString = '<div>'
+						+ '<div class="card-header text-light bg-primary w-100 p-1">'
+			 				+ '<div class="cfw-cpusampling-percent-block">'
+				 				+ '<div class="cfw-cpusampling-percent bg-success" style="width: '+element.percentage+'%;">'
+				 				+ '</div>'
+			 				+ '</div>'
+					     + '<a tabindex="0" role="button" class="text-light" id="link-of-'+id
+					     	+'" onclick="cfw_cpusampling_printChildren('+id+')"'
+					     	+'" onkeydown="cfw_cpusampling_navigateChildren(event, '+parentID+', '+id+')">'
+					     		+ Math.round(element.percentage)+'% - '+title
+					     	+'</a>'
+					     + '</div>'
+					     + '<div id="'+childcontainerID+'" class="cfw-cpusampling-children w-100" style=" padding-left: 15px;">'
+				   + '</div>';
+	console.log(domTarget);		   
+	domTarget.append(htmlString);
+	
+	//-------------------------------------
+	// Handle children
+//	var newLevel = level + 1;
+//	for(var i = 0; i < children.length; i++ ){
+//		cfw_cpusampling_printHierarchyDiv(newLevel, domTarget, children[i]);
+//	}
+}
+
+/******************************************************************
+ * Main method for building the view.
+ * 
+ ******************************************************************/
+function cfw_cpusampling_draw(){
+	
+	CFW.ui.toogleLoader(true);
+	
+	window.setTimeout( 
+	function(){
+
+		CFW.http.fetchAndCacheData("./statistics", {type: "cpusampling"}, "cpusampling", cfw_cpusampling_prepareData);
+		
+		CFW.ui.toogleLoader(false);
+	}, 100);
+}
