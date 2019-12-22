@@ -1,21 +1,21 @@
 package com.pengtoolbox.cfw.stats;
 
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.schedule.CFWScheduledTask;
 
-public class StatsCPUSamplingAggregationTask extends TimerTask {
+public class StatsCPUSamplingAggregationTask extends CFWScheduledTask {
 	
 	private static Logger logger = CFWLog.getLogger(StatsCPUSamplingAggregationTask.class.getName());
 
-	@Override
-	public void run() {
-		System.out.println("============= RUN StatsCPUSamplingAggregationTask ============");
+	
+	public void execute() {
+		
+		//System.out.println("============= RUN StatsCPUSamplingAggregationTask ============");
 		Configuration config = CFW.DB.Config.selectByName(Configuration.CPU_SAMPLING_AGGREGATION);
 		Object[] granularities = (Object[])config.options();
 		
@@ -32,11 +32,12 @@ public class StatsCPUSamplingAggregationTask extends TimerTask {
 			// Get timespan 
 			Timestamp oldest = CFWDBStatsCPUSample.getOldestAgedRecord(granularity, ageOutTime);
 			Timestamp youngest = CFWDBStatsCPUSample.getYoungestAgedRecord(granularity, ageOutTime);
-			System.out.println("=========================================");
-			System.out.println("granularity:"+granularity);
-			System.out.println("oldest:"+oldest);
-			System.out.println("youngest:"+youngest);
-			System.out.println("ageOutTime:"+ageOutTime.toString());
+//			System.out.println("=========================================");
+//			System.out.println("granularity:"+granularity);
+//			System.out.println("oldest:"+oldest);
+//			System.out.println("youngest:"+youngest);
+//			System.out.println("ageOutTime:"+ageOutTime.toString());
+			
 			if(oldest == null || youngest == null ) {
 				//nothing to aggregate for this granularity
 				continue;
@@ -51,20 +52,18 @@ public class StatsCPUSamplingAggregationTask extends TimerTask {
 			Timestamp endTime = CFW.Time.offsetTimestamp(oldest, 0, 0, 0, granularity);
 			
 			while(endTime.getTime() < youngest.getTime()) {
-				System.out.println("---------- Aggregate ----------");
-				System.out.println("startTime:"+startTime.toString());
-				System.out.println("endTime:"+endTime.toString());
+//				System.out.println("---------- Aggregate ----------");
+//				System.out.println("startTime:"+startTime.toString());
+//				System.out.println("endTime:"+endTime.toString());
 				boolean success = CFWDBStatsCPUSample.aggregateStatistics(startTime, endTime, granularity);
 				startTime =  CFW.Time.offsetTimestamp(startTime, 0, 0, 0, granularity);
 				endTime = CFW.Time.offsetTimestamp(endTime, 0, 0, 0, granularity);
-				System.out.println("success: "+success);
+//				System.out.println("success: "+success);
 			}
 
 		}
 		
 		
-		
 	}
-	
 
 }

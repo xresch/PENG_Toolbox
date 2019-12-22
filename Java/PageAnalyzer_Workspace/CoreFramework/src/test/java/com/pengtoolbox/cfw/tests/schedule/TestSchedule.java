@@ -2,7 +2,6 @@ package com.pengtoolbox.cfw.tests.schedule;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimerTask;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -10,7 +9,7 @@ import org.junit.Test;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.config.Configuration;
-import com.pengtoolbox.cfw.db.CFWDB;
+import com.pengtoolbox.cfw.schedule.CFWScheduledTask;
 import com.pengtoolbox.cfw.stats.StatsCPUSamplingTask;
 import com.pengtoolbox.cfw.tests._master.WebTestMaster;
 
@@ -21,19 +20,19 @@ public class TestSchedule extends WebTestMaster {
 	//@Test
 	public void testSchedule() throws InterruptedException {
 		
-		ScheduledFuture<?> future = CFW.Schedule.runPeriodically(5, 1, new Runnable() {
+		ScheduledFuture<?> future = CFW.Schedule.runPeriodically(5, 1, new CFWScheduledTask() {
 			int count = 1;
 			@Override
-			public void run() {
+			public void execute() {
 				System.out.println("Task: "+count++);
 				
 
 			}
 		});
 		
-		ScheduledFuture<?> terminator = CFW.Schedule.runPeriodically(10, 1, new Runnable() {
+		ScheduledFuture<?> terminator = CFW.Schedule.runPeriodically(10, 1, new CFWScheduledTask() {
 			@Override
-			public void run() {
+			public void execute() {
 				System.out.println("Terminate");
 				future.cancel(true);
 			}
@@ -48,10 +47,10 @@ public class TestSchedule extends WebTestMaster {
 	public void testScheduleWeekly() throws InterruptedException {
 		
 		// set the time to a past date time to check if it works
-		CFW.Schedule.scheduleWeekly(Calendar.MONDAY, 19, 46, 40, new TimerTask() {
+		CFW.Schedule.scheduleWeekly(Calendar.MONDAY, 19, 46, 40, new CFWScheduledTask() {
 
 			@Override
-			public void run() {
+			public void execute() {
 				System.out.println("Executed on: "+new Date().toLocaleString());
 				TestSchedule.isExecuted = true;
 			}
@@ -72,10 +71,10 @@ public class TestSchedule extends WebTestMaster {
 	public void testScheduleJumpIncrease() throws InterruptedException {
 		
 		// set the time to a past date time to check if it works
-		CFW.Schedule.scheduleTimed((int)TimeUnit.MINUTES.toSeconds(1), Calendar.MONDAY, 19, 46, 40, new TimerTask() {
+		CFW.Schedule.scheduleTimed((int)TimeUnit.MINUTES.toSeconds(1), Calendar.MONDAY, 19, 46, 40, new CFWScheduledTask() {
 
 			@Override
-			public void run() {
+			public void execute() {
 				System.out.println("Executed on: "+new Date().toLocaleString());
 				TestSchedule.isExecuted = true;
 			}
@@ -98,9 +97,9 @@ public class TestSchedule extends WebTestMaster {
 		
 		ScheduledFuture<?> future = CFW.Schedule.runPeriodically(0, seconds, new StatsCPUSamplingTask());
 
-		ScheduledFuture<?> terminator = CFW.Schedule.runPeriodically(20000, 1, new Runnable() {
+		ScheduledFuture<?> terminator = CFW.Schedule.runPeriodically(20000, 1, new CFWScheduledTask() {
 			@Override
-			public void run() {
+			public void execute() {
 				System.out.println("Terminate");
 				future.cancel(true);
 			}

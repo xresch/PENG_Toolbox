@@ -5,15 +5,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.config.Configuration;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.schedule.CFWScheduledTask;
 
-public class StatsCPUSamplingTask extends TimerTask {
+public class StatsCPUSamplingTask extends CFWScheduledTask {
 	
 	private static long lastSave = System.currentTimeMillis();
 	private static Logger logger = CFWLog.getLogger(StatsCPUSamplingTask.class.getName());
@@ -26,7 +26,7 @@ public class StatsCPUSamplingTask extends TimerTask {
 	private static int samplingSeconds = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_SECONDS);
 	
 	@Override
-	public void run() {
+	public void execute() {
 		long currentTime = System.currentTimeMillis();
 		// minutes to millis
 		int aggregationMillis = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_AGGREGATION) *60000;
@@ -34,14 +34,12 @@ public class StatsCPUSamplingTask extends TimerTask {
 		//-----------------------------------
 		// Check Saving
 		if( (currentTime - lastSave) > aggregationMillis ) {
-			System.out.println("################SAVE################");
 			saveAndResetCounters();
 			lastSave = currentTime;
 		}
 		
 		//-----------------------------------
 		// Check Saving
-		System.out.println(currentTime+"-update");
 		updateCounters();
 		
 		//System.out.println(dumpCounters());

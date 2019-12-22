@@ -218,11 +218,11 @@ public class CFWDB {
 		//Create new array to avoid ConcurrentModificationException
 		for(Connection con : connArray.toArray(new Connection[] {})) {
 			
-			System.out.println("ForceClose: "+con.getClass());
-			counter++;
+
 			try {
 				if(!con.isClosed()) {
-					System.out.println("forced: "+con.getCatalog());
+					counter++;			
+					System.out.println("ForceClose: "+con.getClass());
 					con.close();
 				}
 				connArray.remove(con);

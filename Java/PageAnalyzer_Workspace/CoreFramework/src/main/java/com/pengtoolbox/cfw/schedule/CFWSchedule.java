@@ -20,7 +20,7 @@ public class CFWSchedule {
 	  * @param action
 	  * @return ScheduledFuture<?>
 	  ********************************************************************************/
-	 public static ScheduledFuture<?> runPeriodically(int initialDelaySeconds, int periodSeconds, Runnable action) {
+	 public static ScheduledFuture<?> runPeriodically(int initialDelaySeconds, int periodSeconds, CFWScheduledTask action) {
 		 return runPeriodically(initialDelaySeconds, periodSeconds, TimeUnit.SECONDS, action);
 	 }
 	 
@@ -32,9 +32,8 @@ public class CFWSchedule {
 	  * @param action
 	  * @return ScheduledFuture<?>
 	  ********************************************************************************/
-	 public static ScheduledFuture<?> runPeriodically(int initialDelaySeconds, int periodSeconds, TimeUnit unit, Runnable action) {
+	 public static ScheduledFuture<?> runPeriodically(int initialDelaySeconds, int periodSeconds, TimeUnit unit, CFWScheduledTask action) {
 		 return scheduler.scheduleAtFixedRate(action, initialDelaySeconds, periodSeconds, unit);
-		 
 	 }
 	 
 	 /********************************************************************************
@@ -49,7 +48,7 @@ public class CFWSchedule {
 	  * @param task
 	  * @return
 	  ********************************************************************************/
-	 public static Timer scheduleWeekly(int dayOfWeek, int hourOfDay, int minute, int second, TimerTask task) {
+	 public static Timer scheduleWeekly(int dayOfWeek, int hourOfDay, int minute, int second, CFWScheduledTask task) {
 		 return scheduleTimed((int)TimeUnit.DAYS.toSeconds(7), dayOfWeek, hourOfDay, minute, second, task);
 	 }
 	 
@@ -66,7 +65,7 @@ public class CFWSchedule {
 	  * @param task
 	  * @return
 	  ********************************************************************************/
-	 public static Timer scheduleTimed(int intervalSec, int dayOfWeek, int hourOfDay, int minute, int second, TimerTask task) {
+	 public static Timer scheduleTimed(int intervalSec, int dayOfWeek, int hourOfDay, int minute, int second, CFWScheduledTask task) {
 		
 		Calendar calendar = Calendar.getInstance();
 		
@@ -89,7 +88,7 @@ public class CFWSchedule {
 	  * @param task
 	  * @return
 	  ********************************************************************************/
-     public static Timer scheduleTimed(Calendar startDateTime, int intervalSec, boolean preventImmediate, TimerTask task) {
+     public static Timer scheduleTimed(Calendar startDateTime, int intervalSec, boolean preventImmediate, CFWScheduledTask task) {
     		 
         Timer timer = new Timer(); // Instantiate Timer Object
 
@@ -117,6 +116,4 @@ public class CFWSchedule {
 
         return timer;
 	 }
-	 
-	 
 }

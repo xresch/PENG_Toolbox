@@ -276,7 +276,7 @@ public class CFW {
 		int seconds = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_SECONDS);
 		ScheduledFuture<?> sampling = CFW.Schedule.runPeriodically(0, seconds, new StatsCPUSamplingTask());
 		
-		ScheduledFuture<?> aggregation = CFW.Schedule.runPeriodically(0, 20, new StatsCPUSamplingAggregationTask());
+		ScheduledFuture<?> aggregation = CFW.Schedule.runPeriodically(0, 600, new StatsCPUSamplingAggregationTask());
 	}
 	
 }
