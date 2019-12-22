@@ -10,18 +10,20 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.config.Configuration;
+import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
-public class StatsMethodSamplingTask extends TimerTask {
+public class StatsCPUSamplingTask extends TimerTask {
 	
 	private static long lastSave = System.currentTimeMillis();
-	private static Logger logger = CFWLog.getLogger(StatsMethodSamplingTask.class.getName());
+	private static Logger logger = CFWLog.getLogger(StatsCPUSamplingTask.class.getName());
 	
 	// Contains "parentID -> signatureID" as key and the number of occurences as value.
-	private static LinkedHashMap<String, StatsMethod> counterMap = new LinkedHashMap<String, StatsMethod>();
+	private static LinkedHashMap<String, StatsCPUSample> counterMap = new LinkedHashMap<String, StatsCPUSample>();
 	
 	// Contains the stack element signature with ID as in the DB
-	private static HashMap<Object, Object> signatureIDMap = CFWDBStatsMethodSignature.getSignaturesAsKeyValueMap();
+	private static HashMap<Object, Object> signatureIDMap = CFWDBStatsCPUSampleSignature.getSignaturesAsKeyValueMap();
+	private static int samplingSeconds = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_SECONDS);
 	
 	@Override
 	public void run() {
@@ -54,13 +56,18 @@ public class StatsMethodSamplingTask extends TimerTask {
 		Timestamp time = new Timestamp(System.currentTimeMillis());
 		int periodMinutes = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_AGGREGATION);
 		
-		for(StatsMethod entry : counterMap.values()) {
-			if(entry.count() != 0) {
-				if(entry.time(time).period(periodMinutes).insert()) {
-					entry.count(0);
-				}	
+		CFWDB.beginTransaction();
+			for(StatsCPUSample entry : counterMap.values()) {
+				if(entry.count() != 0) {
+					if(entry.time(time)
+					  .prepareStatistics(samplingSeconds)
+					  .granularity(periodMinutes).insert()) {
+						
+						entry.count(0);
+					}	
+				}
 			}
-		}
+		CFWDB.commitTransaction();
 		
 	}
 	
@@ -87,7 +94,7 @@ public class StatsMethodSamplingTask extends TimerTask {
 				// Create DB entry for Signature if not exists
 				if(!signatureIDMap.containsKey(signatureString)) {
 					
-					signatureID = new StatsMethodSignature()
+					signatureID = new StatsCPUSampleSignature()
 							.signature(signatureString)
 							.insertGetPrimaryKey();
 					
@@ -113,7 +120,7 @@ public class StatsMethodSamplingTask extends TimerTask {
 															
 					//---------------------------------------
 					// Add counter to map
-					StatsMethod  methodStats = new StatsMethod()
+					StatsCPUSample  methodStats = new StatsCPUSample()
 							.foreignKeySignature(signatureID)
 							.foreignKeyParent(parentID)
 							.count(1);
@@ -131,7 +138,7 @@ public class StatsMethodSamplingTask extends TimerTask {
 	public static String dumpCounters() {
 		
 		StringBuilder builder = new StringBuilder();
-		for(Entry<String, StatsMethod> entry : counterMap.entrySet()) {
+		for(Entry<String, StatsCPUSample> entry : counterMap.entrySet()) {
 			builder.append(entry.getKey()).append(": ").append(entry.getValue().count()).append("\n");
 		}
 		

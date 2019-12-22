@@ -1,0 +1,15 @@
+/**********************************
+ * Aggregate statistics.
+ **********************************/
+SELECT (
+		DATEADD(
+			SECOND, 
+			DATEDIFF(SECOND, MIN(TIME), MAX(TIME)) / 2,
+			MIN(TIME)
+		)) AS NewTime, 
+FK_ID_SIGNATURE, FK_ID_PARENT, SUM(COUNT), MIN(MIN), AVG(AVG), MAX(MAX), GRANULARITY
+FROM PUBLIC.CFW_STATS_CPUSAMPLE
+WHERE TIME > '2019-12-22 09:10:19'
+AND TIME < '2019-12-22 09:30:19'
+AND GRANULARITY < 10
+GROUP BY FK_ID_SIGNATURE, FK_ID_PARENT;

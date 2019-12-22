@@ -46,7 +46,7 @@ function cfw_cpusampling_prepareData(data){
 	for(var i = 0; i < timeseries.length; i++){
 		var current = timeseries[i];
 		parentID = current.FK_ID_PARENT;
-		if(current.FK_ID_PARENT == "null"){
+		if(current.FK_ID_PARENT == null){
 			signature = GLOBAL_SIGNATURES[current.FK_ID_SIGNATURE]
 			if(!TOP_ELEMENTS.includes(signature)){
 				TOP_ELEMENTS.push(signature);
@@ -100,14 +100,16 @@ function cfw_cpusampling_printOverview(){
 	parent = $("#cfw-container");
 	
 	parent.append("<h1>CPU Sampling</h1>");
-	
+	parent.append("<p>Internal CPU sampling allows you to see where your application is spending the most time. " +
+				  "Use the arrow keys to navigate through the tree.</p>");
 	//------------------------------------------
 	// Calculate Percentages for top elements
 	var totalTopCalls = 0;
 	for(id in TOP_ELEMENTS){
-		console.log("totalTopCalls"+totalTopCalls);
 		totalTopCalls += TOP_ELEMENTS[id].totalCalls;
 	}
+	
+	CFW.array.sortArrayByValueOfObject(TOP_ELEMENTS, 'totalCalls', true);
 	
 	//------------------------------------------
 	// Create Hierarchy
@@ -165,6 +167,7 @@ function cfw_cpusampling_navigateChildren(e, domElement){
 			elementChildren.find('a').first().focus();
 
 		}
+		
 		//------------------------
 		// Use next sibling
 		else{
@@ -193,7 +196,7 @@ function cfw_cpusampling_navigateChildren(e, domElement){
 		console.log("UP");
 		e.preventDefault();
 		
-		var prevLink = elementLink.parent().parent().prev().find('a').last().focus();
+		var prevLink = elementLink.parent().parent().prev().find('a:visible').last().focus();
 		if(prevLink.length == 0 ){
 			  parentLink.focus();
 		}else{
@@ -241,9 +244,9 @@ function cfw_cpusampling_printChildren(domElement){
 	var parentID = titleLink.attr('data-parentid');
 	var signatureID = titleLink.attr('data-signatureid');
 	
-	console.log("guid-"+guid);
-	console.log("parentID-"+parentID);
-	console.log("signatureID-"+signatureID);
+//	console.log("guid-"+guid);
+//	console.log("parentID-"+parentID);
+//	console.log("signatureID-"+signatureID);
 	
 	var domTarget = $("#children-of-"+guid);
 	var element = GLOBAL_SIGNATURES[signatureID];
@@ -289,10 +292,10 @@ function cfw_cpusampling_printHierarchyDiv(domTarget, element, parentPercentage,
 		
 	var isRecursion = false;
 	var recursiveLabel = "";
-	console.log("===================");
-	console.log("signatureID = "+signatureID);
-	console.log("domTarget.parent().attr('id') = "+domTarget.parent().attr('id'));
-	console.log("domTarget.closest('#'+signatureID).length = "+domTarget.closest('#'+signatureID).length);
+//	console.log("===================");
+//	console.log("signatureID = "+signatureID);
+//	console.log("domTarget.parent().attr('id') = "+domTarget.parent().attr('id'));
+//	console.log("domTarget.closest('#'+signatureID).length = "+domTarget.closest('#'+signatureID).length);
 	
 	if(domTarget.closest('#'+signatureID).length > 0 ){
 		recursiveLabel = '<div class="badge badge-danger ml-2">Recursion</div>';
@@ -325,7 +328,8 @@ function cfw_cpusampling_printHierarchyDiv(domTarget, element, parentPercentage,
 					     + '</div>'
 					     + '<div id="'+childcontainerID+'" class="cfw-cpusampling-children w-100" style=" padding-left: 15px;">'
 				   + '</div>';
-	console.log(domTarget);		   
+	
+	//console.log(domTarget);		   
 	domTarget.append(htmlString);
 	
 	//-------------------------------------

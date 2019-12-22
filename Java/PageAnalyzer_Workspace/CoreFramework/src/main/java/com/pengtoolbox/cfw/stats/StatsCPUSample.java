@@ -19,65 +19,86 @@ import com.pengtoolbox.cfw.logging.CFWLog;
  * @author Reto Scheiwiller, � 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class StatsMethod extends CFWObject {
+public class StatsCPUSample extends CFWObject {
 	
-	public static final String TABLE_NAME = "CFW_STATS_METHOD";
+	public static final String TABLE_NAME = "CFW_STATS_CPUSAMPLE";
 	
-	public enum StatsMethodFields{
+	public enum StatsCPUSampleFields{
 		PK_ID,
 		TIME,
 		FK_ID_SIGNATURE,
 		FK_ID_PARENT,
 		COUNT,
-		PERIOD,
+		INTERVAL,
+		GRANULARITY, 
+		MIN,
+		AVG,
+		MAX,
+		SUM,
 	}
 
-	private static Logger logger = CFWLog.getLogger(StatsMethod.class.getName());
+	private static Logger logger = CFWLog.getLogger(StatsCPUSample.class.getName());
 	
-	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.NONE, StatsMethodFields.PK_ID.toString())
+	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.NONE, StatsCPUSampleFields.PK_ID.toString())
 			.setPrimaryKeyAutoIncrement(this)
 			.setDescription("The id of the statistic.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
-	private CFWField<Timestamp> time = CFWField.newTimestamp(FormFieldType.NONE, StatsMethodFields.TIME)
+	private CFWField<Timestamp> time = CFWField.newTimestamp(FormFieldType.NONE, StatsCPUSampleFields.TIME)
 			.setDescription("The date and time of when the statistic was written to the database.")
 			.setValue(new Timestamp(new Date().getTime()));
 	
-	private CFWField<Integer> foreignKeySignature = CFWField.newInteger(FormFieldType.NONE, StatsMethodFields.FK_ID_SIGNATURE)
-			.setForeignKeyCascade(this, StatsMethodSignature.class, StatsMethodFields.PK_ID)
+	private CFWField<Integer> foreignKeySignature = CFWField.newInteger(FormFieldType.NONE, StatsCPUSampleFields.FK_ID_SIGNATURE)
+			.setForeignKeyCascade(this, StatsCPUSampleSignature.class, StatsCPUSampleFields.PK_ID)
 			.setDescription("The id of the method signature.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(null);
 	
-	private CFWField<Integer> foreignKeyParent = CFWField.newInteger(FormFieldType.NONE, StatsMethodFields.FK_ID_PARENT)
-			.setForeignKeyCascade(this, StatsMethodSignature.class, StatsMethodFields.PK_ID)
+	private CFWField<Integer> foreignKeyParent = CFWField.newInteger(FormFieldType.NONE, StatsCPUSampleFields.FK_ID_PARENT)
+			.setForeignKeyCascade(this, StatsCPUSampleSignature.class, StatsCPUSampleFields.PK_ID)
 			.setDescription("The id of the parent method signature.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(null);
 
-	private CFWField<Integer> count = CFWField.newInteger(FormFieldType.NONE, StatsMethodFields.COUNT)
-			.setDescription("The count of the statistic.")
+	private CFWField<Integer> count = CFWField.newInteger(FormFieldType.NONE, StatsCPUSampleFields.COUNT)
+			.setDescription("The total number of occurences of this method(estimated to occurences per minute).")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(null);
 	
-	private CFWField<Integer> period = CFWField.newInteger(FormFieldType.NONE, StatsMethodFields.PERIOD)
+	private CFWField<Integer> min = CFWField.newInteger(FormFieldType.NONE, StatsCPUSampleFields.MIN)
+			.setDescription("The minimun number of occurences.")
+			.apiFieldType(FormFieldType.NUMBER)
+			.setValue(null);
+	
+	private CFWField<Integer> avg = CFWField.newInteger(FormFieldType.NONE, StatsCPUSampleFields.AVG)
+			.setDescription("The average of the occurences.")
+			.apiFieldType(FormFieldType.NUMBER)
+			.setValue(null);
+	
+	private CFWField<Integer> max = CFWField.newInteger(FormFieldType.NONE, StatsCPUSampleFields.MAX)
+			.setDescription("The maximum number of occurences.")
+			.apiFieldType(FormFieldType.NUMBER)
+			.setValue(null);
+	
+	private CFWField<Integer> granularity = CFWField.newInteger(FormFieldType.NONE, StatsCPUSampleFields.GRANULARITY)
 			.setDescription("The aggregation period in minutes represented by this statistics.")
 			.apiFieldType(FormFieldType.NUMBER)
-			.setValue(-999);
+			.setValue(null);
 	
-	public StatsMethod() {
+	
+	public StatsCPUSample() {
 		initializeFields();
 	}
 		
-	public StatsMethod(ResultSet result) throws SQLException {
+	public StatsCPUSample(ResultSet result) throws SQLException {
 		initializeFields();
 		this.mapResultSet(result);	
 	}
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.addFields(id, time, foreignKeySignature, foreignKeyParent, count, period);
+		this.addFields(id, time, foreignKeySignature, foreignKeyParent, count, min, avg, max, granularity);
 	}
 	
 	/**************************************************************************************
@@ -109,21 +130,25 @@ public class StatsMethod extends CFWObject {
 		
 		String[] inputFields = 
 				new String[] {
-						StatsMethodFields.PK_ID.toString(),
-						StatsMethodFields.TIME.toString(), 
-						StatsMethodFields.FK_ID_SIGNATURE.toString(),
-						StatsMethodFields.FK_ID_PARENT.toString(),
-						StatsMethodFields.PERIOD.toString()
+						StatsCPUSampleFields.PK_ID.toString(),
+						StatsCPUSampleFields.TIME.toString(), 
+						StatsCPUSampleFields.FK_ID_SIGNATURE.toString(),
+						StatsCPUSampleFields.FK_ID_PARENT.toString(),
+						StatsCPUSampleFields.GRANULARITY.toString()
 				};
 		
 		String[] outputFields = 
 				new String[] {
-						StatsMethodFields.PK_ID.toString(),
-						StatsMethodFields.TIME.toString(), 
-						StatsMethodFields.FK_ID_SIGNATURE.toString(),
-						StatsMethodFields.FK_ID_PARENT.toString(),
-						StatsMethodFields.COUNT.toString(),
-						StatsMethodFields.PERIOD.toString()	
+						StatsCPUSampleFields.PK_ID.toString(),
+						StatsCPUSampleFields.TIME.toString(), 
+						StatsCPUSampleFields.FK_ID_SIGNATURE.toString(),
+						StatsCPUSampleFields.FK_ID_PARENT.toString(),
+						StatsCPUSampleFields.COUNT.toString(),
+						StatsCPUSampleFields.MIN.toString(),
+						StatsCPUSampleFields.AVG.toString(),
+						StatsCPUSampleFields.MAX.toString(),
+						StatsCPUSampleFields.SUM.toString(),
+						StatsCPUSampleFields.GRANULARITY.toString()	
 				};
 
 		//----------------------------------
@@ -146,7 +171,7 @@ public class StatsMethod extends CFWObject {
 		return id.getValue();
 	}
 	
-	public StatsMethod id(int id) {
+	public StatsCPUSample id(int id) {
 		this.id.setValue(id);
 		return this;
 	}
@@ -155,7 +180,7 @@ public class StatsMethod extends CFWObject {
 		return time.getValue();
 	}
 	
-	public StatsMethod time(Timestamp time) {
+	public StatsCPUSample time(Timestamp time) {
 		this.time.setValue(time);
 		return this;
 	}
@@ -164,7 +189,7 @@ public class StatsMethod extends CFWObject {
 		return foreignKeySignature.getValue();
 	}
 	
-	public StatsMethod foreignKeySignature(Integer foreignKeySignature) {
+	public StatsCPUSample foreignKeySignature(Integer foreignKeySignature) {
 		this.foreignKeySignature.setValue(foreignKeySignature);
 		return this;
 	}
@@ -173,7 +198,7 @@ public class StatsMethod extends CFWObject {
 		return foreignKeyParent.getValue();
 	}
 	
-	public StatsMethod foreignKeyParent(Integer foreignKeyParent) {
+	public StatsCPUSample foreignKeyParent(Integer foreignKeyParent) {
 		this.foreignKeyParent.setValue(foreignKeyParent);
 		return this;
 	}
@@ -182,22 +207,31 @@ public class StatsMethod extends CFWObject {
 		return count.getValue();
 	}
 	
-	public StatsMethod count(int count) {
+	public StatsCPUSample count(int count) {
 		this.count.setValue(count);
 		return this;
 	}
 	
-	public StatsMethod increaseCount() {
+	public StatsCPUSample increaseCount() {
 		this.count.setValue(count.getValue()+1);
 		return this;
 	}
 	
-	public int period() {
-		return period.getValue();
+	//
+	public StatsCPUSample prepareStatistics(int collectionIntervalSeconds) {
+		int computedCount = count.getValue() * collectionIntervalSeconds;
+		this.count.setValue(computedCount);
+		this.min.setValue(computedCount);
+		this.max.setValue(computedCount);
+		this.avg.setValue(computedCount);
+		return this;
+	}
+	public int granularity() {
+		return granularity.getValue();
 	}
 	
-	public StatsMethod period(int period) {
-		this.period.setValue(period);
+	public StatsCPUSample granularity(int granularity) {
+		this.granularity.setValue(granularity);
 		return this;
 	}
 	

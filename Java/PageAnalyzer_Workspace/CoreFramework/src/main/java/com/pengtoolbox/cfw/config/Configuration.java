@@ -179,12 +179,12 @@ public class Configuration extends CFWObject {
 		//-----------------------------------------
 		// 
 		//-----------------------------------------
-		if(!CFW.DB.Config.checkConfigExists(Configuration.CPU_SAMPLING_AGGREGATION )) {
+		if(!CFW.DB.Config.checkConfigExists(Configuration.CPU_SAMPLING_AGGREGATION)) {
 			CFW.DB.Config.create(
 				new Configuration("Performance", Configuration.CPU_SAMPLING_AGGREGATION )
 					.description("The period in minutes used for the aggregation of the statistics and writing them to the database.")
 					.type(FormFieldType.SELECT)
-					.options(new String[]{"1", "5", "10", "30", "60", "120", "360", "1440"})
+					.options(new Integer[]{1, 5, 10, 30, 60, 120, 360, 1440})
 					.value("10")
 			);
 		}

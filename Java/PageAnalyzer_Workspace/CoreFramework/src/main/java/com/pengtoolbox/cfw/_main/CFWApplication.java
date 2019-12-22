@@ -55,7 +55,7 @@ import com.pengtoolbox.cfw.servlets.PermissionsServlet;
 import com.pengtoolbox.cfw.servlets.admin.APIUserMgmtSevlet;
 import com.pengtoolbox.cfw.servlets.admin.UserManagementServlet;
 import com.pengtoolbox.cfw.servlets.userprofile.ChangePasswordServlet;
-import com.pengtoolbox.cfw.stats.ServletCPUSampling;
+import com.pengtoolbox.cfw.stats.StatsCPUSamplingServlet;
 import com.pengtoolbox.cfw.stats.ServletStatistics;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
@@ -269,7 +269,7 @@ public class CFWApplication {
 		//-----------------------------------------
 		// Various Servlets
 	    servletContextHandler.addServlet(CFWAPIServlet.class,  "/api");
-	    servletContextHandler.addServlet(ServletCPUSampling.class,  "/cpusampling");
+	    servletContextHandler.addServlet(StatsCPUSamplingServlet.class,  "/cpusampling");
 	    servletContextHandler.addServlet(ServletStatistics.class,  "/statistics");
 	    
 		//-----------------------------------------

@@ -757,11 +757,15 @@ function cfw_sortArrayByValueOfObject(array, key, reverse){
 			var valueA = a[key];
 			var valueB = b[key];
 			
+			if(valueA == undefined) valueA = 0;
+			if(valueB == undefined) valueA = 0;
+			
 			if(isNaN(valueA)) valueA = 9999999;
 			if(isNaN(valueB)) valueB = 9999999;
 			
+			
 		if(reverse){
-			return valueB -valueA;
+			return valueB - valueA;
 		}else{
 			return valueA - valueB;
 		}

@@ -465,6 +465,60 @@ public class CFWDB {
 	}
 	
 	/********************************************************************************************
+	 * 
+	 * @param sql string with placeholders
+	 * @param values the values to be placed in the prepared statement
+	 * @return true if update count is > 0, false otherwise
+	 ********************************************************************************************/
+	public static boolean preparedExecuteBatch(String sql, Object... values){	
+        
+		CFWLog log = new CFWLog(logger).method("preparedExecuteBatch").start();
+		Connection conn = null;
+		PreparedStatement prepared = null;
+
+		boolean result = true;
+		try {
+			//-----------------------------------------
+			// Initialize Variables
+			conn = CFWDB.getConnection();
+			prepared = conn.prepareStatement(sql);
+			
+			//-----------------------------------------
+			// Prepare Statement
+			CFWDB.prepareStatement(prepared, values);
+			prepared.addBatch();
+			
+			//-----------------------------------------
+			// Execute
+			int[] resultCounts = prepared.executeBatch();
+
+			for(int i : resultCounts) {
+				if(i < 0) {
+					result = false;
+					break;
+				}
+			}
+		} catch (SQLException e) {
+			result = false;
+			log.severe("Database Error: "+e.getMessage(), e);
+		} finally {
+			try {
+				if(conn != null && transactionConnection.get() == null) { 
+					removeOpenConnection(conn);
+					conn.close(); 
+				}
+				if(prepared != null) { prepared.close(); }
+			} catch (SQLException e) {
+				log.severe("Issue closing resources.", e);
+			}
+			
+		}
+		
+		log.custom("sql", sql).end();
+		return result;
+	}
+	
+	/********************************************************************************************
 	 * Executes the insert and returns the generated Key of the new record. (what is a
 	 * primary key in most cases)
 	 * 
@@ -575,10 +629,12 @@ public class CFWDB {
 	 * @throws SQLException 
 	 ********************************************************************************************/
 	public static void prepareStatement(PreparedStatement prepared, Object... values) throws SQLException{
-
+		
 		if(values != null) {
 			for(int i = 0; i < values.length ; i++) {
 				Object currentValue = values[i];
+				// Could be a better solution
+				//prepared.setObject(i+1, currentValue);
 				if		(currentValue instanceof String) 	{ prepared.setString(i+1, (String)currentValue); }
 				else if	(currentValue instanceof char[]) 	{ prepared.setString(i+1, new String((char[])currentValue)); }
 				else if (currentValue instanceof Integer) 	{ prepared.setInt(i+1, (Integer)currentValue); }
@@ -594,6 +650,8 @@ public class CFWDB {
 				else { throw new RuntimeException("Unsupported database field type: "+ currentValue.getClass().getName());}
 			}
 		}
+		new CFWLog(logger).custom("preparedSQL", prepared.toString()).finest("Prepared SQL");
+		//System.out.println(prepared);
 	}
 	
 	/********************************************************************************************
@@ -677,11 +735,12 @@ public class CFWDB {
 					if(column.startsWith("JSON")) {
 						json.append(value).append(",");
 					}else {
-						if(value instanceof Number
+						if(value == null
+						|| value instanceof Number
 						|| value instanceof Boolean ) {
 							json.append(value).append(",");
 						}else {
-							json.append("\"").append(value).append("\",");
+							json.append("\"").append(resultSet.getString(i)).append("\",");
 						}
 					}
 				}

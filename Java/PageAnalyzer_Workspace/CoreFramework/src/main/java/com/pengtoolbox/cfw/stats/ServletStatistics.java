@@ -78,8 +78,8 @@ public class ServletStatistics extends HttpServlet {
     	
 		if( CFW.Context.Request.hasPermission(Permission.CFW_VIEW_STATISTICS) ) {
 
-			String signatures = CFWDBStatsMethodSignature.getSignatureListAsJSON();
-			String timeseries =  CFWDBStatsMethod.getLatestAsJSON();
+			String signatures = CFWDBStatsCPUSampleSignature.getSignatureListAsJSON();
+			String timeseries =  CFWDBStatsCPUSample.getLatestAsJSON();
 			
 			jsonResponse.getContent()
 				.append("{\"signatures\": ").append(signatures)

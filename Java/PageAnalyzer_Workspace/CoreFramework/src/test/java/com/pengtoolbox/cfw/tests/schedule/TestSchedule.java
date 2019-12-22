@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.config.Configuration;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.stats.StatsMethodSamplingTask;
+import com.pengtoolbox.cfw.stats.StatsCPUSamplingTask;
 import com.pengtoolbox.cfw.tests._master.WebTestMaster;
 
 public class TestSchedule extends WebTestMaster {
@@ -96,7 +96,7 @@ public class TestSchedule extends WebTestMaster {
 		
 		int seconds = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_SECONDS);
 		
-		ScheduledFuture<?> future = CFW.Schedule.runPeriodically(0, seconds, new StatsMethodSamplingTask());
+		ScheduledFuture<?> future = CFW.Schedule.runPeriodically(0, seconds, new StatsCPUSamplingTask());
 
 		ScheduledFuture<?> terminator = CFW.Schedule.runPeriodically(20000, 1, new Runnable() {
 			@Override

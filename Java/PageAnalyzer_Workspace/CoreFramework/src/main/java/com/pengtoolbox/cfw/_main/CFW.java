@@ -25,9 +25,10 @@ import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.mail.CFWMail;
 import com.pengtoolbox.cfw.schedule.CFWSchedule;
-import com.pengtoolbox.cfw.stats.StatsMethod;
-import com.pengtoolbox.cfw.stats.StatsMethodSamplingTask;
-import com.pengtoolbox.cfw.stats.StatsMethodSignature;
+import com.pengtoolbox.cfw.stats.StatsCPUSample;
+import com.pengtoolbox.cfw.stats.StatsCPUSamplingTask;
+import com.pengtoolbox.cfw.stats.StatsCPUSampleSignature;
+import com.pengtoolbox.cfw.stats.StatsCPUSamplingAggregationTask;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWJson;
@@ -182,8 +183,8 @@ public class CFW {
 		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.RolePermissionMap.class);
 		CFW.Registry.Objects.addCFWObject(SpaceGroup.class);
 		CFW.Registry.Objects.addCFWObject(Space.class);
-		CFW.Registry.Objects.addCFWObject(StatsMethodSignature.class);
-		CFW.Registry.Objects.addCFWObject(StatsMethod.class);
+		CFW.Registry.Objects.addCFWObject(StatsCPUSampleSignature.class);
+		CFW.Registry.Objects.addCFWObject(StatsCPUSample.class);
 		//---------------------------
 		// Application Register
 		appToStart.register();
@@ -271,10 +272,11 @@ public class CFW {
 	private static void initializeScheduledTasks(CFWAppInterface appToStart) {
 		
 		//---------------------------
-		// CPU Sampling Task
+		// CPU Sampling 
 		int seconds = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_SECONDS);
-		ScheduledFuture<?> future = CFW.Schedule.runPeriodically(0, seconds, new StatsMethodSamplingTask());
+		ScheduledFuture<?> sampling = CFW.Schedule.runPeriodically(0, seconds, new StatsCPUSamplingTask());
 		
+		ScheduledFuture<?> aggregation = CFW.Schedule.runPeriodically(0, 20, new StatsCPUSamplingAggregationTask());
 	}
 	
 }

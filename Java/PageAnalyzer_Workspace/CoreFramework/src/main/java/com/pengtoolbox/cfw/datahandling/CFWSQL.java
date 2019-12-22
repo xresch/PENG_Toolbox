@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWObject.ForeignKeyDefinition;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -600,7 +601,7 @@ public class CFWSQL {
 			if(fields.get(fieldname).getValueClass() == String.class) {
 				query.append(" ORDER BY LOWER("+fieldname+")");
 			}else {
-				query.append(" ORDER BY "+fieldname+"");
+				query.append(" ORDER BY "+fieldname+" ASC");
 			}
 		}
 		return this;
@@ -642,17 +643,37 @@ public class CFWSQL {
 		}
 		return this;
 	}
+		
+	/****************************************************************
+	 * Adds a custom part to the query and values for the binding.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWSQL loadSQLResource(String packageName, String filename, Object... params) {
+		
+		if(!isQueryCached()) {
+			String queryPart = CFW.Files.readPackageResource(packageName, filename);
+			query.append(queryPart);
+		}
+		
+		for(Object param : params) {
+			values.add(param);
+		}
+		return this;
+	}
 	
 	
 	/****************************************************************
 	 * Adds a custom part to the query and values for the binding.
 	 * @return CFWStatement for method chaining
 	 ****************************************************************/
-	public CFWSQL custom(String queryPart, Object value) {
+	public CFWSQL custom(String queryPart, Object... params) {
 		if(!isQueryCached()) {
-			query.append(queryPart);
+			query.append(" ").append(queryPart).append(" ");
 		}
-		values.add(value);
+		
+		for(Object param : params) {
+			values.add(param);
+		}
 		return this;
 	}
 	
@@ -689,7 +710,7 @@ public class CFWSQL {
 	 * 
 	 * @return CFWStatement for method chaining
 	 ****************************************************************/
-	private boolean execute() {
+	public boolean execute() {
 		
 		//----------------------------
 		// Handle Caching
@@ -714,7 +735,35 @@ public class CFWSQL {
 		}else {
 			return CFWDB.preparedExecute(statement, values.toArray());
 		}
+	}
+	
+	/****************************************************************
+	 * Executes the query and saves the results in the global 
+	 * variable.
+	 * 
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public boolean executeBatch() {
 		
+		//----------------------------
+		// Handle Caching
+		String statement;
+		
+		if(isQueryCached()) {
+			statement = queryCache.get(queryName);
+		}else {
+			statement = query.toString();
+			queryCache.put(queryName, statement);
+		}
+		
+		//----------------------------
+		// Execute Statement 
+		boolean success = CFWDB.preparedExecuteBatch(statement, values.toArray());
+		
+		CFWDB.close(result);
+		
+		return success;
+
 	}
 	
 	/****************************************************************

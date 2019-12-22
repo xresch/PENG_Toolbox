@@ -19,39 +19,38 @@ import com.pengtoolbox.cfw.validation.LengthValidator;
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class StatsMethodSignature extends CFWObject {
+public class StatsCPUSampleSignature extends CFWObject {
 	
-	public static final String TABLE_NAME = "CFW_STATS_METHOD_SIGNATURE";
+	public static final String TABLE_NAME = "CFW_STATS_CPUSAMPLE_SIGNATURE";
 	
-	public enum StatsMethodSignatureFields{
+	public enum CPUSampleSignatureFields{
 		PK_ID,
 		SIGNATURE
 	}
 
-	private static Logger logger = CFWLog.getLogger(StatsMethodSignature.class.getName());
+	private static Logger logger = CFWLog.getLogger(StatsCPUSampleSignature.class.getName());
 	
-	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, StatsMethodSignatureFields.PK_ID.toString())
+	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, CPUSampleSignatureFields.PK_ID.toString())
 			.setPrimaryKeyAutoIncrement(this)
 			.setDescription("The id of the method signature.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 		
-	private CFWField<String> signature = CFWField.newString(FormFieldType.TEXT, StatsMethodSignatureFields.SIGNATURE.toString())
+	private CFWField<String> signature = CFWField.newString(FormFieldType.TEXT, CPUSampleSignatureFields.SIGNATURE.toString())
 			.setColumnDefinition("VARCHAR UNIQUE")
 			.setDescription("The signature of the method.")
 			.addValidator(new LengthValidator(0, 255));
 	
-	
-	public StatsMethodSignature() {
+	public StatsCPUSampleSignature() {
 		initializeFields();
 	}
 	
-	public StatsMethodSignature(String name) {
+	public StatsCPUSampleSignature(String name) {
 		initializeFields();
 		this.signature.setValue(name);
 	}
 	
-	public StatsMethodSignature(ResultSet result) throws SQLException {
+	public StatsCPUSampleSignature(ResultSet result) throws SQLException {
 		initializeFields();
 		this.mapResultSet(result);	
 	}
@@ -85,14 +84,14 @@ public class StatsMethodSignature extends CFWObject {
 		
 		String[] inputFields = 
 				new String[] {
-						StatsMethodSignatureFields.PK_ID.toString(), 
-						StatsMethodSignatureFields.SIGNATURE.toString(),
+						CPUSampleSignatureFields.PK_ID.toString(), 
+						CPUSampleSignatureFields.SIGNATURE.toString(),
 				};
 		
 		String[] outputFields = 
 				new String[] {
-						StatsMethodSignatureFields.PK_ID.toString(), 
-						StatsMethodSignatureFields.SIGNATURE.toString()
+						CPUSampleSignatureFields.PK_ID.toString(), 
+						CPUSampleSignatureFields.SIGNATURE.toString()
 				};
 
 		//----------------------------------
@@ -115,7 +114,7 @@ public class StatsMethodSignature extends CFWObject {
 		return id.getValue();
 	}
 	
-	public StatsMethodSignature id(int id) {
+	public StatsCPUSampleSignature id(int id) {
 		this.id.setValue(id);
 		return this;
 	}
@@ -124,7 +123,7 @@ public class StatsMethodSignature extends CFWObject {
 		return signature.getValue();
 	}
 	
-	public StatsMethodSignature signature(String signature) {
+	public StatsCPUSampleSignature signature(String signature) {
 		this.signature.setValue(signature);
 		return this;
 	}

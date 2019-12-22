@@ -4,16 +4,16 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.stats.StatsMethodSignature.StatsMethodSignatureFields;
+import com.pengtoolbox.cfw.stats.StatsCPUSampleSignature.CPUSampleSignatureFields;
 
 /**************************************************************************************************************
  * 
  * @author Reto Scheiwiller, � 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class CFWDBStatsMethodSignature {
+public class CFWDBStatsCPUSampleSignature {
 	
-	public static Logger logger = CFWLog.getLogger(CFWDBStatsMethodSignature.class.getName());
+	public static Logger logger = CFWLog.getLogger(CFWDBStatsCPUSampleSignature.class.getName());
 		
 	/********************************************************************************************
 	 * Creates a new signature in the DB and returns it's primary key.
@@ -21,7 +21,7 @@ public class CFWDBStatsMethodSignature {
 	 * @return id or null if not successful
 	 * 
 	 ********************************************************************************************/
-	public static Integer insertGetID(StatsMethodSignature signature) {
+	public static Integer insertGetID(StatsCPUSampleSignature signature) {
 		
 		if(signature == null) {
 			new CFWLog(logger)
@@ -45,7 +45,7 @@ public class CFWDBStatsMethodSignature {
 		}
 		
 		return signature
-				.queryCache(CFWDBStatsMethodSignature.class, "create")
+				.queryCache(CFWDBStatsCPUSampleSignature.class, "create")
 				.insertGetPrimaryKey();
 	}
 	
@@ -54,12 +54,12 @@ public class CFWDBStatsMethodSignature {
 	 * @param id of the signature
 	 * @return Returns a signature or null if not found or in case of exception.
 	 ****************************************************************/
-	public static StatsMethodSignature selectByName(String name) {
+	public static StatsCPUSampleSignature selectByName(String name) {
 		
-		return (StatsMethodSignature)new StatsMethodSignature()
-				.queryCache(CFWDBStatsMethodSignature.class, "selectByName")
+		return (StatsCPUSampleSignature)new StatsCPUSampleSignature()
+				.queryCache(CFWDBStatsCPUSampleSignature.class, "selectByName")
 				.select()
-				.where(StatsMethodSignatureFields.SIGNATURE.toString(), name)
+				.where(CPUSampleSignatureFields.SIGNATURE.toString(), name)
 				.getFirstObject();
 
 	}
@@ -69,12 +69,12 @@ public class CFWDBStatsMethodSignature {
 	 * @param id of the signature
 	 * @return Returns a signature or null if not found or in case of exception.
 	 ****************************************************************/
-	public static StatsMethodSignature selectByID(int id ) {
+	public static StatsCPUSampleSignature selectByID(int id ) {
 
-		return (StatsMethodSignature)new StatsMethodSignature()
-				.queryCache(CFWDBStatsMethodSignature.class, "selectByID")
+		return (StatsCPUSampleSignature)new StatsCPUSampleSignature()
+				.queryCache(CFWDBStatsCPUSampleSignature.class, "selectByID")
 				.select()
-				.where(StatsMethodSignatureFields.PK_ID.toString(), id)
+				.where(CPUSampleSignatureFields.PK_ID.toString(), id)
 				.getFirstObject();
 		
 	}
@@ -86,10 +86,10 @@ public class CFWDBStatsMethodSignature {
 	 ****************************************************************/
 	public static String getSignatureAsJSON(String id) {
 		
-		return new StatsMethodSignature()
-				.queryCache(CFWDBStatsMethodSignature.class, "getSignatureAsJSON")
+		return new StatsCPUSampleSignature()
+				.queryCache(CFWDBStatsCPUSampleSignature.class, "getSignatureAsJSON")
 				.select()
-				.where(StatsMethodSignatureFields.PK_ID.toString(), Integer.parseInt(id))
+				.where(CPUSampleSignatureFields.PK_ID.toString(), Integer.parseInt(id))
 				.getAsJSON();
 		
 	}
@@ -101,11 +101,11 @@ public class CFWDBStatsMethodSignature {
 	 ****************************************************************/
 	public static HashMap<Object, Object> getSignaturesAsKeyValueMap() {
 		
-		return new StatsMethodSignature()
-				.queryCache(CFWDBStatsMethodSignature.class, "getSignaturesAsKeyValueMap")
+		return new StatsCPUSampleSignature()
+				.queryCache(CFWDBStatsCPUSampleSignature.class, "getSignaturesAsKeyValueMap")
 				.select()
-				.getKeyValueMap(StatsMethodSignatureFields.SIGNATURE.toString(), 
-								StatsMethodSignatureFields.PK_ID.toString());
+				.getKeyValueMap(CPUSampleSignatureFields.SIGNATURE.toString(), 
+								CPUSampleSignatureFields.PK_ID.toString());
 		
 	}
 
@@ -116,10 +116,10 @@ public class CFWDBStatsMethodSignature {
 	 * @return Returns a result set with all users or null.
 	 ****************************************************************/
 	public static String getSignatureListAsJSON() {
-		return new StatsMethodSignature()
-				.queryCache(CFWDBStatsMethodSignature.class, "getSignatureListAsJSON")
+		return new StatsCPUSampleSignature()
+				.queryCache(CFWDBStatsCPUSampleSignature.class, "getSignatureListAsJSON")
 				.select()
-				.orderby(StatsMethodSignatureFields.SIGNATURE.toString())
+				.orderby(CPUSampleSignatureFields.SIGNATURE.toString())
 				.getAsJSON();
 	}
 	
@@ -131,10 +131,10 @@ public class CFWDBStatsMethodSignature {
 	 ****************************************************************/
 	public static boolean deleteByID(int id) {
 				
-		return new StatsMethodSignature()
-				.queryCache(CFWDBStatsMethodSignature.class, "deleteByID")
+		return new StatsCPUSampleSignature()
+				.queryCache(CFWDBStatsCPUSampleSignature.class, "deleteByID")
 				.delete()
-				.where(StatsMethodSignatureFields.PK_ID.toString(), id)
+				.where(CPUSampleSignatureFields.PK_ID.toString(), id)
 				.executeDelete();
 					
 	}	
@@ -146,12 +146,12 @@ public class CFWDBStatsMethodSignature {
 	 ****************************************************************/
 	public static boolean deleteByName(String name) {
 		
-		StatsMethodSignature signature = selectByName(name);
+		StatsCPUSampleSignature signature = selectByName(name);
 		
-		return new StatsMethodSignature()
-				.queryCache(CFWDBStatsMethodSignature.class, "deleteByName")
+		return new StatsCPUSampleSignature()
+				.queryCache(CFWDBStatsCPUSampleSignature.class, "deleteByName")
 				.delete()
-				.where(StatsMethodSignatureFields.SIGNATURE.toString(), name)
+				.where(CPUSampleSignatureFields.SIGNATURE.toString(), name)
 				.executeDelete();
 					
 	}
@@ -163,7 +163,7 @@ public class CFWDBStatsMethodSignature {
 	 * @param signature to check
 	 * @return true if exists, false otherwise or in case of exception.
 	 ****************************************************************/
-	public static boolean checkStatsMethodSignatureExists(StatsMethodSignature signature) {
+	public static boolean checkStatsMethodSignatureExists(StatsCPUSampleSignature signature) {
 		if(signature != null) {
 			return checkStatsMethodSignatureExists(signature.signature());
 		}
@@ -178,10 +178,10 @@ public class CFWDBStatsMethodSignature {
 	 ****************************************************************/
 	public static boolean checkStatsMethodSignatureExists(String signatureName) {
 		
-		int count = new StatsMethodSignature()
-				.queryCache(CFWDBStatsMethodSignature.class, "checkStatsMethodSignatureExists")
+		int count = new StatsCPUSampleSignature()
+				.queryCache(CFWDBStatsCPUSampleSignature.class, "checkStatsMethodSignatureExists")
 				.selectCount()
-				.where(StatsMethodSignatureFields.SIGNATURE.toString(), signatureName)
+				.where(CPUSampleSignatureFields.SIGNATURE.toString(), signatureName)
 				.getCount();
 		
 		return (count > 0);
