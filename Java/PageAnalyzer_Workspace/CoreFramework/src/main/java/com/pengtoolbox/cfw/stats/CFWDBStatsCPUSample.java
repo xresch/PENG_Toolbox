@@ -67,6 +67,7 @@ public class CFWDBStatsCPUSample {
 				.custom("WHERE GRANULARITY < ?", granularity)
 				.custom("AND TIME <= ?", ageOutTime)
 				.orderby(StatsCPUSampleFields.TIME.toString())
+				.limit(1)
 				.getFirstObject();
 		
 		if(first != null) {
@@ -92,6 +93,7 @@ public class CFWDBStatsCPUSample {
 				.custom(" WHERE GRANULARITY < ? ", granularity)
 				.custom(" AND TIME <= ? ", ageOutTime)
 				.orderbyDesc(StatsCPUSampleFields.TIME.toString())
+				.limit(1)
 				.getFirstObject();
 		
 		if(first != null) {

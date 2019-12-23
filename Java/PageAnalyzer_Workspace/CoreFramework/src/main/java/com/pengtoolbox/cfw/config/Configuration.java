@@ -184,8 +184,8 @@ public class Configuration extends CFWObject {
 				new Configuration("Performance", Configuration.CPU_SAMPLING_AGGREGATION )
 					.description("The period in minutes used for the aggregation of the statistics and writing them to the database.")
 					.type(FormFieldType.SELECT)
-					.options(new Integer[]{5, 10, 30, 60, 120, 360, 1440})
-					.value("10")
+					.options(new Integer[]{5, 15, 60, 240, 720, 1440})
+					.value("5")
 			);
 		}
 							

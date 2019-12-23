@@ -1,6 +1,7 @@
 TODO
 ====
 
+- SQL Query Cache Overview (hit statistics?)
 - Truncate too long toasts.
 - Show previous toasts all toasts button
 - Spaces!!!

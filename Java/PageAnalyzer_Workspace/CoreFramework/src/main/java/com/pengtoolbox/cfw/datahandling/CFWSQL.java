@@ -601,7 +601,7 @@ public class CFWSQL {
 			if(fields.get(fieldname).getValueClass() == String.class) {
 				query.append(" ORDER BY LOWER("+fieldname+")");
 			}else {
-				query.append(" ORDER BY "+fieldname+" ASC");
+				query.append(" ORDER BY "+fieldname);
 			}
 		}
 		return this;
@@ -643,7 +643,18 @@ public class CFWSQL {
 		}
 		return this;
 	}
-		
+	
+	/****************************************************************
+	 * Adds a LIMIT statement
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWSQL limit(int limit) {
+		if(!isQueryCached()) {
+			query.append(" LIMIT ").append(limit);
+		}
+		return this;
+	}
+	
 	/****************************************************************
 	 * Adds a custom part to the query and values for the binding.
 	 * @return CFWStatement for method chaining
