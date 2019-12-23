@@ -146,7 +146,6 @@ public class Result extends CFWObject {
 						ResultFields.NAME.toString(),
 						ResultFields.USERNAME.toString(),
 						ResultFields.PAGE_URL.toString(),
-						ResultFields.JSON_RESULT.toString(),
 						ResultFields.TIME_CREATED.toString(),
 				};
 

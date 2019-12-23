@@ -119,8 +119,8 @@ public class Configuration extends CFWObject {
 				new Configuration("Design", Configuration.THEME)
 					.description("Set the application look and feel. 'Slate' is the default and recommended theme, all others are not 100% tested. For custom the file has to be placed under ./resources/css/bootstrap-theme-custom.css.")
 					.type(FormFieldType.SELECT)
-					.options(new String[]{"custom", "darkblue", "flatly", "lumen", "materia", "minty", "pulse", "sandstone", "simplex", "slate", "spacelab", "superhero", "united"})
-					.value("slate")
+					.options(new String[]{"custom", "darkblue", "flatly", "lumen", "materia", "minty", "pulse", "sandstone", "simplex", "slate", "slate-edged", "spacelab", "superhero", "united", "warm-soft", "warm-edged"})
+					.value("slate-edged")
 			);
 		}
 		
@@ -184,8 +184,8 @@ public class Configuration extends CFWObject {
 				new Configuration("Performance", Configuration.CPU_SAMPLING_AGGREGATION )
 					.description("The period in minutes used for the aggregation of the statistics and writing them to the database.")
 					.type(FormFieldType.SELECT)
-					.options(new Integer[]{5, 15, 60, 240, 720, 1440})
-					.value("5")
+					.options(new Integer[]{3, 15, 60, 240, 720, 1440})
+					.value("3")
 			);
 		}
 							

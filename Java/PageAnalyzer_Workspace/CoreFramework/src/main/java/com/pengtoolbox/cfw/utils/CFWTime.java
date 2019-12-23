@@ -84,7 +84,7 @@ public class CFWTime {
 	public static Timestamp getDefaultAgeOutTime(int granularityMinutes) {
 		Timestamp ageOutOffset = null;
 		
-		if		(granularityMinutes <= 5) 		{ ageOutOffset = CFW.Time.getCurrentTimestampWithOffset(0, 0, 0, -1); }
+		if		(granularityMinutes <= 3) 		{ ageOutOffset = CFW.Time.getCurrentTimestampWithOffset(0, 0, 0, -30); }
 		else if (granularityMinutes <= 15) 		{ ageOutOffset = CFW.Time.getCurrentTimestampWithOffset(0, 0, -1, 0); }
 		else if (granularityMinutes <= 60) 		{ ageOutOffset = CFW.Time.getCurrentTimestampWithOffset(0, -1, 0, 0); }
 		else if (granularityMinutes <= 240) 	{ ageOutOffset = CFW.Time.getCurrentTimestampWithOffset(0, -7, 0, 0); }

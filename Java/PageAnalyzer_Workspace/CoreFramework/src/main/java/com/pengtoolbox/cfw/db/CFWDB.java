@@ -731,14 +731,14 @@ public class CFWDB {
 					String column = metadata.getColumnLabel(i);
 					json.append("\"").append(column).append("\": ");
 					
-					Object value = resultSet.getObject(i);
+					Object object = resultSet.getObject(i);
 					if(column.startsWith("JSON")) {
-						json.append(value).append(",");
+						json.append(resultSet.getString(i)).append(",");
 					}else {
-						if(value == null
-						|| value instanceof Number
-						|| value instanceof Boolean ) {
-							json.append(value).append(",");
+						if(object == null
+						|| object instanceof Number
+						|| object instanceof Boolean ) {
+							json.append(object).append(",");
 						}else {
 							json.append("\"").append(resultSet.getString(i)).append("\",");
 						}

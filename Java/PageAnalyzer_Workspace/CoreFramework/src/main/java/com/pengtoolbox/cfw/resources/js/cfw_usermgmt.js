@@ -41,7 +41,7 @@ function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 					var params = {action: "update", item: mapName, itemid: itemID, listitemid: current.PK_ID};
 					var cfwToggleButton = CFW.ui.createToggleButton(CFW_USRMGMT_URL, params, (current.ITEM_ID == itemID));
 					
-					if(!current.IS_DELETABLE){
+					if(current.IS_DELETABLE != null && !current.IS_DELETABLE){
 						cfwToggleButton.setLocked();
 					}
 					var buttonCell = $("<td>");

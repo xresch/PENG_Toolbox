@@ -1,6 +1,7 @@
 TODO
 ====
 
+- Image Upload for Summernote Editor
 - SQL Query Cache Overview (hit statistics?)
 - Truncate too long toasts.
 - Show previous toasts all toasts button
@@ -23,7 +24,6 @@ DONE
 ====
 - Add FormFieldType.TAGS
 - Add FormFieldType.AUTOCOMPLETE
-
 
 - LOGO!!!
 - Reset User Password
