@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
+import com.pengtoolbox.cfw.datahandling.CFWHierarchy;
+import com.pengtoolbox.cfw.datahandling.CFWObject;
+
 
 /**************************************************************************************************************
  * 
@@ -219,8 +222,12 @@ public abstract class HierarchicalHTMLItem {
 		return addAttribute("class", cssClass);
 	}
 
+	/***********************************************************************************
+	 * Set the onclick attribute.
+	 * @param cssClass the 
+	 ***********************************************************************************/
 	public HierarchicalHTMLItem onclick(String onclick) {
 		return addAttribute("onclick", onclick);
 	}
-	
+		
 }

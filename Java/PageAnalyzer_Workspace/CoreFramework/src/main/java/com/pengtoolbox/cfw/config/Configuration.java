@@ -145,7 +145,7 @@ public class Configuration extends CFWObject {
 				new Configuration("Design", Configuration.MENU_TITLE )
 					.description("Set the title displayed in the menu bar. Applies to all new sessions, login/logout required to see the change.")
 					.type(FormFieldType.TEXT)
-					.value("PAGE ANALYZER")
+					.value("")
 			);
 		}
 		

@@ -4,12 +4,39 @@ package com.pengtoolbox.cfw.tests.web;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 import com.pengtoolbox.cfw.tests.assets.mockups.MenuItemMockup;
 
 public class MenuTests {
 
+	@Test
+	public void testMenuRegistry() {
+		
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Top Item"), null);
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("A"), "Top Item");
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("B"), " Top Item | A ");
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("C"), " Top Item | A | B");
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Top Item 2"), null);
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Sub Item"), "Top Item 2");
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Sub Sub Item"), " Top Item 2 | Sub Item ");
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Sub Sub Item 2"), "Top Item 2 | Sub Item ");
+		
+		String dump = CFW.Registry.Components.dumpMenuItemHierarchy();
+		System.out.println(dump);
+		
+		Assertions.assertTrue(dump.contains("|      |--> C"), 
+				"Item C is present.");
+		
+		Assertions.assertTrue(dump.contains("    |--> Sub Sub Item"), 
+				"Sub Sub Item is present and on correct level.");
+		
+		Assertions.assertTrue(dump.contains("    |--> Sub Sub Item 2"), 
+				"Sub Sub Item 2 is present and on correct level.");
+	}
+	
+	
 	@Test
 	public void testBootstrapMenu() {
 		
