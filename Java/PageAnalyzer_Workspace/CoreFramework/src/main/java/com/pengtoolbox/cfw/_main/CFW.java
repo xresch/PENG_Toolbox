@@ -26,9 +26,10 @@ import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.mail.CFWMail;
 import com.pengtoolbox.cfw.schedule.CFWSchedule;
 import com.pengtoolbox.cfw.stats.StatsCPUSample;
-import com.pengtoolbox.cfw.stats.StatsCPUSamplingTask;
 import com.pengtoolbox.cfw.stats.StatsCPUSampleSignature;
 import com.pengtoolbox.cfw.stats.StatsCPUSamplingAggregationTask;
+import com.pengtoolbox.cfw.stats.StatsCPUSamplingTask;
+import com.pengtoolbox.cfw.utils.CFWDump;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWJson;
@@ -63,6 +64,7 @@ public class CFW {
 	}
 	
 	public class CLI extends CFWCommandLineInterface {}
+	public class Dump extends CFWDump {}
 	public class Encryption extends CFWEncryption {}
 	public class Files extends CFWFiles {}
 	public class HTTP extends CFWHttp {}

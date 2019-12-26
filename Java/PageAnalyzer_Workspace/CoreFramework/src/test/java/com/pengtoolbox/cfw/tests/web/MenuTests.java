@@ -14,14 +14,38 @@ public class MenuTests {
 	@Test
 	public void testMenuRegistry() {
 		
+		//---------------------------
+		// Test Menu Hierarchy
 		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Top Item"), null);
 		CFW.Registry.Components.addRegularMenuItem(new MenuItem("A"), "Top Item");
 		CFW.Registry.Components.addRegularMenuItem(new MenuItem("B"), " Top Item | A ");
 		CFW.Registry.Components.addRegularMenuItem(new MenuItem("C"), " Top Item | A | B");
+		
+		//---------------------------
+		// Test Menu Hierarchy 2
 		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Top Item 2"), null);
 		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Sub Item"), "Top Item 2");
 		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Sub Sub Item"), " Top Item 2 | Sub Item ");
 		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Sub Sub Item 2"), "Top Item 2 | Sub Item ");
+		
+		//---------------------------
+		// Test Override
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Sub Item"), "Top Item 2");
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Sub Sub Item"), " Top Item 2 | Sub Item ");
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Sub Sub Item 2"), "Top Item 2 | Sub Item ");
+		
+		//---------------------------
+		// Test addChild combo
+		CFW.Registry.Components.addUserMenuItem(new MenuItem("User Top")
+				.addChild(new MenuItem("User A")
+							.addChild(new MenuItem("User B"))
+						 )
+				
+				, null);
+		CFW.Registry.Components.addUserMenuItem(new MenuItem("User C"), "User Top | User A | User B");
+		
+		//---------------------------
+		// Dump and Check
 		
 		String dump = CFW.Registry.Components.dumpMenuItemHierarchy();
 		System.out.println(dump);
@@ -34,6 +58,18 @@ public class MenuTests {
 		
 		Assertions.assertTrue(dump.contains("    |--> Sub Sub Item 2"), 
 				"Sub Sub Item 2 is present and on correct level.");
+		
+		Assertions.assertTrue(dump.contains("|--> User C"), 
+				"User C is present and on correct level.");
+
+		
+		//---------------------------
+		// Create and Check Menu
+		BTMenu menu = CFW.Registry.Components.createMenuInstance(false);
+		//System.out.println(CFW.Dump.dumpObject(menu));
+		String html = menu.getHTML();
+		System.out.println("========= HTML =========\n"+html);
+		
 	}
 	
 	

@@ -28,15 +28,15 @@ public class SessionData {
 	private BTFooter footer;
 	
 	public SessionData() {
-		menu = CFW.Registry.Components.createDefaultMenuInstance();
+		menu = CFW.Registry.Components.createMenuInstance(false);
 		footer = CFW.Registry.Components.createDefaultFooterInstance();
 	}
 	
 	public void triggerLogin() {
 		isLoggedIn = true;
 		
-		menu = CFW.Registry.Components.createDefaultMenuInstance();
-		menu.setUserMenuItem(CFW.Registry.Components.createUserMenuItemInstance(this));
+		menu = CFW.Registry.Components.createMenuInstance(true);
+		//menu.setUserMenuItem(CFW.Registry.Components.createUserMenuItemInstance(this));
 		footer = CFW.Registry.Components.createDefaultFooterInstance();
 
 	}
@@ -44,7 +44,7 @@ public class SessionData {
 	public void triggerLogout() {
 		isLoggedIn = false;
 		
-		menu = CFW.Registry.Components.createDefaultMenuInstance();
+		menu = CFW.Registry.Components.createMenuInstance(false);
 		footer = CFW.Registry.Components.createDefaultFooterInstance();
 		user = null;
 	}

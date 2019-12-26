@@ -6,7 +6,7 @@ TODO
 - Truncate too long toasts.
 - Show previous toasts all toasts button
 - Spaces!!!
-- Menu Registry with permission checking
+
 - Form errors add to field.
 
 - Add Rule for HTTP2
@@ -22,6 +22,7 @@ TODO
 
 DONE
 ====
+- Menu Registry with permission checking
 - Add FormFieldType.TAGS
 - Add FormFieldType.AUTOCOMPLETE
 

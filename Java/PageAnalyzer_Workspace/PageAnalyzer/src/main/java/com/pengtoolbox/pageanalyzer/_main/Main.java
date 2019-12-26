@@ -9,12 +9,12 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppInterface;
 import com.pengtoolbox.cfw._main.CFWApplication;
+import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 import com.pengtoolbox.pageanalyzer.db.Result;
 import com.pengtoolbox.pageanalyzer.response.PageAnalyzerFooter;
-import com.pengtoolbox.pageanalyzer.response.PageAnalyzerMenu;
-import com.pengtoolbox.pageanalyzer.response.PageAnalyzerUserMenuItem;
 import com.pengtoolbox.pageanalyzer.servlets.AnalyzeURLServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CompareServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CustomContentServlet;
@@ -53,12 +53,114 @@ public class Main extends Application implements CFWAppInterface {
     
 	@Override
 	public void register() {
-    	CFW.Registry.Components.setDefaultMenu(PageAnalyzerMenu.class);
-    	CFW.Registry.Components.setDefaultUserMenuItem(PageAnalyzerUserMenuItem.class);
-    	CFW.Registry.Components.setDefaultFooter(PageAnalyzerFooter.class);
     	
+		//----------------------------------
+		// Register Objects
     	CFW.Registry.Objects.addCFWObject(Result.class);
+    	
+    	//----------------------------------
+    	// Register Regular Menu
+		CFW.Registry.Components.addRegularMenuItem(
+				(MenuItem)new MenuItem("HAR Upload")
+					.faicon("fas fa-upload")
+					.addPermission(PAPermissions.ANALYZE_HAR)
+					.href("./harupload")	
+				, null);
 		
+		CFW.Registry.Components.addRegularMenuItem(
+				(MenuItem)new MenuItem("Analyze URL")
+					.faicon("fas fa-flask")
+					.addPermission(PAPermissions.ANALYZE_URL)
+					.href("./analyzeurl")	
+				, null);
+		
+		CFW.Registry.Components.addRegularMenuItem(
+				(MenuItem)new MenuItem("History")
+					.faicon("fas fa-history")
+					.addPermission(PAPermissions.VIEW_HISTORY)
+					.href("./resultlist")
+				, null);
+			
+		CFW.Registry.Components.addRegularMenuItem(
+				(MenuItem)new MenuItem("Docu")
+					.faicon("fas fa-book")
+					.addPermission(PAPermissions.VIEW_DOCU)
+					.href("./docu")
+				, null);
+		
+		CFW.Registry.Components.addRegularMenuItem(
+				(MenuItem)new MenuItem("Summary")
+					.faicon("fas fa-calculator")
+					.addPermission(PAPermissions.VIEW_DOCU)
+					.cssClass("result-view-tabs")
+					.onclick("draw({data: 'yslowresult', info: 'overview', view: ''})")
+				, null);
+		
+		CFW.Registry.Components.addRegularMenuItem(
+				(MenuItem)new MenuItem("Grade")
+					.faicon("fas fa-thermometer-half")
+					.addPermission(PAPermissions.VIEW_DOCU)
+					.cssClass("result-view-tabs")
+					.addChild(new MenuItem("Panels").faicon("fas fa-columns")		.onclick("draw({data: 'yslowresult', info: 'grade', view: 'panels'})"))
+					.addChild(new MenuItem("Table").faicon("fas fa-table")			.onclick("draw({data: 'yslowresult', info: 'grade', view: 'table'})"))
+					.addChild(new MenuItem("Plain Text").faicon("fas fa-file-alt")	.onclick("draw({data: 'yslowresult', info: 'grade', view: 'plaintext'})"))
+					.addChild(new MenuItem("JIRA Ticket").faicon("fab fa-jira")		.onclick("draw({data: 'yslowresult', info: 'grade', view: 'jira'})"))
+					.addChild(new MenuItem("CSV").faicon("fas fa-file-csv")			.onclick("draw({data: 'yslowresult', info: 'grade', view: 'csv'})"))
+					.addChild(new MenuItem("JSON").faicon("fab fa-js")				.onclick("draw({data: 'yslowresult', info: 'grade', view: 'json'})"))
+				, null);
+
+		CFW.Registry.Components.addRegularMenuItem(
+				(MenuItem)new MenuItem("Statistics")
+					.faicon("fas fa-signal")
+					.addPermission(PAPermissions.VIEW_DOCU)
+					.cssClass("result-view-tabs")
+					.addChild(new MenuItem("Table: Statistics by Type").faicon("fas fa-table")						.onclick("draw({data: 'yslowresult', info: 'stats', view: 'table', stats: 'type'})"))
+					.addChild(new MenuItem("Table: Statistics by Type with primed Cache").faicon("fas fa-table")	.onclick("draw({data: 'yslowresult', info: 'stats', view: 'table', stats: 'type_cached'})"))
+					.addChild(new MenuItem("Table: Components").faicon("fas fa-table")								.onclick("draw({data: 'yslowresult', info: 'stats', view: 'table', stats: 'components'})"))
+				, null);
+				
+    	//----------------------------------
+    	// Register User Menu
+		CFW.Registry.Components.addUserMenuItem(
+				(MenuItem)new MenuItem("Manage Results")
+					.faicon("fas fa-poll")
+					.addPermission(PAPermissions.MANAGE_RESULTS)
+					.href("./manageresults")	
+				, null);
+
+		
+		CFW.Registry.Components.addUserMenuItem(
+				(MenuItem)new MenuItem("Manage Configuration")
+					.faicon("fas fa-list-alt")
+					.addPermission(Permission.CFW_CONFIG_MANAGEMENT)
+					.href("./configuration")	
+				, null);
+				
+		CFW.Registry.Components.addUserMenuItem(
+				(MenuItem)new MenuItem("Manage Users")
+					.faicon("fas fa-users")
+					.addPermission(Permission.CFW_USER_MANAGEMENT)
+					.href("./usermanagement")	
+				, null);
+				
+		CFW.Registry.Components.addUserMenuItem(
+				(MenuItem)new MenuItem("API")
+					.faicon("fas fa-code")
+					.addPermission(Permission.CFW_API)
+					.href("./api")	
+				, null);
+				
+		CFW.Registry.Components.addUserMenuItem(
+				(MenuItem)new MenuItem("CPU Sampling")
+					.faicon("fas fa-microchip")
+					.addPermission(Permission.CFW_VIEW_STATISTICS)
+					.href("./cpusampling")	
+				, null);
+		
+		//----------------------------------
+		// Register Footer
+    	CFW.Registry.Components.setDefaultFooter(PageAnalyzerFooter.class);
+    			
 	}
 
 	@Override

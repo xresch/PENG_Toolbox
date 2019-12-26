@@ -3,8 +3,10 @@ package com.pengtoolbox.cfw.response.bootstrap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 
 /**************************************************************************************************************
@@ -15,6 +17,7 @@ import com.pengtoolbox.cfw.db.usermanagement.Permission;
 public class MenuItem extends HierarchicalHTMLItem {
 	
 	private String label = "&nbsp;";
+	private String faiconClasses = "";
 	private String alignRightClass = "";
 	
 	// if any permissions match item will be rendered
@@ -46,15 +49,14 @@ public class MenuItem extends HierarchicalHTMLItem {
 		
 		return this;
 	}
+		
 	/***********************************************************************************
 	 * Overrloaded addChild to handle sub menu items.
 	 * @return String html for this item. 
 	 ***********************************************************************************/
 	public MenuItem addChild(MenuItem childItem) {
 		super.addChild(childItem);
-		if(childItem instanceof MenuItem) {
-			childMenuItems.put(childItem.getLabel(), childItem);
-		}
+		childMenuItems.put(childItem.getLabel(), childItem);
 		return this;
 	}
 	
@@ -72,9 +74,16 @@ public class MenuItem extends HierarchicalHTMLItem {
 	 ***********************************************************************************/
 	public void createHTML(StringBuilder html) {
 		
+		//Check Login
+//		SessionData session = CFW.Context.Request.getSessionData();
+//		if( CFW.Properties.AUTHENTICATION_ENABLED == false ||
+//			( session != null && session.isLoggedIn()) ) {
+//		}
+		
 		//----------------------------------
 		// Check Permissions
-		if(permissions != null) {
+		if(permissions.size() > 0) {
+
 			boolean hasPermission = false;
 			HashMap<String, Permission> usersPermissions = CFW.Context.Request.getUserPermissions();
 			for(String permission : permissions) {
@@ -87,7 +96,6 @@ public class MenuItem extends HierarchicalHTMLItem {
 			if(!hasPermission) {
 				return;
 			}
-			
 		}
 		
 		//----------------------------------
@@ -95,13 +103,22 @@ public class MenuItem extends HierarchicalHTMLItem {
 		String cssClass = this.popAttributeValue("class");
 
 		if(!this.hasChildren() && !this.hasOneTimeChildren()) {
-			html.append("\n<li class=\""+cssClass+"\">");
-			html.append("<a class=\"dropdown-item\" "+this.getAttributesString()+">"+label+"</a></li>");   
+			html.append("\n<li class=\""+cssClass+"\">")
+				.append("<a class=\"dropdown-item\" "+this.getAttributesString()+">")
+					.append("<div class=\"cfw-fa-box\"><i class=\""+faiconClasses+"\"></i></div>")
+					.append(label)
+				.append("</a></li>");   
 		}else {
-			
-			html.append("\n<li class=\"dropdown "+cssClass+"\">");
-			html.append("\n<a "+this.getAttributesString()+"class=\"dropdown-item dropdown-toggle\" id=\"cfwMenuDropdown\" data-toggle=\"dropdown\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">"+label+"<span class=\"caret\"></span></a>");   
-			html.append("\n<ul class=\"dropdown-menu "+alignRightClass+"\" aria-labelledby=\"cfwMenuDropdown\">");
+			String submenuClass = "";
+			if(parent instanceof MenuItem) {
+				submenuClass = "";
+			}
+			html.append("\n<li class=\"dropdown "+cssClass+"\">")
+				.append("\n<a "+this.getAttributesString()+"class=\"dropdown-item dropdown-toggle\" id=\"cfwMenuDropdown\" data-toggle=\"dropdown\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">")
+					.append("<div class=\"cfw-fa-box\"><i class=\""+faiconClasses+"\"></i></div>")
+					.append(label)
+				.append("<span class=\"caret\"></span></a>")   
+				.append("\n<ul class=\"dropdown-menu dropdown-submenu "+submenuClass+alignRightClass+"\" aria-labelledby=\"cfwMenuDropdown\">");
 
 			for(HierarchicalHTMLItem child : children) {
 				if(child instanceof MenuItem) {
@@ -142,6 +159,14 @@ public class MenuItem extends HierarchicalHTMLItem {
 	public HierarchicalHTMLItem href(String href) {
 		return addAttribute("href", href);
 	}
+	
+	/*****************************************************************************
+	 *  
+	 *****************************************************************************/
+	public MenuItem faicon(String faiconClasses) {
+		this.faiconClasses = faiconClasses;
+		return this;
+	}
 
 	/*****************************************************************************
 	 *  
@@ -153,5 +178,54 @@ public class MenuItem extends HierarchicalHTMLItem {
 			alignRightClass = "";
 		}
 	}
+	
+
+	
+	/***********************************************************************************
+	 * 
+	 * @param 
+	 ***********************************************************************************/
+	public MenuItem createCopy() {
+		return copyInto(new MenuItem(""));
+	}
+	
+	/***********************************************************************************
+	 * 
+	 * @param 
+	 ***********************************************************************************/
+	public MenuItem copyInto(MenuItem targetItem) {
+		
+		//------------------------------------
+		// Copy Menu Fields
+		targetItem.label = this.label;
+		targetItem.alignRightClass = this.alignRightClass;
+		targetItem.faiconClasses = this.faiconClasses;
+		targetItem.permissions = this.permissions;
+		
+		for(HierarchicalHTMLItem child : children) {
+			if(child instanceof MenuItem) {
+				targetItem.addChild( ((MenuItem)child).createCopy());
+			}else {
+				targetItem.addChild(child);
+			}
+		}
+		
+		//------------------------------------
+		// Copy HierarchicalHTMLItem Fields
+		targetItem.oneTimeChildren = this.oneTimeChildren;
+		targetItem.hasChanged = true;
+		targetItem.html = null;
+		
+		for(Entry<String, String> entry : this.attributes.entrySet()) {
+			targetItem.attributes.put(entry.getKey(), entry.getValue());
+		}
+		
+		//don't copy parent - targetItem.parent = this.parent;
+		
+		return targetItem;
+		
+	}
+	
+	
 
 }

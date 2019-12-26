@@ -1549,10 +1549,42 @@ var CFW = {
 }
 
 
+
+
+
 /********************************************************************
  * General initialization
  ********************************************************************/
 
 $(function () {
-	  $('[data-toggle="tooltip"]').tooltip()
+	  
+	  //-----------------------------------
+	  // Initialize tooltipy
+	  $('[data-toggle="tooltip"]').tooltip();
+	  
+	  //-----------------------------------
+	  // Setup Bootstrap hierarchical menu
+	  $('.dropdown-menu a.dropdown-toggle').on('click', function(e) {
+		  if (!$(this).next().hasClass('show')) {
+		    $(this).parents('.dropdown-menu').first().find('.show').removeClass("show");
+		  }
+		  var $subMenu = $(this).next(".dropdown-menu");
+		  $subMenu.toggleClass('show');
+
+
+		  $(this).parents('li.nav-item.dropdown.show').on('hidden.bs.dropdown', function(e) {
+		    $('.dropdown-submenu .show').removeClass("show");
+		  });
+
+
+		  return false;
+		});
+	  
+	  //-----------------------------------
+	  // Highlight Code Blocks
+	  $(document).ready(function() {
+		  $('pre code').each(function(i, block) {
+		    hljs.highlightBlock(block);
+		  });
+		});
 })

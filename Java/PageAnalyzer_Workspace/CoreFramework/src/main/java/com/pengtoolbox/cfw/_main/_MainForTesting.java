@@ -6,7 +6,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 
 import com.pengtoolbox.cfw.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.tests.assets.mockups.TestMenu;
+import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 import com.pengtoolbox.cfw.tests.assets.servlets.FormTestServlet;
 import com.pengtoolbox.cfw.tests.assets.servlets.GeneralTestServlet;
 
@@ -27,8 +27,19 @@ public class _MainForTesting implements CFWAppInterface {
 
 	@Override
 	public void register() {
-		CFW.Registry.Components.setDefaultMenu(TestMenu.class);
 		
+		CFW.Registry.Components.addRegularMenuItem(
+				(MenuItem)new MenuItem("Test Pages")
+					.faicon("fas fa-flask")
+					.cssClass("some-test-class")
+					.addChild(new MenuItem("General Tests").href("./general"))
+					.addChild(new MenuItem("Form Tests").faicon("fa fa-table").href("./form"))
+				, null);
+		
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("Menu Test"), null);
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("A").faicon("fa fa-star"), "Menu Test");
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("B").faicon("fa fa-folder-open"), " Menu Test | A ");
+		CFW.Registry.Components.addRegularMenuItem(new MenuItem("C"), " Menu Test | A | B");
 	}
 
 	@Override
