@@ -3,10 +3,13 @@ package com.pengtoolbox.cfw._main;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw.config.Configuration;
+import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
+import com.pengtoolbox.cfw.response.bootstrap.MenuItemDivider;
 import com.pengtoolbox.cfw.response.bootstrap.UserMenuItem;
 
 
@@ -20,7 +23,9 @@ public class CFWRegistryComponents {
 	
 	private static LinkedHashMap<String, MenuItem> regularMenuItems = new LinkedHashMap<String, MenuItem>();
 	private static LinkedHashMap<String, MenuItem> userMenuItems = new LinkedHashMap<String, MenuItem>();
-		
+	
+	private static LinkedHashMap<String, MenuItem> adminMenuItems = new LinkedHashMap<String, MenuItem>();
+	
 	private static Class<?> defaultFooterClass = null;
 
 	
@@ -34,6 +39,23 @@ public class CFWRegistryComponents {
 	 ***********************************************************************/
 	public static void addRegularMenuItem(MenuItem item, String menuPath)  {
 		addMenuItem(regularMenuItems, item, menuPath);
+	}
+	
+	/***********************************************************************
+	 * Adds a menuItem to the user menu.
+	 * Define the position of in the menu with the menuPath parameter. Use
+	 * "|" to separate multiple menu labels.
+	 * @param menuitem to add
+	 * @param menuPath were the menu should be added, or null for root
+	 * @param Class that extends from BTMenu
+	 ***********************************************************************/
+	public static void addAdminMenuItem(MenuItem itemToAdd, String menuPath)  {
+		if(itemToAdd.getPermissions().size() == 0){
+			new CFWLog(logger)
+			.method("addAdminMenuItem")
+			.severe("Coding Issue: Admin menu items need at least 1 permission.");
+		}
+		addMenuItem(adminMenuItems, itemToAdd, menuPath);
 	}
 	
 	/***********************************************************************
@@ -96,16 +118,67 @@ public class CFWRegistryComponents {
 	 * Create a instance of the menu.
 	 * @return a Bootstrap Menu instance
 	 ***********************************************************************/
-	public static BTMenu createMenuInstance(boolean withUserMenu)  {
+	public static BTMenu createMenuInstance(boolean withUserMenus)  {
 		
 		BTMenu menu = new BTMenu();
+		menu.setLabel(CFW.DB.Config.getConfigAsString(Configuration.MENU_TITLE));
 		
-		
+		//======================================
+		// User Menus
+		//======================================
 		for(MenuItem item : regularMenuItems.values() ) {
 			menu.addChild(item.createCopy());
 		}
 		
-		if(withUserMenu) {
+		//======================================
+		// User Menus
+		//======================================
+		if(withUserMenus) {
+			
+			//---------------------------
+			// Admin Menu
+			MenuItem adminMenuItem = new MenuItem("Admin").faicon("fas fa-tools");	
+			menu.addChild(adminMenuItem);
+			
+			for(MenuItem item : adminMenuItems.values() ) {
+				adminMenuItem.addChild(item.createCopy());
+				adminMenuItem.addPermissions(item.getPermissions());
+			}
+
+			if(adminMenuItems.size() > 0) {
+				adminMenuItem.addChild(new MenuItemDivider());
+			}
+			
+			adminMenuItem.addChild(
+					new MenuItem("Configuration")
+						.faicon("fas fa-list-alt")
+						.addPermission(Permission.CFW_CONFIG_MANAGEMENT)
+						.href("./configuration")	
+					);
+					
+			adminMenuItem.addChild(
+					new MenuItem("Manage Users")
+						.faicon("fas fa-users")
+						.addPermission(Permission.CFW_USER_MANAGEMENT)
+						.href("./usermanagement")	
+					);
+					
+			adminMenuItem.addChild(
+					new MenuItem("API")
+						.faicon("fas fa-code")
+						.addPermission(Permission.CFW_API)
+						.href("./api")	
+					);
+					
+			adminMenuItem.addChild(
+					new MenuItem("CPU Sampling")
+						.faicon("fas fa-microchip")
+						.addPermission(Permission.CFW_VIEW_STATISTICS)
+						.href("./cpusampling")	
+					);
+			
+			//---------------------------
+			// User Menu
 			UserMenuItem userMenuItem = new UserMenuItem(CFW.Context.Session.getSessionData());	
 			menu.setUserMenuItem(userMenuItem);
 			

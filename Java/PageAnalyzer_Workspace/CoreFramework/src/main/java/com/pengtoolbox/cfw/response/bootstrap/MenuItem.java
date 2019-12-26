@@ -2,11 +2,11 @@ package com.pengtoolbox.cfw.response.bootstrap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 
 /**************************************************************************************************************
@@ -22,7 +22,7 @@ public class MenuItem extends HierarchicalHTMLItem {
 	
 	// if any permissions match item will be rendered
 	// if null item will be rendered
-	private ArrayList<String> permissions = new ArrayList<String>();
+	private HashSet<String> permissions = new HashSet<String>();
 	private LinkedHashMap<String, MenuItem> childMenuItems = new LinkedHashMap<String, MenuItem>();
 	
 	public MenuItem(String label) {
@@ -30,26 +30,12 @@ public class MenuItem extends HierarchicalHTMLItem {
 		this.addAttribute("href", "#");
 	}
 	
-	public MenuItem(String label, ArrayList<String> permissions) {
+	public MenuItem(String label, HashSet<String> permissions) {
 		this.label = label;
 		this.permissions = permissions;
 		this.addAttribute("href", "#");
 	}
-	
-	/***********************************************************************************
-	 * Add the permission needed to see this menu item.
-	 * @return String html for this item. 
-	 ***********************************************************************************/
-	public MenuItem addPermission(String permission) {
-		if(permissions == null) {
-			permissions = new ArrayList<String>();
-		}
-		
-		permissions.add(permission);
-		
-		return this;
-	}
-		
+			
 	/***********************************************************************************
 	 * Overrloaded addChild to handle sub menu items.
 	 * @return String html for this item. 
@@ -106,7 +92,9 @@ public class MenuItem extends HierarchicalHTMLItem {
 			html.append("\n<li class=\""+cssClass+"\">")
 				.append("<a class=\"dropdown-item\" "+this.getAttributesString()+">")
 					.append("<div class=\"cfw-fa-box\"><i class=\""+faiconClasses+"\"></i></div>")
-					.append(label)
+					.append("<span class=\"cfw-menuitem-label\">")
+						.append(label)
+					.append("</span>")
 				.append("</a></li>");   
 		}else {
 			String submenuClass = "";
@@ -116,15 +104,14 @@ public class MenuItem extends HierarchicalHTMLItem {
 			html.append("\n<li class=\"dropdown "+cssClass+"\">")
 				.append("\n<a "+this.getAttributesString()+"class=\"dropdown-item dropdown-toggle\" id=\"cfwMenuDropdown\" data-toggle=\"dropdown\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">")
 					.append("<div class=\"cfw-fa-box\"><i class=\""+faiconClasses+"\"></i></div>")
-					.append(label)
+					.append("<span class=\"cfw-menuitem-label\">")
+						.append(label)
+					.append("</span>")  
 				.append("<span class=\"caret\"></span></a>")   
 				.append("\n<ul class=\"dropdown-menu dropdown-submenu "+submenuClass+alignRightClass+"\" aria-labelledby=\"cfwMenuDropdown\">");
 
 			for(HierarchicalHTMLItem child : children) {
-				if(child instanceof MenuItem) {
-
-					html.append("\t"+((MenuItem)child).getHTML());
-				}
+				html.append("\t"+child.getHTML());
 			}
 			
 			for(HierarchicalHTMLItem child : oneTimeChildren) {
@@ -135,6 +122,43 @@ public class MenuItem extends HierarchicalHTMLItem {
 			html.append("\n</ul></li>");
 		}
 		
+	}
+	
+	/***********************************************************************************
+	 * Add the permission needed to see this menu item.
+	 * @return String html for this item. 
+	 ***********************************************************************************/
+	public MenuItem addPermission(String permission) {
+		if(permissions == null) {
+			permissions = new HashSet<String>();
+		}
+		
+		permissions.add(permission);
+		
+		return this;
+	}
+	
+	
+	/***********************************************************************************
+	 * Add the permissions needed to see this menu item.
+	 * @return String html for this item. 
+	 ***********************************************************************************/
+	public MenuItem addPermissions(HashSet<String> permissionArray) {
+		if(permissions == null) {
+			permissions = new HashSet<String>();
+		}
+		
+		permissions.addAll(permissionArray);
+		
+		return this;
+	}
+	
+	/***********************************************************************************
+	 * 
+	 * @return permissions
+	 ***********************************************************************************/
+	public HashSet<String> getPermissions( ) {
+		return permissions;
 	}
 	
 	/*****************************************************************************

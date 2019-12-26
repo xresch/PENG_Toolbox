@@ -120,41 +120,12 @@ public class Main extends Application implements CFWAppInterface {
 				, null);
 				
     	//----------------------------------
-    	// Register User Menu
-		CFW.Registry.Components.addUserMenuItem(
+    	// Register Admin Menu
+		CFW.Registry.Components.addAdminMenuItem(
 				(MenuItem)new MenuItem("Manage Results")
 					.faicon("fas fa-poll")
 					.addPermission(PAPermissions.MANAGE_RESULTS)
 					.href("./manageresults")	
-				, null);
-
-		
-		CFW.Registry.Components.addUserMenuItem(
-				(MenuItem)new MenuItem("Manage Configuration")
-					.faicon("fas fa-list-alt")
-					.addPermission(Permission.CFW_CONFIG_MANAGEMENT)
-					.href("./configuration")	
-				, null);
-				
-		CFW.Registry.Components.addUserMenuItem(
-				(MenuItem)new MenuItem("Manage Users")
-					.faicon("fas fa-users")
-					.addPermission(Permission.CFW_USER_MANAGEMENT)
-					.href("./usermanagement")	
-				, null);
-				
-		CFW.Registry.Components.addUserMenuItem(
-				(MenuItem)new MenuItem("API")
-					.faicon("fas fa-code")
-					.addPermission(Permission.CFW_API)
-					.href("./api")	
-				, null);
-				
-		CFW.Registry.Components.addUserMenuItem(
-				(MenuItem)new MenuItem("CPU Sampling")
-					.faicon("fas fa-microchip")
-					.addPermission(Permission.CFW_VIEW_STATISTICS)
-					.href("./cpusampling")	
 				, null);
 		
 		//----------------------------------
