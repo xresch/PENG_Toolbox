@@ -29,7 +29,7 @@ public class CFWAutocompleteHandlerDefault extends CFWAutocompleteHandler {
 		if( !(parent.getValue() instanceof Object[])) {
 			try {
 				result = clazz.newInstance()
-					.select(fieldname)
+					.select("DISTINCT "+fieldname)
 					.like(fieldname, "%"+inputValue+"%")
 					.limit(this.getMaxResults())
 					.getAsStringArray(fieldname);
