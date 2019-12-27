@@ -843,7 +843,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		// Convert string values to the appropriate type
 		if(value.getClass() == String.class) {
 			if( ((String)value).trim().equals("")) { 
-				if(valueClass == Integer.class) 	    { return this.changeValue(0); }
+				if(valueClass == Integer.class) 	    { return this.changeValue(null); }
 				else if(valueClass == Boolean.class) 	{ return this.changeValue(false); }
 				else if(valueClass == Timestamp.class)  { return this.changeValue(null);  }
 				else if(valueClass == Date.class)  		{ return this.changeValue(null); }

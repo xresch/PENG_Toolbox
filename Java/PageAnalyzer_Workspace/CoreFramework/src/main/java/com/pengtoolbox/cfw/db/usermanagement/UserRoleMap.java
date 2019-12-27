@@ -134,24 +134,24 @@ public class UserRoleMap extends CFWObject {
 		return apis;
 	}
 	
-	public int id() {
+	public Integer id() {
 		return id.getValue();
 	}
 
-	public int foreignKeyUser() {
+	public Integer foreignKeyUser() {
 		return foreignKeyUser.getValue();
 	}
 	
-	public UserRoleMap foreignKeyUser(int foreignKeyUser) {
+	public UserRoleMap foreignKeyUser(Integer foreignKeyUser) {
 		this.foreignKeyUser.setValue(foreignKeyUser);
 		return this;
 	}	
 	
-	public int foreignKeyRole() {
+	public Integer foreignKeyRole() {
 		return foreignKeyRole.getValue();
 	}
 	
-	public UserRoleMap foreignKeyRole(int foreignKeyRole) {
+	public UserRoleMap foreignKeyRole(Integer foreignKeyRole) {
 		this.foreignKeyRole.setValue(foreignKeyRole);
 		return this;
 	}	

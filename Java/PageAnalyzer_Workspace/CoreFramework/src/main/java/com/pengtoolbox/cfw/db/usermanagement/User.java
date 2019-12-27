@@ -359,11 +359,11 @@ public class User extends CFWObject {
 		return apis;
 	}
 	
-	public int id() {
+	public Integer id() {
 		return id.getValue();
 	}
 	
-	public User id(int id) {
+	public User id(Integer id) {
 		this.id.setValue(id);
 		return this;
 	}

@@ -238,11 +238,11 @@ public class Permission extends CFWObject{
 	}
 	
 	
-	public int id() {
+	public Integer id() {
 		return id.getValue();
 	}
 	
-	public Permission id(int id) {
+	public Permission id(Integer id) {
 		this.id.setValue(id);
 		return this;
 	}

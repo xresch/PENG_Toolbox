@@ -115,7 +115,7 @@ public class Space extends CFWObject {
 		initializeFields();
 	}
 	
-	public Space(int spacegroupid, String name) {
+	public Space(Integer spacegroupid, String name) {
 		initializeFields();
 		this.foreignKeySpaceGroup.setValue(spacegroupid);
 		this.name.setValue(name);
@@ -137,7 +137,7 @@ public class Space extends CFWObject {
 	 **************************************************************************************/
 	public void initDB() {
 		
-//		int spacegroupid = CFW.DB.SpaceGroups.selectByName(SpaceGroup.CFW_SPACEGROUP_TESTSPACE).id();
+//		Integer spacegroupid = CFW.DB.SpaceGroups.selectByName(SpaceGroup.CFW_SPACEGROUP_TESTSPACE).id();
 //		
 //		//-----------------------------------------
 //		// 
@@ -214,11 +214,11 @@ public class Space extends CFWObject {
 		return apis;
 	}
 
-	public int id() {
+	public Integer id() {
 		return id.getValue();
 	}
 	
-	public Space id(int id) {
+	public Space id(Integer id) {
 		this.id.setValue(id);
 		return this;
 	}

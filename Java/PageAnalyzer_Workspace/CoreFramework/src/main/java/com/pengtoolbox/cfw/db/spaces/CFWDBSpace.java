@@ -1,11 +1,8 @@
-package com.pengtoolbox.cfw.db.usermanagement;
+package com.pengtoolbox.cfw.db.spaces;
 
 import java.sql.ResultSet;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
-import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.db.spaces.Space;
 import com.pengtoolbox.cfw.db.spaces.Space.SpaceFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 

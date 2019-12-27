@@ -135,25 +135,25 @@ public class RolePermissionMap extends CFWObject {
 	}
 	
 	
-	public int id() {
+	public Integer id() {
 		return id.getValue();
 	}
 
-	public int foreignKeyRole() {
+	public Integer foreignKeyRole() {
 		return foreignKeyRole.getValue();
 	}
 	
-	public RolePermissionMap foreignKeyRole(int foreignKeyRole) {
+	public RolePermissionMap foreignKeyRole(Integer foreignKeyRole) {
 		this.foreignKeyRole.setValue(foreignKeyRole);
 		return this;
 	}	
 	
 
-	public int foreignKeyPermission() {
+	public Integer foreignKeyPermission() {
 		return foreignKeyPermission.getValue();
 	}
 	
-	public RolePermissionMap foreignKeyPermission(int foreignKeyPermission) {
+	public RolePermissionMap foreignKeyPermission(Integer foreignKeyPermission) {
 		this.foreignKeyPermission.setValue(foreignKeyPermission);
 		return this;
 	}	

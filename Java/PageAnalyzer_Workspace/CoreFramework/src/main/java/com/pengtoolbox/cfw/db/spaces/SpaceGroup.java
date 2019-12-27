@@ -134,11 +134,11 @@ public class SpaceGroup extends CFWObject {
 		return apis;
 	}
 
-	public int id() {
+	public Integer id() {
 		return id.getValue();
 	}
 	
-	public SpaceGroup id(int id) {
+	public SpaceGroup id(Integer id) {
 		this.id.setValue(id);
 		return this;
 	}

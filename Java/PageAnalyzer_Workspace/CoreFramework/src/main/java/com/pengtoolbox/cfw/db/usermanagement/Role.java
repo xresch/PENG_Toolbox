@@ -261,11 +261,11 @@ public class Role extends CFWObject {
 		return apis;
 	}
 
-	public int id() {
+	public Integer id() {
 		return id.getValue();
 	}
 	
-	public Role id(int id) {
+	public Role id(Integer id) {
 		this.id.setValue(id);
 		return this;
 	}

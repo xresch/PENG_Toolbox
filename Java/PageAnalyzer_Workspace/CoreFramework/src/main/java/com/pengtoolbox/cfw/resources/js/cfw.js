@@ -703,15 +703,14 @@ function cfw_initializeTimefield(fieldID, epochMillis){
 	
 	if(epochMillis != null){
 		date = new CFWDate(epochMillis);
-	}else{
-		date = new CFWDate();
+		datepicker.first().val(date.getDateForInput());
+		
+		if(timepicker.length > 0 != null){
+			timepicker.first().val(date.getTimeForInput());
+		}
 	}
 		
-	datepicker.first().val(date.getDateForInput());
-	
-	if(timepicker.length > 0 != null){
-		timepicker.first().val(date.getTimeForInput());
-	}
+
 }
 
 /**************************************************************************************
@@ -740,6 +739,8 @@ function cfw_updateTimeField(fieldID){
 	
 	if(dateString.length > 0){
 		$(id).val(Date.parse(dateString));
+	}else{
+		$(id).val('');
 	}
 	
 }
