@@ -3,17 +3,16 @@ package com.pengtoolbox.cfw.utils;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -80,14 +79,16 @@ public class CFWFiles {
 			omlogger.finest("Read from disk into cache");
 			
 			try{
-				List<String> fileContent = Files.readAllLines(Paths.get(path), Charset.forName("UTF-8"));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path),"utf-8"));
 				
 				StringBuffer contentBuffer = new StringBuffer();
+				String line;
 				
-				for(String line : fileContent){
+				while( (line = reader.readLine()) != null) {
 					contentBuffer.append(line);
 					contentBuffer.append("\n");
 				}
+
 				String content = contentBuffer.toString();
 				CFWFiles.permanentStringFileCache.put(path, content);
 				

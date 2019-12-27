@@ -188,7 +188,6 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					options = CFWArrayUtils.add(options, null);
 				}
 			}
-			
 		}
 		//---------------------------------------------
 		// Create Form Group
@@ -219,14 +218,34 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		}
 		
 		//---------------------------------------------
-		// Create Field
+		// Set Attributes
 		//---------------------------------------------
 		this.addAttribute("placeholder", formLabel);
 		this.addAttribute("name", name);
 		
 		if(isDisabled) {	this.addAttribute("disabled", "disabled");};
-		if(value != null) {	this.addAttribute("value", value.toString()); };
+		if(value != null) {	
+			
+			if( !(value instanceof Object[]) ) {
+				this.addAttribute("value", value.toString().replace("\"", "&quot;")); 
+			}else {
+				StringBuilder builder = new StringBuilder();
+				Object[] array = (Object[])value;
+				for(Object object : array) {
+					builder.append(object.toString()).append(",");
+				}
+				if(array.length > 0) {
+					builder.deleteCharAt(builder.length()-1);
+				}
+				this.addAttribute("value", builder.toString().replace("\"", "&quot;")); 
+			}
+			
+			
+		};
 		
+		//---------------------------------------------
+		// Create Field
+		//---------------------------------------------
 		switch(formFieldType) {
 			case TEXT:  			html.append("<input type=\"text\" class=\"form-control\" "+this.getAttributesString()+"/>");
 									break;
@@ -940,6 +959,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @return instance of chaining
 	 ******************************************************************************************************/
 	public CFWField<T> setAutocompleteHandler(CFWAutocompleteHandler autocompleteHandler) {
+		autocompleteHandler.setParent(this);
 		this.autocompleteHandler = autocompleteHandler;
 		return this;
 	}

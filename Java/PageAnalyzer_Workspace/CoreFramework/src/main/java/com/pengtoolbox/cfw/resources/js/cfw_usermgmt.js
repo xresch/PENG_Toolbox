@@ -213,7 +213,7 @@ function cfw_usermgmt_printUserList(data){
 	
 	//--------------------------------
 	// Button
-	var createButton = $('<button class="btn btn-success mb-2" alt="Create" title="Delete" onclick="cfw_usermgmt_createUser()">'
+	var createButton = $('<button class="btn btn-success mb-2" alt="Create" title="Create" onclick="cfw_usermgmt_createUser()">'
 							+ '<i class="fas fa-plus-circle"></i> Create User'
 					   + '</button>');
 	

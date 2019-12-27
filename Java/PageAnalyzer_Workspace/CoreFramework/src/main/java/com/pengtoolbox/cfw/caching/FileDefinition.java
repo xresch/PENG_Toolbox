@@ -88,7 +88,6 @@ public class FileDefinition {
 	 * @return
 	 **************************************************************************/
 	public String readContents(){
-		
 		String returnContent = "";
 		switch(type) {
 			case FILE:			returnContent = CFW.Files.getFileContent(null, path, filename);

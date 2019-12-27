@@ -8,6 +8,7 @@ package com.pengtoolbox.cfw.datahandling;
 public abstract class CFWAutocompleteHandler {
 	
 	private int maxResults = 10;
+	private CFWField parent = null;
 	
 	public CFWAutocompleteHandler() {
 		
@@ -31,6 +32,15 @@ public abstract class CFWAutocompleteHandler {
 		this.maxResults = maxResults;
 	}
 
+	public CFWField getParent() {
+		return parent;
+	}
+
+	public void setParent(CFWField parent) {
+		this.parent = parent;
+	}
+
+	
 	
 	
 }

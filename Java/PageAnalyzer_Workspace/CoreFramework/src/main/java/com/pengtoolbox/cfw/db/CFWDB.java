@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw.db;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
@@ -50,6 +51,9 @@ public class CFWDB {
 	 ********************************************************************************************/
 	public static void startDatabase() {
     	
+		
+
+		
     	//---------------------------------------
     	// Get variables
 		String server 		= CFWProperties.DB_SERVER;
@@ -64,6 +68,20 @@ public class CFWDB {
 		File datastoreFolder = new File(storePath);
     	if(!datastoreFolder.isDirectory()) {
     		datastoreFolder.mkdir();
+    	}
+    	
+    	//---------------------------------------
+    	// Create Folder 
+		File datastoreFile = new File(storePath+"/"+databaseName+".mv.db");
+    	if(!datastoreFile.isFile()) {
+    		try {
+				datastoreFile.createNewFile();
+			} catch (IOException e) {
+				new CFWLog(logger)
+				.method("startDatabase")
+				.severe("Error creating database file.", e);
+				
+			}
     	}
     	
 		String h2_url 		= "jdbc:h2:tcp://"+server+":"+port+"/"+storePath+"/"+databaseName;
@@ -739,8 +757,10 @@ public class CFWDB {
 						|| object instanceof Number
 						|| object instanceof Boolean ) {
 							json.append(object).append(",");
-						}else {
-							json.append("\"").append(resultSet.getString(i)).append("\",");
+						}else if(object instanceof Object[]){
+							json.append(CFW.JSON.toJSON(object)).append(",");
+						}else{
+							json.append("\"").append(CFW.JSON.escapeString(resultSet.getString(i))).append("\",");
 						}
 					}
 				}

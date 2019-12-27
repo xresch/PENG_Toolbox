@@ -454,6 +454,22 @@ public class CFWSQL {
 		return this;
 	}
 	
+	
+	/****************************************************************
+	 * Adds a WHERE clause to the query.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWSQL like(String fieldname, Object value) {
+		if(!isQueryCached()) {
+			if(value == null) {
+				return whereIsNull(fieldname);
+			}
+			query.append(" WHERE ").append(fieldname).append(" LIKE ?");	
+		}
+		values.add(value);
+		return this;
+	}
+	
 	/****************************************************************
 	 * Adds a WHERE <fieldname> IN(?) clause to the query.
 	 * @return CFWStatement for method chaining
@@ -974,6 +990,45 @@ public class CFWSQL {
 		}
 		
 		return keyValueMap;
+		
+	}
+	
+	/***************************************************************
+	 * Execute the Query and gets the result as a string array.
+	 ***************************************************************/
+	public String[] getAsStringArray(String columnName) {
+		return getAsStringArrayList(columnName).toArray(new String[] {});
+	}
+	/***************************************************************
+	 * Execute the Query and gets the result as a string array list.
+	 ***************************************************************/
+	public ArrayList<String> getAsStringArrayList(String columnName) {
+		
+		ArrayList<String> stringArray = new ArrayList<String>();
+		
+		if(this.execute()) {
+			
+			if(result == null) {
+				return stringArray;
+			}
+			
+			try {
+				while(result.next()) {
+					Object value = result.getObject(columnName);
+					stringArray.add(value.toString());
+				}
+			} catch (SQLException e) {
+				new CFWLog(logger)
+				.method("getAsStringArray")
+				.severe("Error reading object from database.", e);
+				
+			}finally {
+				CFWDB.close(result);
+			}
+			
+		}
+		
+		return stringArray;
 		
 	}
 		

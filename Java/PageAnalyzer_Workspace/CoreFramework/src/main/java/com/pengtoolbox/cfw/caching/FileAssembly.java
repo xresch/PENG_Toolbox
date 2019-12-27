@@ -83,8 +83,6 @@ public class FileAssembly {
 				
 				String content = fileDef.readContents();
 				
-				
-				
 				if(content != null  && !content.isEmpty()) {
 					concatenatedFile.append(content).append("\n");
 				}
