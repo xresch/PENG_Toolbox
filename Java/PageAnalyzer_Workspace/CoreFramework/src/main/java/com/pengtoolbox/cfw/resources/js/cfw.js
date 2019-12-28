@@ -65,6 +65,32 @@ class CFWDate{
 }
 
 /**************************************************************************************
+ * Filters items in the selected DOM nodes.
+ * The items that should be filtered(based on their HTML content) have to be found with
+ * the itemSelector.
+ * 
+ *@param context the JQuery selector for the element containing the items which should be filtered.
+ *@param searchField the searchField of the field containing the search string.
+ *@param itemSelector the JQuery selector for the object which should be filtered.
+ *************************************************************************************/
+function cfw_filterItems(context, searchField, itemSelector){
+
+	var filterContext = $(context);
+	var input = $(searchField);
+
+	filter = input.val().toUpperCase();
+	
+	filterContext.find(itemSelector).each(function( index ) {
+		  
+		  if ($(this).html().toUpperCase().indexOf(filter) > -1) {
+			  $(this).css("display", "");
+		  } else {
+			  $(this).css("display", "none");
+			}
+	});
+
+}
+/**************************************************************************************
  * Filter the rows of a table by the value of the search field.
  * This method is best used by triggering it on the onchange-event on the search field
  * itself.

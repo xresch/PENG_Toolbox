@@ -514,6 +514,18 @@ public class CFWSQL {
 	}
 	
 	/****************************************************************
+	 * Adds a WHERE <fieldname> IN(?) clause to the query.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWSQL whereArrayContains(String fieldname, Object value) {
+		if(!isQueryCached()) {
+			query.append(" WHERE ARRAY_CONTAINS("+fieldname).append(", ?) ");
+		}
+		
+		values.add(value);
+		return this;
+	}
+	/****************************************************************
 	 * Begins a SELECT COUNT(*) statement.
 	 * @return CFWStatement for method chaining
 	 ****************************************************************/
