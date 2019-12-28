@@ -1020,8 +1020,15 @@ function cfw_showModal(modalTitle, modalBody, jsCode){
 	//---------------------------------
 	// Add Callback
 	if(jsCode != null){
+		console.log("jsCode:"+jsCode);
 		defaultModal.on('hidden.bs.modal', function () {
-			eval(jsCode);
+			if(typeof jsCode === "function"){
+				console.log("function");
+				jsCode();
+			}else{
+				console.log("code");
+				eval(jsCode);
+			}
 			$("#"+modalID).off('hidden.bs.modal');
 		});	
 	}
@@ -1074,8 +1081,15 @@ function cfw_showSmallModal(modalTitle, modalBody, jsCode){
 	//---------------------------------
 	// Add Callback
 	if(jsCode != null){
-		smallModal.on('hidden.bs.modal', function () {
-			eval(jsCode);
+		console.log("jsCode:"+jsCode);
+		defaultModal.on('hidden.bs.modal', function () {
+			if(typeof jsCode === "function"){
+				console.log("function");
+				jsCode();
+			}else{
+				console.log("code");
+				eval(jsCode);
+			}
 			$("#"+modalID).off('hidden.bs.modal');
 		});	
 	}
@@ -1494,6 +1508,41 @@ function  cfw_hasPermission(permissionName){
 	return false;
 }
 
+/**************************************************************************************
+ * Checks if the user has the specified permission
+ * @param permissionName the name of the Permission
+ *************************************************************************************/
+function  cfw_getUserID(){
+	$.ajaxSetup({async: false});
+		cfw_fetchAndCacheData("./usermanagement/permissions", null, "userPermissions")
+	$.ajaxSetup({async: true});
+	
+	if(CFW.cache.data["userPermissions"] != null
+	&& CFW.cache.data["userPermissions"].payload.includes(permissionName)){
+		return true;
+	}
+	
+	return false;
+}
+
+
+/**************************************************************************************
+ * Checks if the user has the specified permission
+ * @param permissionName the name of the Permission
+ *************************************************************************************/
+function  cfw_getUserID(){
+	$.ajaxSetup({async: false});
+	cfw_fetchAndCacheData("./usermanagement/permissions", null, "userPermissions")
+	$.ajaxSetup({async: true});
+	
+	if(CFW.cache.data["userPermissions"] != null
+	&& CFW.cache.data["userPermissions"].payload.includes(permissionName)){
+		return true;
+	}
+	
+	return false;
+}
+
 /********************************************************************
  * CFW FRAMEWORK STRUCTURE
  * -----------------------
@@ -1537,7 +1586,9 @@ var CFW = {
 		createToggleButton: cfw_createToggleButton,
 		toc: cfw_table_toc,
 		addToast: cfw_addToast,
+		addToastInfo: function(text){cfw_addToast(text, null, "info", CFW.config.toastDelay);},
 		addToastSuccess: function(text){cfw_addToast(text, null, "success", CFW.config.toastDelay);},
+		addToastWarning: function(text){cfw_addToast(text, null, "warning", CFW.config.toastDelay);},
 		addToastDanger: function(text){cfw_addToast(text, null, "danger", CFW.config.toastErrorDelay);},
 		showModal: cfw_showModal,
 		showSmallModal: cfw_showSmallModal,

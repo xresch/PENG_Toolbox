@@ -13,6 +13,8 @@ import org.eclipse.jetty.server.handler.HandlerWrapper;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw._main.SessionData;
+import com.pengtoolbox.cfw.response.AbstractResponse;
+import com.pengtoolbox.cfw.response.HTMLResponse;
 
 /**************************************************************************************************************
  * 
@@ -43,7 +45,11 @@ public class AuthenticationHandler extends HandlerWrapper
 	        	// Call Wrapped Handler
 	        	//##################################
 	        	this._handler.handle(target, baseRequest, request, response);
-	        	
+	    		
+	        	AbstractResponse template = CFW.Context.Request.getResponse();
+	    		if(template instanceof HTMLResponse) {
+	    			((HTMLResponse)template).addJavascriptData("userid", data.getUser().id());
+	    		}
         	}else {
         		
         		if(request.getRequestURI().toString().endsWith("/login")
@@ -65,6 +71,10 @@ public class AuthenticationHandler extends HandlerWrapper
     		}
     		
     		this._handler.handle(target, baseRequest, request, response);
+        	AbstractResponse template = CFW.Context.Request.getResponse();
+    		if(template instanceof HTMLResponse) {
+    			((HTMLResponse)template).addJavascriptData("userid", CFW.Context.Request.getUser().id());
+    		}
     	}
     	
 

@@ -7,6 +7,7 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.config.Configuration;
+import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
@@ -138,15 +139,15 @@ public class HTMLResponse extends AbstractHTMLResponse {
 				//--------------------------
 				// JavascriptData
 				this.appendSectionTitle(buildedPage, "Javascript Data");
-				buildedPage.append("<div id=\"javaScriptData\" style=\"display: none;\">");
+				buildedPage.append("<script id=\"javaScriptData\" style=\"display: none;\">");
 				buildedPage.append(this.javascriptData);
-				buildedPage.append("</div>");
+				buildedPage.append("</script>");
 				
 				//--------------------------
 				// Javascript
 				this.appendSectionTitle(buildedPage, "Javascript");
 				buildedPage.append("<div id=\"javascripts\">");
-				
+								
 				if(bottomjs.hasFiles()) {
 					buildedPage.append("<script src=\""+bottomjs.assemble().cache().getAssemblyServletPath()+"\"></script>");
 				}

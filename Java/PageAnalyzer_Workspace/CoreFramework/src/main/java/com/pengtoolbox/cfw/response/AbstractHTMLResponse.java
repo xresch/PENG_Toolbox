@@ -25,7 +25,7 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 	protected StringBuffer footer = new StringBuffer();
 	protected StringBuffer supportInfo = new StringBuffer();
 	protected StringBuffer javascript = new StringBuffer();
-	protected StringBuffer javascriptData = new StringBuffer();
+	protected StringBuffer javascriptData = new StringBuffer("JSDATA = {};\n");
 	
 	public AbstractHTMLResponse(){
 		super();
@@ -70,12 +70,14 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 		singleJSBottom.add(new FileDefinition(javascript));
 	}
 	
+	public void addJavascriptData(String key, int value){
+		this.javascriptData.append("JSDATA.").append(key)
+				.append(" = ").append(value).append(";\n");
+
+	}
 	public void addJavascriptData(String key, String value){
-		this.javascriptData.append("<p id=\"jsdata_");
-		this.javascriptData.append(key);
-		this.javascriptData.append("\">");
-		this.javascriptData.append(value);
-		this.javascriptData.append("</p>\n");
+		this.javascriptData.append("JSDATA.").append(key)
+				.append(" = '").append(value).append("';\n");
 
 	}
 	
