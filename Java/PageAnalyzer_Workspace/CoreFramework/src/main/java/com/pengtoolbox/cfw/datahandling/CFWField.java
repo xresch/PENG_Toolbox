@@ -315,7 +315,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		String falseChecked = "";
 		String trueChecked = "";
 		
-		if(value.toString().trim().toLowerCase().equals("true")) {
+		if(value != null && value.toString().trim().toLowerCase().equals("true")) {
 			trueChecked = "checked";
 		}else {
 			falseChecked = "checked";
