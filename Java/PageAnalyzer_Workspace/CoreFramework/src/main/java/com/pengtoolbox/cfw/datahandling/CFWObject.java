@@ -127,6 +127,10 @@ public class CFWObject {
 		return fields;
 	}
 	
+	public String[] getFieldnames() {
+		return fields.keySet().toArray(new String[] {});
+	}
+	
 	public String getTableName() {
 		return tableName;
 	}

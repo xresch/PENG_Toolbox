@@ -27,7 +27,9 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 public class RequestHandler extends HandlerWrapper
 {
 	private static Logger logger = CFWLog.getLogger(RequestHandler.class.getName());
-			
+	
+	private static Object syncLock = new Object();
+	
     public void handle( String target,
                         Request baseRequest,
                         HttpServletRequest request,
@@ -85,7 +87,7 @@ public class RequestHandler extends HandlerWrapper
     	
     	// check outside the loop first to avoid synchronizing when it is not needed
     	if(session.getAttribute(CFW.SESSION_DATA) == null) {
-    		synchronized(CFW.SESSION_DATA){
+    		synchronized(syncLock){
     			if(session.getAttribute(CFW.SESSION_DATA) == null) {
 		    		SessionData data = new SessionData();
 		    		session.setAttribute(CFW.SESSION_DATA, data);

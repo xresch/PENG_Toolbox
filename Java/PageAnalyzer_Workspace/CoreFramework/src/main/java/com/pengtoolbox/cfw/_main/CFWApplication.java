@@ -289,7 +289,7 @@ public class CFWApplication {
 	 * Propagates all sessions and session data to all available session context handlers.
 	 * @throws Exception
 	 **************************************************************************************************/
-	public static String propagateSessionDataToOtherContexts(HttpServletRequest request, SessionData data) {
+	public static synchronized String propagateSessionDataToOtherContexts(HttpServletRequest request, SessionData data) {
 		
 		String sessionID = "";
 		for(ServletContextHandler handler : servletContextArray) {
