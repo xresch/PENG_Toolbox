@@ -34,7 +34,6 @@ public class StatsCPUSample extends CFWObject {
 		MIN,
 		AVG,
 		MAX,
-		SUM,
 	}
 
 	private static Logger logger = CFWLog.getLogger(StatsCPUSample.class.getName());
@@ -147,7 +146,6 @@ public class StatsCPUSample extends CFWObject {
 						StatsCPUSampleFields.MIN.toString(),
 						StatsCPUSampleFields.AVG.toString(),
 						StatsCPUSampleFields.MAX.toString(),
-						StatsCPUSampleFields.SUM.toString(),
 						StatsCPUSampleFields.GRANULARITY.toString()	
 				};
 
