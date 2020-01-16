@@ -16,7 +16,7 @@ class TestPipeline extends Pipeline<String, String> {
 		TestPipeline pipe = new TestPipeline();
 		CFW.Files.addAllowedPackage(FileDefinition.CFW_JAR_RESOURCES_PATH);
 		System.out.println(
-			pipe.data(CFW.Files.readPackageResource(FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "cfw.js").split("\\r\\n|\\n"))
+			pipe.data(CFW.Files.readPackageResource(FileDefinition.CFW_JAR_RESOURCES_PATH + ".test", "cfwjs_test.js").split("\\r\\n|\\n"))
 				.execute()
 				.resultToString()
 		);

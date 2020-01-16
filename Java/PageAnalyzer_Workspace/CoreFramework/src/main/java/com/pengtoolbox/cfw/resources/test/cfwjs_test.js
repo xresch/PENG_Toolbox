@@ -60,10 +60,61 @@ function cfw_test_createTable(parent){
 }
 
 /********************************************************************
+ * Minimizing Test
+ * 
+ ********************************************************************/
+function mockupForRemoveCommentsTest(){ 
+	
+	/*
+	 *  Minimize-Test: Multi Line
+	 *  
+	 */
+	/*******************************
+	 *  Minimize-Test: Multi Line 2
+	 *  
+	 *******************************/
+	
+	/*
+	 *  Minimize-Test: Multi Line before
+	 *  
+	 */ if (true){ return; }
+	 
+	 if (true){ return; } /*
+	 *  Minimize-Test: Multi Line after
+	 *  
+	 */ 
+	 
+	//-------------------------------
+	// Single line Comments
+	//-------------------------------
+	 
+	/* single line block comment */
+	 
+	/** before inline **/ if (true){ return 1; }
+	 if (true){ return 2; } /** after inline **/
+	/** before and after inline **/ if (true){ return 3; } /** before and after inline **/
+	
+	//-------------------------------
+	// In String Comments
+	//-------------------------------
+	var doubleQuote = "before /* blabla */ after";
+	var singleQuote = 'before /* blabla */ after';
+	var doubleQuote = "before /* blabla */ after" + "more text";
+	var doubleQuote = "before /* " + " */ splitted";
+	var singleQuote = "before /* blabla */ after" + /*between strings*/ "bla" + /*between strings*/ + "";
+	//-------------------------------
+	// Crazy Combination tests
+	//-------------------------------
+	
+	/** block before
+	 **/ /* before and after inline */ var singleQuote = "before /* blabla */ after" + /*between strings*/ 'bla' + /*between strings*/ + ""; /** before and after inline **/ var anotherVar = false;	/** block after
+	**/
+}
+/********************************************************************
  * Executes the tests cases.
  * 
  ********************************************************************/
-function run(){
+function run(){ 
 	
 	CFW.ui.addAlert("info", "================ TEST ISSUES BELOW THIS LINE =================");
 	parent = $("#cfw-content");
