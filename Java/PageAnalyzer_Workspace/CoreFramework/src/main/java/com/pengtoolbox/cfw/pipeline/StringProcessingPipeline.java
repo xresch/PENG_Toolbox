@@ -34,6 +34,62 @@ class StringProcessingPipeline extends Pipeline<String, String> {
 		});
 		return this;
 	}
+	
+	/*********************************************************************
+	 * 
+	 * @return
+	 *********************************************************************/
+	public StringProcessingPipeline grep(String searchTerm, boolean inverse) {
+		
+		this.add(new PipelineAction<String, String>(){
+			@Override
+			void execute() throws Exception {
+
+				while(!inQueue.isEmpty()) {
+					String line = inQueue.poll();
+					if( !inverse) {
+						if(line.contains(searchTerm)) {
+							outQueue.add(line);
+						}
+					}else {
+						if(!line.contains(searchTerm)) {
+							outQueue.add(line);
+						}
+					}
+				}
+				this.setDoneIfPreviousDone();
+			}
+			
+		});
+		return this;
+	}
+	
+	/*********************************************************************
+	 * 
+	 * @return
+	 *********************************************************************/
+	public StringProcessingPipeline countLines() {
+		
+		this.add(new PipelineAction<String, String>(){
+			int counter = 0;
+			@Override
+			void execute() throws Exception {
+				
+				while(!previousAction.isDone()) {
+					while(!inQueue.isEmpty()) {
+						inQueue.poll().trim();
+						counter++;
+					}
+					this.waitForInput(50);
+				}
+				outQueue.add(counter+"");
+				this.setDoneIfPreviousDone();
+			}
+			
+		});
+		return this;
+	}
+	
 	/*********************************************************************
 	 * 
 	 * @return
@@ -66,6 +122,8 @@ class StringProcessingPipeline extends Pipeline<String, String> {
 		pipe.removeBlankLines()
 			.removeComments()
 			.trim()
+			.grep("cfwT", false)
+			.countLines()
 			.data(CFW.Files.readPackageResource(FileDefinition.CFW_JAR_RESOURCES_PATH + ".test", "cfwjs_test.js").split("\\r\\n|\\n"))
 			.execute(false);
 			

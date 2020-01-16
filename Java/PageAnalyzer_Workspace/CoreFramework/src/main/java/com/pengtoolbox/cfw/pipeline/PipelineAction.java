@@ -7,9 +7,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 abstract class PipelineAction<I, O> extends Thread {
 	
-	private Pipeline<O, ?> parent = null;
-	private PipelineAction<?, I> previousAction = null;
-	private PipelineAction<O, ?> nextAction = null;
+	protected Pipeline<O, ?> parent = null;
+	protected PipelineAction<?, I> previousAction = null;
+	protected PipelineAction<O, ?> nextAction = null;
 	
 	protected LinkedBlockingQueue<I> inQueue = new LinkedBlockingQueue<I>();
 	protected LinkedBlockingQueue<O> outQueue;
@@ -43,11 +43,7 @@ abstract class PipelineAction<I, O> extends Thread {
 					}
 					//---------------------------
 					// Wait for more input
-					if(previousAction != null && !previousAction.isDone()) {
-						synchronized(this) {
-							this.wait(50);
-						}
-					}
+					this.waitForInput(50);
 				}
 				
 			this.terminateAction();
@@ -118,6 +114,19 @@ abstract class PipelineAction<I, O> extends Thread {
 			this.setDone(true);
 		}else if(getPreviousAction().isDone()) {
 			this.setDone(true);
+		}
+	}
+	
+	public void waitForInput(long millis) {
+		if(previousAction != null && !previousAction.isDone()) {
+			synchronized(this) {
+				try {
+					this.wait(millis);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
