@@ -71,12 +71,8 @@ public class RemoveCommentsAction extends PipelineAction<String, String>{
 			//=================================================
 			outQueue.add(line);
 		}
+		this.setDoneIfPreviousDone();
 		
-		if(getPreviousAction() == null) {
-			this.setDone(true);
-		}else if(getPreviousAction().isDone()) {
-			this.setDone(true);
-		}
 	}
 	
 	private static int firstUnquotedIndexOf(String text, String searchTerm, int offset) {

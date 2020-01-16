@@ -31,7 +31,7 @@ public class Pipeline<I, O> {
 	 * @param args
 	 * @return
 	 *************************************************************************************/
-	public Pipeline<I, O> execute() {
+	public Pipeline<I, O> execute(boolean doWait) {
 
 		//-----------------------------------
 		// Check has Actions
@@ -53,9 +53,23 @@ public class Pipeline<I, O> {
 		// Initialize
 		for (PipelineAction action : actionArray) {
 			action.setLatch(latch);
-			new Thread(action).start();
+			action.start();
 		}
 		
+		if(doWait) {
+			return waitForComplete();
+		}else {
+			return this;
+		}
+		
+	}
+	
+	/*************************************************************************************
+	 * Start all the actions as separate threads.
+	 * @param args
+	 * @return
+	 *************************************************************************************/
+	public Pipeline<I, O> waitForComplete() {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
@@ -67,7 +81,6 @@ public class Pipeline<I, O> {
 		}	
 		
 		return this;
-		
 	}
 	
 	/*************************************************************************************
@@ -78,7 +91,7 @@ public class Pipeline<I, O> {
 	public void add(PipelineAction nextAction) {
 		
 		if(actionArray.size() > 0) {
-			PipelineAction previousAction = actionArray.get(actionArray.size());
+			PipelineAction previousAction = actionArray.get(actionArray.size()-1);
 			previousAction.setOutQueue(nextAction.getInQueue());
 			previousAction.setNextAction(nextAction);
 			
@@ -88,6 +101,7 @@ public class Pipeline<I, O> {
 			this.firstQueue = nextAction.getInQueue();
 		}
 		
+		nextAction.setParent(this);
 		actionArray.add(nextAction);
 		queues.add(nextAction.getInQueue());
 				
@@ -113,6 +127,40 @@ public class Pipeline<I, O> {
 			builder.append(lastQueue.poll().toString()).append("\n");
 		}
 		
+		return builder.toString();
+	}
+	
+	/*************************************************************************************
+	 * 
+	 *************************************************************************************/
+	public void dumpSysoutLoop(int intervalSeconds, int count) {
+		
+		for(int i = 0; i < count; i++) {
+			System.err.println("========================");
+			System.err.println(dumpActionStatus());
+			
+			try {
+				Thread.sleep(1000*intervalSeconds);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	/*************************************************************************************
+	 * 
+	 *************************************************************************************/
+	public String dumpActionStatus() {
+		
+		StringBuilder builder = new StringBuilder();
+		
+		for(PipelineAction action : actionArray) {
+			builder
+				.append(action.getClass().getSimpleName())
+				.append(" {isDone: ").append(action.isDone()).append(", ")
+				.append("inQueueSize: ").append(action.inQueue.size()).append(", ")
+				.append("outQueueSize: ").append(action.outQueue.size()).append("}\n");
+		}
 		return builder.toString();
 	}
 }

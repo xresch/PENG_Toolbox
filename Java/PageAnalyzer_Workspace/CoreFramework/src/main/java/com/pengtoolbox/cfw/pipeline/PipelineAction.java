@@ -5,8 +5,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 // http://www.informit.com/articles/article.aspx?p=366887&seqNum=8
 
-abstract class PipelineAction<I, O> implements Runnable {
-
+abstract class PipelineAction<I, O> extends Thread {
+	
+	private Pipeline<O, ?> parent = null;
 	private PipelineAction<?, I> previousAction = null;
 	private PipelineAction<O, ?> nextAction = null;
 	
@@ -29,8 +30,23 @@ abstract class PipelineAction<I, O> implements Runnable {
 			this.initializeAction();
 
 				while (!done) {
-					if(!inQueue.isEmpty()) {
-						this.execute();
+					//---------------------------
+					// Execute
+					this.execute();
+					
+					//---------------------------
+					// Wake up next action
+					if(nextAction != null) {
+						synchronized(nextAction) {
+							nextAction.notifyAll();
+						}
+					}
+					//---------------------------
+					// Wait for more input
+					if(previousAction != null && !previousAction.isDone()) {
+						synchronized(this) {
+							this.wait(50);
+						}
 					}
 				}
 				
@@ -96,6 +112,24 @@ abstract class PipelineAction<I, O> implements Runnable {
 		return this;
 	}
 
+
+	public void setDoneIfPreviousDone() {
+		if(getPreviousAction() == null) {
+			this.setDone(true);
+		}else if(getPreviousAction().isDone()) {
+			this.setDone(true);
+		}
+	}
+
+	public Pipeline<O, ?> getParent() {
+		return parent;
+	}
+
+	public PipelineAction<I, O> setParent(Pipeline<O, ?> parent) {
+		this.parent = parent;
+		return this;
+	}
+	
 	
 	
 }
