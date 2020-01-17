@@ -14,7 +14,7 @@ import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
- * Class used to create SQL statements for a CFWOBject.
+ * Class used to create SQL statements for a CFWObject.
  * 
  * @author Reto Scheiwiller, � 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
@@ -23,6 +23,7 @@ public class CFWSQL {
 	
 	private static Logger logger = CFWLog.getLogger(CFWSQL.class.getName());
 	private static HashMap<String, String> queryCache = new HashMap<String, String>();
+	private static HashMap<String, Integer> cacheHitCount = new HashMap<String, Integer>();
 	private String queryName = null;
 	
 	private CFWObject object;
@@ -51,13 +52,38 @@ public class CFWSQL {
 	}
 	
 	/****************************************************************
-	 * Returns the current String representation of the query.
-	 * @param Class of the class using the query.
-	 * @param name of the query
+	 * Returns the current String representation of the query without
+	 * caching the statement.
 	 ****************************************************************/
-	public String getQueryString() {
+	public String getStatementString() {
 		return this.query.toString();
 	}
+	
+	/****************************************************************
+	 * Builds the statement while handling the caching.
+	 ****************************************************************/
+	public String getStatementCached() {
+		String statement;
+		
+		if(isQueryCached()) {
+			statement = queryCache.get(queryName);
+			
+			if(cacheHitCount.containsKey(statement)) {
+				cacheHitCount.put(statement, cacheHitCount.get(statement)+1);
+			}else {
+				cacheHitCount.put(statement, 1);
+			}
+		}else {
+			statement = query.toString();
+			if(queryName != null) {
+				queryCache.put(queryName, statement);
+				cacheHitCount.put(statement, 1);
+			}
+		}
+		
+		return statement;
+	}
+	
 	/****************************************************************
 	 * Caches the query with the specified name for lower performance
 	 * impact.
@@ -734,7 +760,7 @@ public class CFWSQL {
 	public CFWSQL append(CFWSQL partialQuery) {
 		if(partialQuery != null) {
 			if(!isQueryCached()) {
-				query.append(partialQuery.getQueryString());
+				query.append(partialQuery.getStatementString());
 			}
 			System.out.println("### Values: "+Arrays.toString(partialQuery.values.toArray()));
 			values.addAll(partialQuery.values);
@@ -753,14 +779,7 @@ public class CFWSQL {
 		
 		//----------------------------
 		// Handle Caching
-		String statement;
-		
-		if(isQueryCached()) {
-			statement = queryCache.get(queryName);
-		}else {
-			statement = query.toString();
-			queryCache.put(queryName, statement);
-		}
+		String statement = getStatementCached();
 		
 		//----------------------------
 		// Execute Statement 
@@ -786,14 +805,7 @@ public class CFWSQL {
 		
 		//----------------------------
 		// Handle Caching
-		String statement;
-		
-		if(isQueryCached()) {
-			statement = queryCache.get(queryName);
-		}else {
-			statement = query.toString();
-			queryCache.put(queryName, statement);
-		}
+		String statement = getStatementCached();
 		
 		//----------------------------
 		// Execute Statement 
@@ -815,14 +827,7 @@ public class CFWSQL {
 		
 		//----------------------------
 		// Handle Caching
-		String statement;
-		
-		if(isQueryCached()) {
-			statement = queryCache.get(queryName);
-		}else {
-			statement = query.toString();
-			queryCache.put(queryName, statement);
-		}
+		String statement = getStatementCached();
 		
 		//----------------------------
 		// Execute Statement 
@@ -866,15 +871,8 @@ public class CFWSQL {
 			this.execute();
 			if(result != null) {	
 				//----------------------------
-				//Get Query
-				String statement;
-				
-				if(isQueryCached()) {
-					statement = queryCache.get(queryName);
-				}else {
-					statement = query.toString();
-					queryCache.put(queryName, statement);
-				}
+				// Handle Caching
+				String statement = getStatementCached();
 				
 				//----------------------------
 				//Get Count
@@ -1080,6 +1078,28 @@ public class CFWSQL {
 		CFWDB.close(result);
 		
 		return string;
+		
+	}
+	
+	/***************************************************************
+	 * Execute the Query and gets the result as XML string.
+	 ****************************************************************/
+	public static String getStatisticsAsJSON() {
+		
+		StringBuilder json = new StringBuilder("[");
+		
+		if(!queryCache.isEmpty()) {
+			for(String key : queryCache.keySet()) {
+				String statement = queryCache.get(key);
+				int count = cacheHitCount.get(statement);
+				json.append("{ \"name\": \"").append(CFW.JSON.escapeString(key)).append("\", ")
+				.append("\"query\": \"").append(CFW.JSON.escapeString(statement)).append("\", ")
+				.append("\"count\": ").append(count).append("},");
+			}
+			json.deleteCharAt(json.length()-1); //remove last comma
+		}
+		
+		return json.append("]").toString();
 		
 	}
 	
