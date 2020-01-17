@@ -1038,8 +1038,12 @@ function cfw_showModal(modalTitle, modalBody, jsCode){
 				+ '    </div>'
 				+ '  </div>'
 				+ '</div>');
-				
+		
 		defaultModal.modal();
+//		defaultModal.modal({
+//		    backdrop: 'static',
+//		    keyboard: false
+//		});
 		$('body').prepend(defaultModal);
 	}
 
@@ -1100,6 +1104,10 @@ function cfw_showSmallModal(modalTitle, modalBody, jsCode){
 				+ '</div>');
 
 		smallModal.modal();
+//		smallModal.modal({
+//		    backdrop: 'static',
+//		    keyboard: false
+//		});
 		$('body').prepend(smallModal);
 		
 	}
@@ -1432,6 +1440,18 @@ function cfw_createForm(url, params, targetElement, callback){
 		      $(targetElement).append(response.payload.html);
 		      formID = $(targetElement).find('form').attr("id");
               eval("intializeForm_"+formID+"();");
+              
+              //--------------------------
+              // prevent Submit on enter
+//              $('#'+formID).on('keyup keypress', function(e) {
+//            	  var keyCode = e.keyCode || e.which;
+//            	  if (keyCode === 13) { 
+//            	    e.preventDefault();
+//            	    return false;
+//            	  }
+//            	});
+              //--------------------------
+              // Call callback
               if(callback != undefined){
             	  callback(formID);
               }
