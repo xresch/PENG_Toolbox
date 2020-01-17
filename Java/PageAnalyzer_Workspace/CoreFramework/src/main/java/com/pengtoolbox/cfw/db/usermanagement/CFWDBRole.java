@@ -5,15 +5,18 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.db.CFWDBDefaultOperations;
+import com.pengtoolbox.cfw.db.PrecheckHandler;
 import com.pengtoolbox.cfw.db.usermanagement.Role.RoleFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class CFWDBRole {
+public class CFWDBRole extends CFWDBDefaultOperations<Role> {
 
 	
 	public static String CFW_ROLE_SUPERUSER = "Superuser";
@@ -22,54 +25,33 @@ public class CFWDBRole {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBRole.class.getName());
 	
+	static {
+		precheckForCreate(new Role(), new PrecheckHandler() {
 
-	/********************************************************************************************
-	 * Creates multiple roles in the DB.
-	 * @param Roles with the values that should be inserted. ID will be set by the Database.
-	 * @return nothing
-	 * 
-	 ********************************************************************************************/
-	public static void create(Role... roles) {
-		
-		for(Role role : roles) {
-			create(role);
-		}
+			public boolean doCheck(CFWObject object) {
+				Role role = (Role)object;
+				
+				System.out.println("doCheck() Executed!!!");
+				if(role.name() == null || role.name().isEmpty()) {
+					new CFWLog(logger)
+						.method("create")
+						.warn("Please specify a name for the role to create.");
+					return false;
+				}
+				
+				if(checkRoleExists(role)) {
+					new CFWLog(logger)
+						.method("create")
+						.warn("The role '"+role.name()+"' cannot be created as a role with this name already exists.");
+					return false;
+				}
+				
+				return false;
+			}
+			
+		});
 	}
-	
-	/********************************************************************************************
-	 * Creates a new role in the DB.
-	 * @param CFWSpace with the values that should be inserted. ID will be set by the Database.
-	 * @return true if successful, false otherwise
-	 * 
-	 ********************************************************************************************/
-	public static boolean create(Role role) {
-		
-		if(role == null) {
-			new CFWLog(logger)
-				.method("create")
-				.warn("The role cannot be null");
-			return false;
-		}
-		
-		if(role.name() == null || role.name().isEmpty()) {
-			new CFWLog(logger)
-				.method("create")
-				.warn("Please specify a name for the role to create.");
-			return false;
-		}
-		
-		if(checkRoleExists(role)) {
-			new CFWLog(logger)
-				.method("create")
-				.warn("The role '"+role.name()+"' cannot be created as a role with this name already exists.");
-			return false;
-		}
-		
-		return role
-				.queryCache(CFWDBRole.class, "create")
-				.insert();
-	}
-	
+
 	/***************************************************************
 	 * Select a role by it's name.
 	 * @param id of the role
