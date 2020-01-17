@@ -26,7 +26,8 @@ public class CFWDBRole extends CFWDBDefaultOperations<Role> {
 	public static Logger logger = CFWLog.getLogger(CFWDBRole.class.getName());
 	
 	static {
-		precheckForCreate(new Role(), new PrecheckHandler() {
+		
+		PrecheckHandler handler =  new PrecheckHandler() {
 
 			public boolean doCheck(CFWObject object) {
 				Role role = (Role)object;
@@ -35,21 +36,24 @@ public class CFWDBRole extends CFWDBDefaultOperations<Role> {
 				if(role.name() == null || role.name().isEmpty()) {
 					new CFWLog(logger)
 						.method("create")
-						.warn("Please specify a name for the role to create.");
+						.warn("Please specify a name for the role.");
 					return false;
 				}
 				
 				if(checkRoleExists(role)) {
 					new CFWLog(logger)
 						.method("create")
-						.warn("The role '"+role.name()+"' cannot be created as a role with this name already exists.");
+						.warn("The role with the name '"+role.name()+"' already exists.");
 					return false;
 				}
 				
 				return false;
 			}
 			
-		});
+		};
+		
+		precheckForCreate(new Role(),handler);
+		precheckForUpdate(new Role(),handler);
 	}
 
 	/***************************************************************

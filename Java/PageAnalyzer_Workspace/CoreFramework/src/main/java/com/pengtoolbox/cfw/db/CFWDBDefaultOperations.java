@@ -28,6 +28,11 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 	public static <O extends CFWObject> void precheckForCreate(CFWObject object, PrecheckHandler handler) {
 		addPrecheckHandler(object, "create", handler);
 	}
+	
+	public static <O extends CFWObject> void precheckForUpdate(CFWObject object, PrecheckHandler handler) {
+		addPrecheckHandler(object, "update", handler);
+	}
+	
 	/********************************************************************************************
 	 * Creates multiple objects in the DB.
 	 * @param Roles with the values that should be inserted. ID will be set by the Database.
@@ -65,6 +70,31 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 			.queryCache(object.getClass(), "create")
 			.insert();
 
+	}
+	
+	/***************************************************************
+	 * Updates the object selecting by ID.
+	 * @param object
+	 * @return true or false
+	 ****************************************************************/
+	public static <O extends CFWObject> boolean update(O object) {
+		
+		if(object == null) {
+			new CFWLog(logger)
+				.method("update")
+				.warn("The role that should be updated cannot be null");
+			return false;
+		}
+		
+		PrecheckHandler precheck = getPrecheckHandler(object, "update");
+		if(precheck != null && !precheck.doCheck(object)) {
+			return false;
+		}
+				
+		return object
+				.queryCache(CFWDBDefaultOperations.class, "update")
+				.update();
+		
 	}
 	
 //	/***************************************************************
@@ -143,32 +173,6 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 //				.getAsJSON();
 //	}
 //	
-//	/***************************************************************
-//	 * Updates the object selecting by ID.
-//	 * @param role
-//	 * @return true or false
-//	 ****************************************************************/
-//	public static boolean update(Role role) {
-//		
-//		if(role == null) {
-//			new CFWLog(logger)
-//				.method("update")
-//				.warn("The role that should be updated cannot be null");
-//			return false;
-//		}
-//		
-//		if(role.name() == null || role.name().isEmpty()) {
-//			new CFWLog(logger)
-//				.method("update")
-//				.warn("Please specify a name for the role.");
-//			return false;
-//		}
-//				
-//		return role
-//				.queryCache(CFWDBDefaultOperations.class, "update")
-//				.update();
-//		
-//	}
 //	
 //	/***************************************************************
 //	 * Retrieve the permissions for the specified role.
