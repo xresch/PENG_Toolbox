@@ -122,8 +122,8 @@ class StringProcessingPipeline extends Pipeline<String, String> {
 		pipe.removeBlankLines()
 			.removeComments()
 			.trim()
-			.grep("cfwT", false)
-			.countLines()
+			//.grep("cfwT", false)
+			//.countLines()
 			.data(CFW.Files.readPackageResource(FileDefinition.CFW_JAR_RESOURCES_PATH + ".test", "cfwjs_test.js").split("\\r\\n|\\n"))
 			.execute(false);
 			

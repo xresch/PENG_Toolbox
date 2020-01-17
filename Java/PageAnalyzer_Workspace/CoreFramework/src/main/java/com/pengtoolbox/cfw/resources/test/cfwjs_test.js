@@ -99,6 +99,8 @@ function mockupForRemoveCommentsTest(){
 	//-------------------------------
 	var doubleQuote = "before /* blabla */ after";
 	var singleQuote = 'before /* blabla */ after';
+	var doubleQuote = "start only /* ";
+	var singleQuote = 'end only */';
 	var doubleQuote = "before /* blabla */ after" + "more text";
 	var doubleQuote = "before /* " + " */ splitted";
 	var singleQuote = "before /* blabla */ after" + /*between strings*/ "bla" + /*between strings*/ + "";
