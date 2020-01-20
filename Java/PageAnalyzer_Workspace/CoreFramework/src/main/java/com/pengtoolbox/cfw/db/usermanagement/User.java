@@ -236,7 +236,7 @@ public class User extends CFWObject {
 		//-----------------------------------------
 		// Add Admin to role Superuser
 		//-----------------------------------------
-		Role superuserRole = CFW.DB.Roles.selectByName(CFWDBRole.CFW_ROLE_SUPERUSER);
+		Role superuserRole = CFW.DB.Roles.selectFirstByName(CFWDBRole.CFW_ROLE_SUPERUSER);
 		
 		if(!CFW.DB.UserRoleMap.checkIsUserInRole(adminUser, superuserRole)) {
 			CFW.DB.UserRoleMap.addUserToRole(adminUser, superuserRole, false);

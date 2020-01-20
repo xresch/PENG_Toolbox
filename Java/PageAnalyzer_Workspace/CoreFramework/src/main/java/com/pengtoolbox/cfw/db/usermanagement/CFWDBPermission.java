@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.db.CFWDBDefaultOperations;
 import com.pengtoolbox.cfw.db.usermanagement.Permission.PermissionFields;
+import com.pengtoolbox.cfw.db.usermanagement.Role.RoleFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
@@ -16,6 +18,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 public class CFWDBPermission {
 
 	public static Logger logger = CFWLog.getLogger(CFWDBPermission.class.getName());
+	
 	
 	/********************************************************************************************
 	 * Creates multiple permissions in the DB.
@@ -53,7 +56,7 @@ public class CFWDBPermission {
 			return false;
 		}
 		
-		if(checkPermissionExists(permission)) {
+		if(checkExistsByName(permission)) {
 			new CFWLog(logger)
 				.method("create")
 				.warn("The permission '"+permission.name()+"' cannot be created as a permission with this name already exists.");
@@ -67,7 +70,7 @@ public class CFWDBPermission {
 		//----------------------------------------
 		// Add new permission to superuser
 		Permission permissionFromDB = CFW.DB.Permissions.selectByName(permission.name());
-		Role superuser = CFW.DB.Roles.selectByName(CFW.DB.Roles.CFW_ROLE_SUPERUSER);
+		Role superuser = CFW.DB.Roles.selectFirstByName(CFW.DB.Roles.CFW_ROLE_SUPERUSER);
 		
 		return CFW.DB.RolePermissionMap.addPermissionToRole(permissionFromDB, superuser, false);
 				
@@ -242,35 +245,46 @@ public class CFWDBPermission {
 			
 	}
 	
-	
-	/****************************************************************
-	 * Check if the permission exists by name.
-	 * 
-	 * @param permission to check
-	 * @return true if exists, false otherwise or in case of exception.
-	 ****************************************************************/
-	public static boolean checkPermissionExists(Permission permission) {
-		if(permission != null) {
-			return checkPermissionExists(permission.name());
+	//####################################################################################################
+	// CHECKS
+	//####################################################################################################
+	private static Class<Permission> cfwObjectClass = Permission.class;
+	public static boolean checkExistsByName(String itemName) {	return CFWDBDefaultOperations.checkExistsBy(cfwObjectClass, RoleFields.NAME.toString(), itemName); }
+	public static boolean checkExistsByName(Permission object) {
+		if(object != null) {
+			return checkExistsByName(object.name());
 		}
 		return false;
 	}
 	
-	/****************************************************************
-	 * Check if the permission exists by name.
-	 * 
-	 * @param permission to check
-	 * @return true if exists, false otherwise or in case of exception.
-	 ****************************************************************/
-	public static boolean checkPermissionExists(String permissionName) {
-		
-		int count = new Permission()
-				.queryCache(CFWDBPermission.class, "checkPermissionExists")
-				.selectCount()
-				.where(PermissionFields.NAME.toString(), permissionName)
-				.getCount();
-		
-		return (count > 0);
-	}
+//	/****************************************************************
+//	 * Check if the permission exists by name.
+//	 * 
+//	 * @param permission to check
+//	 * @return true if exists, false otherwise or in case of exception.
+//	 ****************************************************************/
+//	public static boolean checkExistsByName(Permission permission) {
+//		if(permission != null) {
+//			return checkExistsByName(permission.name());
+//		}
+//		return false;
+//	}
+//	
+//	/****************************************************************
+//	 * Check if the permission exists by name.
+//	 * 
+//	 * @param permission to check
+//	 * @return true if exists, false otherwise or in case of exception.
+//	 ****************************************************************/
+//	public static boolean checkExistsByName(String permissionName) {
+//		
+//		int count = new Permission()
+//				.queryCache(CFWDBPermission.class, "checkPermissionExists")
+//				.selectCount()
+//				.where(PermissionFields.NAME.toString(), permissionName)
+//				.getCount();
+//		
+//		return (count > 0);
+//	}
 	
 }

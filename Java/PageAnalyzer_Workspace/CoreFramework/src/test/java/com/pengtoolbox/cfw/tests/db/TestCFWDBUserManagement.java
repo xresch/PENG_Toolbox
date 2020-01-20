@@ -38,13 +38,13 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//------------------------------
 		// Roles
 		CFW.DB.Roles.create(new Role("TestroleA", "user"));
-		testroleA = CFW.DB.Roles.selectByName("TestroleA");
+		testroleA = CFW.DB.Roles.selectFirstByName("TestroleA");
 		
 		CFW.DB.Roles.create(new Role("TestroleB", "user"));
-		testroleB = CFW.DB.Roles.selectByName("TestroleB");
+		testroleB = CFW.DB.Roles.selectFirstByName("TestroleB");
 		
 		CFW.DB.Roles.create(new Role("TestroleC", "user"));
-		testroleC = CFW.DB.Roles.selectByName("TestroleC");
+		testroleC = CFW.DB.Roles.selectFirstByName("TestroleC");
 		
 		//------------------------------
 		// Users
@@ -283,17 +283,17 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//--------------------------------------
 		// Cleanup
-		Role roleToDelete = CFW.DB.Roles.selectByName(rolename);
+		Role roleToDelete = CFW.DB.Roles.selectFirstByName(rolename);
 		if(roleToDelete != null) {
 			CFW.DB.Roles.deleteByID(roleToDelete.id());
 		}
 
-		roleToDelete = CFW.DB.Roles.selectByName(rolenameUpdated);
+		roleToDelete = CFW.DB.Roles.selectFirstByName(rolenameUpdated);
 		if(roleToDelete != null) {
 			CFW.DB.Roles.deleteByID(roleToDelete.id());
 		}
-		Assertions.assertFalse(CFW.DB.Roles.checkRoleExists(rolename), "Role doesn't exists, checkRoleExists(String) works.");
-		Assertions.assertFalse(CFW.DB.Roles.checkRoleExists(roleToDelete), "Role doesn't exist, checkRoleExists(Role) works.");
+		Assertions.assertFalse(CFW.DB.Roles.checkExistsByName(rolename), "Role doesn't exists, checkRoleExists(String) works.");
+		Assertions.assertFalse(CFW.DB.Roles.checkExistsByName(roleToDelete), "Role doesn't exist, checkRoleExists(Role) works.");
 		
 		
 		//--------------------------------------
@@ -303,16 +303,16 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 				.isDeletable(false)
 				);
 		
-		Assertions.assertTrue(CFW.DB.Roles.checkRoleExists(rolename), "Role created successfully, checkRoleExists(String) works.");
+		Assertions.assertTrue(CFW.DB.Roles.checkExistsByName(rolename), "Role created successfully, checkRoleExists(String) works.");
 
 		//--------------------------------------
 		// SELECT BY NAME
-		Role role = CFW.DB.Roles.selectByName(rolename);
+		Role role = CFW.DB.Roles.selectFirstByName(rolename);
 		
 		//System.out.println("===== USER =====");
 		//System.out.println(role.getKeyValueString());
 
-		Assertions.assertTrue(CFW.DB.Roles.checkRoleExists(role), "Role created successfully, checkRoleExists(Role) works.");
+		Assertions.assertTrue(CFW.DB.Roles.checkExistsByName(role), "Role created successfully, checkRoleExists(Role) works.");
 		Assertions.assertTrue(role != null);
 		Assertions.assertTrue(role.name().equals(rolename));
 		Assertions.assertTrue(role.description().equals("Testdescription"));
@@ -321,7 +321,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//--------------------------------------
 		// CHECK NOT DELETABLE
 		Assertions.assertFalse(CFW.DB.Roles.deleteByID(role.id()), "The role is not deleted, returns false.");
-		Assertions.assertTrue(CFW.DB.Roles.checkRoleExists(role), "The role still exists.");
+		Assertions.assertTrue(CFW.DB.Roles.checkExistsByName(role), "The role still exists.");
 		
 		//--------------------------------------
 		// UPDATE
@@ -333,7 +333,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//--------------------------------------
 		// SELECT UPDATED GROUP
-		Role updatedRole = CFW.DB.Roles.selectByName(rolenameUpdated);
+		Role updatedRole = CFW.DB.Roles.selectFirstByName(rolenameUpdated);
 		
 		//System.out.println("===== UPDATED GROUP =====");
 		//System.out.println(updatedRole.getKeyValueString());
@@ -352,7 +352,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// DELETE
 		CFW.DB.Roles.deleteByID(updatedRole.id());
 		
-		Assertions.assertFalse(CFW.DB.Roles.checkRoleExists(rolename));
+		Assertions.assertFalse(CFW.DB.Roles.checkExistsByName(rolename));
 		
 	}
 	
@@ -415,7 +415,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		Role roleToDelete = new Role("TestRoleToDelete", "user");
 		
 		CFW.DB.Roles.create(roleToDelete);
-		roleToDelete = CFW.DB.Roles.selectByName("TestRoleToDelete");
+		roleToDelete = CFW.DB.Roles.selectFirstByName("TestRoleToDelete");
 		
 		CFW.DB.UserRoleMap.addUserToRole(testuserB, roleToDelete, true);
 		Assertions.assertTrue(CFW.DB.UserRoleMap.checkIsUserInRole(testuserB, roleToDelete), "User was added to the role.");
@@ -447,8 +447,8 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 			CFW.DB.Permissions.deleteByID(permissionToDelete.id());
 		}
 		
-		Assertions.assertFalse(CFW.DB.Permissions.checkPermissionExists(permissionname), "Permission doesn't exists, checkPermissionExists(String) works.");
-		Assertions.assertFalse(CFW.DB.Permissions.checkPermissionExists(permissionToDelete), "Permission doesn't exist, checkPermissionExists(Permission) works.");
+		Assertions.assertFalse(CFW.DB.Permissions.checkExistsByName(permissionname), "Permission doesn't exists, checkPermissionExists(String) works.");
+		Assertions.assertFalse(CFW.DB.Permissions.checkExistsByName(permissionToDelete), "Permission doesn't exist, checkPermissionExists(Permission) works.");
 		
 		
 		//--------------------------------------
@@ -458,7 +458,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 				.isDeletable(false)
 				);
 		
-		Assertions.assertTrue(CFW.DB.Permissions.checkPermissionExists(permissionname), "Permission created successfully, checkPermissionExists(String) works.");
+		Assertions.assertTrue(CFW.DB.Permissions.checkExistsByName(permissionname), "Permission created successfully, checkPermissionExists(String) works.");
 
 		//--------------------------------------
 		// SELECT BY NAME
@@ -467,7 +467,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//System.out.println("===== USER =====");
 		//System.out.println(permission.getKeyValueString());
 
-		Assertions.assertTrue(CFW.DB.Permissions.checkPermissionExists(permission), "Permission created successfully, checkPermissionExists(Permission) works.");
+		Assertions.assertTrue(CFW.DB.Permissions.checkExistsByName(permission), "Permission created successfully, checkPermissionExists(Permission) works.");
 		Assertions.assertTrue(permission != null);
 		Assertions.assertTrue(permission.name().equals(permissionname));
 		Assertions.assertTrue(permission.description().equals("Testdescription"));
@@ -476,7 +476,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//--------------------------------------
 		// CHECK NOT DELETABLE
 		Assertions.assertFalse(CFW.DB.Permissions.deleteByID(permission.id()), "The permission is not deleted, returns false.");
-		Assertions.assertTrue(CFW.DB.Permissions.checkPermissionExists(permission), "The permission still exists.");
+		Assertions.assertTrue(CFW.DB.Permissions.checkExistsByName(permission), "The permission still exists.");
 		
 		//--------------------------------------
 		// UPDATE
@@ -507,7 +507,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// DELETE
 		CFW.DB.Permissions.deleteByID(updatedPermission.id());
 		
-		Assertions.assertFalse(CFW.DB.Permissions.checkPermissionExists(permissionname));
+		Assertions.assertFalse(CFW.DB.Permissions.checkExistsByName(permissionname));
 		
 	}
 	
@@ -584,7 +584,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		Role roleToDelete = new Role("TestRoleToDelete", "user");
 		
 		CFW.DB.Roles.create(roleToDelete);
-		roleToDelete = CFW.DB.Roles.selectByName("TestRoleToDelete");
+		roleToDelete = CFW.DB.Roles.selectFirstByName("TestRoleToDelete");
 		
 		CFW.DB.RolePermissionMap.addPermissionToRole(permissionAA, roleToDelete, true);
 		Assertions.assertTrue(CFW.DB.RolePermissionMap.checkIsPermissionInRole(permissionAA, roleToDelete), "Permission was added to the role.");

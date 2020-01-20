@@ -16,74 +16,91 @@ import com.pengtoolbox.cfw.logging.CFWLog;
  * @author Reto Scheiwiller, � 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class CFWDBRole extends CFWDBDefaultOperations<Role> {
+public class CFWDBRole {
 
 	
 	public static String CFW_ROLE_SUPERUSER = "Superuser";
 	public static String CFW_ROLE_ADMIN = "Administrator";
 	public static String CFW_ROLE_USER = "User";
 	
-	public static Logger logger = CFWLog.getLogger(CFWDBRole.class.getName());
+	private static Class<Role> cfwObjectClass = Role.class;
 	
-	static {
+	public static Logger logger = CFWLog.getLogger(CFWDBRole.class.getName());
 		
-		PrecheckHandler handler =  new PrecheckHandler() {
-
-			public boolean doCheck(CFWObject object) {
-				Role role = (Role)object;
-				
-				System.out.println("doCheck() Executed!!!");
-				if(role.name() == null || role.name().isEmpty()) {
-					new CFWLog(logger)
-						.method("create")
-						.warn("Please specify a name for the role.");
-					return false;
-				}
-				
-				if(checkRoleExists(role)) {
-					new CFWLog(logger)
-						.method("create")
-						.warn("The role with the name '"+role.name()+"' already exists.");
-					return false;
-				}
-				
+	
+	//####################################################################################################
+	// Preckeck Initialization
+	//####################################################################################################
+	private static PrecheckHandler prechecksCreateUpdate =  new PrecheckHandler() {
+		public boolean doCheck(CFWObject object) {
+			
+			Role role = (Role)object;
+			
+			if(role.name() == null || role.name().isEmpty()) {
+				new CFWLog(logger)
+					.method("doCheck")
+					.warn("Please specify a name for the role.", new Throwable());
 				return false;
 			}
 			
-		};
-		
-		precheckForCreate(new Role(),handler);
-		precheckForUpdate(new Role(),handler);
-	}
+			if(checkExistsByName(role)) {
+				new CFWLog(logger)
+					.method("doCheck")
+					.warn("The role with the name '"+role.name()+"' already exists.", new Throwable());
+				return false;
+			}
 
-	/***************************************************************
-	 * Select a role by it's name.
-	 * @param id of the role
-	 * @return Returns a role or null if not found or in case of exception.
-	 ****************************************************************/
-	public static Role selectByName(String name) {
+			return true;
+		}
+	};
+	
+	
+	private static PrecheckHandler prechecksDelete =  new PrecheckHandler() {
+		public boolean doCheck(CFWObject object) {
+			Role role = (Role)object;
+			
+			if(role != null && role.isDeletable() == false) {
+				new CFWLog(logger)
+				.method("doCheck")
+				.severe("The role '"+role.name()+"' cannot be deleted as it is marked as not deletable.", new Throwable());
+				return false;
+			}
+			
+			return true;
+		}
+	};
 		
-		return (Role)new Role()
-				.queryCache(CFWDBRole.class, "selectByName")
-				.select()
-				.where(RoleFields.NAME.toString(), name)
-				.getFirstObject();
-
+	//####################################################################################################
+	// CREATE
+	//####################################################################################################
+	public static boolean	create(Role... items) 	{ return CFWDBDefaultOperations.create(prechecksCreateUpdate, items); }
+	public static boolean 	create(Role item) 		{ return CFWDBDefaultOperations.create(prechecksCreateUpdate, item);}
+	
+	//####################################################################################################
+	// UPDATE
+	//####################################################################################################
+	public static boolean 	update(Role... items) 	{ return CFWDBDefaultOperations.update(prechecksCreateUpdate, items); }
+	public static boolean 	update(Role item) 		{ return CFWDBDefaultOperations.update(prechecksCreateUpdate, item); }
+	
+	//####################################################################################################
+	// DELETE
+	//####################################################################################################
+	public static boolean 	deleteByID(int id) 					{ return CFWDBDefaultOperations.deleteFirstBy(prechecksDelete, cfwObjectClass, RoleFields.PK_ID.toString(), id); }
+	public static boolean 	deleteMultipleByID(String itemIDs) 	{ return CFWDBDefaultOperations.deleteMultipleByID(cfwObjectClass, itemIDs); }
+	
+	public static boolean 	deleteByName(String name) 		{ 
+		return CFWDBDefaultOperations.deleteFirstBy(prechecksDelete, cfwObjectClass, RoleFields.NAME.toString(), name); 
 	}
 	
-	/***************************************************************
-	 * Select a role by it's ID.
-	 * @param id of the role
-	 * @return Returns a role or null if not found or in case of exception.
-	 ****************************************************************/
+	//####################################################################################################
+	// SELECT
+	//####################################################################################################
 	public static Role selectByID(int id ) {
-
-		return (Role)new Role()
-				.queryCache(CFWDBRole.class, "selectByID")
-				.select()
-				.where(RoleFields.PK_ID.toString(), id)
-				.getFirstObject();
-		
+		return CFWDBDefaultOperations.selectFirstBy(cfwObjectClass, RoleFields.PK_ID.toString(), id);
+	}
+	
+	public static Role selectFirstByName(String name) { 
+		return CFWDBDefaultOperations.selectFirstBy(cfwObjectClass, RoleFields.NAME.toString(), name);
 	}
 	
 	/***************************************************************
@@ -132,32 +149,6 @@ public class CFWDBRole extends CFWDBDefaultOperations<Role> {
 				.getAsJSON();
 	}
 	
-	/***************************************************************
-	 * Updates the object selecting by ID.
-	 * @param role
-	 * @return true or false
-	 ****************************************************************/
-	public static boolean update(Role role) {
-		
-		if(role == null) {
-			new CFWLog(logger)
-				.method("update")
-				.warn("The role that should be updated cannot be null");
-			return false;
-		}
-		
-		if(role.name() == null || role.name().isEmpty()) {
-			new CFWLog(logger)
-				.method("update")
-				.warn("Please specify a name for the role.");
-			return false;
-		}
-				
-		return role
-				.queryCache(CFWDBRole.class, "update")
-				.update();
-		
-	}
 	
 	/***************************************************************
 	 * Retrieve the permissions for the specified role.
@@ -167,110 +158,16 @@ public class CFWDBRole extends CFWDBDefaultOperations<Role> {
 	public static HashMap<String, Permission> selectPermissionsForRole(Role role) {
 		return CFW.DB.RolePermissionMap.selectPermissionsForRole(role);
 	}
-	
-	/****************************************************************
-	 * Deletes the role by id.
-	 * @param id of the user
-	 * @return true if successful, false otherwise.
-	 ****************************************************************/
-	public static boolean deleteByID(int id) {
-		
-		Role role = selectByID(id);
-		if(role != null && role.isDeletable() == false) {
-			new CFWLog(logger)
-			.method("deleteByID")
-			.severe("The role '"+role.name()+"' cannot be deleted as it is marked as not deletable.");
-			return false;
-		}
-		
-		return new Role()
-				.queryCache(CFWDBRole.class, "deleteByID")
-				.delete()
-				.where(RoleFields.PK_ID.toString(), id)
-				.and(RoleFields.IS_DELETABLE.toString(), true)
-				.executeDelete();
-					
-	}
-	
-	/****************************************************************
-	 * Deletes multiple users by id.
-	 * @param ids of the users separated by comma
-	 * @return true if successful, false otherwise.
-	 ****************************************************************/
-	public static boolean deleteMultipleByID(String resultIDs) {
-		
-		//----------------------------------
-		// Check input format
-		if(resultIDs == null ^ !resultIDs.matches("(\\d,?)+")) {
-			new CFWLog(logger)
-			.method("deleteMultipleByID")
-			.severe("The userID's '"+resultIDs+"' are not a comma separated list of strings.");
-			return false;
-		}
-
-		return new Role()
-				.queryCache(CFWDBRole.class, "deleteMultipleByID")
-				.delete()
-				.whereIn(RoleFields.PK_ID.toString(), resultIDs)
-				.and(RoleFields.IS_DELETABLE.toString(), true)
-				.executeDelete();
-					
-	}
-	
-	/****************************************************************
-	 * Deletes the role by id.
-	 * @param id of the user
-	 * @return true if successful, false otherwise.
-	 ****************************************************************/
-	public static boolean deleteByName(String name) {
-		
-		Role role = selectByName(name);
-		if(role != null && role.isDeletable() == false) {
-			new CFWLog(logger)
-			.method("deleteByName")
-			.severe("The role '"+role.name()+"' cannot be deleted as it is marked as not deletable.");
-			return false;
-		}
-		
-		return new Role()
-				.queryCache(CFWDBRole.class, "deleteByName")
-				.delete()
-				.where(RoleFields.NAME.toString(), name)
-				.and(RoleFields.IS_DELETABLE.toString(), true)
-				.executeDelete();
-					
-	}
-	
-	
-	/****************************************************************
-	 * Check if the role exists by name.
-	 * 
-	 * @param role to check
-	 * @return true if exists, false otherwise or in case of exception.
-	 ****************************************************************/
-	public static boolean checkRoleExists(Role role) {
-		if(role != null) {
-			return checkRoleExists(role.name());
+			
+	//####################################################################################################
+	// CHECKS
+	//####################################################################################################
+	public static boolean checkExistsByName(String itemName) {	return CFWDBDefaultOperations.checkExistsBy(cfwObjectClass, RoleFields.NAME.toString(), itemName); }
+	public static boolean checkExistsByName(Role item) {
+		if(item != null) {
+			return checkExistsByName(item.name());
 		}
 		return false;
 	}
-	
-	/****************************************************************
-	 * Check if the role exists by name.
-	 * 
-	 * @param rolename to check
-	 * @return true if exists, false otherwise or in case of exception.
-	 ****************************************************************/
-	public static boolean checkRoleExists(String roleName) {
 		
-		int count = new Role()
-				.queryCache(CFWDBRole.class, "checkRoleExists")
-				.selectCount()
-				.where(RoleFields.NAME.toString(), roleName)
-				.getCount();
-		
-		return (count > 0);
-		
-	}
-	
 }

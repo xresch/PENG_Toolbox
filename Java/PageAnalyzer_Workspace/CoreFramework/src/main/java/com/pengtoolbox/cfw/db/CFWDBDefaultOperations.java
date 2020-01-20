@@ -1,6 +1,6 @@
 package com.pengtoolbox.cfw.db;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -15,44 +15,30 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBDefaultOperations.class.getName());
 	
-	public static HashMap<String, PrecheckHandler> precheckMap = new HashMap<String, PrecheckHandler>();
-	
-	private static <O extends CFWObject> void addPrecheckHandler(O object, String method, PrecheckHandler handler) {
-		precheckMap.put(object.getClass().getName()+"."+method, handler);
-	}
-	
-	private static <O extends CFWObject> PrecheckHandler getPrecheckHandler(O object, String method) {
-		return precheckMap.get(object.getClass().getName()+"."+method);
-	}
-	
-	public static <O extends CFWObject> void precheckForCreate(CFWObject object, PrecheckHandler handler) {
-		addPrecheckHandler(object, "create", handler);
-	}
-	
-	public static <O extends CFWObject> void precheckForUpdate(CFWObject object, PrecheckHandler handler) {
-		addPrecheckHandler(object, "update", handler);
-	}
 	
 	/********************************************************************************************
-	 * Creates multiple objects in the DB.
+	 * Creates multiple items in the DB.
 	 * @param Roles with the values that should be inserted. ID will be set by the Database.
-	 * @return nothing
+	 * @return true if all created successful
 	 * 
 	 ********************************************************************************************/
-	public static <O extends CFWObject> void create(O... cfwObjects) {
+	public static <O extends CFWObject> boolean create(PrecheckHandler precheck, O... cfwObjects) {
 		
+		boolean result = true;
 		for(O object : cfwObjects) {
-			create(object);
+			result &= create(precheck, object);
 		}
+		
+		return result;
 	}
 	
 	/********************************************************************************************
-	 * Creates a new role in the DB.
-	 * @param CFWSpace with the values that should be inserted. ID will be set by the Database.
+	 * Creates a new item in the DB.
+	 * @param Object with the values that should be inserted. ID will be set by the Database.
 	 * @return true if successful, false otherwise
 	 * 
 	 ********************************************************************************************/
-	public static <O extends CFWObject> boolean create(O object) {
+	public static <O extends CFWObject> boolean create(PrecheckHandler precheck, O object) {
 		
 		if(object == null) {
 			new CFWLog(logger)
@@ -61,23 +47,37 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 			return false;
 		}
 		
-		PrecheckHandler precheck = getPrecheckHandler(object, "create");
 		if(precheck != null && !precheck.doCheck(object)) {
 			return false;
 		}
 		
 		return object
-			.queryCache(object.getClass(), "create")
+			.queryCache(object.getClass(), "CFWDBDefaultOperations.create")
 			.insert();
 
 	}
 	
+	/********************************************************************************************
+	 * Updates multiple items in the DB.
+	 * @param Objects with the values that should be inserted. ID will be set by the Database.
+	 * @return true if all updated successful
+	 * 
+	 ********************************************************************************************/
+	public static <O extends CFWObject> boolean update(PrecheckHandler precheck, O... cfwObjects) {
+		
+		boolean result = true;
+		for(O object : cfwObjects) {
+			result &= update(precheck, object);
+		}
+		
+		return result;
+	}
 	/***************************************************************
 	 * Updates the object selecting by ID.
 	 * @param object
 	 * @return true or false
 	 ****************************************************************/
-	public static <O extends CFWObject> boolean update(O object) {
+	public static <O extends CFWObject> boolean update(PrecheckHandler precheck, O object) {
 		
 		if(object == null) {
 			new CFWLog(logger)
@@ -86,16 +86,175 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 			return false;
 		}
 		
-		PrecheckHandler precheck = getPrecheckHandler(object, "update");
 		if(precheck != null && !precheck.doCheck(object)) {
 			return false;
 		}
 				
 		return object
-				.queryCache(CFWDBDefaultOperations.class, "update")
+				.queryCache(object.getClass(), "CFWDBDefaultOperations.update")
 				.update();
 		
 	}
+	
+	/***************************************************************
+	 * Deletes the objects selected where the ürecheck returns true.
+	 * @param object
+	 * @return true or false
+	 ****************************************************************/
+	public static <O extends CFWObject> boolean deleteBy(PrecheckHandler precheck, Class<? extends CFWObject> cfwObjectClass, String column, Object value) {
+		
+		ArrayList<CFWObject> objectArray = CFWDBDefaultOperations.selectBy(cfwObjectClass, column, value);
+		
+		for(CFWObject object : objectArray) {
+			if(precheck != null && !precheck.doCheck(object)) {
+				return false;
+			}
+			
+			return object
+					.queryCache(cfwObjectClass, "CFWDBDefaultOperations.deleteBy"+column)
+					.delete()
+					.where(column, value)
+					.executeDelete();
+		}
+		
+		return false;
+	}
+	
+	/***************************************************************
+	 * Deletes the first object selected.
+	 * @param object
+	 * @return true or false
+	 ****************************************************************/
+	public static <O extends CFWObject> boolean deleteFirstBy(PrecheckHandler precheck, Class<? extends CFWObject> cfwObjectClass, String column, Object value) {
+		
+		CFWObject object = CFWDBDefaultOperations.selectFirstBy(cfwObjectClass, column, value);
+		
+		if(precheck != null && !precheck.doCheck(object)) {
+			return false;
+		}
+		
+		if(object != null) {
+			return object
+				.queryCache(cfwObjectClass, "CFWDBDefaultOperations.deleteFirstBy"+column)
+				.deleteTop(1)
+				.where(column, value)
+				.executeDelete();
+		}
+		
+		return false;
+		
+	}
+	
+	/****************************************************************
+	 * Deletes multiple items by id.
+	 * @param ids separated by comma
+	 * @return true if successful, false otherwise.
+	 ****************************************************************/
+	public static <O extends CFWObject> boolean deleteMultipleByID(Class<? extends CFWObject> cfwObjectClass, String commaSeparatedIDs) {
+		
+		//----------------------------------
+		// Check input format
+		if(commaSeparatedIDs == null ^ !commaSeparatedIDs.matches("(\\d,?)+")) {
+			new CFWLog(logger)
+			.method("deleteMultipleByID")
+			.severe("The input '"+commaSeparatedIDs+"' are not a comma separated list of IDs.");
+			return false;
+		}
+
+		try {
+			CFWObject instance = cfwObjectClass.newInstance();
+			return instance
+					.queryCache(CFWDBDefaultOperations.class, "CFWDBDefaultOperations.deleteMultipleByID")
+					.delete()
+					.whereIn(instance.getPrimaryField().getName(), commaSeparatedIDs)
+					.executeDelete();
+			
+		} catch (Exception e) {
+			new CFWLog(logger)
+				.method("deleteMultipleByID")
+				.warn("Error while instanciating object.", e);
+			return false;
+		}
+		
+	}
+	
+	/***************************************************************
+	 * Select a role by it's name.
+	 * @param id of the role
+	 * @return Returns a role or null if not found or in case of exception.
+	 ****************************************************************/
+	@SuppressWarnings("unchecked")
+	public static <O extends CFWObject> O selectFirstBy(Class<? extends CFWObject> cfwObjectClass, String column, Object value ) {
+		
+		try {
+			return (O)cfwObjectClass.newInstance()
+					.queryCache(cfwObjectClass, "CFWDBDefaultOperations.selectFirstBy"+column)
+					.select()
+					.where(column, value)
+					.getFirstObject();
+		} catch (Exception e) {
+			new CFWLog(logger)
+				.method("selectFirstBy")
+				.warn("Error while instanciating object.", e);
+		} 
+		
+		return null;
+
+	}
+	
+	/***************************************************************
+	 * Select a role by it's name.
+	 * @param id of the role
+	 * @return Returns a role or null if not found or in case of exception.
+	 ****************************************************************/
+	@SuppressWarnings("unchecked")
+	public static <O extends CFWObject> ArrayList<O> selectBy(Class<? extends CFWObject> cfwObjectClass, String column, Object value ) {
+		
+		try {
+			return (ArrayList<O>)cfwObjectClass.newInstance()
+					.queryCache(cfwObjectClass, "CFWDBDefaultOperations.selectBy"+column)
+					.select()
+					.where(column, value)
+					.getObjectList();
+			
+		} catch (Exception e) {
+			new CFWLog(logger)
+			.method("selectBy")
+			.warn("Error while instanciating object.", e);
+		} 
+		
+		return null;
+
+	}
+	
+	/***************************************************************
+	 * Select a role by it's name.
+	 * @param id of the role
+	 * @return Returns a role or null if not found or in case of exception.
+	 ****************************************************************/
+	@SuppressWarnings("unchecked")
+	public static <O extends CFWObject> boolean checkExistsBy(Class<? extends CFWObject> cfwObjectClass, String column, Object value ) {
+		
+		try {
+			int count = cfwObjectClass.newInstance()
+					.queryCache(cfwObjectClass, "CFWDBDefaultOperations.checkExistsBy"+column)
+					.selectCount()
+					.where(column, value)
+					.limit(1)
+					.getCount();
+			
+			return (count > 0);
+			
+		} catch (Exception e) {
+			new CFWLog(logger)
+				.method("checkExistsBy")
+				.warn("Error while instanciating object.", e);
+		} 
+		
+		return false;
+
+	}
+
 	
 //	/***************************************************************
 //	 * Select a role by it's name.
@@ -207,30 +366,6 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 //					
 //	}
 //	
-//	/****************************************************************
-//	 * Deletes multiple users by id.
-//	 * @param ids of the users separated by comma
-//	 * @return true if successful, false otherwise.
-//	 ****************************************************************/
-//	public static boolean deleteMultipleByID(String resultIDs) {
-//		
-//		//----------------------------------
-//		// Check input format
-//		if(resultIDs == null ^ !resultIDs.matches("(\\d,?)+")) {
-//			new CFWLog(logger)
-//			.method("deleteMultipleByID")
-//			.severe("The userID's '"+resultIDs+"' are not a comma separated list of strings.");
-//			return false;
-//		}
-//
-//		return new Role()
-//				.queryCache(CFWDBDefaultOperations.class, "deleteMultipleByID")
-//				.delete()
-//				.whereIn(RoleFields.PK_ID.toString(), resultIDs)
-//				.and(RoleFields.IS_DELETABLE.toString(), true)
-//				.executeDelete();
-//					
-//	}
 //	
 //	/****************************************************************
 //	 * Deletes the role by id.

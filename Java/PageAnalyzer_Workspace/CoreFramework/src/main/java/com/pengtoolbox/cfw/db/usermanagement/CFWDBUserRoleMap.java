@@ -30,7 +30,7 @@ public class CFWDBUserRoleMap {
 	 * 
 	 ********************************************************************************************/
 	public static boolean addUserToRole(User user, String rolename, boolean isDeletable) {
-		return addUserToRole(user, CFW.DB.Roles.selectByName(rolename), isDeletable);
+		return addUserToRole(user, CFW.DB.Roles.selectFirstByName(rolename), isDeletable);
 	}
 	
 	/********************************************************************************************

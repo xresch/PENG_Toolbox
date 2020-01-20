@@ -190,7 +190,7 @@ public class CFWDB {
 		//-----------------------------------------
 		// Add Admin to role Superuser
 		//-----------------------------------------
-		Role superuserRole = CFW.DB.Roles.selectByName(CFWDBRole.CFW_ROLE_SUPERUSER);
+		Role superuserRole = CFW.DB.Roles.selectFirstByName(CFWDBRole.CFW_ROLE_SUPERUSER);
 		
 		if(!CFW.DB.UserRoleMap.checkIsUserInRole(adminUser, superuserRole)) {
 			CFW.DB.UserRoleMap.addUserToRole(adminUser, superuserRole, false);
@@ -906,13 +906,13 @@ public class CFWDB {
 		//------------------------------
 		// Roles
 		CFW.DB.Roles.create(new Role("TestroleA", "user").description("This is the testrole A."));
-		testroleA = CFW.DB.Roles.selectByName("TestroleA");
+		testroleA = CFW.DB.Roles.selectFirstByName("TestroleA");
 		
 		CFW.DB.Roles.create(new Role("TestroleB", "user").description("This is the testrole B."));
-		testroleB = CFW.DB.Roles.selectByName("TestroleB");
+		testroleB = CFW.DB.Roles.selectFirstByName("TestroleB");
 		
 		CFW.DB.Roles.create(new Role("TestroleC", "user").description("This is the testrole C."));
-		testroleC = CFW.DB.Roles.selectByName("TestroleC");
+		testroleC = CFW.DB.Roles.selectFirstByName("TestroleC");
 		
 		//------------------------------
 		// Users

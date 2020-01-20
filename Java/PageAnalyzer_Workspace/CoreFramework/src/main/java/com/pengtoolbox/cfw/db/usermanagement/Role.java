@@ -157,7 +157,7 @@ public class Role extends CFWObject {
 		//-----------------------------------------
 		// Create Role Superuser
 		//-----------------------------------------
-		if(!CFW.DB.Roles.checkRoleExists(CFWDBRole.CFW_ROLE_SUPERUSER)) {
+		if(!CFW.DB.Roles.checkExistsByName(CFWDBRole.CFW_ROLE_SUPERUSER)) {
 			CFW.DB.Roles.create(new Role(CFWDBRole.CFW_ROLE_SUPERUSER, "user")
 				.description("Superusers have all the privileges in the system. They are above administrators. ")
 				.isDeletable(false)
@@ -165,7 +165,7 @@ public class Role extends CFWObject {
 			);
 		}
 		
-		Role superuserRole = CFW.DB.Roles.selectByName(CFWDBRole.CFW_ROLE_SUPERUSER);
+		Role superuserRole = CFW.DB.Roles.selectFirstByName(CFWDBRole.CFW_ROLE_SUPERUSER);
 		
 		if(superuserRole == null) {
 			new CFWLog(logger)
@@ -179,7 +179,7 @@ public class Role extends CFWObject {
 		//-----------------------------------------
 		// Create Role Admin
 		//-----------------------------------------
-		if(!CFW.DB.Roles.checkRoleExists(CFWDBRole.CFW_ROLE_ADMIN)) {
+		if(!CFW.DB.Roles.checkExistsByName(CFWDBRole.CFW_ROLE_ADMIN)) {
 			CFW.DB.Roles.create(new Role(CFWDBRole.CFW_ROLE_ADMIN, "user")
 				.description("Administrators have the privileges to manage the application.")
 				.isDeletable(false)
@@ -187,7 +187,7 @@ public class Role extends CFWObject {
 			);
 		}
 		
-		Role adminRole = CFW.DB.Roles.selectByName(CFWDBRole.CFW_ROLE_ADMIN);
+		Role adminRole = CFW.DB.Roles.selectFirstByName(CFWDBRole.CFW_ROLE_ADMIN);
 		
 		if(adminRole == null) {
 			new CFWLog(logger)
@@ -200,7 +200,7 @@ public class Role extends CFWObject {
 		//-----------------------------------------
 		// Create Role User
 		//-----------------------------------------
-		if(!CFW.DB.Roles.checkRoleExists(CFWDBRole.CFW_ROLE_USER)) {
+		if(!CFW.DB.Roles.checkExistsByName(CFWDBRole.CFW_ROLE_USER)) {
 			CFW.DB.Roles.create(new Role(CFWDBRole.CFW_ROLE_USER, "user")
 				.description("Default User role. New users will automatically be added to this role if they are not managed by a foreign source.")
 				.isDeletable(false)
@@ -208,7 +208,7 @@ public class Role extends CFWObject {
 			);
 		}
 		
-		Role userRole = CFW.DB.Roles.selectByName(CFWDBRole.CFW_ROLE_USER);
+		Role userRole = CFW.DB.Roles.selectFirstByName(CFWDBRole.CFW_ROLE_USER);
 		
 		if(userRole == null) {
 			new CFWLog(logger)

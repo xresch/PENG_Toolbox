@@ -130,7 +130,7 @@ public class Permission extends CFWObject{
 		//-----------------------------------------
 		// User Management
 		//-----------------------------------------
-		if(!CFW.DB.Permissions.checkPermissionExists(Permission.CFW_USER_MANAGEMENT)) {
+		if(!CFW.DB.Permissions.checkExistsByName(Permission.CFW_USER_MANAGEMENT)) {
 			CFW.DB.Permissions.create(new Permission(Permission.CFW_USER_MANAGEMENT, "user")
 				.description("Gives the user the ability to view, create, update and delete users.")
 				.isDeletable(false)
@@ -148,7 +148,7 @@ public class Permission extends CFWObject{
 		//-----------------------------------------
 		// Config Management
 		//-----------------------------------------
-		if(!CFW.DB.Permissions.checkPermissionExists(Permission.CFW_CONFIG_MANAGEMENT)) {
+		if(!CFW.DB.Permissions.checkExistsByName(Permission.CFW_CONFIG_MANAGEMENT)) {
 			CFW.DB.Permissions.create(new Permission(Permission.CFW_CONFIG_MANAGEMENT, "user")
 				.description("Gives the user the ability to view and update the configurations in the database.")
 				.isDeletable(false)
@@ -166,7 +166,7 @@ public class Permission extends CFWObject{
 		//-----------------------------------------
 		// API
 		//-----------------------------------------
-		if(!CFW.DB.Permissions.checkPermissionExists(Permission.CFW_API)) {
+		if(!CFW.DB.Permissions.checkExistsByName(Permission.CFW_API)) {
 			CFW.DB.Permissions.create(new Permission(Permission.CFW_API, "user")
 				.description("User can access the API.")
 				.isDeletable(false)
@@ -184,7 +184,7 @@ public class Permission extends CFWObject{
 		//-----------------------------------------
 		// Statistics
 		//-----------------------------------------
-		if(!CFW.DB.Permissions.checkPermissionExists(Permission.CFW_VIEW_STATISTICS)) {
+		if(!CFW.DB.Permissions.checkExistsByName(Permission.CFW_VIEW_STATISTICS)) {
 			CFW.DB.Permissions.create(new Permission(Permission.CFW_VIEW_STATISTICS, "user")
 				.description("User can view and analyze the application statistics.")
 				.isDeletable(false)

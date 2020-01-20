@@ -142,7 +142,6 @@ public class CFWRegistryComponents {
 			
 			for(MenuItem item : adminMenuItems.values() ) {
 				adminMenuItem.addChild(item.createCopy());
-				adminMenuItem.addPermissions(item.getPermissions());
 			}
 
 			if(adminMenuItems.size() > 0) {
@@ -151,7 +150,7 @@ public class CFWRegistryComponents {
 			
 			adminMenuItem.addChild(
 					new MenuItem("Configuration")
-						.faicon("fas fa-list-alt")
+						.faicon("fas fa-cog")
 						.addPermission(Permission.CFW_CONFIG_MANAGEMENT)
 						.href("./configuration")	
 					);

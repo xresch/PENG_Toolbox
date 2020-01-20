@@ -40,9 +40,13 @@ public class MenuItem extends HierarchicalHTMLItem {
 	 * Overrloaded addChild to handle sub menu items.
 	 * @return String html for this item. 
 	 ***********************************************************************************/
-	public MenuItem addChild(MenuItem childItem) {
+	public MenuItem addChild(HierarchicalHTMLItem childItem) {
 		super.addChild(childItem);
-		childMenuItems.put(childItem.getLabel(), childItem);
+		
+		if(childItem instanceof MenuItem) {
+			childMenuItems.put(((MenuItem)childItem).getLabel(), (MenuItem)childItem);
+			this.addPermissions(((MenuItem)childItem).getPermissions());
+		}
 		return this;
 	}
 	
@@ -135,6 +139,10 @@ public class MenuItem extends HierarchicalHTMLItem {
 		
 		permissions.add(permission);
 		
+		if(this.parent != null && parent instanceof MenuItem) {
+			((MenuItem)parent).addPermission(permission);
+		}
+		
 		return this;
 	}
 	
@@ -149,6 +157,10 @@ public class MenuItem extends HierarchicalHTMLItem {
 		}
 		
 		permissions.addAll(permissionArray);
+		
+		if(this.parent != null && parent instanceof MenuItem) {
+			((MenuItem)parent).addPermissions(permissionArray);
+		}
 		
 		return this;
 	}

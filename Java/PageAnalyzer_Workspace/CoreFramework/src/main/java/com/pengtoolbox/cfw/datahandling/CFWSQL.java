@@ -453,6 +453,19 @@ public class CFWSQL {
 	}
 	
 	/****************************************************************
+	 * Begins a DELETE TOP  statement.
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWSQL deleteTop(int count) {
+		if(!isQueryCached()) {		
+			query.append("DELETE TOP ? FROM "+object.getTableName());
+		}
+		values.add(count);
+		
+		return this;
+	}
+	
+	/****************************************************************
 	 * Adds a WHERE clause to the query.
 	 * This method is case sensitive.
 	 * @return CFWStatement for method chaining
@@ -704,8 +717,21 @@ public class CFWSQL {
 	 ****************************************************************/
 	public CFWSQL limit(int limit) {
 		if(!isQueryCached()) {
-			query.append(" LIMIT ").append(limit);
+			query.append(" LIMIT ?");
 		}
+		values.add(limit);
+		return this;
+	}
+	
+	/****************************************************************
+	 * Adds an OFFSET statement
+	 * @return CFWStatement for method chaining
+	 ****************************************************************/
+	public CFWSQL offset(int offset) {
+		if(!isQueryCached()) {
+			query.append(" OFFSET ?");
+		}
+		values.add(offset);
 		return this;
 	}
 	
