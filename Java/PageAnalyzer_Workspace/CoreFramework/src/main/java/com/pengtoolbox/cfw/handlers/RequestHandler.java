@@ -92,14 +92,13 @@ public class RequestHandler extends HandlerWrapper
 		    		SessionData data = new SessionData();
 		    		session.setAttribute(CFW.SESSION_DATA, data);
 		    		
-		    		CFWApplication.propagateSessionDataToOtherContexts(request, data);
+		    		CFWApplication.propagateSessionDataToAllContexts(request, data);
     			}
     		}
     		
     	};
     	
     	CFW.Context.Request.setSessionData((SessionData)session.getAttribute(CFW.SESSION_DATA));
-    	
     	//workaround maxInactiveInterval=-1 issue
     	session.setMaxInactiveInterval(CFW.Properties.SESSION_TIMEOUT);
     	

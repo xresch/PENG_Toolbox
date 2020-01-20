@@ -82,7 +82,7 @@ public class APILoginServlet extends HttpServlet
 
 					//--------------------------------
 					// Create session in other context
-					String sessionID = CFWApplication.propagateSessionDataToOtherContexts(request, data);
+					String sessionID = CFWApplication.propagateSessionDataToAllContexts(request, data);
 					
 					if(CFW.Context.Request.hasPermission(Permission.CFW_API)) {
 						plaintext.getContent().append("JSESSIONID="+sessionID);

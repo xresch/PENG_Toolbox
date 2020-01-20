@@ -84,7 +84,7 @@ public class CFWApplication {
 	
 	public CFWApplication(String[] args) throws Exception {
 		    	       
-		sessionHandler = CFWApplication.createSessionHandler();
+		sessionHandler = CFWApplication.createSessionHandler("/");
 		
     	//---------------------------------------
     	// Create Server 
@@ -114,7 +114,7 @@ public class CFWApplication {
         // Build Handler Chain
         ContextHandler unsecureContextHandler = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);	
         ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);   
-        servletContext.setSessionHandler(createSessionHandler());
+        servletContext.setSessionHandler(createSessionHandler(relativePath));
         
         new HandlerChainBuilder(unsecureContextHandler)
 	        .chain(new GzipHandler())
@@ -139,7 +139,7 @@ public class CFWApplication {
         //-------------------------------
         ContextHandler secureContext = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);
         ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        servletContext.setSessionHandler(createSessionHandler());
+        servletContext.setSessionHandler(createSessionHandler(relativePath));
         
         new HandlerChainBuilder(secureContext)
         	.chain(new GzipHandler())
@@ -289,18 +289,22 @@ public class CFWApplication {
 	 * Propagates all sessions and session data to all available session context handlers.
 	 * @throws Exception
 	 **************************************************************************************************/
-	public static synchronized String propagateSessionDataToOtherContexts(HttpServletRequest request, SessionData data) {
+	public static synchronized String propagateSessionDataToAllContexts(HttpServletRequest request, SessionData data) {
 		
+		System.out.println("######### Propagate Session Data #########");
 		String sessionID = "";
 		for(ServletContextHandler handler : servletContextArray) {
+			
 			HttpSession session = handler.getSessionHandler().getSession(request.getSession().getId());
 			if(session == null) {
+				System.out.println("Session is null for Handler: " + handler.getContextPath());
 				session = handler.getSessionHandler().newHttpSession(request);
 			}
+			System.out.println("Session: " + session.getId());
 			session.setAttribute(CFW.SESSION_DATA, data);
 			sessionID = session.getId();
 		}
-		
+		System.out.println("##########################################");
 		return sessionID;
 	}
 
@@ -320,8 +324,9 @@ public class CFWApplication {
 
 	/***********************************************************************
 	 * Setup and returns a SessionHandler
+	 * @param string 
 	 ***********************************************************************/
-	public static SessionHandler createSessionHandler() {
+	public static SessionHandler createSessionHandler(String string) {
 	
 	    SessionHandler sessionHandler = new SessionHandler();
 	    
