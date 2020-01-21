@@ -1,11 +1,18 @@
 TODO
 ====
 
+- Spaces!!!
+  - Fetch As JSON Hierarchy
+  - HTML Selector
+  - SpacePermissions in SessionData
+  - Selected Space in SessionData
+  - CFQSQL partial query, select entries for user
+  
 - Image Upload for Summernote Editor
 - SQL Query Cache Overview (hit statistics?)
 - Truncate too long toasts.
 - Show previous toasts all toasts button
-- Spaces!!!
+
 
 - Form errors add to field.
 
