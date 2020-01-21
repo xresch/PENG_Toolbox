@@ -287,7 +287,7 @@ public class CFWObject {
 		this.childObjects = childObjects;
 	}
 	
-//	private CFWObject addChildObject(CFWObject child) {
+//	public CFWObject addChildObject(CFWObject child) {
 //		this.childObjects.put(((Integer)child.getPrimaryField().getValue()), child);
 //		return this;
 //	}
