@@ -1,7 +1,7 @@
 package com.pengtoolbox.cfw.utils.json;
 
-import java.lang.reflect.Type;
-import java.util.LinkedHashMap;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,7 +9,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -121,6 +120,8 @@ public class CFWJson {
 		else if(object instanceof Number) 		{	target.addProperty(propertyName, (Number)object); }
 		else if(object instanceof Boolean) 		{	target.addProperty(propertyName, (Boolean)object); }
 		else if(object instanceof Character) 	{	target.addProperty(propertyName, (Character)object); }
+		else if(object instanceof Date) 		{	target.addProperty(propertyName, ((Date)object).getTime()); }
+		else if(object instanceof Timestamp) 	{	target.addProperty(propertyName, ((Timestamp)object).getTime()); }
 		else if(object instanceof JsonElement) 	{	target.add(propertyName, (JsonElement)object); }
 		else if(object instanceof Object[]) 	{	target.add(propertyName, CFW.JSON.arrayToJsonArray((Object[])object)); }
 		else {	

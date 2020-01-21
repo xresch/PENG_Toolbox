@@ -2,6 +2,7 @@ package com.pengtoolbox.cfw.tests.various;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Date;
 
 import org.junit.BeforeClass;
@@ -65,11 +66,12 @@ public class TestCFWObject extends DBTestMaster{
 		object.addField(CFWField.newBoolean(FormFieldType.BOOLEAN, "testBoolean"));
 		object.addField(CFWField.newString(FormFieldType.TEXT, "testString"));
 		object.addField(CFWField.newArray(FormFieldType.TAGS, "testArray").setValue(new String[] {"foo", "bar"}));
-		object.addField(CFWField.newDate(FormFieldType.DATEPICKER, "testDate").setValue(new Date(System.currentTimeMillis())));
+		object.addField(CFWField.newDate(FormFieldType.DATEPICKER, "testDate").setValue(new Date(2020, 01, 03)));
+		object.addField(CFWField.newTimestamp(FormFieldType.DATEPICKER, "testTimestamp").setValue(new Timestamp(2020, 01, 03, 4, 5, 500, 0)));
 		
 		String json = CFW.JSON.toJSON(object);
 		System.out.println(json);
-		Assertions.assertEquals("{\"testInteger\":null,\"testBoolean\":null,\"testString\":null,\"testArray\":[\"foo\",\"bar\"],\"testDate\":\"Jan 21, 2020\",\"children\":[]}",
+		Assertions.assertEquals("{\"testInteger\":null,\"testBoolean\":null,\"testString\":null,\"testArray\":[\"foo\",\"bar\"],\"testDate\":61538828400000,\"testTimestamp\":61538843600000,\"children\":[]}",
 				json,
 				"Object is serialized.");
 		//---------------------------------
