@@ -32,8 +32,8 @@ import com.pengtoolbox.cfw.stats.StatsCPUSamplingTask;
 import com.pengtoolbox.cfw.utils.CFWDump;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 import com.pengtoolbox.cfw.utils.CFWFiles;
-import com.pengtoolbox.cfw.utils.CFWJson;
 import com.pengtoolbox.cfw.utils.CFWTime;
+import com.pengtoolbox.cfw.utils.json.CFWJson;
 import com.pengtoolbox.cfw.validation.CFWValidation;
 
 /**************************************************************************************************************

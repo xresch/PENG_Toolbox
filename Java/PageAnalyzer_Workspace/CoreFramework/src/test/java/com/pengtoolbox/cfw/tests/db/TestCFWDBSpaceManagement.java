@@ -250,7 +250,7 @@ public class TestCFWDBSpaceManagement extends DBTestMaster {
 		
 		Assertions.assertTrue(hierarchyDump.matches("[\\S\\s]*--> \\d+ - MySpace[\\S\\s]*"), "Root element is in list.");
 		Assertions.assertTrue(hierarchyDump.matches("[\\S\\s]*--> \\d+ - FacespaceB[\\S\\s]*"), "Root element is in list.");
-		Assertions.assertTrue(hierarchyDump.matches("[\\S\\s]*\\|  \\|                \\|--> \\d+ - SubSpace8[\\S\\s]*"), "Hierarchy is visualized.");
+		Assertions.assertTrue(hierarchyDump.matches("[\\S\\s]*\\|                  \\|--> \\d+ - Subface8[\\S\\s]*"), "Hierarchy is visualized.");
 
 	}
 	

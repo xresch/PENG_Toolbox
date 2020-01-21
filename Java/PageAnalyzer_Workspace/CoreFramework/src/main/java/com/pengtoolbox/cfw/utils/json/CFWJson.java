@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.utils;
+package com.pengtoolbox.cfw.utils.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
