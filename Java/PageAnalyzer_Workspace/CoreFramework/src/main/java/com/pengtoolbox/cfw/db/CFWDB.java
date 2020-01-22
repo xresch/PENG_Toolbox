@@ -716,13 +716,20 @@ public class CFWDB {
 		}
 	}
 
-
 	/********************************************************************************************
 	 * Returns a jsonString with an array containing a json object for each row.
 	 * Returns an empty array in case of error.
 	 * 
 	 ********************************************************************************************/
 	public static String resultSetToJSON(ResultSet resultSet) {
+		return CFW.JSON.toJSON(resultSet);
+	}
+	/********************************************************************************************
+	 * Returns a jsonString with an array containing a json object for each row.
+	 * Returns an empty array in case of error.
+	 * 
+	 ********************************************************************************************/
+	public static String resultSetToJSONOld(ResultSet resultSet) {
 		StringBuffer json = new StringBuffer();
 		
 		try {

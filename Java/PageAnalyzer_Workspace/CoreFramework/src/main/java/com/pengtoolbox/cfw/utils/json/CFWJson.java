@@ -1,6 +1,9 @@
 package com.pengtoolbox.cfw.utils.json;
 
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 
 import com.google.gson.Gson;
@@ -25,7 +28,11 @@ public class CFWJson {
 	static{
 		//Type cfwobjectListType = new TypeToken<LinkedHashMap<CFWObject>>() {}.getType();
 		
-		gsonInstance = new GsonBuilder().registerTypeHierarchyAdapter(CFWObject.class, new SerializerCFWObject()).serializeNulls().create();
+		gsonInstance = new GsonBuilder()
+				.registerTypeHierarchyAdapter(CFWObject.class, new SerializerCFWObject())
+				.registerTypeHierarchyAdapter(ResultSet.class, new SerializerResultSet())
+				.serializeNulls()
+				.create();
 	}
 			
 	
@@ -121,6 +128,8 @@ public class CFWJson {
 		else if(object instanceof Boolean) 		{	target.addProperty(propertyName, (Boolean)object); }
 		else if(object instanceof Character) 	{	target.addProperty(propertyName, (Character)object); }
 		else if(object instanceof Date) 		{	target.addProperty(propertyName, ((Date)object).getTime()); }
+		else if(object instanceof Clob) 		{	target.addProperty(propertyName, ((Clob)object).toString()); }
+		else if(object instanceof Blob) 		{	target.addProperty(propertyName, ((Blob)object).toString()); }
 		else if(object instanceof Timestamp) 	{	target.addProperty(propertyName, ((Timestamp)object).getTime()); }
 		else if(object instanceof JsonElement) 	{	target.add(propertyName, (JsonElement)object); }
 		else if(object instanceof Object[]) 	{	target.add(propertyName, CFW.JSON.arrayToJsonArray((Object[])object)); }
@@ -137,7 +146,7 @@ public class CFWJson {
 		String name = field.getName();
 		Object value = field.getValue();
 		
-		if(name.startsWith("JSON")) {
+		if(name.toUpperCase().startsWith("JSON")) {
 			JsonElement asElement = CFW.JSON.jsonStringToJsonElement(value.toString());
 			target.add(name, asElement);
 		}else {

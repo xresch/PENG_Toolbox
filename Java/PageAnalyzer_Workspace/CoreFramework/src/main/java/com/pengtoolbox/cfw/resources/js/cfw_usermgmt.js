@@ -221,7 +221,7 @@ function cfw_usermgmt_printUserList(data){
 	
 	//--------------------------------
 	// Table
-	cfwTable.addHeaders(['ID', 'Username', "eMail", "Firstname", "Lastname", "Status", "Date Created", "&nbsp;", "&nbsp;", "&nbsp;"]);
+	cfwTable.addHeaders(['ID', 'Username', "eMail", "Firstname", "Lastname", "Status", "Time Created", "&nbsp;", "&nbsp;", "&nbsp;"]);
 	
 	if(data.payload != undefined){
 		
@@ -241,7 +241,7 @@ function cfw_usermgmt_printUserList(data){
 			htmlString += '<td>'+current.FIRSTNAME+'</td>';
 			htmlString += '<td>'+current.LASTNAME+'</td>';
 			htmlString += '<td><span class="badge badge-'+((current.STATUS.toLowerCase() == "active")? 'success' : 'danger') +'">'+current.STATUS+'</td>';
-			htmlString += '<td>'+current.DATE_CREATED+'</td>';
+			htmlString += '<td>'+CFW.format.epochToTimestamp(current.DATE_CREATED)+'</td>';
 			
 			//Reset Password Button
 			if(!current.IS_FOREIGN){

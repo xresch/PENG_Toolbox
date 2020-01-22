@@ -802,6 +802,37 @@ function cfw_sortArrayByValueOfObject(array, key, reverse){
 }
 
 /**************************************************************************************
+ * Create a timestamp string
+ * @param epoch unix epoch milliseconds since 01.01.1970
+ * @return timestamp as string
+ *************************************************************************************/
+function cfw_epochToTimestamp(epoch){
+  var a = new Date(epoch);
+  var year 		= a.getFullYear();
+  var month 	= a.getMonth()+1 < 10 	? "0"+(a.getMonth()+1) : a.getMonth()+1;
+  var day 		= a.getDate() < 10 		? "0"+a.getDate() : a.getDate();
+  var hour 		= a.getHours() < 10 	? "0"+a.getHours() : a.getHours();
+  var min 		= a.getMinutes() < 10 	? "0"+a.getMinutes() : a.getMinutes();
+  var sec 		= a.getSeconds() < 10 	? "0"+a.getSeconds() : a.getSeconds();
+  var time = year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec ;
+  return time;
+}
+
+/**************************************************************************************
+ * Create a date string
+ * @param epoch unix epoch milliseconds since 01.01.1970
+ * @return date as string
+ *************************************************************************************/
+function cfw_epochToDate(epoch){
+  var a = new Date(epoch);
+  var year 		= a.getFullYear();
+  var month 	= a.getMonth()+1 < 10 	? "0"+(a.getMonth()+1) : a.getMonth()+1;
+  var day 		= a.getDate() < 10 		? "0"+a.getDate() : a.getDate();
+
+  var time = year + '-' + month + '-' + day ;
+  return time;
+}
+/**************************************************************************************
  * Add an alert message to the message section.
  * Ignores duplicated messages.
  * @param type the type of the alert: INFO, SUCCESS, WARNING, ERROR
@@ -1610,6 +1641,10 @@ var CFW = {
 	array: {
 		sortArrayByValueOfObject: cfw_sortArrayByValueOfObject
 	},
+	format: {
+		epochToTimestamp: cfw_epochToTimestamp,
+		epochToDate: cfw_epochToDate
+	},
 	
 	http: {
 		readCookie: cfw_readCookie,
@@ -1620,7 +1655,6 @@ var CFW = {
 		getForm: cfw_getForm,
 		createForm: cfw_createForm,
 		fetchAndCacheData: cfw_fetchAndCacheData
-
 	},
 	
 	selection: {
