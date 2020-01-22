@@ -414,7 +414,7 @@ function printComparison(parent, data){
 
 	for(key in data){
 
-		var time = data[key].TIME_CREATED;
+		var time = CFW.format.epochToTimestamp(data[key].TIME_CREATED);
 		var result = data[key].JSON_RESULT;
 		
 		//----------------------------
@@ -932,7 +932,7 @@ function printResultList(parent, data){
 		var rowString = '<tr>';
 		
 		rowString += '<td><input class="resultSelectionCheckbox" type="checkbox" onchange="resultSelectionChanged();" value="'+currentData.PK_ID+'" /></td>';
-		rowString += '<td>'+currentData.TIME_CREATED+'</td>';
+		rowString += '<td>'+CFW.format.epochToTimestamp(currentData.TIME_CREATED)+'</td>';
 		
 		if(data[0] != null && data[0].USERNAME != undefined){
 			rowString += '<td>'+currentData.USERNAME+'</td>';;
@@ -949,7 +949,7 @@ function printResultList(parent, data){
 		
 		// Gantt Chart Icon
 		if (CFW.hasPermission("Download HAR")){
-			rowString += '<td><a class="btn btn-primary btn-sm" alt="View Gantt Chart" title="View Gantt Chart" href="./ganttchart?resultid='+currentData.PK_ID+'"><i class="fas fa-sliders-h"></i></a></td>';
+			rowString += '<td><a class="btn btn-primary btn-sm" alt="View Gantt Chart" title="View Gantt Chart" href="./ganttchart?resultid='+currentData.PK_ID+'"><i class="fas fa-signal fa-rotate-90"></i></a></td>';
 		}
 		// Link Icon
 		rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Open URL" title="Open URL" href="'+url+'"><i class="fa fa-link"></i></a></td>';
