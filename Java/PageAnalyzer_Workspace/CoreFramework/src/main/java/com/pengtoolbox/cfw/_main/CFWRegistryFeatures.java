@@ -21,7 +21,7 @@ public class CFWRegistryFeatures {
 	 * Adds a CFWObject class to the registry.
 	 * @param objectClass
 	 ***********************************************************************/
-	public static void addCFWObject(Class<? extends CFWAppFeature> objectClass)  {
+	public static void addFeature(Class<? extends CFWAppFeature> objectClass)  {
 		featureClassArray.add(objectClass);
 	}
 	

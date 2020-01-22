@@ -163,7 +163,7 @@ public class Main extends Application implements CFWAppInterface {
 	        //###################################################################
 	        // Create API ServletContext, no login needed
 	        //################################################################### 
-	    	ServletContextHandler apiContext = app.createUnsecureContext("/api");
+	    	ServletContextHandler apiContext = app.getUnsecureContext("/api");
 	    	
 	    	ServletHolder apiHolder = new ServletHolder(new RestAPIServlet());
 	        apiHolder.getRegistration().setMultipartConfig(app.getGlobalMultipartConfig());
@@ -173,7 +173,7 @@ public class Main extends Application implements CFWAppInterface {
 	        //###################################################################
 	        // Create authenticatedServletContext
 	        //###################################################################    	
-	    	ServletContextHandler appContext = app.createSecureContext("/app");
+	    	ServletContextHandler appContext = app.getSecureContext("/app");
 	    	
 	        ServletHolder uploadHolder = new ServletHolder(new HARUploadServlet());
 	        uploadHolder.getRegistration().setMultipartConfig(app.getGlobalMultipartConfig());
@@ -228,6 +228,12 @@ public class Main extends Application implements CFWAppInterface {
 	public static void javafxLogWorkaround(Level level, String message, Throwable e, String method){
 		
 		log.method(method).log(level, message, e);
+	}
+
+	@Override
+	public void startTasks() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

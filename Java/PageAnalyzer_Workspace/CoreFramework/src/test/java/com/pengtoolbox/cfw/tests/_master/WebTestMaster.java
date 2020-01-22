@@ -56,7 +56,7 @@ public class WebTestMaster {
 			public void startApp(CFWApplication app) {
 				APP  = app;
 				
-				testContext = APP.createUnsecureContext("/test");
+				testContext = APP.getUnsecureContext("/test");
 				TEST_URL = "http://localhost:"+CFW.Properties.HTTP_PORT+CFW.Properties.BASE_URL+"/test";
 				
 				//Seperate thread to not make the test thread block
@@ -93,6 +93,12 @@ public class WebTestMaster {
 			
 			@Override
 			public void initializeDB() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void startTasks() {
 				// TODO Auto-generated method stub
 				
 			}

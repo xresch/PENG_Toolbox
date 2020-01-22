@@ -73,6 +73,7 @@ public class CFW {
 	public class Mail extends CFWMail {}
 	public class Properties extends CFWProperties {}
 	public class Registry {
+		public class Features extends CFWRegistryFeatures {} 
 		public class Components extends CFWRegistryComponents {} 
 		public class Objects extends CFWRegistryObjects {} 
 		public class API extends CFWRegistryAPI {}
@@ -150,27 +151,35 @@ public class CFW {
 	    //--------------------------------
 	    // Register Components
 	    doRegister(appToStart);
-		
+	    
+	    ArrayList<CFWAppFeature> features = CFW.Registry.Features.getFeatureInstances();
+	    
 	    //--------------------------------
 	    // Start Database 	
-    	initializeDatabase(appToStart);
+    	initializeDatabase(appToStart, features);
 		
-	    //--------------------------------
-	    // Start Scheduled Tasks
-    	initializeScheduledTasks(appToStart);
-    	
+
 	    //--------------------------------
 	    // Start Application
 		CFWApplication app = new CFWApplication(args);
+		
+		for(CFWAppFeature feature : features) {
+			feature.addFeature(app);
+		}
+		
 		appToStart.startApp(app);
 		
-		
+	    //--------------------------------
+	    // Start Scheduled Tasks
+    	initializeScheduledTasks(appToStart, features);
+    	
 		
 	}
 	
 	/***********************************************************************
 	 * Starts and initializes the Database. Iterates over all Objects in the 
 	 * Registry and add
+	 * @param features 
 	 * @param CFWAppInterface application to start
 	 ***********************************************************************/
 	private static void doRegister(CFWAppInterface appToStart) {
@@ -187,9 +196,18 @@ public class CFW {
 		CFW.Registry.Objects.addCFWObject(Space.class);
 		CFW.Registry.Objects.addCFWObject(StatsCPUSampleSignature.class);
 		CFW.Registry.Objects.addCFWObject(StatsCPUSample.class);
+		
+
 		//---------------------------
 		// Application Register
 		appToStart.register();
+		
+		//---------------------------
+		// Feature Register
+		ArrayList<CFWAppFeature> features = CFW.Registry.Features.getFeatureInstances();
+		for(CFWAppFeature feature : features) {
+			feature.register();
+		}
 		
 		//---------------------------
 		// Register APIs
@@ -206,9 +224,10 @@ public class CFW {
 	/***********************************************************************
 	 * Starts and initializes the Database. Iterates over all Objects in the 
 	 * Registry and add
+	 * @param features 
 	 * @param CFWAppInterface application to start
 	 ***********************************************************************/
-	private static void initializeDatabase(CFWAppInterface appToStart) {
+	private static void initializeDatabase(CFWAppInterface appToStart, ArrayList<CFWAppFeature> features) {
 		
 		//---------------------------
 		// Start Database 
@@ -262,6 +281,12 @@ public class CFW {
     	CFWDB.resetAdminPW();
     
 		//---------------------------
+		// Feature Initialize
+		for(CFWAppFeature feature : features) {
+			feature.initializeDB();
+		}
+		
+		//---------------------------
 		// Do Application init
 		appToStart.initializeDB();
 		
@@ -269,9 +294,10 @@ public class CFW {
 	
 	/***********************************************************************
 	 * Starts and initializes the scheduled tasks.
+	 * @param features 
 	 * @param CFWAppInterface application to start
 	 ***********************************************************************/
-	private static void initializeScheduledTasks(CFWAppInterface appToStart) {
+	private static void initializeScheduledTasks(CFWAppInterface appToStart, ArrayList<CFWAppFeature> features) {
 		
 		//---------------------------
 		// CPU Sampling 
@@ -279,6 +305,18 @@ public class CFW {
 		ScheduledFuture<?> sampling = CFW.Schedule.runPeriodically(0, seconds, new StatsCPUSamplingTask());
 		
 		ScheduledFuture<?> aggregation = CFW.Schedule.runPeriodically(0, 600, new StatsCPUSamplingAggregationTask());
+		
+		//---------------------------
+		// Feature Initialize
+		for(CFWAppFeature feature : features) {
+			feature.startTasks();
+		}
+		
+		//---------------------------
+		// Do Application init
+		appToStart.startTasks();
+		
+	
 	}
 	
 }

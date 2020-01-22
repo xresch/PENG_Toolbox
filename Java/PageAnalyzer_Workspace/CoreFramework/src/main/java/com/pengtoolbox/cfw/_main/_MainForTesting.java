@@ -58,7 +58,7 @@ public class _MainForTesting implements CFWAppInterface {
         //###################################################################
         // Create API ServletContext, no login needed
         //################################################################### 
-    	ServletContextHandler testContext = app.createUnsecureContext("/test");
+    	ServletContextHandler testContext = app.getUnsecureContext("/test");
     	
         testContext.addServlet(GeneralTestServlet.class, "/general");
         testContext.addServlet(FormTestServlet.class, "/form");
@@ -77,6 +77,12 @@ public class _MainForTesting implements CFWAppInterface {
 
 	@Override
 	public void stopApp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void startTasks() {
 		// TODO Auto-generated method stub
 		
 	}

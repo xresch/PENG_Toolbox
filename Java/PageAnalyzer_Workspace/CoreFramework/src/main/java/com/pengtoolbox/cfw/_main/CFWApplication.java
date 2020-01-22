@@ -110,7 +110,7 @@ public class CFWApplication {
 	 * 
 	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
 	 **************************************************************************************************/
-	public ServletContextHandler createUnsecureContext(String relativePath){
+	public ServletContextHandler getUnsecureContext(String relativePath){
 		//-------------------------------
         // Check if exists
         //-------------------------------
@@ -140,7 +140,7 @@ public class CFWApplication {
 	 * 
 	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
 	 **************************************************************************************************/
-	public ServletContextHandler createSecureContext(String relativePath){
+	public ServletContextHandler getSecureContext(String relativePath){
         
 		//-------------------------------
         // Check if exists
