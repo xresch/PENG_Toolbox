@@ -5,10 +5,10 @@ package com.pengtoolbox.cfw._main;
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public interface CFWAppInterface {
+public interface CFWAppFeature {
 
 	/************************************************************************************
-	 * Register components, features and objects.
+	 * Register components and objects.
 	 ************************************************************************************/
 	public void register();
 	
@@ -18,13 +18,13 @@ public interface CFWAppInterface {
 	public void initializeDB();
 	
 	/************************************************************************************
-	 * Add servlets and start the application.
-	 * Make sure to call app.start();
+	 * Add servlets to the application.
+	 * This is executed before the application is started.
 	 ************************************************************************************/
-	public void startApp(CFWApplication app);
+	public void addFeature(CFWApplication app);
 	
 	/************************************************************************************
 	 * Actions that should be executed when the application is stopped.
 	 ************************************************************************************/
-	public void stopApp();
+	public void stopFeature();
 }

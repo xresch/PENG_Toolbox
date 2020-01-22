@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.MultipartConfigElement;
@@ -55,8 +56,8 @@ import com.pengtoolbox.cfw.servlets.PermissionsServlet;
 import com.pengtoolbox.cfw.servlets.admin.APIUserMgmtSevlet;
 import com.pengtoolbox.cfw.servlets.admin.UserManagementServlet;
 import com.pengtoolbox.cfw.servlets.userprofile.ChangePasswordServlet;
-import com.pengtoolbox.cfw.stats.StatsCPUSamplingServlet;
 import com.pengtoolbox.cfw.stats.ServletStatistics;
+import com.pengtoolbox.cfw.stats.StatsCPUSamplingServlet;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
 /**************************************************************************************************************
@@ -69,10 +70,11 @@ public class CFWApplication {
 	private Server server;
 	private MultipartConfigElement globalMultipartConfig;
 	
-	private static ArrayList<ContextHandler> unsecureContextArray = new ArrayList<ContextHandler>();
-	private static ArrayList<ContextHandler> secureContextArray = new ArrayList<ContextHandler>();
+	// HashMap contains Context Path and Context
+	private static LinkedHashMap<String, ContextHandler> unsecureContextArray = new LinkedHashMap<String, ContextHandler>();
+	private static LinkedHashMap<String, ContextHandler> secureContextArray = new LinkedHashMap<String, ContextHandler>();
 	
-	private static ArrayList<ServletContextHandler> servletContextArray = new ArrayList<ServletContextHandler>();	
+	private static LinkedHashMap<String, ServletContextHandler> servletContextArray = new LinkedHashMap<String, ServletContextHandler>();	
 	
 	private String defaultURL = "/";
 	static DefaultSessionIdManager idmanager;
@@ -109,7 +111,13 @@ public class CFWApplication {
 	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
 	 **************************************************************************************************/
 	public ServletContextHandler createUnsecureContext(String relativePath){
-
+		//-------------------------------
+        // Check if exists
+        //-------------------------------
+		if(servletContextArray.containsKey(relativePath)) {
+			return servletContextArray.get(relativePath);
+		}
+		
         //----------------------------------
         // Build Handler Chain
         ContextHandler unsecureContextHandler = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);	
@@ -121,8 +129,8 @@ public class CFWApplication {
 	    	.chain(new RequestHandler())
 	        .chain(servletContext);
         
-        unsecureContextArray.add(unsecureContextHandler);
-        servletContextArray.add(servletContext);
+        unsecureContextArray.put(relativePath, unsecureContextHandler);
+        servletContextArray.put(relativePath, servletContext);
         return servletContext;
 	}
 	
@@ -133,7 +141,14 @@ public class CFWApplication {
 	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
 	 **************************************************************************************************/
 	public ServletContextHandler createSecureContext(String relativePath){
-
+        
+		//-------------------------------
+        // Check if exists
+        //-------------------------------
+		if(servletContextArray.containsKey(relativePath)) {
+			return servletContextArray.get(relativePath);
+		}
+		
         //-------------------------------
         // Create HandlerChain
         //-------------------------------
@@ -147,8 +162,8 @@ public class CFWApplication {
 	        .chain(new AuthenticationHandler())
 	        .chain(servletContext);
        
-        secureContextArray.add(secureContext);
-        servletContextArray.add(servletContext);
+        secureContextArray.put(relativePath, secureContext);
+        servletContextArray.put(relativePath, servletContext);
         return servletContext;
 	}
 	
@@ -181,9 +196,9 @@ public class CFWApplication {
         ArrayList<Handler> handlerArray = new ArrayList<Handler>();
         handlerArray.add(new ShutdownHandler(CFW.Properties.APPLICATION_ID, true, true));
         handlerArray.add(new HTTPSRedirectHandler());
-        handlerArray.addAll(unsecureContextArray);
+        handlerArray.addAll(unsecureContextArray.values());
         handlerArray.add(rewriteHandler);
-        handlerArray.addAll(secureContextArray);
+        handlerArray.addAll(secureContextArray.values());
         handlerArray.add(CFWApplication.createResourceHandler());
         handlerArray.add(createCFWHandler());
         
@@ -293,7 +308,7 @@ public class CFWApplication {
 		
 		System.out.println("######### Propagate Session Data #########");
 		String sessionID = "";
-		for(ServletContextHandler handler : servletContextArray) {
+		for(ServletContextHandler handler : servletContextArray.values()) {
 			
 			HttpSession session = handler.getSessionHandler().getSession(request.getSession().getId());
 			if(session == null) {

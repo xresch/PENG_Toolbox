@@ -807,7 +807,9 @@ function cfw_sortArrayByValueOfObject(array, key, reverse){
  * @return timestamp as string
  *************************************************************************************/
 function cfw_epochToTimestamp(epoch){
+	
   var a = new Date(epoch);
+  //a.toLocaleString('en-GB');
   var year 		= a.getFullYear();
   var month 	= a.getMonth()+1 < 10 	? "0"+(a.getMonth()+1) : a.getMonth()+1;
   var day 		= a.getDate() < 10 		? "0"+a.getDate() : a.getDate();
