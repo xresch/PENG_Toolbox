@@ -1,8 +1,8 @@
 package com.pengtoolbox.pageanalyzer.db;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.db.usermanagement.Role;
-import com.pengtoolbox.cfw.db.usermanagement.Permission;
+import com.pengtoolbox.cfw.features.usermgmt.Permission;
+import com.pengtoolbox.cfw.features.usermgmt.Role;
 
 /**************************************************************************************************************
  * 

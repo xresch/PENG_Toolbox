@@ -9,7 +9,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppInterface;
 import com.pengtoolbox.cfw._main.CFWApplication;
-import com.pengtoolbox.cfw.db.usermanagement.Permission;
+import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;

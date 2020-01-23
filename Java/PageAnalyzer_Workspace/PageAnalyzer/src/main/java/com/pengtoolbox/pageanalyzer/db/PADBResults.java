@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.db.usermanagement.Permission;
-import com.pengtoolbox.cfw.db.usermanagement.User;
+import com.pengtoolbox.cfw.features.usermgmt.Permission;
+import com.pengtoolbox.cfw.features.usermgmt.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.pageanalyzer.db.Result.ResultFields;

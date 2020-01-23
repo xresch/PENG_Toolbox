@@ -9,15 +9,15 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.cfw.api.APIDefinition;
-import com.pengtoolbox.cfw.api.APIDefinitionFetch;
-import com.pengtoolbox.cfw.api.APIRequestHandler;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.User;
-import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
+import com.pengtoolbox.cfw.features.api.APIDefinition;
+import com.pengtoolbox.cfw.features.api.APIDefinitionFetch;
+import com.pengtoolbox.cfw.features.api.APIRequestHandler;
+import com.pengtoolbox.cfw.features.usermgmt.User;
+import com.pengtoolbox.cfw.features.usermgmt.User.UserFields;
 import com.pengtoolbox.cfw.response.PlaintextResponse;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 
