@@ -173,7 +173,7 @@ public class Main extends Application implements CFWAppInterface {
 	        //###################################################################
 	        // Create authenticatedServletContext
 	        //###################################################################    	
-	    	ServletContextHandler appContext = app.getSecureContext("/app");
+	    	ServletContextHandler appContext = app.getSecureContext();
 	    	
 	        ServletHolder uploadHolder = new ServletHolder(new HARUploadServlet());
 	        uploadHolder.getRegistration().setMultipartConfig(app.getGlobalMultipartConfig());
@@ -190,10 +190,7 @@ public class Main extends Application implements CFWAppInterface {
 	        appContext.addServlet(ManageResultsServlet.class, "/manageresults");
 	        appContext.addServlet(DocuServlet.class, "/docu");
 	        appContext.addServlet(CustomContentServlet.class, "/custom");
-	        
-	        //Login, Logout and Resource Servlets
-	        app.addCFWServlets(appContext);
-	        
+	        	        
 	        //###################################################################
 	        // Startup
 	        //###################################################################

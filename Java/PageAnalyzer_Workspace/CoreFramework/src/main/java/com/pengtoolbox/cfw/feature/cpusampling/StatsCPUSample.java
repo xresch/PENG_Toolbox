@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.stats;
+package com.pengtoolbox.cfw.feature.cpusampling;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -1,10 +1,10 @@
-package com.pengtoolbox.cfw.stats;
+package com.pengtoolbox.cfw.feature.cpusampling;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSampleSignature.CPUSampleSignatureFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.stats.StatsCPUSampleSignature.CPUSampleSignatureFields;
 
 /**************************************************************************************************************
  * 

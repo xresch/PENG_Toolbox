@@ -26,6 +26,9 @@ public class CFWRegistryComponents {
 	
 	private static LinkedHashMap<String, MenuItem> adminMenuItems = new LinkedHashMap<String, MenuItem>();
 	
+	// Admin items of the Core Framework
+	private static LinkedHashMap<String, MenuItem> adminMenuItemsCFW = new LinkedHashMap<String, MenuItem>();
+	
 	private static Class<?> defaultFooterClass = null;
 
 	
@@ -42,7 +45,7 @@ public class CFWRegistryComponents {
 	}
 	
 	/***********************************************************************
-	 * Adds a menuItem to the user menu.
+	 * Adds a menuItem to the admin menu.
 	 * Define the position of in the menu with the menuPath parameter. Use
 	 * "|" to separate multiple menu labels.
 	 * @param menuitem to add
@@ -56,6 +59,23 @@ public class CFWRegistryComponents {
 			.severe("Coding Issue: Admin menu items need at least 1 permission.");
 		}
 		addMenuItem(adminMenuItems, itemToAdd, menuPath);
+	}
+	
+	/***********************************************************************
+	 * Adds a menuItem to the admin menu in the section of the CFW.
+	 * Define the position of in the menu with the menuPath parameter. Use
+	 * "|" to separate multiple menu labels.
+	 * @param menuitem to add
+	 * @param menuPath were the menu should be added, or null for root
+	 * @param Class that extends from BTMenu
+	 ***********************************************************************/
+	public static void addAdminCFWMenuItem(MenuItem itemToAdd, String menuPath)  {
+		if(itemToAdd.getPermissions().size() == 0){
+			new CFWLog(logger)
+			.method("addAdminCFWMenuItem")
+			.severe("Coding Issue: Admin menu items need at least 1 permission.");
+		}
+		addMenuItem(adminMenuItemsCFW, itemToAdd, menuPath);
 	}
 	
 	/***********************************************************************
@@ -148,6 +168,13 @@ public class CFWRegistryComponents {
 				adminMenuItem.addChild(new MenuItemDivider());
 			}
 			
+			//---------------------------
+			// Admin Menu Items CFW
+			
+			for(MenuItem item : adminMenuItemsCFW.values() ) {
+				adminMenuItem.addChild(item.createCopy());
+			}
+			
 			adminMenuItem.addChild(
 					new MenuItem("Configuration")
 						.faicon("fas fa-cog")
@@ -168,14 +195,7 @@ public class CFWRegistryComponents {
 						.addPermission(Permission.CFW_API)
 						.href("./api")	
 					);
-					
-			adminMenuItem.addChild(
-					new MenuItem("CPU Sampling")
-						.faicon("fas fa-microchip")
-						.addPermission(Permission.CFW_VIEW_STATISTICS)
-						.href("./cpusampling")	
-					);
-			
+								
 			//---------------------------
 			// User Menu
 			UserMenuItem userMenuItem = new UserMenuItem(CFW.Context.Session.getSessionData());	

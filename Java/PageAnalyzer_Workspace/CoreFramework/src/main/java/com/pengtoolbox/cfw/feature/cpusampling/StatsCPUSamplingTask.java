@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.stats;
+package com.pengtoolbox.cfw.feature.cpusampling;
 
 import java.sql.Timestamp;
 import java.util.HashMap;

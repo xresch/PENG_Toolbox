@@ -1,12 +1,12 @@
-package com.pengtoolbox.cfw.stats;
+package com.pengtoolbox.cfw.feature.cpusampling;
 
 import java.sql.Timestamp;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.db.CFWDB;
+import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSample.StatsCPUSampleFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.stats.StatsCPUSample.StatsCPUSampleFields;
 
 /**************************************************************************************************************
  * 

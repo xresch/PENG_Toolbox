@@ -23,12 +23,13 @@ import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserRoleMap;
 import com.pengtoolbox.cfw.db.usermanagement.Permission;
 import com.pengtoolbox.cfw.db.usermanagement.Role;
 import com.pengtoolbox.cfw.db.usermanagement.User;
+import com.pengtoolbox.cfw.feature.cpusampling.CPUSamplingFeature;
+import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSample;
+import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSampleSignature;
+import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSamplingAggregationTask;
+import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSamplingTask;
 import com.pengtoolbox.cfw.mail.CFWMail;
 import com.pengtoolbox.cfw.schedule.CFWSchedule;
-import com.pengtoolbox.cfw.stats.StatsCPUSample;
-import com.pengtoolbox.cfw.stats.StatsCPUSampleSignature;
-import com.pengtoolbox.cfw.stats.StatsCPUSamplingAggregationTask;
-import com.pengtoolbox.cfw.stats.StatsCPUSamplingTask;
 import com.pengtoolbox.cfw.utils.CFWDump;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 import com.pengtoolbox.cfw.utils.CFWFiles;
@@ -185,7 +186,7 @@ public class CFW {
 	private static void doRegister(CFWAppInterface appToStart) {
 		
 		//---------------------------
-		// Register  
+		// Register Objects 
 		CFW.Registry.Objects.addCFWObject(Configuration.class);
 		CFW.Registry.Objects.addCFWObject(User.class);
 		CFW.Registry.Objects.addCFWObject(Role.class);
@@ -194,9 +195,10 @@ public class CFW {
 		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.RolePermissionMap.class);
 		CFW.Registry.Objects.addCFWObject(SpaceGroup.class);
 		CFW.Registry.Objects.addCFWObject(Space.class);
-		CFW.Registry.Objects.addCFWObject(StatsCPUSampleSignature.class);
-		CFW.Registry.Objects.addCFWObject(StatsCPUSample.class);
 		
+		//---------------------------
+		// Register Features
+		CFW.Registry.Features.addFeature(CPUSamplingFeature.class);		
 
 		//---------------------------
 		// Application Register
@@ -298,13 +300,6 @@ public class CFW {
 	 * @param CFWAppInterface application to start
 	 ***********************************************************************/
 	private static void initializeScheduledTasks(CFWAppInterface appToStart, ArrayList<CFWAppFeature> features) {
-		
-		//---------------------------
-		// CPU Sampling 
-		int seconds = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_SECONDS);
-		ScheduledFuture<?> sampling = CFW.Schedule.runPeriodically(0, seconds, new StatsCPUSamplingTask());
-		
-		ScheduledFuture<?> aggregation = CFW.Schedule.runPeriodically(0, 600, new StatsCPUSamplingAggregationTask());
 		
 		//---------------------------
 		// Feature Initialize

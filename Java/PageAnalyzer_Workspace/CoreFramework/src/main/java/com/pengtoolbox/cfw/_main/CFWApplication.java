@@ -42,6 +42,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import com.pengtoolbox.cfw.api.APILoginServlet;
 import com.pengtoolbox.cfw.api.CFWAPIServlet;
 import com.pengtoolbox.cfw.config.ConfigurationServlet;
+import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSamplingServlet;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
 import com.pengtoolbox.cfw.handlers.HTTPSRedirectHandler;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
@@ -56,8 +57,6 @@ import com.pengtoolbox.cfw.servlets.PermissionsServlet;
 import com.pengtoolbox.cfw.servlets.admin.APIUserMgmtSevlet;
 import com.pengtoolbox.cfw.servlets.admin.UserManagementServlet;
 import com.pengtoolbox.cfw.servlets.userprofile.ChangePasswordServlet;
-import com.pengtoolbox.cfw.stats.ServletStatistics;
-import com.pengtoolbox.cfw.stats.StatsCPUSamplingServlet;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
 /**************************************************************************************************************
@@ -140,7 +139,17 @@ public class CFWApplication {
 	 * 
 	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
 	 **************************************************************************************************/
-	public ServletContextHandler getSecureContext(String relativePath){
+	public ServletContextHandler getSecureContext(){
+		return getSecureContext("/app");
+	}
+	
+	/**************************************************************************************************
+	 * Returns a ServletContextHandler that can be accesses with a prior user login.
+	 * Adds several handlers like gzipHandler, SessionHandler, AuthenticationHandler and RequestHandler.
+	 * 
+	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
+	 **************************************************************************************************/
+	private ServletContextHandler getSecureContext(String relativePath){
         
 		//-------------------------------
         // Check if exists
@@ -164,6 +173,10 @@ public class CFWApplication {
        
         secureContextArray.put(relativePath, secureContext);
         servletContextArray.put(relativePath, servletContext);
+        
+        //Login, Logout and Resource Servlets
+        addCFWServlets(servletContext);
+        
         return servletContext;
 	}
 	
@@ -280,12 +293,9 @@ public class CFWApplication {
 	        servletContextHandler.addServlet(LogoutServlet.class,  "/logout");
 	    }
 	    
-	    
 		//-----------------------------------------
 		// Various Servlets
 	    servletContextHandler.addServlet(CFWAPIServlet.class,  "/api");
-	    servletContextHandler.addServlet(StatsCPUSamplingServlet.class,  "/cpusampling");
-	    servletContextHandler.addServlet(ServletStatistics.class,  "/statistics");
 	    
 		//-----------------------------------------
 		// User Profile Servlets

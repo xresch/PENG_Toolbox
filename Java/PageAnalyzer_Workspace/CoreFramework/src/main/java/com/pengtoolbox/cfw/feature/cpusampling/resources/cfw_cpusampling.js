@@ -351,7 +351,7 @@ function cfw_cpusampling_draw(){
 	window.setTimeout( 
 	function(){
 
-		CFW.http.fetchAndCacheData("./statistics", {type: "cpusampling"}, "cpusampling", cfw_cpusampling_prepareData);
+		CFW.http.fetchAndCacheData("./cpusampling", {action: "fetch", item: "cpusampling"}, "cpusampling", cfw_cpusampling_prepareData);
 		
 		CFW.ui.toogleLoader(false);
 	}, 100);
