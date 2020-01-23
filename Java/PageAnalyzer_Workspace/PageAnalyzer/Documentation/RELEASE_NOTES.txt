@@ -1,4 +1,55 @@
 ################################################################################
+# Page Analyzer v 2.1
+################################################################################
+=== MIGRATION INFORMATION ===
+Problem: 
+  DB Upgrade from H2 v1.4.197 to v1.4.200 causes old database file to be incompatible.
+  
+Solution:
+  If you want to keep your previous data, export it from the older Page Analyzer 
+  version and insert it into the new database manually.
+
+=== CHANGES ===
+- Fixes and Improvements:
+  - Navbar flexible height handled properly
+  - Menu has Icons
+
+- New Features:
+  - Integrated CPU Sampling
+  
+- CFW Framework Improvements: 
+  - Renamed "Group" to "Role"
+  - Started to implement Spaces Feature
+  - Synchonized session propagation
+  - Removed theme "sketchy" as it was to sketchy
+  - Added Themes: slate-edged, warm-soft, warm-edged
+  - Fetch user firstname from LDAP
+  - Fetch user lastname from LDAP
+  - Fetch user mail from LDAP
+  - Added basic mail functionality
+  - Added basic scheduling functionality
+  - Added FormField.TAGS
+  - Added Autocomplete functionality for CFWField
+  - Added Pipeline for parallel processing
+  - Added GSON Serializer for CFWObject and ResultSet
+  - Added CFWDBDefaultOperations
+  - Changed Menu creation to registry style
+  - Added permission check to menu items
+  - Added Features Capability to implement functionality as features
+  - Upgraded h3 to v.1.4.2
+  - CFWSQL: 
+    - added methods for DB migration
+    - added whereArrayContains()
+    - added deleteTop()
+    - added offset()
+    - changed limit() to preparedStatement style
+  - cfw.js: 
+    - Added cfw_filterItems()
+
+  
+  
+  
+################################################################################
 # Page Analyzer v 2.0
 ################################################################################
 === MIGRATION INFORMATION ===
