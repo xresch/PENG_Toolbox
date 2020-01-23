@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.features.api.FeatureAPI;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.features.usermgmt.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -151,7 +152,7 @@ public class PADBResults {
 		
 		if( CFW.Context.Request.getUserPermissions() != null
 			&& ( CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)
-				|| CFW.Context.Request.getUserPermissions().containsKey(Permission.CFW_API))	
+				|| CFW.Context.Request.getUserPermissions().containsKey(FeatureAPI.PERMISSION_CFW_API))	
 			) {
 			Result result = (Result)new Result() 
 					.select(ResultFields.JSON_RESULT.toString())
@@ -198,7 +199,7 @@ public class PADBResults {
 		// Execute
 		if( CFW.Context.Request.getUserPermissions() != null
 			&& ( CFW.Context.Request.getUserPermissions().containsKey(PAPermissions.MANAGE_RESULTS)
-				|| CFW.Context.Request.getUserPermissions().containsKey(Permission.CFW_API))	
+				|| CFW.Context.Request.getUserPermissions().containsKey(FeatureAPI.PERMISSION_CFW_API))	
 			) {
 			Result result = (Result)new Result() 
 					.select(ResultFields.JSON_HAR_FILE.toString())
