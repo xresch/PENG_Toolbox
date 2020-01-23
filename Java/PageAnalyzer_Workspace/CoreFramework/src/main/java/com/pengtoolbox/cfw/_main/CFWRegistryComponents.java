@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.config.Configuration;
-import com.pengtoolbox.cfw.db.usermanagement.Permission;
+import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
@@ -182,19 +182,6 @@ public class CFWRegistryComponents {
 						.href("./configuration")	
 					);
 					
-			adminMenuItem.addChild(
-					new MenuItem("Manage Users")
-						.faicon("fas fa-users")
-						.addPermission(Permission.CFW_USER_MANAGEMENT)
-						.href("./usermanagement")	
-					);
-					
-			adminMenuItem.addChild(
-					new MenuItem("API")
-						.faicon("fas fa-code")
-						.addPermission(Permission.CFW_API)
-						.href("./api")	
-					);
 								
 			//---------------------------
 			// User Menu
@@ -261,6 +248,8 @@ public class CFWRegistryComponents {
 	public static String dumpMenuItemHierarchy() {
 		return new StringBuilder()
 				.append(dumpMenuItemHierarchy("", regularMenuItems))
+				.append(dumpMenuItemHierarchy("", adminMenuItems))
+				.append(dumpMenuItemHierarchy("", adminMenuItemsCFW))
 				.append(dumpMenuItemHierarchy("", userMenuItems))
 				.toString();
 	}

@@ -7,9 +7,9 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pengtoolbox.cfw.db.usermanagement.Role;
-import com.pengtoolbox.cfw.db.usermanagement.Permission;
-import com.pengtoolbox.cfw.db.usermanagement.User;
+import com.pengtoolbox.cfw.features.usermgmt.Permission;
+import com.pengtoolbox.cfw.features.usermgmt.Role;
+import com.pengtoolbox.cfw.features.usermgmt.User;
 import com.pengtoolbox.cfw.response.AbstractResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;

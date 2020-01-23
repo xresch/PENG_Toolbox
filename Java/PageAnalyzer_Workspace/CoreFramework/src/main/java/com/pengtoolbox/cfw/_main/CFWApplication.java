@@ -39,10 +39,13 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import com.pengtoolbox.cfw.api.APILoginServlet;
-import com.pengtoolbox.cfw.api.CFWAPIServlet;
 import com.pengtoolbox.cfw.config.ConfigurationServlet;
-import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSamplingServlet;
+import com.pengtoolbox.cfw.features.api.ServletAPILogin;
+import com.pengtoolbox.cfw.features.api.ServletAPI;
+import com.pengtoolbox.cfw.features.cpusampling.ServletCPUSampling;
+import com.pengtoolbox.cfw.features.usermgmt.ServletPermissions;
+import com.pengtoolbox.cfw.features.usermgmt.ServletUserManagement;
+import com.pengtoolbox.cfw.features.usermgmt.SevletUserManagementAPI;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
 import com.pengtoolbox.cfw.handlers.HTTPSRedirectHandler;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
@@ -53,9 +56,6 @@ import com.pengtoolbox.cfw.servlets.AutocompleteServlet;
 import com.pengtoolbox.cfw.servlets.FormServlet;
 import com.pengtoolbox.cfw.servlets.JARResourceServlet;
 import com.pengtoolbox.cfw.servlets.LogoutServlet;
-import com.pengtoolbox.cfw.servlets.PermissionsServlet;
-import com.pengtoolbox.cfw.servlets.admin.APIUserMgmtSevlet;
-import com.pengtoolbox.cfw.servlets.admin.UserManagementServlet;
 import com.pengtoolbox.cfw.servlets.userprofile.ChangePasswordServlet;
 import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
@@ -292,11 +292,7 @@ public class CFWApplication {
 	        servletContextHandler.addServlet(LoginServlet.class, "/login");
 	        servletContextHandler.addServlet(LogoutServlet.class,  "/logout");
 	    }
-	    
-		//-----------------------------------------
-		// Various Servlets
-	    servletContextHandler.addServlet(CFWAPIServlet.class,  "/api");
-	    
+	  
 		//-----------------------------------------
 		// User Profile Servlets
 	    servletContextHandler.addServlet(ChangePasswordServlet.class,  "/changepassword");
@@ -304,9 +300,6 @@ public class CFWApplication {
 		//-----------------------------------------
 		// User Management Servlets
 	    servletContextHandler.addServlet(ConfigurationServlet.class,  "/configuration");
-	    servletContextHandler.addServlet(UserManagementServlet.class,  "/usermanagement");
-	    servletContextHandler.addServlet(PermissionsServlet.class,  "/usermanagement/permissions");
-		servletContextHandler.addServlet(APIUserMgmtSevlet.class, "/usermanagement/data"); 
 	    
 	}
 	
@@ -424,7 +417,7 @@ public class CFWApplication {
 		servletContextHandler.setSessionHandler(sessionHandler);
 	    //-----------------------------------------
 	    // CFW Servlets
-	    servletContextHandler.addServlet(APILoginServlet.class,  "/apilogin");
+	    servletContextHandler.addServlet(ServletAPILogin.class,  "/apilogin");
 	    servletContextHandler.addServlet(FormServlet.class,  "/formhandler");
 	    servletContextHandler.addServlet(AutocompleteServlet.class,  "/autocomplete");
 		//-----------------------------------------

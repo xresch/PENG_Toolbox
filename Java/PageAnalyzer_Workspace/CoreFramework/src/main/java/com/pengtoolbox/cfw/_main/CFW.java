@@ -1,13 +1,10 @@
 package com.pengtoolbox.cfw._main;
 
 import java.util.ArrayList;
-import java.util.concurrent.ScheduledFuture;
 
-import com.pengtoolbox.cfw.api.CFWRegistryAPI;
 import com.pengtoolbox.cfw.cli.ArgumentsException;
 import com.pengtoolbox.cfw.cli.CFWCommandLineInterface;
 import com.pengtoolbox.cfw.config.CFWDBConfig;
-import com.pengtoolbox.cfw.config.Configuration;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWRegistryObjects;
 import com.pengtoolbox.cfw.db.CFWDB;
@@ -15,19 +12,15 @@ import com.pengtoolbox.cfw.db.spaces.CFWDBSpace;
 import com.pengtoolbox.cfw.db.spaces.CFWDBSpaceGroup;
 import com.pengtoolbox.cfw.db.spaces.Space;
 import com.pengtoolbox.cfw.db.spaces.SpaceGroup;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBPermission;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBRole;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBRolePermissionMap;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBUser;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBUserRoleMap;
-import com.pengtoolbox.cfw.db.usermanagement.Permission;
-import com.pengtoolbox.cfw.db.usermanagement.Role;
-import com.pengtoolbox.cfw.db.usermanagement.User;
-import com.pengtoolbox.cfw.feature.cpusampling.CPUSamplingFeature;
-import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSample;
-import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSampleSignature;
-import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSamplingAggregationTask;
-import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSamplingTask;
+import com.pengtoolbox.cfw.features.api.CFWRegistryAPI;
+import com.pengtoolbox.cfw.features.api.FeatureAPI;
+import com.pengtoolbox.cfw.features.cpusampling.FeatureCPUSampling;
+import com.pengtoolbox.cfw.features.usermgmt.CFWDBPermission;
+import com.pengtoolbox.cfw.features.usermgmt.CFWDBRole;
+import com.pengtoolbox.cfw.features.usermgmt.CFWDBRolePermissionMap;
+import com.pengtoolbox.cfw.features.usermgmt.CFWDBUser;
+import com.pengtoolbox.cfw.features.usermgmt.CFWDBUserRoleMap;
+import com.pengtoolbox.cfw.features.usermgmt.FeatureUserManagement;
 import com.pengtoolbox.cfw.mail.CFWMail;
 import com.pengtoolbox.cfw.schedule.CFWSchedule;
 import com.pengtoolbox.cfw.utils.CFWDump;
@@ -159,7 +152,10 @@ public class CFW {
 	    // Start Database 	
     	initializeDatabase(appToStart, features);
 		
-
+	    //--------------------------------
+	    // Start Scheduled Tasks
+    	initializeScheduledTasks(appToStart, features);
+    	
 	    //--------------------------------
 	    // Start Application
 		CFWApplication app = new CFWApplication(args);
@@ -169,11 +165,6 @@ public class CFW {
 		}
 		
 		appToStart.startApp(app);
-		
-	    //--------------------------------
-	    // Start Scheduled Tasks
-    	initializeScheduledTasks(appToStart, features);
-    	
 		
 	}
 	
@@ -187,19 +178,15 @@ public class CFW {
 		
 		//---------------------------
 		// Register Objects 
-		CFW.Registry.Objects.addCFWObject(Configuration.class);
-		CFW.Registry.Objects.addCFWObject(User.class);
-		CFW.Registry.Objects.addCFWObject(Role.class);
-		CFW.Registry.Objects.addCFWObject(Permission.class);
-		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.UserRoleMap.class);
-		CFW.Registry.Objects.addCFWObject(com.pengtoolbox.cfw.db.usermanagement.RolePermissionMap.class);
 		CFW.Registry.Objects.addCFWObject(SpaceGroup.class);
 		CFW.Registry.Objects.addCFWObject(Space.class);
 		
 		//---------------------------
 		// Register Features
-		CFW.Registry.Features.addFeature(CPUSamplingFeature.class);		
-
+		CFW.Registry.Features.addFeature(FeatureUserManagement.class);	
+		CFW.Registry.Features.addFeature(FeatureAPI.class);	
+		CFW.Registry.Features.addFeature(FeatureCPUSampling.class);		
+			
 		//---------------------------
 		// Application Register
 		appToStart.register();

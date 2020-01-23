@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.config.Configuration;
-import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSamplingTask;
+import com.pengtoolbox.cfw.features.cpusampling.StatsCPUSamplingTask;
 import com.pengtoolbox.cfw.schedule.CFWScheduledTask;
 import com.pengtoolbox.cfw.tests._master.WebTestMaster;
 

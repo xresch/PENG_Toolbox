@@ -5,10 +5,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.api.APIDefinition;
-import com.pengtoolbox.cfw.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.features.api.APIDefinition;
+import com.pengtoolbox.cfw.features.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.validation.LengthValidator;
 

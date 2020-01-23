@@ -14,7 +14,7 @@ import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.db.usermanagement.Role;
+import com.pengtoolbox.cfw.features.usermgmt.Role;
 import com.pengtoolbox.cfw.tests._master.DBTestMaster;
 
 public class TestCFWObject extends DBTestMaster{

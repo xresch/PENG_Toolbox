@@ -7,9 +7,9 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.db.usermanagement.Role;
-import com.pengtoolbox.cfw.db.usermanagement.Permission;
-import com.pengtoolbox.cfw.db.usermanagement.User;
+import com.pengtoolbox.cfw.features.usermgmt.Permission;
+import com.pengtoolbox.cfw.features.usermgmt.Role;
+import com.pengtoolbox.cfw.features.usermgmt.User;
 import com.pengtoolbox.cfw.tests._master.DBTestMaster;
 import com.pengtoolbox.cfw.utils.CFWEncryption;
 

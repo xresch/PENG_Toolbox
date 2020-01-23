@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.pengtoolbox.cfw.api.APIDefinition;
+import com.pengtoolbox.cfw.features.api.APIDefinition;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************

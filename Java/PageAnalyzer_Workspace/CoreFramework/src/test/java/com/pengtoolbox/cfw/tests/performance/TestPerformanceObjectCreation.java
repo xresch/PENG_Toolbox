@@ -2,8 +2,8 @@ package com.pengtoolbox.cfw.tests.performance;
 
 import com.pengtoolbox.cfw.db.spaces.Space;
 import com.pengtoolbox.cfw.db.spaces.SpaceGroup;
-import com.pengtoolbox.cfw.db.usermanagement.Role;
-import com.pengtoolbox.cfw.db.usermanagement.User;
+import com.pengtoolbox.cfw.features.usermgmt.Role;
+import com.pengtoolbox.cfw.features.usermgmt.User;
 
 public class TestPerformanceObjectCreation {
 

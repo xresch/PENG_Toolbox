@@ -11,8 +11,8 @@ import javax.naming.directory.SearchControls;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWProperties;
-import com.pengtoolbox.cfw.db.usermanagement.User;
-import com.pengtoolbox.cfw.db.usermanagement.User.UserFields;
+import com.pengtoolbox.cfw.features.usermgmt.User;
+import com.pengtoolbox.cfw.features.usermgmt.User.UserFields;
 
 /**************************************************************************************************************
  * 

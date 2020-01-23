@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.db.usermanagement.Permission;
+import com.pengtoolbox.cfw.features.usermgmt.Permission;
 
 /**************************************************************************************************************
  * 

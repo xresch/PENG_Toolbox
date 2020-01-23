@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw.utils.json;
 
 import java.lang.reflect.Type;
+import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -39,7 +40,11 @@ public class SerializerResultSet implements JsonSerializer<ResultSet> {
 						row.add(name, asElement);
 					}else {
 						Object value = resultSet.getObject(i);
-						CFW.JSON.addObject(row, name, value);
+						if(! (value instanceof Clob)) {
+							CFW.JSON.addObject(row, name, value);
+						}else {
+							CFW.JSON.addObject(row, name, resultSet.getString(i));
+						}
 					}
 				}
 				result.add(row);

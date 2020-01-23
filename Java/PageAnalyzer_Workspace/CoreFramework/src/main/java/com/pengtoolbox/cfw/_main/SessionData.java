@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import com.pengtoolbox.cfw.datahandling.CFWForm;
-import com.pengtoolbox.cfw.db.usermanagement.Role;
-import com.pengtoolbox.cfw.db.usermanagement.Permission;
-import com.pengtoolbox.cfw.db.usermanagement.User;
+import com.pengtoolbox.cfw.features.usermgmt.Permission;
+import com.pengtoolbox.cfw.features.usermgmt.Role;
+import com.pengtoolbox.cfw.features.usermgmt.User;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 

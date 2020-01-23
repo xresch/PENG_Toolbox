@@ -6,7 +6,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import com.pengtoolbox.cfw.feature.cpusampling.StatsCPUSamplingTask;
+import com.pengtoolbox.cfw.features.cpusampling.StatsCPUSamplingTask;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class Pipeline<I, O> {

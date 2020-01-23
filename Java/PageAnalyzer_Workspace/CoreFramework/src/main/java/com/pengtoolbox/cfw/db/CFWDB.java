@@ -22,11 +22,11 @@ import org.h2.tools.Server;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFW.Properties;
+import com.pengtoolbox.cfw.features.usermgmt.CFWDBRole;
+import com.pengtoolbox.cfw.features.usermgmt.Permission;
+import com.pengtoolbox.cfw.features.usermgmt.Role;
+import com.pengtoolbox.cfw.features.usermgmt.User;
 import com.pengtoolbox.cfw._main.CFWProperties;
-import com.pengtoolbox.cfw.db.usermanagement.CFWDBRole;
-import com.pengtoolbox.cfw.db.usermanagement.Role;
-import com.pengtoolbox.cfw.db.usermanagement.Permission;
-import com.pengtoolbox.cfw.db.usermanagement.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
