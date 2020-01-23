@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
-import com.pengtoolbox.cfw.config.Configuration;
+import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.AbstractResponse;
 

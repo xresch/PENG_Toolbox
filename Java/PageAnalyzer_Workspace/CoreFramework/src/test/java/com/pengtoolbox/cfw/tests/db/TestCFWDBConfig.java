@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.config.Configuration;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.tests._master.DBTestMaster;
 
 public class TestCFWDBConfig extends DBTestMaster {

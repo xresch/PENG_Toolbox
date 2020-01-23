@@ -5,7 +5,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppFeature;
 import com.pengtoolbox.cfw._main.CFWApplication;
-import com.pengtoolbox.cfw.config.Configuration;
+import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 
 /**************************************************************************************************************
@@ -28,7 +28,6 @@ public class FeatureUserManagement extends CFWAppFeature {
 		
 		//----------------------------------
 		// Register Objects
-		CFW.Registry.Objects.addCFWObject(Configuration.class);
 		CFW.Registry.Objects.addCFWObject(User.class);
 		CFW.Registry.Objects.addCFWObject(Role.class);
 		CFW.Registry.Objects.addCFWObject(Permission.class);

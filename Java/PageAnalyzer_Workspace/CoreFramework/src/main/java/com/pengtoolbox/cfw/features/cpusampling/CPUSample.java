@@ -19,7 +19,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
  * @author Reto Scheiwiller, � 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class StatsCPUSample extends CFWObject {
+public class CPUSample extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_STATS_CPUSAMPLE";
 	
@@ -36,7 +36,7 @@ public class StatsCPUSample extends CFWObject {
 		MAX,
 	}
 
-	private static Logger logger = CFWLog.getLogger(StatsCPUSample.class.getName());
+	private static Logger logger = CFWLog.getLogger(CPUSample.class.getName());
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.NONE, StatsCPUSampleFields.PK_ID.toString())
 			.setPrimaryKeyAutoIncrement(this)
@@ -49,13 +49,13 @@ public class StatsCPUSample extends CFWObject {
 			.setValue(new Timestamp(new Date().getTime()));
 	
 	private CFWField<Integer> foreignKeySignature = CFWField.newInteger(FormFieldType.NONE, StatsCPUSampleFields.FK_ID_SIGNATURE)
-			.setForeignKeyCascade(this, StatsCPUSampleSignature.class, StatsCPUSampleFields.PK_ID)
+			.setForeignKeyCascade(this, CPUSampleSignature.class, StatsCPUSampleFields.PK_ID)
 			.setDescription("The id of the method signature.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(null);
 	
 	private CFWField<Integer> foreignKeyParent = CFWField.newInteger(FormFieldType.NONE, StatsCPUSampleFields.FK_ID_PARENT)
-			.setForeignKeyCascade(this, StatsCPUSampleSignature.class, StatsCPUSampleFields.PK_ID)
+			.setForeignKeyCascade(this, CPUSampleSignature.class, StatsCPUSampleFields.PK_ID)
 			.setDescription("The id of the parent method signature.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(null);
@@ -86,11 +86,11 @@ public class StatsCPUSample extends CFWObject {
 			.setValue(null);
 	
 	
-	public StatsCPUSample() {
+	public CPUSample() {
 		initializeFields();
 	}
 		
-	public StatsCPUSample(ResultSet result) throws SQLException {
+	public CPUSample(ResultSet result) throws SQLException {
 		initializeFields();
 		this.mapResultSet(result);	
 	}
@@ -169,7 +169,7 @@ public class StatsCPUSample extends CFWObject {
 		return id.getValue();
 	}
 	
-	public StatsCPUSample id(int id) {
+	public CPUSample id(int id) {
 		this.id.setValue(id);
 		return this;
 	}
@@ -178,7 +178,7 @@ public class StatsCPUSample extends CFWObject {
 		return time.getValue();
 	}
 	
-	public StatsCPUSample time(Timestamp time) {
+	public CPUSample time(Timestamp time) {
 		this.time.setValue(time);
 		return this;
 	}
@@ -187,7 +187,7 @@ public class StatsCPUSample extends CFWObject {
 		return foreignKeySignature.getValue();
 	}
 	
-	public StatsCPUSample foreignKeySignature(Integer foreignKeySignature) {
+	public CPUSample foreignKeySignature(Integer foreignKeySignature) {
 		this.foreignKeySignature.setValue(foreignKeySignature);
 		return this;
 	}
@@ -196,7 +196,7 @@ public class StatsCPUSample extends CFWObject {
 		return foreignKeyParent.getValue();
 	}
 	
-	public StatsCPUSample foreignKeyParent(Integer foreignKeyParent) {
+	public CPUSample foreignKeyParent(Integer foreignKeyParent) {
 		this.foreignKeyParent.setValue(foreignKeyParent);
 		return this;
 	}
@@ -205,18 +205,18 @@ public class StatsCPUSample extends CFWObject {
 		return count.getValue();
 	}
 	
-	public StatsCPUSample count(int count) {
+	public CPUSample count(int count) {
 		this.count.setValue(count);
 		return this;
 	}
 	
-	public StatsCPUSample increaseCount() {
+	public CPUSample increaseCount() {
 		this.count.setValue(count.getValue()+1);
 		return this;
 	}
 	
 	//
-	public StatsCPUSample prepareStatistics(int collectionIntervalSeconds) {
+	public CPUSample prepareStatistics(int collectionIntervalSeconds) {
 		int computedCount = count.getValue() * collectionIntervalSeconds;
 		this.count.setValue(computedCount);
 		this.min.setValue(computedCount);
@@ -228,7 +228,7 @@ public class StatsCPUSample extends CFWObject {
 		return granularity.getValue();
 	}
 	
-	public StatsCPUSample granularity(int granularity) {
+	public CPUSample granularity(int granularity) {
 		this.granularity.setValue(granularity);
 		return this;
 	}

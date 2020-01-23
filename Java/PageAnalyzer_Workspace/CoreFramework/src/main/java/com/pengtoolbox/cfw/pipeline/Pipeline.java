@@ -6,11 +6,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import com.pengtoolbox.cfw.features.cpusampling.StatsCPUSamplingTask;
+import com.pengtoolbox.cfw.features.cpusampling.TaskCPUSampling;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class Pipeline<I, O> {
-	private static Logger logger = CFWLog.getLogger(StatsCPUSamplingTask.class.getName());
+	private static Logger logger = CFWLog.getLogger(TaskCPUSampling.class.getName());
 	
 	protected ArrayList<PipelineAction> actionArray = new ArrayList<PipelineAction>();
 	protected ArrayList<LinkedBlockingQueue<?>> queues = new ArrayList<LinkedBlockingQueue<?>>();

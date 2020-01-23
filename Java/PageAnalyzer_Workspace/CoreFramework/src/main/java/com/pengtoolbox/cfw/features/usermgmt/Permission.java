@@ -23,9 +23,8 @@ import com.pengtoolbox.cfw.validation.LengthValidator;
 public class Permission extends CFWObject{
 	
 	public static final String TABLE_NAME = "CFW_PERMISSION";
-	public static final String CFW_CONFIG_MANAGEMENT = "Configuration Management";
 	public static final String CFW_USER_MANAGEMENT = "User Management";
-	public static final String CFW_VIEW_STATISTICS = "View Statistics";
+
 	enum PermissionFields{
 		PK_ID, 
 		CATEGORY,
@@ -126,6 +125,8 @@ public class Permission extends CFWObject{
 	 **************************************************************************************/
 	public void initDBSecond() {
 		
+		Role adminRole = CFW.DB.Roles.selectFirstByName(CFW.DB.Roles.CFW_ROLE_ADMIN);
+		
 		//-----------------------------------------
 		// User Management
 		//-----------------------------------------
@@ -136,47 +137,11 @@ public class Permission extends CFWObject{
 			);
 			
 			Permission userManagement = CFW.DB.Permissions.selectByName(Permission.CFW_USER_MANAGEMENT);
-			
+			CFW.DB.RolePermissionMap.addPermissionToRole(userManagement, adminRole, true);
 			if(userManagement == null) {
 				new CFWLog(logger)
 				.method("createDefaultPermissions")
 				.severe("User permission '"+Permission.CFW_USER_MANAGEMENT+"' was not found in the database.");
-			}
-		}
-		
-		//-----------------------------------------
-		// Config Management
-		//-----------------------------------------
-		if(!CFW.DB.Permissions.checkExistsByName(Permission.CFW_CONFIG_MANAGEMENT)) {
-			CFW.DB.Permissions.create(new Permission(Permission.CFW_CONFIG_MANAGEMENT, "user")
-				.description("Gives the user the ability to view and update the configurations in the database.")
-				.isDeletable(false)
-			);
-			
-			Permission userManagement = CFW.DB.Permissions.selectByName(Permission.CFW_CONFIG_MANAGEMENT);
-			
-			if(userManagement == null) {
-				new CFWLog(logger)
-				.method("createDefaultPermissions")
-				.severe("User permission '"+Permission.CFW_CONFIG_MANAGEMENT+"' was not found in the database.");
-			}
-		}
-		
-		//-----------------------------------------
-		// Statistics
-		//-----------------------------------------
-		if(!CFW.DB.Permissions.checkExistsByName(Permission.CFW_VIEW_STATISTICS)) {
-			CFW.DB.Permissions.create(new Permission(Permission.CFW_VIEW_STATISTICS, "user")
-				.description("User can view and analyze the application statistics.")
-				.isDeletable(false)
-			);
-			
-			Permission statsPermission = CFW.DB.Permissions.selectByName(Permission.CFW_VIEW_STATISTICS);
-			
-			if(statsPermission == null) {
-				new CFWLog(logger)
-				.method("createDefaultPermissions")
-				.severe("User permission '"+Permission.CFW_VIEW_STATISTICS+"' was not found in the database.");
 			}
 		}
 	}

@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.config.Configuration;
-import com.pengtoolbox.cfw.features.cpusampling.StatsCPUSamplingTask;
+import com.pengtoolbox.cfw.features.config.Configuration;
+import com.pengtoolbox.cfw.features.cpusampling.TaskCPUSampling;
 import com.pengtoolbox.cfw.schedule.CFWScheduledTask;
 import com.pengtoolbox.cfw.tests._master.WebTestMaster;
 
@@ -95,7 +95,7 @@ public class TestSchedule extends WebTestMaster {
 		
 		int seconds = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_SECONDS);
 		
-		ScheduledFuture<?> future = CFW.Schedule.runPeriodically(0, seconds, new StatsCPUSamplingTask());
+		ScheduledFuture<?> future = CFW.Schedule.runPeriodically(0, seconds, new TaskCPUSampling());
 
 		ScheduledFuture<?> terminator = CFW.Schedule.runPeriodically(20000, 1, new CFWScheduledTask() {
 			@Override

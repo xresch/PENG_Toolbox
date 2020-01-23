@@ -19,7 +19,7 @@ import com.pengtoolbox.cfw.validation.LengthValidator;
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class StatsCPUSampleSignature extends CFWObject {
+public class CPUSampleSignature extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_STATS_CPUSAMPLE_SIGNATURE";
 	
@@ -28,7 +28,7 @@ public class StatsCPUSampleSignature extends CFWObject {
 		SIGNATURE
 	}
 
-	private static Logger logger = CFWLog.getLogger(StatsCPUSampleSignature.class.getName());
+	private static Logger logger = CFWLog.getLogger(CPUSampleSignature.class.getName());
 	
 	private CFWField<Integer> id = CFWField.newInteger(FormFieldType.HIDDEN, CPUSampleSignatureFields.PK_ID.toString())
 			.setPrimaryKeyAutoIncrement(this)
@@ -41,16 +41,16 @@ public class StatsCPUSampleSignature extends CFWObject {
 			.setDescription("The signature of the method.")
 			.addValidator(new LengthValidator(0, 255));
 	
-	public StatsCPUSampleSignature() {
+	public CPUSampleSignature() {
 		initializeFields();
 	}
 	
-	public StatsCPUSampleSignature(String name) {
+	public CPUSampleSignature(String name) {
 		initializeFields();
 		this.signature.setValue(name);
 	}
 	
-	public StatsCPUSampleSignature(ResultSet result) throws SQLException {
+	public CPUSampleSignature(ResultSet result) throws SQLException {
 		initializeFields();
 		this.mapResultSet(result);	
 	}
@@ -114,7 +114,7 @@ public class StatsCPUSampleSignature extends CFWObject {
 		return id.getValue();
 	}
 	
-	public StatsCPUSampleSignature id(int id) {
+	public CPUSampleSignature id(int id) {
 		this.id.setValue(id);
 		return this;
 	}
@@ -123,7 +123,7 @@ public class StatsCPUSampleSignature extends CFWObject {
 		return signature.getValue();
 	}
 	
-	public StatsCPUSampleSignature signature(String signature) {
+	public CPUSampleSignature signature(String signature) {
 		this.signature.setValue(signature);
 		return this;
 	}

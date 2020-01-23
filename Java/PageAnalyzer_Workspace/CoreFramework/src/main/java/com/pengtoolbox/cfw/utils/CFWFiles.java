@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.config.Configuration;
+import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************

@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.db.CFWDB;
-import com.pengtoolbox.cfw.features.cpusampling.StatsCPUSample.StatsCPUSampleFields;
+import com.pengtoolbox.cfw.features.cpusampling.CPUSample.StatsCPUSampleFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
@@ -12,9 +12,9 @@ import com.pengtoolbox.cfw.logging.CFWLog;
  * @author Reto Scheiwiller, � 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class CFWDBStatsCPUSample {
+public class CFWDBCPUSample {
 	
-	public static Logger logger = CFWLog.getLogger(CFWDBStatsCPUSample.class.getName());
+	public static Logger logger = CFWLog.getLogger(CFWDBCPUSample.class.getName());
 		
 	/********************************************************************************************
 	 * Creates a new cpuSample in the DB and returns it's primary key.
@@ -22,7 +22,7 @@ public class CFWDBStatsCPUSample {
 	 * @return id or null if not successful
 	 * 
 	 ********************************************************************************************/
-	public static Integer insertGetID(StatsCPUSample cpuSample) {
+	public static Integer insertGetID(CPUSample cpuSample) {
 		
 		if(cpuSample == null) {
 			new CFWLog(logger)
@@ -32,7 +32,7 @@ public class CFWDBStatsCPUSample {
 		}
 
 		return cpuSample
-				.queryCache(CFWDBStatsCPUSample.class, "create")
+				.queryCache(CFWDBCPUSample.class, "create")
 				.insertGetPrimaryKey();
 	}
 	
@@ -42,10 +42,10 @@ public class CFWDBStatsCPUSample {
 	 * @param id of the cpuSample
 	 * @return Returns a cpuSample or null if not found or in case of exception.
 	 ****************************************************************/
-	public static StatsCPUSample selectByID(int id ) {
+	public static CPUSample selectByID(int id ) {
 
-		return (StatsCPUSample)new StatsCPUSample()
-				.queryCache(CFWDBStatsCPUSample.class, "selectByID")
+		return (CPUSample)new CPUSample()
+				.queryCache(CFWDBCPUSample.class, "selectByID")
 				.select()
 				.where(StatsCPUSampleFields.PK_ID.toString(), id)
 				.getFirstObject();
@@ -60,8 +60,8 @@ public class CFWDBStatsCPUSample {
 	 ****************************************************************/
 	public static Timestamp getOldestAgedRecord(int granularity, Timestamp ageOutTime  ) {
 
-		StatsCPUSample first =(StatsCPUSample)new StatsCPUSample()
-				.queryCache(CFWDBStatsCPUSample.class, "getOldestAgedRecord")
+		CPUSample first =(CPUSample)new CPUSample()
+				.queryCache(CFWDBCPUSample.class, "getOldestAgedRecord")
 				.select()
 				.custom("WHERE GRANULARITY < ?", granularity)
 				.custom("AND TIME <= ?", ageOutTime)
@@ -86,8 +86,8 @@ public class CFWDBStatsCPUSample {
 	 ****************************************************************/
 	public static Timestamp getYoungestAgedRecord(int granularity, Timestamp ageOutTime ) {
 
-		StatsCPUSample first =(StatsCPUSample)new StatsCPUSample()
-				.queryCache(CFWDBStatsCPUSample.class, "getYoungestAgedRecord")
+		CPUSample first =(CPUSample)new CPUSample()
+				.queryCache(CFWDBCPUSample.class, "getYoungestAgedRecord")
 				.select()
 				.custom(" WHERE GRANULARITY < ? ", granularity)
 				.custom(" AND TIME <= ? ", ageOutTime)
@@ -110,10 +110,10 @@ public class CFWDBStatsCPUSample {
 	 * @return Returns a result set with all users or null.
 	 ****************************************************************/
 	public static String getLatestAsJSON() {
-		return new StatsCPUSample()
-				.queryCache(CFWDBStatsCPUSample.class, "getLatestAsJSON")
+		return new CPUSample()
+				.queryCache(CFWDBCPUSample.class, "getLatestAsJSON")
 				.select()
-				.custom(" WHERE time = (SELECT MAX(time) FROM "+StatsCPUSample.TABLE_NAME+" )")
+				.custom(" WHERE time = (SELECT MAX(time) FROM "+CPUSample.TABLE_NAME+" )")
 				.getAsJSON();
 	}
 	
@@ -139,8 +139,8 @@ public class CFWDBStatsCPUSample {
 		int cacheCounter = 0;
 		//--------------------------------------------
 		// Check if there is anything to aggregate
-		int count =  new StatsCPUSample()
-				.queryCache(CFWDBStatsCPUSample.class, "aggregateStatistics"+(cacheCounter++))
+		int count =  new CPUSample()
+				.queryCache(CFWDBCPUSample.class, "aggregateStatistics"+(cacheCounter++))
 				.selectCount() 
 				.custom(" WHERE TIME >= ?" + 
 						" AND TIME < ?" + 
@@ -155,15 +155,15 @@ public class CFWDBStatsCPUSample {
 		
 		//--------------------------------------------
 		// Start Aggregation
-		new StatsCPUSample()
-				.queryCache(CFWDBStatsCPUSample.class, "aggregateStatistics"+(cacheCounter++))
+		new CPUSample()
+				.queryCache(CFWDBCPUSample.class, "aggregateStatistics"+(cacheCounter++))
 				.custom("CREATE TEMP TABLE" + 
 						" IF NOT EXISTS CFW_STATS_CPUSAMPLE_AGGREGATION" + 
 						" (TIME TIMESTAMP, FK_ID_SIGNATURE INT, FK_ID_PARENT INT , COUNT INT, MIN INT, AVG INT, MAX INT, GRANULARITY INT);")
 				.execute();
 		
-		success &=  new StatsCPUSample()
-				.queryCache(CFWDBStatsCPUSample.class, "aggregateStatistics"+(cacheCounter++))
+		success &=  new CPUSample()
+				.queryCache(CFWDBCPUSample.class, "aggregateStatistics"+(cacheCounter++))
 				.custom("INSERT INTO CFW_STATS_CPUSAMPLE_AGGREGATION" + 
 						" SELECT (" + 
 						"		DATEADD(" + 
@@ -181,8 +181,8 @@ public class CFWDBStatsCPUSample {
 				.execute();
 		System.out.println("CreateAggregation: "+success);
 		
-		success &=  new StatsCPUSample()
-				.queryCache(CFWDBStatsCPUSample.class, "aggregateStatistics"+(cacheCounter++))
+		success &=  new CPUSample()
+				.queryCache(CFWDBCPUSample.class, "aggregateStatistics"+(cacheCounter++))
 				.custom("DELETE FROM CFW_STATS_CPUSAMPLE" + 
 						" WHERE TIME >= ?" + 
 						" AND TIME < ?" + 
@@ -192,15 +192,15 @@ public class CFWDBStatsCPUSample {
 		System.out.println("Delete: "+success);
 		
 		
-		success &=  new StatsCPUSample()
-				.queryCache(CFWDBStatsCPUSample.class, "aggregateStatistics"+(cacheCounter++))
+		success &=  new CPUSample()
+				.queryCache(CFWDBCPUSample.class, "aggregateStatistics"+(cacheCounter++))
 				.custom(" INSERT INTO CFW_STATS_CPUSAMPLE (TIME, FK_ID_SIGNATURE, FK_ID_PARENT,  COUNT, MIN, AVG, MAX, GRANULARITY)" + 
 						" SELECT * FROM CFW_STATS_CPUSAMPLE_AGGREGATION;")
 				.execute();
 		
 		System.out.println("Insert: "+success);
-		success &=  new StatsCPUSample()
-				.queryCache(CFWDBStatsCPUSample.class, "aggregateStatistics"+(cacheCounter++))
+		success &=  new CPUSample()
+				.queryCache(CFWDBCPUSample.class, "aggregateStatistics"+(cacheCounter++))
 				.custom("DELETE FROM CFW_STATS_CPUSAMPLE_AGGREGATION;\r\n")
 				.execute();
 		
@@ -223,8 +223,8 @@ public class CFWDBStatsCPUSample {
 	 ****************************************************************/
 	public static boolean deleteByID(int id) {
 				
-		return new StatsCPUSample()
-				.queryCache(CFWDBStatsCPUSample.class, "deleteByID")
+		return new CPUSample()
+				.queryCache(CFWDBCPUSample.class, "deleteByID")
 				.delete()
 				.where(StatsCPUSampleFields.PK_ID.toString(), id)
 				.executeDelete();

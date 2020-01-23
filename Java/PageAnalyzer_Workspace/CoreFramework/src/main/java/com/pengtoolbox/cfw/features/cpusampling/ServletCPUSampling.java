@@ -37,7 +37,7 @@ public class ServletCPUSampling extends HttpServlet
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
 
-		if(CFW.Context.Request.hasPermission(Permission.CFW_VIEW_STATISTICS)) {
+		if(CFW.Context.Request.hasPermission(FeatureCPUSampling.PERMISSION_CPU_SAMPlING)) {
 			
 			String action = request.getParameter("action");
 			
@@ -98,10 +98,10 @@ public class ServletCPUSampling extends HttpServlet
 		
 		JsonObject payload = new JsonObject();
 		
-		if( CFW.Context.Request.hasPermission(Permission.CFW_VIEW_STATISTICS) ) {
+		if( CFW.Context.Request.hasPermission(FeatureCPUSampling.PERMISSION_CPU_SAMPlING) ) {
 
-			String signatures = CFWDBStatsCPUSampleSignature.getSignatureListAsJSON();
-			String timeseries =  CFWDBStatsCPUSample.getLatestAsJSON();
+			String signatures = CFWDBCPUSampleSignature.getSignatureListAsJSON();
+			String timeseries =  CFWDBCPUSample.getLatestAsJSON();
 			
 			jsonResponse.getContent()
 				.append("{\"signatures\": ").append(signatures)

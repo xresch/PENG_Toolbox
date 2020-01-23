@@ -8,21 +8,21 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.config.Configuration;
 import com.pengtoolbox.cfw.db.CFWDB;
+import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.schedule.CFWScheduledTask;
 
-public class StatsCPUSamplingTask extends CFWScheduledTask {
+public class TaskCPUSampling extends CFWScheduledTask {
 	
 	private static long lastSave = System.currentTimeMillis();
-	private static Logger logger = CFWLog.getLogger(StatsCPUSamplingTask.class.getName());
+	private static Logger logger = CFWLog.getLogger(TaskCPUSampling.class.getName());
 	
 	// Contains "parentID -> signatureID" as key and the number of occurences as value.
-	private static LinkedHashMap<String, StatsCPUSample> counterMap = new LinkedHashMap<String, StatsCPUSample>();
+	private static LinkedHashMap<String, CPUSample> counterMap = new LinkedHashMap<String, CPUSample>();
 	
 	// Contains the stack element signature with ID as in the DB
-	private static HashMap<Object, Object> signatureIDMap = CFWDBStatsCPUSampleSignature.getSignaturesAsKeyValueMap();
+	private static HashMap<Object, Object> signatureIDMap = CFWDBCPUSampleSignature.getSignaturesAsKeyValueMap();
 	private static int samplingSeconds = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_SECONDS);
 	
 	@Override
@@ -56,7 +56,7 @@ public class StatsCPUSamplingTask extends CFWScheduledTask {
 		int periodMinutes = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_AGGREGATION);
 		
 		CFWDB.beginTransaction();
-			for(StatsCPUSample entry : counterMap.values()) {
+			for(CPUSample entry : counterMap.values()) {
 				if(entry.count() != 0) {
 					if(entry.time(time)
 					  .prepareStatistics(samplingSeconds)
@@ -93,7 +93,7 @@ public class StatsCPUSamplingTask extends CFWScheduledTask {
 				// Create DB entry for Signature if not exists
 				if(!signatureIDMap.containsKey(signatureString)) {
 					
-					signatureID = new StatsCPUSampleSignature()
+					signatureID = new CPUSampleSignature()
 							.signature(signatureString)
 							.insertGetPrimaryKey();
 					
@@ -119,7 +119,7 @@ public class StatsCPUSamplingTask extends CFWScheduledTask {
 															
 					//---------------------------------------
 					// Add counter to map
-					StatsCPUSample  methodStats = new StatsCPUSample()
+					CPUSample  methodStats = new CPUSample()
 							.foreignKeySignature(signatureID)
 							.foreignKeyParent(parentID)
 							.count(1);
@@ -137,7 +137,7 @@ public class StatsCPUSamplingTask extends CFWScheduledTask {
 	public static String dumpCounters() {
 		
 		StringBuilder builder = new StringBuilder();
-		for(Entry<String, StatsCPUSample> entry : counterMap.entrySet()) {
+		for(Entry<String, CPUSample> entry : counterMap.entrySet()) {
 			builder.append(entry.getKey()).append(": ").append(entry.getValue().count()).append("\n");
 		}
 		

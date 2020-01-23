@@ -3,7 +3,7 @@ package com.pengtoolbox.cfw._main;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
-import com.pengtoolbox.cfw.config.Configuration;
+import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
@@ -157,48 +157,42 @@ public class CFWRegistryComponents {
 			
 			//---------------------------
 			// Admin Menu
-			MenuItem adminMenuItem = new MenuItem("Admin").faicon("fas fa-tools");	
-			menu.addChild(adminMenuItem);
+			MenuItem adminParentMenu = new MenuItem("Admin").faicon("fas fa-tools");	
+			menu.addChild(adminParentMenu);
 			
 			for(MenuItem item : adminMenuItems.values() ) {
-				adminMenuItem.addChild(item.createCopy());
+				adminParentMenu.addChild(item.createCopy());
 			}
 
 			if(adminMenuItems.size() > 0) {
-				adminMenuItem.addChild(new MenuItemDivider());
+				adminParentMenu.addChild(new MenuItemDivider());
 			}
 			
 			//---------------------------
 			// Admin Menu Items CFW
 			
 			for(MenuItem item : adminMenuItemsCFW.values() ) {
-				adminMenuItem.addChild(item.createCopy());
+				adminParentMenu.addChild(item.createCopy());
 			}
-			
-			adminMenuItem.addChild(
-					new MenuItem("Configuration")
-						.faicon("fas fa-cog")
-						.addPermission(Permission.CFW_CONFIG_MANAGEMENT)
-						.href("./configuration")	
-					);
-					
-								
+						
 			//---------------------------
 			// User Menu
-			UserMenuItem userMenuItem = new UserMenuItem(CFW.Context.Session.getSessionData());	
-			menu.setUserMenuItem(userMenuItem);
+			UserMenuItem userParentMenu = new UserMenuItem(CFW.Context.Session.getSessionData());	
+			menu.setUserMenuItem(userParentMenu);
 			
 			for(MenuItem item : userMenuItems.values() ) {
-				userMenuItem.addChild(item.createCopy());
+				userParentMenu.addChild(item.createCopy());
 			}
 			
-
+			if(userMenuItems.size() > 0) {
+				userParentMenu.addChild(new MenuItemDivider());
+			}
+		
 			if(!CFW.Context.Request.getUser().isForeign()) {
-				userMenuItem.addChild(new MenuItem("Change Password").faicon("fas fa-key").href("./changepassword"));
+				userParentMenu.addChild(new MenuItem("Change Password").faicon("fas fa-key").href("./changepassword"));
 			}
 			
-
-			userMenuItem.addChild(new MenuItem("Logout").faicon("fas fa-sign-out-alt").href("./logout"));
+			userParentMenu.addChild(new MenuItem("Logout").faicon("fas fa-sign-out-alt").href("./logout"));
 			
 		}
 		return menu;

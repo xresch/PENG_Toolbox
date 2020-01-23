@@ -39,8 +39,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import com.pengtoolbox.cfw.config.ConfigurationServlet;
 import com.pengtoolbox.cfw.features.api.ServletAPILogin;
+import com.pengtoolbox.cfw.features.config.ServletConfiguration;
 import com.pengtoolbox.cfw.features.api.ServletAPI;
 import com.pengtoolbox.cfw.features.cpusampling.ServletCPUSampling;
 import com.pengtoolbox.cfw.features.usermgmt.ServletPermissions;
@@ -296,11 +296,7 @@ public class CFWApplication {
 		//-----------------------------------------
 		// User Profile Servlets
 	    servletContextHandler.addServlet(ChangePasswordServlet.class,  "/changepassword");
-	    
-		//-----------------------------------------
-		// User Management Servlets
-	    servletContextHandler.addServlet(ConfigurationServlet.class,  "/configuration");
-	    
+	    	    
 	}
 	
 	/**************************************************************************************************

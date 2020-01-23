@@ -4,13 +4,13 @@ import java.sql.Timestamp;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.config.Configuration;
+import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.schedule.CFWScheduledTask;
 
-public class StatsCPUSamplingAggregationTask extends CFWScheduledTask {
+public class TaskCPUSamplingAggregation extends CFWScheduledTask {
 	
-	private static Logger logger = CFWLog.getLogger(StatsCPUSamplingAggregationTask.class.getName());
+	private static Logger logger = CFWLog.getLogger(TaskCPUSamplingAggregation.class.getName());
 
 	
 	public void execute() {
@@ -30,8 +30,8 @@ public class StatsCPUSamplingAggregationTask extends CFWScheduledTask {
 			
 			//--------------------------
 			// Get timespan 
-			Timestamp oldest = CFWDBStatsCPUSample.getOldestAgedRecord(granularity, ageOutTime);
-			Timestamp youngest = CFWDBStatsCPUSample.getYoungestAgedRecord(granularity, ageOutTime);
+			Timestamp oldest = CFWDBCPUSample.getOldestAgedRecord(granularity, ageOutTime);
+			Timestamp youngest = CFWDBCPUSample.getYoungestAgedRecord(granularity, ageOutTime);
 //			System.out.println("=========================================");
 //			System.out.println("granularity:"+granularity);
 //			System.out.println("oldest:"+oldest);
@@ -55,7 +55,7 @@ public class StatsCPUSamplingAggregationTask extends CFWScheduledTask {
 //				System.out.println("---------- Aggregate ----------");
 //				System.out.println("startTime:"+startTime.toString());
 //				System.out.println("endTime:"+endTime.toString());
-				boolean success = CFWDBStatsCPUSample.aggregateStatistics(startTime, endTime, granularity);
+				boolean success = CFWDBCPUSample.aggregateStatistics(startTime, endTime, granularity);
 				startTime =  CFW.Time.offsetTimestamp(startTime, 0, 0, 0, granularity);
 				endTime = CFW.Time.offsetTimestamp(endTime, 0, 0, 0, granularity);
 //				System.out.println("success: "+success);

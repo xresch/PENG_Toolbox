@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.config;
+package com.pengtoolbox.cfw.features.config;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

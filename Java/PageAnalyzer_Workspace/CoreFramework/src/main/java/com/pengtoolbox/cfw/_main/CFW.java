@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.pengtoolbox.cfw.cli.ArgumentsException;
 import com.pengtoolbox.cfw.cli.CFWCommandLineInterface;
-import com.pengtoolbox.cfw.config.CFWDBConfig;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWRegistryObjects;
 import com.pengtoolbox.cfw.db.CFWDB;
@@ -14,6 +13,8 @@ import com.pengtoolbox.cfw.db.spaces.Space;
 import com.pengtoolbox.cfw.db.spaces.SpaceGroup;
 import com.pengtoolbox.cfw.features.api.CFWRegistryAPI;
 import com.pengtoolbox.cfw.features.api.FeatureAPI;
+import com.pengtoolbox.cfw.features.config.CFWDBConfig;
+import com.pengtoolbox.cfw.features.config.FeatureConfiguration;
 import com.pengtoolbox.cfw.features.cpusampling.FeatureCPUSampling;
 import com.pengtoolbox.cfw.features.usermgmt.CFWDBPermission;
 import com.pengtoolbox.cfw.features.usermgmt.CFWDBRole;
@@ -183,6 +184,7 @@ public class CFW {
 		
 		//---------------------------
 		// Register Features
+		CFW.Registry.Features.addFeature(FeatureConfiguration.class);	
 		CFW.Registry.Features.addFeature(FeatureUserManagement.class);	
 		CFW.Registry.Features.addFeature(FeatureAPI.class);	
 		CFW.Registry.Features.addFeature(FeatureCPUSampling.class);		
@@ -253,6 +255,7 @@ public class CFW {
     			
     		}
     	}
+    	
     	for(CFWObject object : objectArray) {
     		if(object.getTableName() != null) {
     			object.initDBSecond();

@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
-import com.pengtoolbox.cfw.config.Configuration;
+import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 import com.pengtoolbox.cfw.tests.assets.servlets.FormTestServlet;

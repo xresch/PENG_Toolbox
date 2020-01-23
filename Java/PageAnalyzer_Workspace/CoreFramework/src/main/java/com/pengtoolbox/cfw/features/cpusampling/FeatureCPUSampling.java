@@ -7,7 +7,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppFeature;
 import com.pengtoolbox.cfw._main.CFWApplication;
-import com.pengtoolbox.cfw.config.Configuration;
+import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.features.usermgmt.Role;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
@@ -31,8 +31,8 @@ public class FeatureCPUSampling extends CFWAppFeature {
 		CFW.Files.addAllowedPackage(RESOURCE_PACKAGE);
 		//----------------------------------
 		// Register Objects
-		CFW.Registry.Objects.addCFWObject(StatsCPUSampleSignature.class);
-		CFW.Registry.Objects.addCFWObject(StatsCPUSample.class);
+		CFW.Registry.Objects.addCFWObject(CPUSampleSignature.class);
+		CFW.Registry.Objects.addCFWObject(CPUSample.class);
     	
     	//----------------------------------
     	// Register Regular Menu
@@ -79,8 +79,8 @@ public class FeatureCPUSampling extends CFWAppFeature {
 	public void startTasks() {
 
 		int seconds = CFW.DB.Config.getConfigAsInt(Configuration.CPU_SAMPLING_SECONDS);
-		ScheduledFuture<?> sampling = CFW.Schedule.runPeriodically(0, seconds, new StatsCPUSamplingTask());
-		ScheduledFuture<?> aggregation = CFW.Schedule.runPeriodically(0, 600, new StatsCPUSamplingAggregationTask());
+		ScheduledFuture<?> sampling = CFW.Schedule.runPeriodically(0, seconds, new TaskCPUSampling());
+		ScheduledFuture<?> aggregation = CFW.Schedule.runPeriodically(0, 600, new TaskCPUSamplingAggregation());
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.config;
+package com.pengtoolbox.cfw.features.config;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,14 +26,14 @@ import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class ConfigurationServlet extends HttpServlet
+public class ServletConfiguration extends HttpServlet
 {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = CFWLog.getLogger(ConfigurationServlet.class.getName());
+	private static Logger logger = CFWLog.getLogger(ServletConfiguration.class.getName());
 	
-	public ConfigurationServlet() {
+	public ServletConfiguration() {
 	
 	}
 	
@@ -51,7 +51,7 @@ public class ConfigurationServlet extends HttpServlet
 		
 		StringBuffer content = html.getContent();
 		
-		if(CFW.Context.Request.hasPermission(Permission.CFW_CONFIG_MANAGEMENT)) {
+		if(CFW.Context.Request.hasPermission(FeatureConfiguration.PERMISSION_CONFIGURATION)) {
 			
 			content.append("<h1>Configuration Management</h1>");
 			
