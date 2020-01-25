@@ -96,8 +96,6 @@ public class ServletCPUSampling extends HttpServlet
 	 *************************************************************************************/
 	private static void getCPUSampling(JSONResponse jsonResponse) {
 		
-		JsonObject payload = new JsonObject();
-		
 		if( CFW.Context.Request.hasPermission(FeatureCPUSampling.PERMISSION_CPU_SAMPlING) ) {
 
 			String signatures = CFWDBCPUSampleSignature.getSignatureListAsJSON();
