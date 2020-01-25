@@ -1,0 +1,15 @@
+
+>> Load calculator ()
+>> Statements on Summary Sheet
+
+>> Distribution
+
+Done
+>> Request and user distribution on scenario sheet
+>> fix timeYounger loadYounger
+>> Rounded values in Transacton Diff%
+>> Scenario Total Row
+>> Result sheet with configurations
+>> change coloring for + and - values
+>> Missing Step Checker
+>> Fix Conncurent Open session calculation
