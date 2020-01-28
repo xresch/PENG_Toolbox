@@ -2,13 +2,13 @@ package com.pengtoolbox.pageanalyzer.yslow;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class YSlowExecutorThread extends Thread{
 	
 	@Override
 	public void run() {
-		YSlowExecutor.launch(YSlowExecutor.class);
+		YSlowExecutorJavaFX.launch(YSlowExecutorJavaFX.class);
 	}
 }

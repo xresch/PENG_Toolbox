@@ -8,7 +8,7 @@ import javafx.application.Platform;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class YSlow {
@@ -45,14 +45,16 @@ public class YSlow {
 		CFWLog log = new CFWLog(logger);
 		
 		log.start().method("analyzeHarString");
+		
 		ExecutionContext context = ExecutionContextPool.lockContext();
+
 		//----------------------------------------------
 		// Execute the Java FX Application.
 		// It will set the Result on the singelton instance		
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run() {
-				YSlowExecutor.analyzeHARString(context, harString);
+				YSlowExecutorJavaFX.analyzeHARString(context, harString);
 			}
 		});
 		

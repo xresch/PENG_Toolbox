@@ -28,7 +28,7 @@ import com.pengtoolbox.pageanalyzer.servlets.RestAPIServlet;
 import com.pengtoolbox.pageanalyzer.servlets.ResultListServlet;
 import com.pengtoolbox.pageanalyzer.servlets.ResultViewServlet;
 import com.pengtoolbox.pageanalyzer.yslow.YSlow;
-import com.pengtoolbox.pageanalyzer.yslow.YSlowExecutor;
+import com.pengtoolbox.pageanalyzer.yslow.YSlowExecutorJavaFX;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -36,7 +36,7 @@ import javafx.stage.Stage;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class Main extends Application implements CFWAppInterface {
@@ -154,7 +154,7 @@ public class Main extends Application implements CFWAppInterface {
 			// Initialize YSlow Singleton
 			// prevents error on first analysis request.
 			YSlow.instance();
-			YSlowExecutor.instance();
+			YSlowExecutorJavaFX.instance();
 			
 	    	
 	    	// For Testing only

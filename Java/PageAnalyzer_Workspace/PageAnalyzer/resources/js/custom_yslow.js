@@ -6948,4 +6948,38 @@ function analyzeHARString(harString){
     return JSON.stringify(results);
 }
 
+function analyzeHARObject(harObject){
+	   
+	if (!harObject) {
+        return;
+    }
+	
+	var results;
+	
+	var ruleset = "pageanalyzer";
+	var info = "all";
+	var format = "json";
+	var printDictionary = true;
+	
+
+	var newDoc = document.implementation.createHTMLDocument("Doc for HAR content processing");
+	
+    try {
+        // YSlow analysis
+        results = YSLOW.harImporter.run(newDoc, har, ruleset);
+        
+        results = YSLOW.util.getResults(results.context, info);
+
+        // dictionary
+        if (printDictionary) {
+            results.dictionary = YSLOW.util.getDict(info,ruleset);
+        }
+        
+    } catch (err) {
+        console.error('YSlow Error: ' + err);
+        return;
+    }
+
+    return JSON.stringify(results);
+}
 

@@ -25,22 +25,22 @@ import netscape.javascript.JSObject;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class YSlowExecutor extends Application {
+public class YSlowExecutorJavaFX extends Application {
 	
 	private WebEngine engine;
-	private static YSlowExecutor INSTANCE;
+	private static YSlowExecutorJavaFX INSTANCE;
 	
 	//private static Logger logger = Logger.getLogger(YSlowExecutor.class.getName());
     
 	/***********************************************************************
 	 * 
 	 ***********************************************************************/
-	public static YSlowExecutor instance() {
+	public static YSlowExecutorJavaFX instance() {
 		if(INSTANCE == null) {
-			INSTANCE = new YSlowExecutor();
+			INSTANCE = new YSlowExecutorJavaFX();
 			YSlowExecutorThread thread = new YSlowExecutorThread();
 			thread.start();
 		}
