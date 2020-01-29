@@ -3,15 +3,12 @@ package com.pengtoolbox.cfw.features.query;
 import java.text.ParseException;
 import java.util.ArrayList;
 
-import com.pengtoolbox.cfw.utils.CFWArrayUtils;
-
 public class ContextualTokenizer {
 	
 	private String textToParse;
-	private ArrayList<Character> splitterChars;
-	
+
 	private char[] charArray;
-	private int startPosition = 0;
+	private int lastCutPosition = 0;
 	
 	private boolean handleQuotes = true;
 	
@@ -21,6 +18,32 @@ public class ContextualTokenizer {
 
 	}
 	
+	/***********************************************************************************************
+	 * 
+	 * @param splitterChars
+	 * @return
+	 * @throws ParseException
+	 ***********************************************************************************************/
+	public ArrayList<String> getTokenStringsbyDelimiters(ArrayList<Character> splitterChars) throws ParseException {
+		
+		CFWToken token = this.getNextToken(splitterChars);
+
+		ArrayList<String> tokensArray = new ArrayList<String>();
+		
+		while(token != null) {
+			tokensArray.add(token.getText());
+			token = this.getNextToken(splitterChars);
+		}
+		
+		return tokensArray;
+	}
+	
+	/***********************************************************************************************
+	 * 
+	 * @param splitterChars
+	 * @return
+	 * @throws ParseException
+	 ***********************************************************************************************/
 	public ArrayList<CFWToken> getTokensbyDelimiters(ArrayList<Character> splitterChars) throws ParseException {
 		
 		CFWToken token = this.getNextToken(splitterChars);
@@ -34,8 +57,15 @@ public class ContextualTokenizer {
 		
 		return tokensArray;
 	}
-	public CFWToken getNextToken(ArrayList<Character> splitterChars) throws ParseException {
-		int currentPos = startPosition;
+		
+	/***********************************************************************************************
+	 * 
+	 * @param delimiterChars
+	 * @return
+	 * @throws ParseException
+	 ***********************************************************************************************/
+	private CFWToken getNextToken(ArrayList<Character> delimiterChars) throws ParseException {
+		int currentPos = lastCutPosition;
 		for( ;currentPos < charArray.length; currentPos++) {
 			
 			switch(charArray[currentPos]) {
@@ -44,14 +74,14 @@ public class ContextualTokenizer {
 				case '\'': 		if(handleQuotes) { currentPos = skipQuotedText('\'', currentPos); }
 								break;	
 				default: 
-					if(splitterChars.contains(charArray[currentPos]) ) {
-						CFWToken result = new CFWToken(textToParse.substring(startPosition, currentPos-1).trim());
-						startPosition = currentPos+1;
+					if(delimiterChars.contains(charArray[currentPos]) ) {
+						CFWToken result = new CFWToken(textToParse.substring(lastCutPosition, currentPos-1).trim());
+						lastCutPosition = currentPos+1;
 						
 						//-------------------------
 						//Skip subsequent splitters
-						while(splitterChars.contains(charArray[startPosition]) ) {
-							startPosition++;
+						while(delimiterChars.contains(charArray[lastCutPosition]) ) {
+							lastCutPosition++;
 						}
 						return result;
 					}
@@ -63,9 +93,9 @@ public class ContextualTokenizer {
 		
 		//------------------------------
 		// End of String
-		if(startPosition != currentPos && startPosition < charArray.length) {
-			CFWToken result = new CFWToken(textToParse.substring(startPosition, currentPos-2));
-			startPosition = currentPos+1;
+		if(lastCutPosition != currentPos && lastCutPosition < charArray.length) {
+			CFWToken result = new CFWToken(textToParse.substring(lastCutPosition, currentPos-2));
+			lastCutPosition = currentPos+1;
 			return result;
 		}
 		//------------------------------
@@ -73,10 +103,30 @@ public class ContextualTokenizer {
 		return null;
 	}
 
+
+	/***********************************************************************************************
+	 * 
+	 ***********************************************************************************************/
 	private int skipQuotedText(char quoteChar, int currentPos) throws ParseException {
+		String quotedText = getQuotedText(quoteChar, currentPos).getText();
+		return currentPos + quotedText.length()+1;
+	}
+	
+	/***********************************************************************************************
+	 * Parses a quoted text.
+	 * @param currentPos has to be on a position representing quoteChar
+	 * @param quoteChar either single or double quote
+	 ***********************************************************************************************/
+	private CFWTokenText getQuotedText(char quoteChar, int currentPos) throws ParseException {
 		boolean isQuoteOpen = true;
+		int startPos = currentPos;
 		while(isQuoteOpen && currentPos < charArray.length-1) {
 			currentPos++;
+			
+			if(currentPos >= charArray.length) {
+				throw new ParseException("Unbalanced Quotes!", currentPos);							
+			}
+			
 			if(charArray[currentPos] == quoteChar) {
 				int backslashCount = 0;
 				int tempPos = currentPos-1; 
@@ -89,11 +139,9 @@ public class ContextualTokenizer {
 					isQuoteOpen = false;
 				}
 			}
-			if(currentPos >= charArray.length) {
-				throw new ParseException("Unbalanced Quotes!", currentPos);							
-			}
+
 		}
 		
-		return currentPos;
+		return new CFWTokenText(textToParse.substring(startPos,currentPos-1)).wasQuoted(true);
 	}
 }

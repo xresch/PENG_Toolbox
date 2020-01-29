@@ -52,8 +52,8 @@ public class ParserTest {
 	@Test
 	public void testTokenizeIgnoreSingleQuotedText() throws IOException {
 		
-		ArrayList<Character> delimiter = new ArrayList<Character>();
-		delimiter.add('|');
+		ArrayList<Character> delimiters = new ArrayList<Character>();
+		delimiters.add('|');
 		
 		ContextualTokenizer tokenizer = new ContextualTokenizer(" find User where text='this is | a piped text' "
 		+ "|||| grep '2'"
@@ -63,20 +63,20 @@ public class ParserTest {
 		);
 	
 		try {
-			ArrayList<CFWToken> tokensArray = tokenizer.getTokensbyDelimiters(delimiter);
+			ArrayList<String> tokensArray = tokenizer.getTokenStringsbyDelimiters(delimiters);
 			
-			System.out.println("============= testTokenizeIgnoreDoubleQuotedText =============");
+			System.out.println("============= testTokenizeIgnoreSingleQuotedText =============");
 			
-			for(CFWToken token : tokensArray) {
-				System.out.println(token.getText());
+			for(String token : tokensArray) {
+				System.out.println(token);
 			}
 			
-			Assertions.assertEquals("find User where text='this is | a piped text'", tokensArray.get(0).getText());
-			Assertions.assertEquals("grep '2'", tokensArray.get(1).getText());
-			Assertions.assertEquals("table test, bla, blub", tokensArray.get(2).getText());
-			Assertions.assertEquals("singlebackslash ' dont split this  \\' | \\' dont split this '", tokensArray.get(3).getText());
-			Assertions.assertEquals("multibackslash 'split this \\\\'", tokensArray.get(4).getText());
-			Assertions.assertEquals("'split this'", tokensArray.get(5).getText());
+			Assertions.assertEquals("find User where text='this is | a piped text'", tokensArray.get(0));
+			Assertions.assertEquals("grep '2'", tokensArray.get(1));
+			Assertions.assertEquals("table test, bla, blub", tokensArray.get(2));
+			Assertions.assertEquals("singlebackslash ' dont split this  \\' | \\' dont split this '", tokensArray.get(3));
+			Assertions.assertEquals("multibackslash 'split this \\\\'", tokensArray.get(4));
+			Assertions.assertEquals("'split this'", tokensArray.get(5));
 			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block

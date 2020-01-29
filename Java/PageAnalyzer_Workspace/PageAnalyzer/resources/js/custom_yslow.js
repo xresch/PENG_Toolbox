@@ -6961,7 +6961,6 @@ function analyzeHARObject(harObject){
 	var format = "json";
 	var printDictionary = true;
 	
-
 	var newDoc = document.implementation.createHTMLDocument("Doc for HAR content processing");
 	
     try {
