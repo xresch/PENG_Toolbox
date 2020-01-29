@@ -6,7 +6,8 @@ import java.util.ArrayList;
 public class ContextualTokenizer {
 	
 	private String textToParse;
-
+	private String tempText;
+	
 	private char[] charArray;
 	private int lastCutPosition = 0;
 	
@@ -74,25 +75,32 @@ public class ContextualTokenizer {
 				case '\'': 		if(handleQuotes) { currentPos = skipQuotedText('\'', currentPos); }
 								break;	
 				default: 
+					//---------------------------
+					// handle if delimiter, else
+					// move currentPos
 					if(delimiterChars.contains(charArray[currentPos]) ) {
-						CFWToken result = new CFWToken(textToParse.substring(lastCutPosition, currentPos-1).trim());
-						lastCutPosition = currentPos+1;
+						CFWToken result;
+						if(lastCutPosition == 0) {
+							result = new CFWToken(textToParse.substring(0, currentPos-1).trim());
+						}else {
+							result = new CFWToken(textToParse.substring(lastCutPosition-1, currentPos-1).trim());
+						}
+						lastCutPosition = currentPos;
 						
 						//-------------------------
-						//Skip subsequent splitters
+						//Skip subsequent delimiters
 						while(delimiterChars.contains(charArray[lastCutPosition]) ) {
 							lastCutPosition++;
 						}
 						return result;
 					}
-					
 					break;
 			}
 			
 		}
 		
 		//------------------------------
-		// End of String
+		// End of Text
 		if(lastCutPosition != currentPos && lastCutPosition < charArray.length) {
 			CFWToken result = new CFWToken(textToParse.substring(lastCutPosition, currentPos-2));
 			lastCutPosition = currentPos+1;

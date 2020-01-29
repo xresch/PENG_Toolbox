@@ -19,7 +19,7 @@ public class ParserTest {
 		delimiter.add('|');
 		
 		ContextualTokenizer tokenizer = new ContextualTokenizer(" find User where text=\"this is | a piped text\" "
-			+ "|||| grep \"2\""
+			+ "||||grep \"2\""
 			+ "| table test, bla, blub "
 			+ "| singlebackslash \" dont split this  \\\" | \\\" dont split this \" "
 			+ "| multibackslash \"split this \\\\\" | \"split this\" "
@@ -56,10 +56,11 @@ public class ParserTest {
 		delimiters.add('|');
 		
 		ContextualTokenizer tokenizer = new ContextualTokenizer(" find User where text='this is | a piped text' "
-		+ "|||| grep '2'"
+		+ "||||grep '2'"
 		+ "| table test, bla, blub "
 		+ "| singlebackslash ' dont split this  \\' | \\' dont split this ' "
-		+ "| multibackslash 'split this \\\\' | 'split this' "
+		+ "| multibackslash 'split this \\\\' | 'split this'"
+		+ "|'Check no space between delimiter and quote' "
 		);
 	
 		try {
