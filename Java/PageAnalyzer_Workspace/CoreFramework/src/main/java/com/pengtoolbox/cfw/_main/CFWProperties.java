@@ -72,6 +72,9 @@ public class CFWProperties {
 	/** The URL used for LDAP authentication. (Property=authentication_ldap_url, Default="") */
 	public static String LDAP_URL = "";
 	
+	/**  Define if the LDAP connection should be done using ssl. (Property=authentication_ldap_ssl_enabled, Default=false) */
+	public static boolean LDAP_SSL_ENABLED = false;
+	
 	/** The User used for LDAP authentication. (Property=authentication_ldap_user, Default="") */
 	public static String LDAP_USER = "";
 	
@@ -92,6 +95,8 @@ public class CFWProperties {
 
 	/** The name of the attribute storing the lastname of the user.  (Property=authentication_ldap_attribute_lastname, Default="") */
 	public static String LDAP_ATTRIBUTE_LASTNAME = "";
+	
+	
 	
 	
 	
@@ -142,7 +147,6 @@ public class CFWProperties {
 	public static String DB_PASSWORD = "sa";
 
 
-	
 	/******************************************************************************
 	 * Initialize the configuration with the given properties file.
 	 * @param key
@@ -180,6 +184,7 @@ public class CFWProperties {
 		
 		LDAP_URL 						= CFWProperties.configAsString("authentication_ldap_url", LDAP_URL);
 		LDAP_USER 						= CFWProperties.configAsString("authentication_ldap_user", LDAP_USER);
+		LDAP_SSL_ENABLED 				= CFWProperties.configAsBoolean("authentication_ldap_ssl_enabled", LDAP_SSL_ENABLED);
 		LDAP_PASSWORD 					= CFWProperties.configAsString("authentication_ldap_password", LDAP_PASSWORD);
 		LDAP_SEARCHBASE 				= CFWProperties.configAsString("authentication_ldap_searchbase", LDAP_SEARCHBASE);
 		LDAP_ATTRIBUTE_USERNAME 		= CFWProperties.configAsString("authentication_ldap_attribute_username", LDAP_ATTRIBUTE_USERNAME);

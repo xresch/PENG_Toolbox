@@ -65,6 +65,10 @@ public class LDAPLoginProvider implements LoginProvider {
 		    props.put(Context.SECURITY_PRINCIPAL, CFWProperties.LDAP_USER);
 		    props.put(Context.SECURITY_CREDENTIALS, CFWProperties.LDAP_PASSWORD);
 	
+		    if(CFW.Properties.LDAP_SSL_ENABLED) {
+		    	props.put(Context.SECURITY_PROTOCOL, "ssl");
+		    }
+		    
 		    context = new InitialDirContext(props);
 	
 		    SearchControls ctrls = new SearchControls();

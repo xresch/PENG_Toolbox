@@ -7,39 +7,40 @@ import java.util.ArrayList;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
+import com.pengtoolbox.cfw.features.query.CFWToken;
 import com.pengtoolbox.cfw.features.query.ContextualTokenizer;
-import com.pengtoolbox.cfw.features.query.ParsedToken;
 
 public class ParserTest {
 	
 	@Test
 	public void testTokenizeIgnoreDoubleQuotedText() throws IOException {
 		
+		ArrayList<Character> delimiter = new ArrayList<Character>();
+		delimiter.add('|');
+		
 		ContextualTokenizer tokenizer = new ContextualTokenizer(" find User where text=\"this is | a piped text\" "
-		+ "| grep \"2\""
-		+ "| table test, bla, blub "
-		+ "| singlebackslash \" dont split this  \\\" | \\\" dont split this \" "
-		+ "| multibackslash \"split this \\\\\" | \"split this\" "
-		, '|');
+			+ "|||| grep \"2\""
+			+ "| table test, bla, blub "
+			+ "| singlebackslash \" dont split this  \\\" | \\\" dont split this \" "
+			+ "| multibackslash \"split this \\\\\" | \"split this\" "
+			);
 	
-		ParsedToken token;
 		try {
-			token = tokenizer.getNextToken();
 
-			ArrayList<String> tokensArray = new ArrayList<String>();
+			ArrayList<CFWToken> tokensArray = tokenizer.getTokensbyDelimiters(delimiter);
 			
-			while(token != null) {
-				System.out.println(token.getToken());
-				tokensArray.add(token.getToken());
-				token = tokenizer.getNextToken();
+			System.out.println("============= testTokenizeIgnoreDoubleQuotedText =============");
+			
+			for(CFWToken token : tokensArray) {
+				System.out.println(token.getText());
 			}
-			
-			Assertions.assertEquals("find User where text=\"this is | a piped text\"", tokensArray.get(0));
-			Assertions.assertEquals("grep \"2\"", tokensArray.get(1));
-			Assertions.assertEquals("table test, bla, blub", tokensArray.get(2));
-			Assertions.assertEquals("singlebackslash \" dont split this  \\\" | \\\" dont split this \"", tokensArray.get(3));
-			Assertions.assertEquals("multibackslash \"split this \\\\\"", tokensArray.get(4));
-			Assertions.assertEquals("\"split this\"", tokensArray.get(5));
+						
+			Assertions.assertEquals("find User where text=\"this is | a piped text\"", tokensArray.get(0).getText());
+			Assertions.assertEquals("grep \"2\"", tokensArray.get(1).getText());
+			Assertions.assertEquals("table test, bla, blub", tokensArray.get(2).getText());
+			Assertions.assertEquals("singlebackslash \" dont split this  \\\" | \\\" dont split this \"", tokensArray.get(3).getText());
+			Assertions.assertEquals("multibackslash \"split this \\\\\"", tokensArray.get(4).getText());
+			Assertions.assertEquals("\"split this\"", tokensArray.get(5).getText());
 			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -51,31 +52,31 @@ public class ParserTest {
 	@Test
 	public void testTokenizeIgnoreSingleQuotedText() throws IOException {
 		
+		ArrayList<Character> delimiter = new ArrayList<Character>();
+		delimiter.add('|');
+		
 		ContextualTokenizer tokenizer = new ContextualTokenizer(" find User where text='this is | a piped text' "
-		+ "| grep '2'"
+		+ "|||| grep '2'"
 		+ "| table test, bla, blub "
 		+ "| singlebackslash ' dont split this  \\' | \\' dont split this ' "
 		+ "| multibackslash 'split this \\\\' | 'split this' "
-		, '|');
+		);
 	
-		ParsedToken token;
 		try {
-			token = tokenizer.getNextToken();
-
-			ArrayList<String> tokensArray = new ArrayList<String>();
+			ArrayList<CFWToken> tokensArray = tokenizer.getTokensbyDelimiters(delimiter);
 			
-			while(token != null) {
-				System.out.println(token.getToken());
-				tokensArray.add(token.getToken());
-				token = tokenizer.getNextToken();
+			System.out.println("============= testTokenizeIgnoreDoubleQuotedText =============");
+			
+			for(CFWToken token : tokensArray) {
+				System.out.println(token.getText());
 			}
 			
-			Assertions.assertEquals("find User where text='this is | a piped text'", tokensArray.get(0));
-			Assertions.assertEquals("grep '2'", tokensArray.get(1));
-			Assertions.assertEquals("table test, bla, blub", tokensArray.get(2));
-			Assertions.assertEquals("singlebackslash ' dont split this  \\' | \\' dont split this '", tokensArray.get(3));
-			Assertions.assertEquals("multibackslash 'split this \\\\'", tokensArray.get(4));
-			Assertions.assertEquals("'split this'", tokensArray.get(5));
+			Assertions.assertEquals("find User where text='this is | a piped text'", tokensArray.get(0).getText());
+			Assertions.assertEquals("grep '2'", tokensArray.get(1).getText());
+			Assertions.assertEquals("table test, bla, blub", tokensArray.get(2).getText());
+			Assertions.assertEquals("singlebackslash ' dont split this  \\' | \\' dont split this '", tokensArray.get(3).getText());
+			Assertions.assertEquals("multibackslash 'split this \\\\'", tokensArray.get(4).getText());
+			Assertions.assertEquals("'split this'", tokensArray.get(5).getText());
 			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
