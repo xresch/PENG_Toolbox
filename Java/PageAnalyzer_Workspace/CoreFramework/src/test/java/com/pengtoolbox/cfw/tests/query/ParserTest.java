@@ -86,5 +86,35 @@ public class ParserTest {
 
 	}
 	
+	@Test
+	public void testTokenizeNoSpaceBeforeAndAfterDelimiter() throws IOException {
+		
+		ArrayList<Character> delimiters = new ArrayList<Character>();
+		delimiters.add('|');
+		
+		ContextualTokenizer tokenizer = new ContextualTokenizer("find User"
+		+ "|grep '2'"
+		+ "|'Check no space between delimiter and quote'"
+		);
+	
+		try {
+			ArrayList<String> tokensArray = tokenizer.getTokenStringsbyDelimiters(delimiters);
+			
+			System.out.println("============= testTokenizeNoSpaceBeforeAndAfterDelimiter =============");
+			
+			for(String token : tokensArray) {
+				System.out.println(token);
+			}
+			
+			Assertions.assertEquals("find User", tokensArray.get(0));
+			Assertions.assertEquals("grep '2'", tokensArray.get(1));
+			Assertions.assertEquals("'Check no space between delimiter and quote'", tokensArray.get(2));
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 }

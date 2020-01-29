@@ -6,8 +6,7 @@ import java.util.ArrayList;
 public class ContextualTokenizer {
 	
 	private String textToParse;
-	private String tempText;
-	
+
 	private char[] charArray;
 	private int lastCutPosition = 0;
 	
@@ -15,7 +14,7 @@ public class ContextualTokenizer {
 	
 	public ContextualTokenizer(String textToParse) {
 		this.textToParse = textToParse.trim();
-		charArray = textToParse.toCharArray(); 
+		charArray = this.textToParse.toCharArray(); 
 
 	}
 	
@@ -80,11 +79,10 @@ public class ContextualTokenizer {
 					// move currentPos
 					if(delimiterChars.contains(charArray[currentPos]) ) {
 						CFWToken result;
-						if(lastCutPosition == 0) {
-							result = new CFWToken(textToParse.substring(0, currentPos-1).trim());
-						}else {
-							result = new CFWToken(textToParse.substring(lastCutPosition-1, currentPos-1).trim());
-						}
+						
+						result = new CFWToken(textToParse.substring(lastCutPosition, currentPos).trim());
+						
+						//System.out.println("lastCutPos: "+lastCutPosition+", pos: "+currentPos+", char:"+charArray[currentPos]+", token: '"+result.getText()+"'");
 						lastCutPosition = currentPos;
 						
 						//-------------------------
@@ -102,7 +100,7 @@ public class ContextualTokenizer {
 		//------------------------------
 		// End of Text
 		if(lastCutPosition != currentPos && lastCutPosition < charArray.length) {
-			CFWToken result = new CFWToken(textToParse.substring(lastCutPosition, currentPos-2));
+			CFWToken result = new CFWToken(textToParse.substring(lastCutPosition).trim());
 			lastCutPosition = currentPos+1;
 			return result;
 		}
