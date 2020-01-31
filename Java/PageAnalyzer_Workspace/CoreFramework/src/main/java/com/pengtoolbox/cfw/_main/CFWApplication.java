@@ -61,7 +61,7 @@ import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWApplication {
@@ -454,6 +454,7 @@ public class CFWApplication {
 			
 			ServerConnector httpConnector = new ServerConnector(server, new HttpConnectionFactory(httpConf));
 			httpConnector.setName("unsecured");
+			httpConnector.setHost("127.0.0.1");
 			httpConnector.setPort(CFWProperties.HTTP_PORT);
 			connectorArray.add(httpConnector);
 		}
@@ -473,6 +474,7 @@ public class CFWApplication {
 					new SslConnectionFactory(sslContextFactory, "http/1.1"),
 					new HttpConnectionFactory(httpsConf));
 			httpsConnector.setName("secured");
+			httpsConnector.setHost("127.0.0.1");
 			httpsConnector.setPort(CFWProperties.HTTPS_PORT);
 			
 			connectorArray.add(httpsConnector);
