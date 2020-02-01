@@ -19,7 +19,7 @@ import com.pengtoolbox.cfw.response.bootstrap.UserMenuItem;
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWRegistryComponents {
-	private static Logger logger = CFWLog.getLogger(CFW.class.getName());
+	private static Logger logger = CFWLog.getLogger(CFWRegistryComponents.class.getName());
 	
 	private static LinkedHashMap<String, MenuItem> regularMenuItems = new LinkedHashMap<String, MenuItem>();
 	private static LinkedHashMap<String, MenuItem> userMenuItems = new LinkedHashMap<String, MenuItem>();
@@ -112,7 +112,6 @@ public class CFWRegistryComponents {
 		// Handle Path
 		String[] pathTokens = menuPath.split("\\Q|\\E");
 		MenuItem parentItem = null;
-		LinkedHashMap<String, MenuItem> currentSubItems = targetItemList;
 		for(int i = 0; i < pathTokens.length; i++) {
 			String currentToken = pathTokens[i].trim();
 			

@@ -16,6 +16,7 @@ import com.pengtoolbox.cfw.features.api.FeatureAPI;
 import com.pengtoolbox.cfw.features.config.CFWDBConfig;
 import com.pengtoolbox.cfw.features.config.FeatureConfiguration;
 import com.pengtoolbox.cfw.features.cpusampling.FeatureCPUSampling;
+import com.pengtoolbox.cfw.features.manual.CFWRegistryManual;
 import com.pengtoolbox.cfw.features.usermgmt.CFWDBPermission;
 import com.pengtoolbox.cfw.features.usermgmt.CFWDBRole;
 import com.pengtoolbox.cfw.features.usermgmt.CFWDBRolePermissionMap;
@@ -69,10 +70,12 @@ public class CFW {
 	public class Mail extends CFWMail {}
 	public class Properties extends CFWProperties {}
 	public class Registry {
-		public class Features extends CFWRegistryFeatures {} 
-		public class Components extends CFWRegistryComponents {} 
-		public class Objects extends CFWRegistryObjects {} 
 		public class API extends CFWRegistryAPI {}
+		public class Components extends CFWRegistryComponents {} 
+		public class Features extends CFWRegistryFeatures {} 
+		public class Manual extends CFWRegistryManual {} 
+		public class Objects extends CFWRegistryObjects {} 
+		
 	
 	}
 	public class Schedule extends CFWSchedule {}
