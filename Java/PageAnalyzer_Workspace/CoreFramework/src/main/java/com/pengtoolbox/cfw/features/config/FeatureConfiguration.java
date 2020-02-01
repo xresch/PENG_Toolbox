@@ -71,7 +71,7 @@ public class FeatureConfiguration extends CFWAppFeature {
 
 	@Override
 	public void addFeature(CFWApplication app) {	
-    	app.getSecureContext().addServlet(ServletConfiguration.class,  "/configuration");
+		app.addAppServlet(ServletConfiguration.class,  "/configuration");
 	}
 
 	@Override

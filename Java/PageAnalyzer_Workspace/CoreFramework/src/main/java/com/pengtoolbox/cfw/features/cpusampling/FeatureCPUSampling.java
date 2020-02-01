@@ -71,8 +71,7 @@ public class FeatureCPUSampling extends CFWAppFeature {
 
 	@Override
 	public void addFeature(CFWApplication app) {	
-    	ServletContextHandler appContext = app.getSecureContext();
-        appContext.addServlet(ServletCPUSampling.class,  "/cpusampling");
+    	app.addAppServlet(ServletCPUSampling.class,  "/cpusampling");
 	}
 
 	@Override

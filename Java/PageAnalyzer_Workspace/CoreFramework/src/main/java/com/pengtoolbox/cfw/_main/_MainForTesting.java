@@ -55,17 +55,12 @@ public class _MainForTesting implements CFWAppInterface {
 	@Override
 	public void startApp(CFWApplication app) {
 
-        //###################################################################
-        // Create API ServletContext, no login needed
-        //################################################################### 
-    	ServletContextHandler testContext = app.getUnsecureContext("/test");
-    	
-        testContext.addServlet(GeneralTestServlet.class, "/general");
-        testContext.addServlet(FormTestServlet.class, "/form");
+        app.addUnsecureServlet(GeneralTestServlet.class, "/test/general");
+        app.addUnsecureServlet(FormTestServlet.class, "/test/form");
         //###################################################################
         // Startup
         //###################################################################
-        app.setDefaultURL("/test/general");
+        app.setDefaultURL("/test/general", false);
         try {
 			app.start();
 		} catch (Exception e) {

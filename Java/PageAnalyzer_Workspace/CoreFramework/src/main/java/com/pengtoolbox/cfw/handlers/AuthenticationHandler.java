@@ -2,11 +2,14 @@ package com.pengtoolbox.cfw.handlers;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.rewrite.handler.RedirectRegexRule;
+import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 
@@ -23,6 +26,15 @@ import com.pengtoolbox.cfw.response.HTMLResponse;
  **************************************************************************************************************/
 public class AuthenticationHandler extends HandlerWrapper
 {
+	private String securePath;
+	private String defaultURL;
+	
+	public AuthenticationHandler(String securePath, String defaultURL) {
+		
+		this.securePath = securePath;
+		this.defaultURL = defaultURL;
+			
+	}
 
     public void handle( String target,
                         Request baseRequest,
@@ -32,6 +44,19 @@ public class AuthenticationHandler extends HandlerWrapper
     {
     	
     	if(CFWProperties.AUTHENTICATION_ENABLED) {
+    		
+    		//##################################
+        	// Handle unsecured servlets
+        	//##################################
+    		String uri = request.getRequestURI().toString();
+
+    		System.out.println("securePath:"+securePath);
+    		System.out.println("request.getRequestURI().toString():"+uri);
+    		if(!request.getRequestURI().toString().startsWith(securePath)) {
+    			this._handler.handle(target, baseRequest, request, response);
+    			return;
+    		}
+    		
     		
     		//##################################
         	// Get Session

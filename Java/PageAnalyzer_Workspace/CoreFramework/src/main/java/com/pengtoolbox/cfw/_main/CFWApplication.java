@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.MultipartConfigElement;
+import javax.servlet.Servlet;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -36,18 +37,14 @@ import org.eclipse.jetty.server.session.NullSessionDataStore;
 import org.eclipse.jetty.server.session.SessionCache;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import com.pengtoolbox.cfw.features.api.ServletAPILogin;
-import com.pengtoolbox.cfw.features.config.ServletConfiguration;
-import com.pengtoolbox.cfw.features.api.ServletAPI;
-import com.pengtoolbox.cfw.features.cpusampling.ServletCPUSampling;
-import com.pengtoolbox.cfw.features.usermgmt.ServletPermissions;
-import com.pengtoolbox.cfw.features.usermgmt.ServletUserManagement;
-import com.pengtoolbox.cfw.features.usermgmt.SevletUserManagementAPI;
 import com.pengtoolbox.cfw.handlers.AuthenticationHandler;
 import com.pengtoolbox.cfw.handlers.HTTPSRedirectHandler;
+import com.pengtoolbox.cfw.handlers.RedirectDefaultPageHandler;
 import com.pengtoolbox.cfw.handlers.RequestHandler;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.login.LoginServlet;
@@ -74,6 +71,8 @@ public class CFWApplication {
 	private static LinkedHashMap<String, ContextHandler> secureContextArray = new LinkedHashMap<String, ContextHandler>();
 	
 	private static LinkedHashMap<String, ServletContextHandler> servletContextArray = new LinkedHashMap<String, ServletContextHandler>();	
+	
+	ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
 	
 	private String defaultURL = "/";
 	static DefaultSessionIdManager idmanager;
@@ -103,34 +102,45 @@ public class CFWApplication {
          
 	}
 	
+//	/**************************************************************************************************
+//	 * Returns a ServletContextHandler that can be accesses without a user login.
+//	 * Adds several handlers like gzipHandler, SessionHandler and RequestHandler.
+//	 * 
+//	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
+//	 **************************************************************************************************/
+//	public ServletContextHandler getUnsecureContext(String relativePath){
+//		//-------------------------------
+//        // Check if exists
+//        //-------------------------------
+//		if(servletContextArray.containsKey(relativePath)) {
+//			return servletContextArray.get(relativePath);
+//		}
+//		
+//        //----------------------------------
+//        // Build Handler Chain
+//        ContextHandler unsecureContextHandler = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);	
+//        ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);   
+//        servletContext.setSessionHandler(createSessionHandler(relativePath));
+//        
+//        new HandlerChainBuilder(unsecureContextHandler)
+//	        .chain(new GzipHandler())
+//	    	.chain(new RequestHandler())
+//	        .chain(new AuthenticationHandler())
+//	        .chain(servletContext);
+//        
+//        unsecureContextArray.put(relativePath, unsecureContextHandler);
+//        servletContextArray.put(relativePath, servletContext);
+//        return servletContext;
+//	}
+	
 	/**************************************************************************************************
-	 * Returns a ServletContextHandler that can be accesses without a user login.
-	 * Adds several handlers like gzipHandler, SessionHandler and RequestHandler.
+	 * Returns a ServletContextHandler that can be accesses with a prior user login.
+	 * Adds several handlers like gzipHandler, SessionHandler, AuthenticationHandler and RequestHandler.
 	 * 
 	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
 	 **************************************************************************************************/
-	public ServletContextHandler getUnsecureContext(String relativePath){
-		//-------------------------------
-        // Check if exists
-        //-------------------------------
-		if(servletContextArray.containsKey(relativePath)) {
-			return servletContextArray.get(relativePath);
-		}
-		
-        //----------------------------------
-        // Build Handler Chain
-        ContextHandler unsecureContextHandler = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);	
-        ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);   
-        servletContext.setSessionHandler(createSessionHandler(relativePath));
-        
-        new HandlerChainBuilder(unsecureContextHandler)
-	        .chain(new GzipHandler())
-	    	.chain(new RequestHandler())
-	        .chain(servletContext);
-        
-        unsecureContextArray.put(relativePath, unsecureContextHandler);
-        servletContextArray.put(relativePath, servletContext);
-        return servletContext;
+	public ServletHolder addAppServlet(Class<? extends Servlet> clazz, String path){
+		return this.servletContext.addServlet(clazz, "/app"+path);
 	}
 	
 	/**************************************************************************************************
@@ -139,127 +149,47 @@ public class CFWApplication {
 	 * 
 	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
 	 **************************************************************************************************/
-	public ServletContextHandler getSecureContext(){
-		return getSecureContext("/app");
+	public ServletHolder addUnsecureServlet(Class<? extends Servlet> clazz, String path){
+		return this.servletContext.addServlet(clazz, path);
 	}
 	
-	/**************************************************************************************************
-	 * Returns a ServletContextHandler that can be accesses with a prior user login.
-	 * Adds several handlers like gzipHandler, SessionHandler, AuthenticationHandler and RequestHandler.
-	 * 
-	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
-	 **************************************************************************************************/
-	private ServletContextHandler getSecureContext(String relativePath){
-        
-		//-------------------------------
-        // Check if exists
-        //-------------------------------
-		if(servletContextArray.containsKey(relativePath)) {
-			return servletContextArray.get(relativePath);
-		}
-		
-        //-------------------------------
-        // Create HandlerChain
-        //-------------------------------
-        ContextHandler secureContext = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);
-        ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        servletContext.setSessionHandler(createSessionHandler(relativePath));
-        
-        new HandlerChainBuilder(secureContext)
-        	.chain(new GzipHandler())
-	        .chain(new RequestHandler())
-	        .chain(new AuthenticationHandler())
-	        .chain(servletContext);
-       
-        secureContextArray.put(relativePath, secureContext);
-        servletContextArray.put(relativePath, servletContext);
-        
-        //Login, Logout and Resource Servlets
-        addCFWServlets(servletContext);
-        
-        return servletContext;
-	}
+//	/**************************************************************************************************
+//	 * Returns a ServletContextHandler that can be accesses with a prior user login.
+//	 * Adds several handlers like gzipHandler, SessionHandler, AuthenticationHandler and RequestHandler.
+//	 * 
+//	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
+//	 **************************************************************************************************/
+//	private ServletContextHandler getSecureContext(String relativePath){
+//        
+//		//-------------------------------
+//        // Check if exists
+//        //-------------------------------
+//		if(servletContextArray.containsKey(relativePath)) {
+//			return servletContextArray.get(relativePath);
+//		}
+//		
+//        //-------------------------------
+//        // Create HandlerChain
+//        //-------------------------------
+//        ContextHandler secureContext = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);
+//        ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
+//        servletContext.setSessionHandler(createSessionHandler(relativePath));
+//        
+//
+//        new HandlerChainBuilder(secureContext)
+//        	.chain(new GzipHandler())
+//	        .chain(new RequestHandler())
+//	        .chain(servletContext);
+//       
+//        secureContextArray.put(relativePath, secureContext);
+//        servletContextArray.put(relativePath, servletContext);
+//        
+//        //Login, Logout and Resource Servlets
+//        addCFWServlets(servletContext);
+//        
+//        return servletContext;
+//	}
 	
-	/**************************************************************************************************
-	 * @throws Exception
-	 **************************************************************************************************/
-	public void start() throws Exception {
-		
-        //-------------------------------
-        // Create Rewrite Handler
-        //-------------------------------
-        RewriteHandler rewriteHandler = new RewriteHandler();
-        rewriteHandler.setRewriteRequestURI(true);
-        rewriteHandler.setRewritePathInfo(true);
-        rewriteHandler.setOriginalPathAttribute("requestedPath");
-
-        RedirectRegexRule mainRedirect = new RedirectRegexRule();
-        mainRedirect.setRegex("^/$"+
-        					 "|"+CFWProperties.BASE_URL+"/?$"+
-        					 "|"+CFWProperties.BASE_URL+"/app/?$");
-        mainRedirect.setReplacement(CFWProperties.BASE_URL+defaultURL);
-        rewriteHandler.addRule(mainRedirect);	
-        
-		// TODO Auto-generated method stub
-        //###################################################################
-        // Create Handler Collection
-        //###################################################################
-        
-        //Connect all relevant Handlers
-        ArrayList<Handler> handlerArray = new ArrayList<Handler>();
-        handlerArray.add(new ShutdownHandler(CFW.Properties.APPLICATION_ID, true, true));
-        handlerArray.add(new HTTPSRedirectHandler());
-        handlerArray.addAll(unsecureContextArray.values());
-        handlerArray.add(rewriteHandler);
-        handlerArray.addAll(secureContextArray.values());
-        handlerArray.add(CFWApplication.createResourceHandler());
-        handlerArray.add(createCFWHandler());
-        
-        HandlerCollection handlerCollection = new HandlerCollection();
-        handlerCollection.setHandlers(handlerArray.toArray(new Handler[] {}));
-        server.setHandler(handlerCollection);
-        
-        //###################################################################
-        // Startup
-        //###################################################################
-        server.start();
-        server.join();
-	}
-	
-	/**************************************************************************************************
-	 * 
-	 **************************************************************************************************/
-	public static void stop() {
-		
-		System.out.println("Try to stop running application instance.");
-		
-		//----------------------------------
-		// Resolve Port to use
-		String protocol = "http";
-		int port = CFW.Properties.HTTP_PORT;
-		if(!CFW.Properties.HTTP_ENABLED && CFW.Properties.HTTPS_ENABLED) {
-			protocol = "https";
-			port = CFW.Properties.HTTPS_PORT;
-		}
-		
-		//----------------------------------
-		// Try Stop 
-        try {
-        	URL url = new URL(protocol, "localhost", port, "/shutdown?token="+CFW.Properties.APPLICATION_ID);
-        	 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-             connection.setRequestMethod("POST");
-
-             if(connection.getResponseCode() == 200) {
-            	 System.out.println("Shutdown successful.");
-             }else {
-            	 System.err.println("Jetty returned response code HTTP "+connection.getResponseCode());
-             }
-             
-        } catch (IOException ex) {
-            System.err.println("Stop Jetty failed: " + ex.getMessage());
-        }
-	}
-
 	public Server getServer() {
 		return server;
 	}
@@ -275,8 +205,12 @@ public class CFWApplication {
 	/**************************************************************************************************
 	 * Set the Default URL to which an incomplete URL should be redirected to.
 	 **************************************************************************************************/
-	public void setDefaultURL(String defaultURL) {
-		this.defaultURL = defaultURL;
+	public void setDefaultURL(String defaultURL, boolean isAppServlet) {
+		if(isAppServlet) {
+			this.defaultURL = CFWProperties.BASE_URL+defaultURL;
+		}else {
+			this.defaultURL = defaultURL;
+		}
 	}
 
 	/***********************************************************************
@@ -284,18 +218,18 @@ public class CFWApplication {
 	 *  LoginServlet on /login
 	 *  LogoutServlet on /logout
 	 ***********************************************************************/
-	public void addCFWServlets(ServletContextHandler servletContextHandler) {
+	public void addCFWServlets() {
 		
 		//-----------------------------------------
 		// Authentication Servlets
 	    if(CFWProperties.AUTHENTICATION_ENABLED) {
-	        servletContextHandler.addServlet(LoginServlet.class, "/login");
-	        servletContextHandler.addServlet(LogoutServlet.class,  "/logout");
+	        this.addAppServlet(LoginServlet.class, "/login");
+	        this.addAppServlet(LogoutServlet.class,  "/logout");
 	    }
 	  
 		//-----------------------------------------
 		// User Profile Servlets
-	    servletContextHandler.addServlet(ChangePasswordServlet.class,  "/changepassword");
+	    this.addAppServlet(ChangePasswordServlet.class,  "/changepassword");
 	    	    
 	}
 	
@@ -484,12 +418,91 @@ public class CFWApplication {
 		
 		return server;
 	}
+		
+	/**************************************************************************************************
+	 * @throws Exception
+	 **************************************************************************************************/
+	public void start() throws Exception {
+		
+        //###################################################################
+        // Create Handler chain
+        //###################################################################
+        //----------------------------------
+        // Build Handler Chain
+        ContextHandler contextHandler = new ContextHandler(CFWProperties.BASE_URL);	 
+        servletContext.setSessionHandler(createSessionHandler(CFWProperties.BASE_URL));
+        
+        
+        new HandlerChainBuilder(contextHandler)
+	        .chain(new GzipHandler())
+	    	.chain(new RequestHandler())
+	        .chain(new AuthenticationHandler(CFWProperties.BASE_URL+"/app", defaultURL))
+	        .chain(servletContext);
+        
+        //###################################################################
+        // Add CFW Servlets
+        //###################################################################
+        addCFWServlets();
+        
+        System.out.println(servletContext.dump());
+        //###################################################################
+        // Create Handler Collection
+        //###################################################################
+        
+        //Connect all relevant Handlers
+        ArrayList<Handler> handlerArray = new ArrayList<Handler>();
+        handlerArray.add(new ShutdownHandler(CFW.Properties.APPLICATION_ID, true, true));
+        handlerArray.add(new HTTPSRedirectHandler());
+        handlerArray.add(new RedirectDefaultPageHandler(defaultURL));
+        handlerArray.add(contextHandler);
+        handlerArray.add(CFWApplication.createResourceHandler());
+        handlerArray.add(createCFWHandler());
+        
+        HandlerCollection handlerCollection = new HandlerCollection();
+        handlerCollection.setHandlers(handlerArray.toArray(new Handler[] {}));
+        server.setHandler(handlerCollection);
+        
+        //###################################################################
+        // Startup
+        //###################################################################
+        server.start();
+        server.join();
+	}
 
+		
+	/**************************************************************************************************
+	 * 
+	 **************************************************************************************************/
+	public static void stop() {
+		
+		System.out.println("Try to stop running application instance.");
+		
+		//----------------------------------
+		// Resolve Port to use
+		String protocol = "http";
+		int port = CFW.Properties.HTTP_PORT;
+		if(!CFW.Properties.HTTP_ENABLED && CFW.Properties.HTTPS_ENABLED) {
+			protocol = "https";
+			port = CFW.Properties.HTTPS_PORT;
+		}
+		
+		//----------------------------------
+		// Try Stop 
+        try {
+        	URL url = new URL(protocol, "localhost", port, "/shutdown?token="+CFW.Properties.APPLICATION_ID);
+        	 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+             connection.setRequestMethod("POST");
 
-	
-	
-	
-	
-	
+             if(connection.getResponseCode() == 200) {
+            	 System.out.println("Shutdown successful.");
+             }else {
+            	 System.err.println("Jetty returned response code HTTP "+connection.getResponseCode());
+             }
+             
+        } catch (IOException ex) {
+            System.err.println("Stop Jetty failed: " + ex.getMessage());
+        }
+	}
+
 
 }

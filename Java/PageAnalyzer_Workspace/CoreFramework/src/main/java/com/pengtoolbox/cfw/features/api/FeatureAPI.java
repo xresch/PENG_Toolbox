@@ -68,9 +68,7 @@ public class FeatureAPI extends CFWAppFeature {
 
 	@Override
 	public void addFeature(CFWApplication app) {	
-    	ServletContextHandler appContext = app.getSecureContext();
-
-    	appContext.addServlet(ServletAPI.class,  "/api");
+    	app.addAppServlet(ServletAPI.class,  "/api");
 	}
 
 	@Override
