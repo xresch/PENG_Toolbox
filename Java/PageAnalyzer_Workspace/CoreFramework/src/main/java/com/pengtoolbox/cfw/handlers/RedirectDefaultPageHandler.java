@@ -32,15 +32,11 @@ public class RedirectDefaultPageHandler extends HandlerWrapper {
     	//##################################
 		
 		String uri = request.getRequestURI().toString();
-		
-		System.out.println("uri:"+uri);
-		System.out.println("defaultURL:"+defaultURL);
+
 		if(uri.equals("")
 		|| uri.equals("/")
-		|| uri.equals(CFW.Properties.BASE_URL)
-		|| uri.equals(CFW.Properties.BASE_URL+"/")
-		|| uri.equals(CFW.Properties.BASE_URL+"/app")) {
-			System.out.println("REDIRECT");
+		|| uri.equals("/app")
+		|| uri.equals("/app/")) {
 			CFW.HTTP.redirectToURL(response, defaultURL);
 			baseRequest.setHandled(true);
 			return;

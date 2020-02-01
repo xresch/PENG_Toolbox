@@ -161,13 +161,13 @@ function cfw_usermgmt_editRole(roleID){
 	allDiv.append(detailsDiv);
 	
 	//-----------------------------------
-	// Roles
+	// Permissions
 	//-----------------------------------
-	var roleDiv = $('<div id="cfw-usermgmt-roles">');
-	roleDiv.append('<h2>Roles</h2>');
-	allDiv.append(roleDiv);
+	var permissionDiv = $('<div id="cfw-usermgmt-roles">');
+	permissionDiv.append('<h2>Permissions</h2>');
+	allDiv.append(permissionDiv);
 	
-	cfw_usermgmt_createToggleTable(roleDiv, "rolepermissionmap", roleID)
+	cfw_usermgmt_createToggleTable(permissionDiv, "rolepermissionmap", roleID)
 	
 	CFW.ui.showModal("Edit Role", allDiv, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'roles'})");
 	

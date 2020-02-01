@@ -124,7 +124,7 @@ function cfw_apioverview_printLoginPanel(parent){
 	html += '<pre class="cfwApiOverviewCode"><code>Cookie: JSESSIONID=node01ab2c3d4e5f61xhc7f6puqsab1</code></pre>';
 	
 	html += '<p>Here is an example login request using curl that will return the SessionID string:</p>';
-	html += '<pre class="cfwApiOverviewCode"><code>curl -X POST --data \'username=apiUser&password=apiUserPW\' \'http://localhost:8888/cfw/apilogin</code></pre>\'';
+	html += '<pre class="cfwApiOverviewCode"><code>curl -X POST --data \'username=apiUser&password=apiUserPW\' \'http://localhost:8888/cfw/apilogin\'</code></pre>';
 	
 	cookie = CFW.http.readCookie("JSESSIONID");
 	html += '<p>Afterwards you can use the SessionID to access the API, here is an example. You can create examples for each API using the :</p>';

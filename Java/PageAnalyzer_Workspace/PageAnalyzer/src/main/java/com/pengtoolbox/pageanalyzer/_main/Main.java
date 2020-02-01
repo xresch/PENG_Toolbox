@@ -163,38 +163,35 @@ public class Main extends Application implements CFWAppInterface {
 	        //###################################################################
 	        // Create API ServletContext, no login needed
 	        //################################################################### 
-	    	ServletContextHandler apiContext = app.getUnsecureContext("/api");
-	    	
 	    	ServletHolder apiHolder = new ServletHolder(new RestAPIServlet());
 	        apiHolder.getRegistration().setMultipartConfig(app.getGlobalMultipartConfig());
 	        
-	        apiContext.addServlet(apiHolder, "/analyzehar");
+	        app.addUnsecureServlet(apiHolder, "/analyzehar");
 	        
 	        //###################################################################
 	        // Create authenticatedServletContext
 	        //###################################################################    	
-	    	ServletContextHandler appContext = app.getSecureContext();
 	    	
 	        ServletHolder uploadHolder = new ServletHolder(new HARUploadServlet());
 	        uploadHolder.getRegistration().setMultipartConfig(app.getGlobalMultipartConfig());
-	        appContext.addServlet(uploadHolder, "/");
-	        appContext.addServlet(uploadHolder, "/harupload");
-	        appContext.addServlet(DataServlet.class, "/data");
+	        app.addAppServlet(uploadHolder, "/");
+	        app.addAppServlet(uploadHolder, "/harupload");
+	        app.addAppServlet(DataServlet.class, "/data");
 	        
-	        appContext.addServlet(AnalyzeURLServlet.class, "/analyzeurl");
-	        appContext.addServlet(ResultViewServlet.class, "/resultview");
-	        appContext.addServlet(CompareServlet.class, "/compare");
-	        appContext.addServlet(DeleteResultServlet.class, "/delete");
-	        appContext.addServlet(ResultListServlet.class, "/resultlist");
-	        appContext.addServlet(GanttChartServlet.class, "/ganttchart");
-	        appContext.addServlet(ManageResultsServlet.class, "/manageresults");
-	        appContext.addServlet(DocuServlet.class, "/docu");
-	        appContext.addServlet(CustomContentServlet.class, "/custom");
+	        app.addAppServlet(AnalyzeURLServlet.class, "/analyzeurl");
+	        app.addAppServlet(ResultViewServlet.class, "/resultview");
+	        app.addAppServlet(CompareServlet.class, "/compare");
+	        app.addAppServlet(DeleteResultServlet.class, "/delete");
+	        app.addAppServlet(ResultListServlet.class, "/resultlist");
+	        app.addAppServlet(GanttChartServlet.class, "/ganttchart");
+	        app.addAppServlet(ManageResultsServlet.class, "/manageresults");
+	        app.addAppServlet(DocuServlet.class, "/docu");
+	        app.addAppServlet(CustomContentServlet.class, "/custom");
 	        	        
 	        //###################################################################
 	        // Startup
 	        //###################################################################
-	        app.setDefaultURL("/app/harupload");
+	        app.setDefaultURL("/harupload", true);
 	        try {
 				app.start();
 			} catch (Exception e) {

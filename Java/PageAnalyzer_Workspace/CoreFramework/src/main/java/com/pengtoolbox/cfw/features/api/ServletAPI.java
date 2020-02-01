@@ -89,7 +89,7 @@ public class ServletAPI extends HttpServlet
 		HTMLResponse html = new HTMLResponse("API");
 		
 		if(CFW.Context.Request.hasPermission(FeatureAPI.PERMISSION_CFW_API)) {
-			
+			System.out.println("A");
 			//html.addJSFileBottomSingle(new FileDefinition(HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".js", "cfw_apioverview.js"));
 			html.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FeatureAPI.RESOURCE_PACKAGE, "cfw_apioverview.js");
 			
@@ -97,8 +97,9 @@ public class ServletAPI extends HttpServlet
 			
 	        response.setContentType("text/html");
 	        response.setStatus(HttpServletResponse.SC_OK);
-			
+	        System.out.println("B");
 		}else {
+			System.out.println("C");
 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied!!!");
 		}
 	}

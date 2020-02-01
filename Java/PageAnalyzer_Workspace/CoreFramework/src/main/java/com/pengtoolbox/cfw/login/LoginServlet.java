@@ -101,7 +101,7 @@ public class LoginServlet extends HttpServlet
 					data.triggerLogin();
 					
 					if(url == null || url.isEmpty()) {
-						url = Properties.BASE_URL;
+						url = CFW.Context.App.getApp().getDefaultURL();
 					}
 					CFW.HTTP.redirectToURL(response, url);
 					return; 

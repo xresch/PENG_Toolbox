@@ -154,12 +154,8 @@ public class CFWDB {
 			}
 		
 			User anonUser = CFW.DB.Users.selectByUsernameOrMail("anonymous");
-			
-			if(anonUser == null) {
-				new CFWLog(logger)
-				.method("createDefaultUsers")
-				.severe("User 'anonymous' was not found in the database.");
-			}
+			Role superuserRole = CFW.DB.Roles.selectFirstByName(CFWDBRole.CFW_ROLE_SUPERUSER);
+			CFW.DB.UserRoleMap.addUserToRole(anonUser, superuserRole, true);
 		}
 		//-----------------------------------------
 		// Create default admin user

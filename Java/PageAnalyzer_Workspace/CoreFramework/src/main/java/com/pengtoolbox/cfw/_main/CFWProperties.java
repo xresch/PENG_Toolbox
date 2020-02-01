@@ -50,10 +50,7 @@ public class CFWProperties {
 	
 	/**  (Property=cfw_https_keymanager_password, Default="") */
 	public static String HTTPS_KEYMANAGER_PASSWORD = "";
-	
-	/** the base url of the application. */
-	public static String BASE_URL = "/";
-		
+			
 	/** Session Time in Seconds. (Property=cfw_session_timeout, Default=36000) */
 	public static int SESSION_TIMEOUT = 36000;
 	
@@ -162,8 +159,6 @@ public class CFWProperties {
 		APPLICATION_MAX_UPLOADSIZE		= CFWProperties.configAsInt("cfw_application_max_uploadsize", APPLICATION_MAX_UPLOADSIZE);
 		RESET_ADMIN_PW 					= CFWProperties.configAsBoolean("cfw_reset_admin_pw", RESET_ADMIN_PW);
 				
-		BASE_URL 						= "/"+APPLICATION_NAME;
-		
 		HTTP_ENABLED 					= CFWProperties.configAsBoolean("cfw_http_enabled", HTTP_ENABLED);
 		HTTP_PORT 						= CFWProperties.configAsInt("cfw_http_port", HTTP_PORT);
 		HTTP_REDIRECT_TO_HTTPS			= CFWProperties.configAsBoolean("cfw_http_redirect_to_https", HTTP_REDIRECT_TO_HTTPS);

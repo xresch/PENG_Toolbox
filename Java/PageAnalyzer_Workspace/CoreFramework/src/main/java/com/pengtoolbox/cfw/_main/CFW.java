@@ -54,6 +54,7 @@ public class CFW {
 	}
 	
 	public static class Context {
+		public static class App extends CFWContextApp{};
 		public static class Request extends CFWContextRequest{};
 		public static class Session extends CFWContextSession{};
 	}

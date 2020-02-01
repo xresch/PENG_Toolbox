@@ -50,9 +50,8 @@ public class AuthenticationHandler extends HandlerWrapper
         	//##################################
     		String uri = request.getRequestURI().toString();
 
-    		System.out.println("securePath:"+securePath);
-    		System.out.println("request.getRequestURI().toString():"+uri);
     		if(!request.getRequestURI().toString().startsWith(securePath)) {
+    			System.out.println("111");
     			this._handler.handle(target, baseRequest, request, response);
     			return;
     		}
@@ -65,7 +64,7 @@ public class AuthenticationHandler extends HandlerWrapper
         	SessionData data = CFW.Context.Request.getSessionData(); 
         	
         	if(data.isLoggedIn()) {
-
+        		System.out.println("222");
 	        	//##################################
 	        	// Call Wrapped Handler
 	        	//##################################
@@ -76,7 +75,7 @@ public class AuthenticationHandler extends HandlerWrapper
 	    			((HTMLResponse)template).addJavascriptData("userid", data.getUser().id());
 	    		}
         	}else {
-        		
+        		System.out.println("333");
         		if(request.getRequestURI().toString().endsWith("/login")
         		   || request.getRequestURI().toString().contains("/login;jsessionid")) {
         			this._handler.handle(target, baseRequest, request, response);
@@ -85,11 +84,13 @@ public class AuthenticationHandler extends HandlerWrapper
         			if(request.getQueryString() != null && !request.getQueryString().equals("#")) {
         				query = "?"+request.getQueryString();
         			}
-        			CFW.HTTP.redirectToURL(response, "./login?url="+URLEncoder.encode(request.getRequestURI()+query));
+        			CFW.HTTP.redirectToURL(response, "/app/login?url="+URLEncoder.encode(request.getRequestURI()+query));
         		}
         	}
 	
     	}else {
+    		//---------------------------------
+    		// Login as anonymous
     		if(CFW.Context.Request.getUser() == null) {
     			CFW.Context.Request.getSessionData().setUser(CFW.DB.Users.selectByUsernameOrMail("anonymous"));
     			CFW.Context.Session.getSessionData().triggerLogin();

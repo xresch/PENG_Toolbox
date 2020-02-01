@@ -14,8 +14,6 @@ import javax.servlet.SessionTrackingMode;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.eclipse.jetty.rewrite.handler.RedirectRegexRule;
-import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -134,23 +132,59 @@ public class CFWApplication {
 //	}
 	
 	/**************************************************************************************************
-	 * Returns a ServletContextHandler that can be accesses with a prior user login.
-	 * Adds several handlers like gzipHandler, SessionHandler, AuthenticationHandler and RequestHandler.
-	 * 
-	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
+	 * Adds a servlet to the secure application context that needs authentication to access.
+	 * The resulting path will be CFW.Properties.BASE_URL + "/app" + path.
+	 * @param the relative path of the context,
 	 **************************************************************************************************/
 	public ServletHolder addAppServlet(Class<? extends Servlet> clazz, String path){
 		return this.servletContext.addServlet(clazz, "/app"+path);
 	}
 	
 	/**************************************************************************************************
-	 * Returns a ServletContextHandler that can be accesses with a prior user login.
-	 * Adds several handlers like gzipHandler, SessionHandler, AuthenticationHandler and RequestHandler.
+	 * Adds a servlet to the secure application context that needs authentication to access.
+	 * The resulting path will be CFW.Properties.BASE_URL + "/app" + path.
+	 * 
+	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
+	 **************************************************************************************************/
+	public void addAppServlet(ServletHolder holder, String path){
+		this.servletContext.addServlet(holder, "/app"+path);
+	}
+	
+	/**************************************************************************************************
+	 * Adds a servlet to the secure application context that needs authentication to access.
+	 * The resulting path will be CFW.Properties.BASE_URL + path.
 	 * 
 	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
 	 **************************************************************************************************/
 	public ServletHolder addUnsecureServlet(Class<? extends Servlet> clazz, String path){
 		return this.servletContext.addServlet(clazz, path);
+	}
+	
+	/**************************************************************************************************
+	 * Adds a servlet to the secure application context that needs authentication to access.
+	 * The resulting path will be CFW.Properties.BASE_URL + path.
+	 * 
+	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
+	 **************************************************************************************************/
+	public void addUnsecureServlet(ServletHolder holder, String path){
+		this.servletContext.addServlet(holder, path);
+	}
+	
+	/**************************************************************************************************
+	 * Adds a servlet to the secure application context that needs authentication to access.
+	 * The resulting path will be CFW.Properties.BASE_URL + path.
+	 * 
+	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
+	 * @return 
+	 **************************************************************************************************/
+	public HttpSession createNewSession(HttpServletRequest request){
+		
+		HttpSession session = servletContext.getSessionHandler().getSession(request.getSession().getId());
+		if(session == null) {
+			session = servletContext.getSessionHandler().newHttpSession(request);
+		}
+		
+		return session;
 	}
 	
 //	/**************************************************************************************************
@@ -203,11 +237,13 @@ public class CFWApplication {
 	}
 
 	/**************************************************************************************************
-	 * Set the Default URL to which an incomplete URL should be redirected to.
+	 * Set the default URL for redirects, e.g after login.
+	 * @param defaultURL 
+	 * @param isAppServlet prepends "/app" if true
 	 **************************************************************************************************/
 	public void setDefaultURL(String defaultURL, boolean isAppServlet) {
 		if(isAppServlet) {
-			this.defaultURL = CFWProperties.BASE_URL+defaultURL;
+			this.defaultURL = "/app"+defaultURL;
 		}else {
 			this.defaultURL = defaultURL;
 		}
@@ -230,32 +266,20 @@ public class CFWApplication {
 		//-----------------------------------------
 		// User Profile Servlets
 	    this.addAppServlet(ChangePasswordServlet.class,  "/changepassword");
+	    
+	    //-----------------------------------------
+	    // CFW Servlets
+	    servletContext.addServlet(ServletAPILogin.class,  "/cfw/apilogin");
+	    servletContext.addServlet(FormServlet.class,  "/cfw/formhandler");
+	    servletContext.addServlet(AutocompleteServlet.class,  "/cfw/autocomplete");
+		//-----------------------------------------
+		// Resource Servlets
+	    servletContext.addServlet(AssemblyServlet.class, "/cfw/assembly"); 
+	    servletContext.addServlet(JARResourceServlet.class, "/cfw/jarresource");
+
 	    	    
 	}
 	
-	/**************************************************************************************************
-	 * Propagates all sessions and session data to all available session context handlers.
-	 * @throws Exception
-	 **************************************************************************************************/
-	public static synchronized String propagateSessionDataToAllContexts(HttpServletRequest request, SessionData data) {
-		
-		System.out.println("######### Propagate Session Data #########");
-		String sessionID = "";
-		for(ServletContextHandler handler : servletContextArray.values()) {
-			
-			HttpSession session = handler.getSessionHandler().getSession(request.getSession().getId());
-			if(session == null) {
-				System.out.println("Session is null for Handler: " + handler.getContextPath());
-				session = handler.getSessionHandler().newHttpSession(request);
-			}
-			System.out.println("Session: " + session.getId());
-			session.setAttribute(CFW.SESSION_DATA, data);
-			sessionID = session.getId();
-		}
-		System.out.println("##########################################");
-		return sessionID;
-	}
-
 	/**************************************************************************************************
 	 * Create an error handler.
 	 * @throws Exception
@@ -334,41 +358,6 @@ public class CFWApplication {
 	}
 
 	/***********************************************************************
-	 * Add the servlets provided by CFW to the given context.
-	 *  AssemblyServlet on /assembly
-	 *  JARFontServlet on /jarfont
-	 *  TestServlet on /test
-	 ***********************************************************************/
-	public HandlerWrapper createCFWHandler() {
-		
-		ContextHandler contextHandler = new ContextHandler("/cfw");
-
-		ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-		servletContextHandler.setSessionHandler(sessionHandler);
-	    //-----------------------------------------
-	    // CFW Servlets
-	    servletContextHandler.addServlet(ServletAPILogin.class,  "/apilogin");
-	    servletContextHandler.addServlet(FormServlet.class,  "/formhandler");
-	    servletContextHandler.addServlet(AutocompleteServlet.class,  "/autocomplete");
-		//-----------------------------------------
-		// Resource Servlets
-		servletContextHandler.addServlet(AssemblyServlet.class, "/assembly"); 
-		servletContextHandler.addServlet(JARResourceServlet.class, "/jarresource");
-		
-		//-----------------------------------------
-		// Handler Chain
-	    GzipHandler servletGzipHandler = new GzipHandler();
-	    RequestHandler requestHandler = new RequestHandler();
-	
-	     new HandlerChainBuilder(contextHandler)
-	     	 .chain(servletGzipHandler)
-	         .chain(requestHandler)
-	         .chain(servletContextHandler);
-		
-		return contextHandler;
-	}
-
-	/***********************************************************************
 	 * Create a Server with the defined HTTP and HTTPs settings in the 
 	 * cfw.properties.
 	 * @return Server instance
@@ -429,22 +418,23 @@ public class CFWApplication {
         //###################################################################
         //----------------------------------
         // Build Handler Chain
-        ContextHandler contextHandler = new ContextHandler(CFWProperties.BASE_URL);	 
-        servletContext.setSessionHandler(createSessionHandler(CFWProperties.BASE_URL));
+        ContextHandler contextHandler = new ContextHandler("/");	 
+        servletContext.setSessionHandler(createSessionHandler("/"));
         
         
         new HandlerChainBuilder(contextHandler)
 	        .chain(new GzipHandler())
 	    	.chain(new RequestHandler())
-	        .chain(new AuthenticationHandler(CFWProperties.BASE_URL+"/app", defaultURL))
+	        .chain(new AuthenticationHandler("/app", defaultURL))
 	        .chain(servletContext);
         
         //###################################################################
         // Add CFW Servlets
         //###################################################################
         addCFWServlets();
-        
+        // Debug
         System.out.println(servletContext.dump());
+        
         //###################################################################
         // Create Handler Collection
         //###################################################################
@@ -454,9 +444,8 @@ public class CFWApplication {
         handlerArray.add(new ShutdownHandler(CFW.Properties.APPLICATION_ID, true, true));
         handlerArray.add(new HTTPSRedirectHandler());
         handlerArray.add(new RedirectDefaultPageHandler(defaultURL));
-        handlerArray.add(contextHandler);
         handlerArray.add(CFWApplication.createResourceHandler());
-        handlerArray.add(createCFWHandler());
+        handlerArray.add(contextHandler);
         
         HandlerCollection handlerCollection = new HandlerCollection();
         handlerCollection.setHandlers(handlerArray.toArray(new Handler[] {}));
@@ -465,6 +454,7 @@ public class CFWApplication {
         //###################################################################
         // Startup
         //###################################################################
+        CFW.Context.App.setApp(this);
         server.start();
         server.join();
 	}

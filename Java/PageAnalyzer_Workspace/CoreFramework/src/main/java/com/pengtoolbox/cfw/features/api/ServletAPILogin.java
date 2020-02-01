@@ -72,20 +72,17 @@ public class ServletAPILogin extends HttpServlet
 			if(user != null) {
 				
 				if(user.status() != null && user.status().toUpperCase().equals("ACTIVE")) {
-					
 					//--------------------------------
 					//Login success
 					SessionData data = CFW.Context.Request.getSessionData(); 
 					data.resetUser();
 					data.setUser(user);
-					data.triggerLogin();
-
+					
 					//--------------------------------
 					// Create session in other context
-					String sessionID = CFWApplication.propagateSessionDataToAllContexts(request, data);
-					
 					if(CFW.Context.Request.hasPermission(FeatureAPI.PERMISSION_CFW_API)) {
-						plaintext.getContent().append("JSESSIONID="+sessionID);
+						data.triggerLogin();
+						plaintext.getContent().append("JSESSIONID="+CFW.Context.Request.getRequest().getSession().getId());
 					}else {
 						plaintext.getContent().append("ERROR: Access Denied.");
 					}
@@ -93,6 +90,8 @@ public class ServletAPILogin extends HttpServlet
 				}
 				
 				
+			}else {
+				plaintext.getContent().append("ERROR: Access is Denied.");
 			}
 			
 		}
