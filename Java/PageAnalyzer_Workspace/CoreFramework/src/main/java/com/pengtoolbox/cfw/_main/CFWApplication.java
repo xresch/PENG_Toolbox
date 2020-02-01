@@ -432,8 +432,8 @@ public class CFWApplication {
         // Add CFW Servlets
         //###################################################################
         addCFWServlets();
-        // Debug
-        System.out.println(servletContext.dump());
+        // Debug servlet mappings
+        //System.out.println(servletContext.dump());
         
         //###################################################################
         // Create Handler Collection

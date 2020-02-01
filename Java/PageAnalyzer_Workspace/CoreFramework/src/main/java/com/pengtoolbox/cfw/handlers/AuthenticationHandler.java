@@ -51,7 +51,6 @@ public class AuthenticationHandler extends HandlerWrapper
     		String uri = request.getRequestURI().toString();
 
     		if(!request.getRequestURI().toString().startsWith(securePath)) {
-    			System.out.println("111");
     			this._handler.handle(target, baseRequest, request, response);
     			return;
     		}
@@ -64,7 +63,6 @@ public class AuthenticationHandler extends HandlerWrapper
         	SessionData data = CFW.Context.Request.getSessionData(); 
         	
         	if(data.isLoggedIn()) {
-        		System.out.println("222");
 	        	//##################################
 	        	// Call Wrapped Handler
 	        	//##################################
@@ -75,7 +73,6 @@ public class AuthenticationHandler extends HandlerWrapper
 	    			((HTMLResponse)template).addJavascriptData("userid", data.getUser().id());
 	    		}
         	}else {
-        		System.out.println("333");
         		if(request.getRequestURI().toString().endsWith("/login")
         		   || request.getRequestURI().toString().contains("/login;jsessionid")) {
         			this._handler.handle(target, baseRequest, request, response);
