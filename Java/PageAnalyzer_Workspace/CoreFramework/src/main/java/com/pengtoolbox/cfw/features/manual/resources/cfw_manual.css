@@ -1,7 +1,12 @@
 #cfw-content  {
 	padding: 0px;
 }
+
 #cfw-container  {
 	max-width: 100%;
 	padding: 0px;
+}
+
+#manual-page-content {
+	padding: 20px;
 }
