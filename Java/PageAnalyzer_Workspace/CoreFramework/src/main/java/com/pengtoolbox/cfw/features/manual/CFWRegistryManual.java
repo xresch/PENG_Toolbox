@@ -17,7 +17,7 @@ public class CFWRegistryManual {
 	private static Logger logger = CFWLog.getLogger(CFWRegistryManual.class.getName());
 	
 	private static LinkedHashMap<String, ManualPage> manualPages = new LinkedHashMap<String, ManualPage>();
-		
+	
 	/***********************************************************************
 	 * Adds a menuItem to the regular menu.
 	 * Define the position of in the menu with the menuPath parameter. Use
@@ -26,8 +26,9 @@ public class CFWRegistryManual {
 	 * @param menuitem to add
 	 * @param Class that extends from BTMenu
 	 ***********************************************************************/
-	public static void addManualPage(String menuPath, ManualPage item)  {
-		addManualPage(manualPages, item, menuPath);
+	public static ManualPage addManualPage(String menuPath, ManualPage page)  {
+		addManualPage(manualPages, page, menuPath);
+		return page;
 	}
 	
 	

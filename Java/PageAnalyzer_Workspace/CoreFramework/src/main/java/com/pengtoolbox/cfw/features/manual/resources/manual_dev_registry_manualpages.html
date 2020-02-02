@@ -1,0 +1,56 @@
+
+<p>
+Manual pages are created by adding them to the registry. </br>
+Here is an example how this page was added to the manual:
+</p>
+<ul>
+	<li><strong>Path:&nbsp;</strong> The path consist of the page titles. The titles are delimited with the pipe character, therefore pipe is not allowed in titles.</li>
+	<li><strong>Parents:&nbsp;</strong> Parents that do not exist are automatically created. If you want to have a icon on the page, you need to create them manually as below.</li>
+	<li><strong>Permissions:&nbsp;</strong> Users will only see pages they have permissions for. Permissions will be propagated from child pages to their parents. </li>
+</ul>
+<pre>
+	<code>CFW.Registry.Manual.addManualPage(null, new ManualPage("Administration")
+	.faicon("fa fa-cog")
+	.addPermission(PERMISSION_ADMIN_MANUAL));
+CFW.Registry.Manual.addManualPage("Administration", new ManualPage("Development")
+	.faicon("fa fa-code")
+	.addPermission(PERMISSION_ADMIN_MANUAL));
+
+CFW.Registry.Manual.addManualPage("Administration | Development", 
+		new ManualPage("Manual Pages")
+			.faicon("fa fa-book")
+			.addPermission(PERMISSION_ADMIN_MANUAL)
+			.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_registry_manualpages.html")
+		);
+	</code>
+</pre>
+
+<p>
+Here another example were you directly add a children to a parent page that was already added to the registry. </br>
+</p>
+<pre>
+	<code>ManualPage dev = CFW.Registry.Manual.addManualPage(null, new ManualPage("Development").faicon("fa fa-code").addPermission(PERMISSION_ADMIN_MANUAL));
+dev.addChild(
+	new ManualPage("Configuration")
+		.faicon("fa fa-cog")
+		.addPermission(PERMISSION_ADMIN_MANUAL)
+		.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_configuration.html")
+);
+
+dev.addChild(
+	new ManualPage("Permissions")
+		.faicon("fa fa-lock")
+		.addPermission(PERMISSION_ADMIN_MANUAL)
+		.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_permissions.html")
+	);
+
+dev.addChild(
+	new ManualPage("Manual Pages")
+		.faicon("fa fa-book")
+		.addPermission(PERMISSION_ADMIN_MANUAL)
+		.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_registry_manualpages.html")
+	);
+	</code>
+</pre>
+
+

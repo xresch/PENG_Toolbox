@@ -1,11 +1,8 @@
 package com.pengtoolbox.cfw.features.usermgmt;
 
-import org.eclipse.jetty.servlet.ServletContextHandler;
-
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppFeature;
 import com.pengtoolbox.cfw._main.CFWApplication;
-import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 
 /**************************************************************************************************************

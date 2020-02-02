@@ -27,36 +27,49 @@ public class FeatureManual extends CFWAppFeature {
 
     	//----------------------------------
     	// Register Regular Menu
-//		CFW.Registry.Components.addRegularMenuItem(
-//				(MenuItem)new MenuItem("Manual")
-//					.faicon("fas fa-book")
-//					.addPermission(PERMISSION_MANUAL)
-//					.href("./manual")
-//				, null);
-		
+		// Manual Menu is handled by CFW.Registry.Components.createMenuInstance()
 		
 		//---------------------------
-		// Test Menu Hierarchy
+		// Admin Manuals
 		CFW.Registry.Manual.addManualPage(null, 			new ManualPage("Administration").faicon("fa fa-cog").addPermission(PERMISSION_ADMIN_MANUAL));
-		CFW.Registry.Manual.addManualPage("Administration", new ManualPage("Development").faicon("fa fa-code").addPermission(PERMISSION_ADMIN_MANUAL));
-		CFW.Registry.Manual.addManualPage("Administration | Development", 
-				new ManualPage("Configuration")
+		
+		//---------------------------
+		// Developer Manuals
+		ManualPage dev = CFW.Registry.Manual.addManualPage(null, new ManualPage("Development").faicon("fa fa-code").addPermission(PERMISSION_ADMIN_MANUAL));
+		ManualPage quickstart = new ManualPage("Quickstart").faicon("fas fa-fighter-jet").addPermission(PERMISSION_ADMIN_MANUAL);
+		dev.addChild(quickstart);
+		
+		
+		quickstart.addChild(new ManualPage("Create an Application")
+				.faicon("fas fa-server")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_create_application.html")
+			);
+		
+		quickstart.addChild(new ManualPage("Create a Feature")
+				.faicon("fas fa-plug")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_create_feature.html")
+			);
+		quickstart.addChild(new ManualPage("Add Configuration Items")
 					.faicon("fa fa-cog")
 					.addPermission(PERMISSION_ADMIN_MANUAL)
-					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_configuration.html"));
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_configuration.html")
+				);
 		
-		CFW.Registry.Manual.addManualPage("Administration | Development", 
-				new ManualPage("Permissions")
+		quickstart.addChild(
+				new ManualPage("Create Permissions")
 					.faicon("fa fa-lock")
 					.addPermission(PERMISSION_ADMIN_MANUAL)
-					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_permissions.html"));
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_permissions.html")
+				);
 		
-		//---------------------------
-		// Test Menu Hierarchy 2
-		CFW.Registry.Manual.addManualPage(null, new ManualPage("Top Item 2").faicon("fa fa-book"));
-		CFW.Registry.Manual.addManualPage("Top Item 2", new ManualPage("Sub Item"));
-		CFW.Registry.Manual.addManualPage(" Top Item 2 | Sub Item ", new ManualPage("Sub Sub Item"));
-		CFW.Registry.Manual.addManualPage("Top Item 2 | Sub Item ", new ManualPage("Sub Sub Item 2"));
+		quickstart.addChild(
+				new ManualPage("Create Manual Pages")
+					.faicon("fa fa-book")
+					.addPermission(PERMISSION_ADMIN_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_registry_manualpages.html")
+				);
 	}
 
 	@Override

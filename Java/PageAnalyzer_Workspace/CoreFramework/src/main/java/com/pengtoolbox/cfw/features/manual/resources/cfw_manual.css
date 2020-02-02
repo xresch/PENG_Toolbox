@@ -11,6 +11,9 @@
 	padding: 20px;
 }
 
-.cfw-fa-box {
+.cfw-manual-fa-box {
+	height: 16px;
+    width: 16px;
+    float: left;
     margin-right: 0px; 
 }

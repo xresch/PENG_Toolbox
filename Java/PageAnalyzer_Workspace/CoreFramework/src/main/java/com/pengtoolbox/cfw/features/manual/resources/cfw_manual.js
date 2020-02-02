@@ -39,7 +39,7 @@ function cfw_manual_createMenuItem(pageData){
 	var collapseID = 'collapse-'+CFW_MANUAL_COUNTER;	
 	//-------------------------
 	// arrow
-	var arrow = '<div class="cfw-fa-box">';
+	var arrow = '<div class="cfw-manual-fa-box">';
 	var dataToggle = '';
 	if(pageData.children != null && pageData.children.length > 0){
 		dataToggle = ' data-toggle="collapse" data-target="#'+collapseID+'" '
