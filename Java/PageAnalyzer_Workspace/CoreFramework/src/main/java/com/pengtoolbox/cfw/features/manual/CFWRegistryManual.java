@@ -22,11 +22,11 @@ public class CFWRegistryManual {
 	 * Adds a menuItem to the regular menu.
 	 * Define the position of in the menu with the menuPath parameter. Use
 	 * "|" to separate multiple menu labels.
-	 * @param menuitem to add
 	 * @param menuPath were the menu should be added, or null for root
+	 * @param menuitem to add
 	 * @param Class that extends from BTMenu
 	 ***********************************************************************/
-	public static void addManualPage(ManualPage item, String menuPath)  {
+	public static void addManualPage(String menuPath, ManualPage item)  {
 		addManualPage(manualPages, item, menuPath);
 	}
 	

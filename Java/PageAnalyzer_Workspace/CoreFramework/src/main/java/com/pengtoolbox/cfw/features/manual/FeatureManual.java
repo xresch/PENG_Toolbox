@@ -3,6 +3,7 @@ package com.pengtoolbox.cfw.features.manual;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppFeature;
 import com.pengtoolbox.cfw._main.CFWApplication;
+import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.features.usermgmt.Role;
 
@@ -14,7 +15,7 @@ import com.pengtoolbox.cfw.features.usermgmt.Role;
 public class FeatureManual extends CFWAppFeature {
 
 	public static final String PERMISSION_MANUAL = "Manual";
-	
+	public static final String PERMISSION_ADMIN_MANUAL = "Manual for Admins";
 
 	public static final String RESOURCE_PACKAGE = "com.pengtoolbox.cfw.features.manual.resources";
 	
@@ -36,41 +37,48 @@ public class FeatureManual extends CFWAppFeature {
 		
 		//---------------------------
 		// Test Menu Hierarchy
-		CFW.Registry.Manual.addManualPage(new ManualPage("Top Page").faicon("fa fa-cog").content("This is a test Top Page."), null);
-		CFW.Registry.Manual.addManualPage(new ManualPage("A"), "Top Page");
-		CFW.Registry.Manual.addManualPage(new ManualPage("B").content("This is a test B."), "Top Page | A");
-		CFW.Registry.Manual.addManualPage(new ManualPage("C").content("This is a test C."), "Top Page | A | B" );
+		CFW.Registry.Manual.addManualPage(null, 			new ManualPage("Administration").faicon("fa fa-cog").addPermission(PERMISSION_ADMIN_MANUAL));
+		CFW.Registry.Manual.addManualPage("Administration", new ManualPage("Development").faicon("fa fa-code").addPermission(PERMISSION_ADMIN_MANUAL));
+		CFW.Registry.Manual.addManualPage("Administration | Development", 
+				new ManualPage("Configuration")
+					.faicon("fa fa-cog")
+					.addPermission(PERMISSION_ADMIN_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_configuration.html"));
+		
+		CFW.Registry.Manual.addManualPage("Administration | Development", 
+				new ManualPage("Permissions")
+					.faicon("fa fa-lock")
+					.addPermission(PERMISSION_ADMIN_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_permissions.html"));
 		
 		//---------------------------
 		// Test Menu Hierarchy 2
-		CFW.Registry.Manual.addManualPage(new ManualPage("Top Item 2").faicon("fa fa-book"), null);
-		CFW.Registry.Manual.addManualPage(new ManualPage("Sub Item"), "Top Item 2");
-		CFW.Registry.Manual.addManualPage(new ManualPage("Sub Sub Item"), " Top Item 2 | Sub Item ");
-		CFW.Registry.Manual.addManualPage(new ManualPage("Sub Sub Item 2"), "Top Item 2 | Sub Item ");
+		CFW.Registry.Manual.addManualPage(null, new ManualPage("Top Item 2").faicon("fa fa-book"));
+		CFW.Registry.Manual.addManualPage("Top Item 2", new ManualPage("Sub Item"));
+		CFW.Registry.Manual.addManualPage(" Top Item 2 | Sub Item ", new ManualPage("Sub Sub Item"));
+		CFW.Registry.Manual.addManualPage("Top Item 2 | Sub Item ", new ManualPage("Sub Sub Item 2"));
 	}
 
 	@Override
 	public void initializeDB() {
 		
-		Role adminRole = CFW.DB.Roles.selectFirstByName(CFW.DB.Roles.CFW_ROLE_ADMIN);
-		Role userRole = CFW.DB.Roles.selectFirstByName(CFW.DB.Roles.CFW_ROLE_USER);
-		
 		//-----------------------------------
 		// 
-		if(!CFW.DB.Permissions.checkExistsByName(PERMISSION_MANUAL)) {
-			Permission permission = 
-					new Permission(PERMISSION_MANUAL, "user")
-						.description("Can access the manual pages.")
-						.isDeletable(false);
+		CFW.DB.Permissions.oneTimeCreate(
+				new Permission(PERMISSION_MANUAL, "user")
+					.description("Can access the manual pages. Adds the ")
+					.isDeletable(false),
+					true,
+					true
+				);
 			
-			CFW.DB.Permissions.create(permission);
-			
-			permission = CFW.DB.Permissions.selectByName(PERMISSION_MANUAL);
-			
-			CFW.DB.RolePermissionMap.addPermissionToRole(permission, adminRole, true);
-			CFW.DB.RolePermissionMap.addPermissionToRole(permission, userRole, true);
-		}
-
+		CFW.DB.Permissions.oneTimeCreate(
+				new Permission(PERMISSION_ADMIN_MANUAL, "user")
+					.description("Can access the manual pages for admins and developers.")
+					.isDeletable(false),
+					true,
+					false
+				);
 	}
 
 	@Override

@@ -118,7 +118,7 @@
 }
 
 /* Closed arrow  */
-.nav-side-menu .arrow:before {
+.nav-side-menu ul .arrow:before {
   font-family: 'Font Awesome 5 Free';
   content: "\f054";
   font-weight: 900;
@@ -129,7 +129,7 @@
 }
 
 /* opened Arrow */
-.nav-side-menu li[data-toggle]:not(.collapsed) > .arrow:before {
+.nav-side-menu .show > div > .arrow:before {
   font-family: 'Font Awesome 5 Free';
   content: "\f078";
   font-weight: 900;

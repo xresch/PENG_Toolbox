@@ -1,0 +1,10 @@
+
+<p>You can add a configuration to the configuration page by creating a new configuration object and add it to the database. </p>
+<pre>
+	<code>CFW.DB.Config.oneTimeCreate(
+	new Configuration("Silk Performance Manager", CONFIG_SPM_PROD_URL)
+		.description("The URL of the productive SPM instance.")
+		.type(FormFieldType.TEXT)
+);
+	</code>
+</pre>

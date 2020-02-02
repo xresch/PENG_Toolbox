@@ -96,6 +96,11 @@ function cfw_manual_printContent(domElement){
 			var pageData = data.payload;
 			target.html(pageData.content);
 			target.prepend('<h1>'+pageData.title+'</h1>');
+			
+			target.find('pre code').each(function(index, element){
+				console.log("highlight");
+				hljs.highlightBlock(element);
+			})
 		}
 	})
 	

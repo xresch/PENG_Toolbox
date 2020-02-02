@@ -120,7 +120,7 @@ public class ManualPage {
 		result.addProperty("path", path);
 		result.addProperty("faiconClasses", faiconClasses);
 		result.addProperty("hasContent", content != null);
-		result.addProperty("content", content.getContent());
+		result.addProperty("content", content.readContents());
 		
 		return result;
 	}

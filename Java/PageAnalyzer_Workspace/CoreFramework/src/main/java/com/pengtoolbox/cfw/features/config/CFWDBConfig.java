@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.features.config.Configuration.ConfigFields;
+import com.pengtoolbox.cfw.features.usermgmt.Permission;
+import com.pengtoolbox.cfw.features.usermgmt.Role;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
@@ -105,6 +108,27 @@ public class CFWDBConfig {
 		for(Configuration config : configs) {
 			create(config);
 		}
+	}
+	
+	/********************************************************************************************
+	 * Creates a new configuration in the DB if the name was not already given.
+	 * All newly created permissions are by default assigned to the Superuser Role.
+	 * 
+	 * @param configuration with the values that should be inserted. ID will be set by the Database.
+	 * @return true if successful, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static boolean oneTimeCreate(Configuration configuration) {
+		
+		boolean result = true; 
+		if(!CFW.DB.Config.checkConfigExists(configuration)) {
+			
+			result &= CFW.DB.Config.create(configuration);
+			configuration = CFW.DB.Config.selectByName(configuration.name());
+			
+		}
+		
+		return result;
 	}
 	
 	/********************************************************************************************

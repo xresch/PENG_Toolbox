@@ -32,6 +32,36 @@ public class CFWDBPermission {
 			create(permission);
 		}
 	}
+	
+	/********************************************************************************************
+	 * Creates a new permission in the DB if the name was not already given.
+	 * All newly created permissions are by default assigned to the Superuser Role.
+	 * 
+	 * @param permission with the values that should be inserted. ID will be set by the Database.
+	 * @return true if successful, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static boolean oneTimeCreate(Permission permission, boolean addToAdminRole, boolean addToUserRole) {
+		
+		boolean result = true; 
+		if(!CFW.DB.Permissions.checkExistsByName(permission)) {
+			
+			result &= CFW.DB.Permissions.create(permission);
+			
+			permission = CFW.DB.Permissions.selectByName(permission.name());
+			
+			if(addToAdminRole) {
+				Role adminRole = CFW.DB.Roles.selectFirstByName(CFW.DB.Roles.CFW_ROLE_ADMIN);
+				result &= CFW.DB.RolePermissionMap.addPermissionToRole(permission, adminRole, true);
+			}
+			if(addToUserRole) {
+				Role userRole = CFW.DB.Roles.selectFirstByName(CFW.DB.Roles.CFW_ROLE_USER);
+				result &= CFW.DB.RolePermissionMap.addPermissionToRole(permission, userRole, true);
+			}
+		}
+		
+		return result;
+	}
 	/********************************************************************************************
 	 * Creates a new permission in the DB.
 	 * All newly created permissions are by default assigned to the Superuser Role.

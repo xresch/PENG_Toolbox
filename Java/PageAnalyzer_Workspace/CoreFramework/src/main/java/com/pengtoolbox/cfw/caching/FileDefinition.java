@@ -66,7 +66,7 @@ public class FileDefinition {
 	 * Return the contents set by setContent().
 	 * @return
 	 **************************************************************************/
-	public String getContent() {
+	private String getContent() {
 		return content;
 	}
 
