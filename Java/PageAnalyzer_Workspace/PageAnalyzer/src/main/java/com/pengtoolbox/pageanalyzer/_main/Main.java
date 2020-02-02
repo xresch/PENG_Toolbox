@@ -92,7 +92,7 @@ public class Main extends Application implements CFWAppInterface {
 				(MenuItem)new MenuItem("Summary")
 					.faicon("fas fa-calculator")
 					.addPermission(PAPermissions.VIEW_DOCU)
-					.cssClass("result-view-tabs")
+					.addCssClass("result-view-tabs")
 					.onclick("draw({data: 'yslowresult', info: 'overview', view: ''})")
 				, null);
 		
@@ -100,7 +100,7 @@ public class Main extends Application implements CFWAppInterface {
 				(MenuItem)new MenuItem("Grade")
 					.faicon("fas fa-thermometer-half")
 					.addPermission(PAPermissions.VIEW_DOCU)
-					.cssClass("result-view-tabs")
+					.addCssClass("result-view-tabs")
 					.addChild(new MenuItem("Panels").faicon("fas fa-columns")		.onclick("draw({data: 'yslowresult', info: 'grade', view: 'panels'})"))
 					.addChild(new MenuItem("Table").faicon("fas fa-table")			.onclick("draw({data: 'yslowresult', info: 'grade', view: 'table'})"))
 					.addChild(new MenuItem("Plain Text").faicon("fas fa-file-alt")	.onclick("draw({data: 'yslowresult', info: 'grade', view: 'plaintext'})"))
@@ -113,7 +113,7 @@ public class Main extends Application implements CFWAppInterface {
 				(MenuItem)new MenuItem("Statistics")
 					.faicon("fas fa-signal")
 					.addPermission(PAPermissions.VIEW_DOCU)
-					.cssClass("result-view-tabs")
+					.addCssClass("result-view-tabs")
 					.addChild(new MenuItem("Table: Statistics by Type").faicon("fas fa-table")						.onclick("draw({data: 'yslowresult', info: 'stats', view: 'table', stats: 'type'})"))
 					.addChild(new MenuItem("Table: Statistics by Type with primed Cache").faicon("fas fa-table")	.onclick("draw({data: 'yslowresult', info: 'stats', view: 'table', stats: 'type_cached'})"))
 					.addChild(new MenuItem("Table: Components").faicon("fas fa-table")								.onclick("draw({data: 'yslowresult', info: 'stats', view: 'table', stats: 'components'})"))

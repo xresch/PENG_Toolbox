@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.caching.FileDefinition;
+import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
@@ -22,6 +24,8 @@ public class ManualPage {
 	
 	private String title = "&nbsp;";
 	private String faiconClasses = "";
+	
+	private FileDefinition content = null;
 	
 	// if any permissions match page will be accessible by the user
 	// if no permission in the list page will be accessible by the user
@@ -99,6 +103,7 @@ public class ManualPage {
 		
 		result.addProperty("title", title);
 		result.addProperty("faiconClasses", title);
+		result.addProperty("hasContent", content != null);
 		
 		if(childPages.size() > 0) {
 			JsonArray children = new JsonArray();
@@ -180,10 +185,42 @@ public class ManualPage {
 	/*****************************************************************************
 	 *  
 	 *****************************************************************************/
+	public FileDefinition content() {
+		return this.content;
+	}
+	/*****************************************************************************
+	 *  
+	 *****************************************************************************/
+	public ManualPage content(String html) {
+		this.content = new FileDefinition(html);
+		return this;
+	}
+	
+	/*****************************************************************************
+	 *  
+	 *****************************************************************************/
+	public ManualPage content(HandlingType type, String path, String filename) {
+		this.content = new FileDefinition(type, path, filename);
+		return this;
+	}
+	
+	/*****************************************************************************
+	 *  
+	 *****************************************************************************/
+	public ManualPage content(FileDefinition fileDef) {
+		this.content = fileDef;
+		return this;
+	}
+	
+	/*****************************************************************************
+	 *  
+	 *****************************************************************************/
 	public ManualPage faicon(String faiconClasses) {
 		this.faiconClasses = faiconClasses;
 		return this;
 	}
+	
+	
 	
 	
 

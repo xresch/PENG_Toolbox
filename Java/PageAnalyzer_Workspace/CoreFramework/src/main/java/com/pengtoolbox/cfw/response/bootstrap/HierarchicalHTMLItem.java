@@ -215,8 +215,13 @@ public abstract class HierarchicalHTMLItem {
 	 * Set the CSS Class attribute.
 	 * @param cssClass the css classes you want to set on this item.
 	 ***********************************************************************************/
-	public HierarchicalHTMLItem cssClass(String cssClass) {
-		return addAttribute("class", cssClass);
+	public HierarchicalHTMLItem addCssClass(String cssClass) {
+		if(getAttributes().containsKey("class")) {
+			String currentClasses = getAttributeValue("class");
+			return addAttribute("class", currentClasses+" "+cssClass);
+		}else {
+			return addAttribute("class", cssClass);
+		}
 	}
 	
 	/***********************************************************************************

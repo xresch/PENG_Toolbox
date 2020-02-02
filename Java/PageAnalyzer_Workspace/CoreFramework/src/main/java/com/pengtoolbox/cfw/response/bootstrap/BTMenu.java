@@ -1,5 +1,7 @@
 package com.pengtoolbox.cfw.response.bootstrap;
 
+import java.util.ArrayList;
+
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.features.config.Configuration;
 
@@ -13,6 +15,7 @@ public class BTMenu extends HierarchicalHTMLItem {
 	
 	private String label = "&nbsp;";
 	private UserMenuItem userMenuItem = null;
+	private ArrayList<MenuItem> rightMenuItems = new ArrayList<MenuItem>();
 	
 	public BTMenu() {
 	}
@@ -58,11 +61,19 @@ public class BTMenu extends HierarchicalHTMLItem {
 		}
 		html.append("\n</ul>");
 		
-		if(this.userMenuItem != null) {	
-			html.append("\n<ul class=\"nav navbar-nav navbar-right\">");
-			html.append(userMenuItem.getHTML());
-			html.append("\n</ul>");
-		}
+		//-----------------------------
+		// Right User menus
+		html.append("\n<ul class=\"nav navbar-nav navbar-right\">");
+			for(MenuItem item : rightMenuItems) {
+				html.append(item.getHTML());
+			}
+			
+			//-----------------------------
+			// User Menu
+			if(this.userMenuItem != null) {	
+				html.append(userMenuItem.getHTML());
+			}
+		html.append("\n</ul>");
 		
 		html.append("\n</div></div></nav></div>");
 	}
@@ -81,6 +92,11 @@ public class BTMenu extends HierarchicalHTMLItem {
 		return userMenuItem;
 	}
 
+	public BTMenu addRightMenuItem(MenuItem item) {
+		fireChange();
+		rightMenuItems.add(item);
+		return this;
+	}
 	public BTMenu setUserMenuItem(UserMenuItem userMenuItem) {
 		fireChange();
 		this.userMenuItem = userMenuItem;

@@ -68,8 +68,5 @@ public class ManualPagesTests {
 		System.out.println("========= JSON =========\n"+pagesArray.toString());
 		
 	}
-	
-	
-
 
 }

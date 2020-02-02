@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.features.config.Configuration;
+import com.pengtoolbox.cfw.features.manual.FeatureManual;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
@@ -169,11 +170,22 @@ public class CFWRegistryComponents {
 			
 			//---------------------------
 			// Admin Menu Items CFW
-			
 			for(MenuItem item : adminMenuItemsCFW.values() ) {
 				adminParentMenu.addChild(item.createCopy());
 			}
-						
+			
+			//---------------------------
+			// Manual
+			if(CFW.Registry.Manual.getManualPagesForUserAsJSON().size() > 0
+			&& CFW.Context.Request.hasPermission(FeatureManual.PERMISSION_MANUAL)) {
+				menu.addRightMenuItem(
+						(MenuItem)new MenuItem("Manual")
+						.faicon("fas fa-book")
+						.addPermission(FeatureManual.PERMISSION_MANUAL)
+						.href("./manual")
+				);
+			};
+			
 			//---------------------------
 			// User Menu
 			UserMenuItem userParentMenu = new UserMenuItem(CFW.Context.Session.getSessionData());	

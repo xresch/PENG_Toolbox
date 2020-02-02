@@ -31,7 +31,7 @@ public class _MainForTesting implements CFWAppInterface {
 		CFW.Registry.Components.addRegularMenuItem(
 				(MenuItem)new MenuItem("Test Pages")
 					.faicon("fas fa-flask")
-					.cssClass("some-test-class")
+					.addCssClass("some-test-class")
 					.addChild(new MenuItem("General Tests").href("./general"))
 					.addChild(new MenuItem("Form Tests").faicon("fa fa-table").href("./form"))
 				, null);

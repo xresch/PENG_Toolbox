@@ -17,6 +17,7 @@ import com.pengtoolbox.cfw.features.config.CFWDBConfig;
 import com.pengtoolbox.cfw.features.config.FeatureConfiguration;
 import com.pengtoolbox.cfw.features.cpusampling.FeatureCPUSampling;
 import com.pengtoolbox.cfw.features.manual.CFWRegistryManual;
+import com.pengtoolbox.cfw.features.manual.FeatureManual;
 import com.pengtoolbox.cfw.features.usermgmt.CFWDBPermission;
 import com.pengtoolbox.cfw.features.usermgmt.CFWDBRole;
 import com.pengtoolbox.cfw.features.usermgmt.CFWDBRolePermissionMap;
@@ -192,7 +193,8 @@ public class CFW {
 		CFW.Registry.Features.addFeature(FeatureUserManagement.class);	
 		CFW.Registry.Features.addFeature(FeatureAPI.class);	
 		CFW.Registry.Features.addFeature(FeatureCPUSampling.class);		
-			
+		CFW.Registry.Features.addFeature(FeatureManual.class);		
+		
 		//---------------------------
 		// Application Register
 		appToStart.register();

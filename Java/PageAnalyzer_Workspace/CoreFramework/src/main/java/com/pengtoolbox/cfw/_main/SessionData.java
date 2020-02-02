@@ -19,6 +19,7 @@ import com.pengtoolbox.cfw.response.bootstrap.BTMenu;
 public class SessionData {
 	
 	private boolean isLoggedIn = false;
+	private boolean hasManualPages = false;
 	private User user = null;
 	private HashMap<String, Role> userRoles = new HashMap<String, Role>();
 	private HashMap<String, Permission> userPermissions = new HashMap<String, Permission>();
@@ -34,9 +35,7 @@ public class SessionData {
 	
 	public void triggerLogin() {
 		isLoggedIn = true;
-		
 		menu = CFW.Registry.Components.createMenuInstance(true);
-		//menu.setUserMenuItem(CFW.Registry.Components.createUserMenuItemInstance(this));
 		footer = CFW.Registry.Components.createDefaultFooterInstance();
 
 	}

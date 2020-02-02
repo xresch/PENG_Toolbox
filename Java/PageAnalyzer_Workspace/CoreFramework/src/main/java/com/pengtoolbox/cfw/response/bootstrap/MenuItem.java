@@ -89,8 +89,11 @@ public class MenuItem extends HierarchicalHTMLItem {
 		
 		//----------------------------------
 		// Render Menu Item
+		if(this.label.isEmpty()) {
+			this.addCssClass("menu-item-icon-only");
+		}
 		String cssClass = this.popAttributeValue("class");
-
+		
 		if(!this.hasChildren() && !this.hasOneTimeChildren()) {
 			html.append("\n<li class=\""+cssClass+"\">")
 				.append("<a class=\"dropdown-item\" "+this.getAttributesString()+">")

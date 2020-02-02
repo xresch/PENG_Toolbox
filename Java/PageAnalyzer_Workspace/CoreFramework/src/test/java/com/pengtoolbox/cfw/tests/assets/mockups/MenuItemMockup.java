@@ -9,13 +9,13 @@ public class MenuItemMockup extends MenuItem {
 		
 		MenuItem subDropdown = new MenuItem("Sub Dropdown");
 		
-		subDropdown.cssClass("dropdownClass")
+		subDropdown.addCssClass("dropdownClass")
 				   .addChild(new MenuItem("Sub Subitem 1"))
 				   .addChild(new MenuItem("Sub Subitem 2"));
 		
 		this.addChild(new MenuItem("href Subitem").href("./test/servlet"))
 			.addChild(new MenuItem("onclick Subitem").href(null).onclick("draw('test');"))
-			.addChild(new MenuItem("cssClass Subitem").cssClass("mockup-class test-class"))
+			.addChild(new MenuItem("cssClass Subitem").addCssClass("mockup-class test-class"))
 			.addChild(subDropdown);
 	}
 
