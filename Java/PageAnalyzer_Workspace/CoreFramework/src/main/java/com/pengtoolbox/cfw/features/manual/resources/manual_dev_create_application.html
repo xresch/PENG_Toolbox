@@ -23,25 +23,25 @@ public class Main implements CFWAppInterface {
 	@Override
 	public void register() {
 		// Do the registering here
-    	CFW.Registry.Features.addFeature(MyPersonalFeature.class);
+		CFW.Registry.Features.addFeature(MyPersonalFeature.class);
 	}
 
 	
 	@Override
 	public void startApp(CFWApplication app) {
-			// Set the default URL the user will be redirected after signing in
-	        app.setDefaultURL("/mydefaulturl?param=value", true);
-	        
-	        try {
-	        	// Starts the application
-				app.start();
-			} catch (Exception e) {
-			
-				// That's how you create logs
-				new CFWLog(logger)
-					.method("startApp")
-					.severe("Exception occured during startup.", e);
-			}
+		// Set the default URL the user will be redirected after signing in
+		app.setDefaultURL("/mydefaulturl?param=value", true);
+
+		try {
+			// Starts the application
+			app.start();
+		} catch (Exception e) {
+
+			// That's how you create logs
+			new CFWLog(logger)
+				.method("startApp")
+				.severe("Exception occured during startup.", e);
+		}
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class Main implements CFWAppInterface {
 	public void stopApp() { /* Actions to be done when the application is stopped. */ }
 
 	@Override
-	public void startTasks() {	/* Create scheduled tasks and start them here. */ }
+	public void startTasks() { /* Create scheduled tasks and start them here. */ }
 
 }</code>
 </pre>
