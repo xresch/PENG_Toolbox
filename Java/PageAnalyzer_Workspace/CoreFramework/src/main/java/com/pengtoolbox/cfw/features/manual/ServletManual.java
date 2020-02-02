@@ -80,7 +80,17 @@ public class ServletManual extends HttpServlet
 				switch(item.toLowerCase()) {
 					case "menuitems": 			jsonResponse.getContent().append(CFW.Registry.Manual.getManualPagesForUserAsJSON().toString());
 	  											break;
-	  										
+	  				
+					case "page": 				String path = request.getParameter("path");
+												ManualPage page = CFW.Registry.Manual.getPageByPath(path);
+												if(page != null) {
+													jsonResponse.getContent().append(page.toJSONObjectWithContent());
+												}else {
+													CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The page with the path '"+path+"' was not found.");
+												}
+												break;
+												
+												
 					default: 					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 												break;
 				}

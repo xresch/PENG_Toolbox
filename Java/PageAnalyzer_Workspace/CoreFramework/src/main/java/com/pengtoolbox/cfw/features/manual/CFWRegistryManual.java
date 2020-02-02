@@ -37,14 +37,14 @@ public class CFWRegistryManual {
 	 * Define the position of in the menu with the menuPath parameter. Use
 	 * "|" to separate multiple menu labels.
 	 * @param menuitem to add
-	 * @param menuPath were the menu should be added, or null for root
+	 * @param pagePath were the menu should be added, or null for root
 	 * @param Class that extends from BTMenu
 	 ***********************************************************************/
-	private static void addManualPage(LinkedHashMap<String, ManualPage> targetPageList, ManualPage itemToAdd, String menuPath)  {
+	private static void addManualPage(LinkedHashMap<String, ManualPage> targetPageList, ManualPage itemToAdd, String pagePath)  {
 		//System.out.println("======= Path :"+menuPath+" ======== ");
 		//-----------------------
 		// Check Argument
-		if(menuPath == null || menuPath.trim().length() == 0) {
+		if(pagePath == null || pagePath.trim().length() == 0) {
 			targetPageList.put(itemToAdd.getLabel(), itemToAdd);
 			//System.out.println("Add "+item.getLabel());
 			return;
@@ -52,7 +52,7 @@ public class CFWRegistryManual {
 		
 		//-----------------------
 		// Handle Path
-		String[] pathTokens = menuPath.split("\\Q|\\E");
+		String[] pathTokens = pagePath.split("\\Q|\\E");
 		ManualPage parentItem = null;
 		LinkedHashMap<String, ManualPage> currentSubPage = targetPageList;
 		for(int i = 0; i < pathTokens.length; i++) {
@@ -75,7 +75,31 @@ public class CFWRegistryManual {
 			}
 		}
 	}
-	
+	/***********************************************************************
+	 * Returns the manual pages the user has permissions for.
+	 ***********************************************************************/
+	public static ManualPage getPageByPath(String pagePath)  {
+		//-----------------------
+		// Handle Path
+		String[] pathTokens = pagePath.split("\\Q|\\E");
+		ManualPage currentItem = null;
+		
+		if(pathTokens.length > 0) {
+			currentItem = manualPages.get(pathTokens[0]);
+			
+			for(int i = 1; i < pathTokens.length; i++) {
+				String currentToken = pathTokens[i].trim();
+				currentItem = currentItem.getChildPagebyTitle(currentToken);
+				//---------------------------
+				// Handle Parent
+				if(currentItem == null) {
+					return null;
+				}
+			}
+		}
+		
+		return currentItem;
+	}
 	/***********************************************************************
 	 * Returns the manual pages the user has permissions for.
 	 ***********************************************************************/
@@ -84,7 +108,7 @@ public class CFWRegistryManual {
 		JsonArray pages = new JsonArray();
 
 		for(ManualPage page : manualPages.values()) {
-			JsonObject object = page.toJSONObjectForUser();
+			JsonObject object = page.toJSONObjectForMenu();
 			if(object != null) {
 				pages.add(object);
 			}

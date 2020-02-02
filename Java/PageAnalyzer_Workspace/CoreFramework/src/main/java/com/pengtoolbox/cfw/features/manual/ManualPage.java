@@ -25,6 +25,8 @@ public class ManualPage {
 	private String title = "&nbsp;";
 	private String faiconClasses = "";
 	
+	private String path = "";
+	
 	private FileDefinition content = null;
 	
 	// if any permissions match page will be accessible by the user
@@ -43,6 +45,7 @@ public class ManualPage {
 		}
 		
 		this.title = title;
+		this.path = title;
 	}
 	
 	public ManualPage(String label, HashSet<String> permissions) {
@@ -56,14 +59,27 @@ public class ManualPage {
 	 ***********************************************************************************/
 	public ManualPage addChild(ManualPage childItem) {
 		
-		childPages.put(((ManualPage)childItem).getLabel(), (ManualPage)childItem);
+		childPages.put(((ManualPage)childItem).getLabel().trim(), (ManualPage)childItem);
 		this.addPermissions(((ManualPage)childItem).getPermissions());
 		
 		childItem.setParent(this);
 
 		return this;
 	}
+	
+	/***********************************************************************************
+	 * Overrloaded addChild to handle sub menu items.
+	 * @return String html for this item. 
+	 ***********************************************************************************/
+	public ManualPage getChildPagebyTitle(String title) {
 		
+		if(childPages.containsKey(title.trim())) {
+			return childPages.get(title);
+		}
+
+		return null;
+	}
+	
 	/***********************************************************************************
 	 * Overrride to handle sub menu items.
 	 * @return String html for this item. 
@@ -77,7 +93,43 @@ public class ManualPage {
 	 * permissions for the page
 	 * @return String html for this item. 
 	 ***********************************************************************************/
-	public JsonObject toJSONObjectForUser() {
+	public JsonObject toJSONObjectWithContent() {
+		//----------------------------------
+		// Check Permissions
+		if(permissions.size() > 0) {
+
+			boolean hasPermission = false;
+			HashMap<String, Permission> usersPermissions = CFW.Context.Request.getUserPermissions();
+			for(String permission : permissions) {
+				if(usersPermissions.containsKey(permission)) {
+					hasPermission = true;
+					break;
+				}
+			}
+			
+			if(!hasPermission) {
+				return null;
+			}
+		}
+
+		//----------------------------------
+		// Build JSON
+		JsonObject result = new JsonObject();
+		
+		result.addProperty("title", title);
+		result.addProperty("path", path);
+		result.addProperty("faiconClasses", faiconClasses);
+		result.addProperty("hasContent", content != null);
+		result.addProperty("content", content.getContent());
+		
+		return result;
+	}
+	/***********************************************************************************
+	 * Returns the Json data needed to build the navigation if the user has the required 
+	 * permissions for the page
+	 * @return String html for this item. 
+	 ***********************************************************************************/
+	public JsonObject toJSONObjectForMenu() {
 		
 		//----------------------------------
 		// Check Permissions
@@ -102,13 +154,14 @@ public class ManualPage {
 		JsonObject result = new JsonObject();
 		
 		result.addProperty("title", title);
+		result.addProperty("path", path);
 		result.addProperty("faiconClasses", faiconClasses);
 		result.addProperty("hasContent", content != null);
 		
 		if(childPages.size() > 0) {
 			JsonArray children = new JsonArray();
 			for(ManualPage page : childPages.values()) {
-				JsonObject object = page.toJSONObjectForUser();
+				JsonObject object = page.toJSONObjectForMenu();
 				if(object != null) {
 					children.add(object);
 				}
@@ -127,6 +180,10 @@ public class ManualPage {
 
 	public void setParent(ManualPage parent) {
 		this.parent = parent;
+		this.path = this.resolvePath(null);
+		for(ManualPage child : childPages.values()) {
+			child.resolvePath(null);
+		}
 	}
 	
 	/***********************************************************************************
@@ -166,6 +223,23 @@ public class ManualPage {
 		return this;
 	}
 	
+	/*****************************************************************************
+	 *  resolves the path of a page.
+	 *  Use null to start resolving the path.
+	 *****************************************************************************/
+	public String resolvePath(String pagePath) {
+		if(pagePath == null) {
+			pagePath = title;
+		}else {
+			pagePath = title+"|"+pagePath;
+		}
+		
+		if(this.parent != null) {
+			return parent.resolvePath(pagePath);
+		}
+		return pagePath;
+	}
+	
 	/***********************************************************************************
 	 * 
 	 * @return permissions
@@ -188,6 +262,7 @@ public class ManualPage {
 	public FileDefinition content() {
 		return this.content;
 	}
+	
 	/*****************************************************************************
 	 *  
 	 *****************************************************************************/

@@ -8,7 +8,7 @@
  * Global
  ******************************************************************/
 var CFW_MANUAL_COUNTER = 0;
-
+var CFW_MANUAL_GUID_PAGE_MAP = {};
 
 /******************************************************************
  * 
@@ -32,11 +32,11 @@ function cfw_manual_printMenu(data){
 /******************************************************************
  * 
  ******************************************************************/
-function cfw_manual_createMenuItem(pageData, uid){
+function cfw_manual_createMenuItem(pageData){
 	CFW_MANUAL_COUNTER++;
-	var collapseID = 'collapse-'+CFW_MANUAL_COUNTER;
-	var htmlString = '<li>';
+	CFW_MANUAL_GUID_PAGE_MAP[CFW_MANUAL_COUNTER] = pageData;
 	
+	var collapseID = 'collapse-'+CFW_MANUAL_COUNTER;	
 	//-------------------------
 	// arrow
 	var arrow = '<div class="cfw-fa-box">';
@@ -58,11 +58,13 @@ function cfw_manual_createMenuItem(pageData, uid){
 	// Title
 	var onclick = '';
 	if(pageData.hasContent){
-		onclick = 'onclick="console.log(\'has Content\')"';
+		onclick = 'onclick="cfw_manual_printContent(this)"';
 	}
 	
-	htmlString += arrow+'<a '+onclick+' '+dataToggle+'>'+faicon+' <span>'+pageData.title+'</span> </a>';
-
+	//-------------------------
+	// Put everything together
+	var htmlString = '<li>';
+	htmlString += arrow+'<a id="'+CFW_MANUAL_COUNTER+'" '+onclick+' '+dataToggle+'>'+faicon+' <span>'+pageData.title+'</span> </a>';
 	htmlString += '</li>';
 	
 	//-------------------------
@@ -76,6 +78,29 @@ function cfw_manual_createMenuItem(pageData, uid){
 	}
 	
 	return htmlString;
+}
+
+/******************************************************************
+ * Main method for building the view.
+ * 
+ ******************************************************************/
+function cfw_manual_printContent(domElement){
+	var id = $(domElement).attr('id');
+	var page = CFW_MANUAL_GUID_PAGE_MAP[id];
+	
+	var target = $('#cfw-manual-page-content');
+	target.html('');
+	
+	CFW.http.fetchAndCacheData("./manual", {action: "fetch", item: "page", path: page.path}, "page"+page.path, function (data){
+		if(data.payload != undefined){
+			var pageData = data.payload;
+			target.html(pageData.content);
+			target.prepend('<h1>'+pageData.title+'</h1>');
+		}
+	})
+	
+	
+	
 }
 /******************************************************************
  * Main method for building the view.

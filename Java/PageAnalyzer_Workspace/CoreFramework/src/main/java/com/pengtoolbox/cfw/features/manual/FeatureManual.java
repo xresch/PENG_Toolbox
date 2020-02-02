@@ -36,7 +36,7 @@ public class FeatureManual extends CFWAppFeature {
 		
 		//---------------------------
 		// Test Menu Hierarchy
-		CFW.Registry.Manual.addManualPage(new ManualPage("Top Page").faicon("fa fa-cog"), null);
+		CFW.Registry.Manual.addManualPage(new ManualPage("Top Page").faicon("fa fa-cog").content("This is a test Top Page."), null);
 		CFW.Registry.Manual.addManualPage(new ManualPage("A"), "Top Page");
 		CFW.Registry.Manual.addManualPage(new ManualPage("B").content("This is a test B."), "Top Page | A");
 		CFW.Registry.Manual.addManualPage(new ManualPage("C").content("This is a test C."), "Top Page | A | B" );
