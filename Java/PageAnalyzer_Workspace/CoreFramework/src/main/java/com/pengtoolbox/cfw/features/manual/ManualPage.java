@@ -102,7 +102,7 @@ public class ManualPage {
 		JsonObject result = new JsonObject();
 		
 		result.addProperty("title", title);
-		result.addProperty("faiconClasses", title);
+		result.addProperty("faiconClasses", faiconClasses);
 		result.addProperty("hasContent", content != null);
 		
 		if(childPages.size() > 0) {

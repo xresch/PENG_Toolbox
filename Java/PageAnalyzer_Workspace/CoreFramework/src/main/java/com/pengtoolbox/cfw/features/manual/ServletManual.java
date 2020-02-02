@@ -51,7 +51,7 @@ public class ServletManual extends HttpServlet
 				
 				content.append(CFW.Files.readPackageResource(FeatureManual.RESOURCE_PACKAGE, "cfw_manual.html"));
 				
-				html.addJavascriptCode("cfw_cpusampling_draw({tab: 'latest'});");
+				html.addJavascriptCode("cfw_manual_draw();");
 				
 		        response.setContentType("text/html");
 		        response.setStatus(HttpServletResponse.SC_OK);
@@ -78,7 +78,7 @@ public class ServletManual extends HttpServlet
 		
 			case "fetch": 			
 				switch(item.toLowerCase()) {
-					case "menu": 				jsonResponse.getContent().append("");
+					case "menuitems": 			jsonResponse.getContent().append(CFW.Registry.Manual.getManualPagesForUserAsJSON().toString());
 	  											break;
 	  										
 					default: 					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");

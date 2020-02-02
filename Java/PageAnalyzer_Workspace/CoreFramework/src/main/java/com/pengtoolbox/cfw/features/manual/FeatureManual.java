@@ -1,16 +1,10 @@
 package com.pengtoolbox.cfw.features.manual;
 
-import java.util.concurrent.ScheduledFuture;
-
-import org.eclipse.jetty.servlet.ServletContextHandler;
-
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppFeature;
 import com.pengtoolbox.cfw._main.CFWApplication;
-import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.features.usermgmt.Role;
-import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 
 /**************************************************************************************************************
  * 
@@ -42,14 +36,14 @@ public class FeatureManual extends CFWAppFeature {
 		
 		//---------------------------
 		// Test Menu Hierarchy
-		CFW.Registry.Manual.addManualPage(new ManualPage("Top Page"), null);
+		CFW.Registry.Manual.addManualPage(new ManualPage("Top Page").faicon("fa fa-cog"), null);
 		CFW.Registry.Manual.addManualPage(new ManualPage("A"), "Top Page");
 		CFW.Registry.Manual.addManualPage(new ManualPage("B").content("This is a test B."), "Top Page | A");
 		CFW.Registry.Manual.addManualPage(new ManualPage("C").content("This is a test C."), "Top Page | A | B" );
 		
 		//---------------------------
 		// Test Menu Hierarchy 2
-		CFW.Registry.Manual.addManualPage(new ManualPage("Top Item 2"), null);
+		CFW.Registry.Manual.addManualPage(new ManualPage("Top Item 2").faicon("fa fa-book"), null);
 		CFW.Registry.Manual.addManualPage(new ManualPage("Sub Item"), "Top Item 2");
 		CFW.Registry.Manual.addManualPage(new ManualPage("Sub Sub Item"), " Top Item 2 | Sub Item ");
 		CFW.Registry.Manual.addManualPage(new ManualPage("Sub Sub Item 2"), "Top Item 2 | Sub Item ");

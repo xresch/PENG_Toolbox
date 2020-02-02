@@ -85,7 +85,14 @@
 .nav-side-menu ul,
 .nav-side-menu li {
   list-style: none;
+  padding-inline-start: 0px;
 }
+
+.menu-content ul ul,
+.menu-content li ul{
+  margin-left: 20px;
+}
+
 
 .menu-content > ul,
 .menu-content > li {
@@ -94,6 +101,7 @@
   margin: 0px;
   line-height: 35px;
   cursor: pointer;
+
   /*    
     .collapsed{
        .arrow:before{
@@ -156,13 +164,14 @@
 .nav-side-menu li .sub-menu li.active a {
   color: #d19b3d;
 }
-.nav-side-menu ul .sub-menu li,
-.nav-side-menu li .sub-menu li {
+.nav-side-menu ul .sub-menu > li,
+.nav-side-menu li .sub-menu > li {
   border: none;
   line-height: 28px;
   border-bottom: 1px solid #23282e;
-  margin-left: 0px;
+  margin-left: 20px;
 }
+
 .nav-side-menu ul .sub-menu li:hover,
 .nav-side-menu li .sub-menu li:hover {
   background-color: #020203;
