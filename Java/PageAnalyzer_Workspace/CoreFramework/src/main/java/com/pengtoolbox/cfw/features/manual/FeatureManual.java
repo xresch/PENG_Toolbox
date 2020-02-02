@@ -5,7 +5,6 @@ import com.pengtoolbox.cfw._main.CFWAppFeature;
 import com.pengtoolbox.cfw._main.CFWApplication;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
-import com.pengtoolbox.cfw.features.usermgmt.Role;
 
 /**************************************************************************************************************
  * 
@@ -31,7 +30,7 @@ public class FeatureManual extends CFWAppFeature {
 		
 		//---------------------------
 		// Admin Manuals
-		CFW.Registry.Manual.addManualPage(null, 			new ManualPage("Administration").faicon("fa fa-cog").addPermission(PERMISSION_ADMIN_MANUAL));
+		CFW.Registry.Manual.addManualPage(null, new ManualPage("Administration").faicon("fa fa-cog").addPermission(PERMISSION_ADMIN_MANUAL));
 		
 		//---------------------------
 		// Developer Manuals
@@ -39,18 +38,30 @@ public class FeatureManual extends CFWAppFeature {
 		ManualPage quickstart = new ManualPage("Quickstart").faicon("fas fa-fighter-jet").addPermission(PERMISSION_ADMIN_MANUAL);
 		dev.addChild(quickstart);
 		
+		quickstart.addChild(new ManualPage("Overview")
+				.faicon("fas fa-eye")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_overview.html")
+			);
 		
 		quickstart.addChild(new ManualPage("Create an Application")
 				.faicon("fas fa-server")
 				.addPermission(PERMISSION_ADMIN_MANUAL)
-				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_create_application.html")
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_create_application.html")
 			);
 		
 		quickstart.addChild(new ManualPage("Create a Feature")
 				.faicon("fas fa-plug")
 				.addPermission(PERMISSION_ADMIN_MANUAL)
-				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_create_feature.html")
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_create_feature.html")
 			);
+		
+		quickstart.addChild(new ManualPage("Create a Servlet")
+				.faicon("fas fa-server")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_create_servlet.html")
+			);
+		
 		quickstart.addChild(new ManualPage("Add Configuration Items")
 					.faicon("fa fa-cog")
 					.addPermission(PERMISSION_ADMIN_MANUAL)

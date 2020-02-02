@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.features.manual.FeatureManual;
-import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.BTFooter;
 import com.pengtoolbox.cfw.response.bootstrap.BTMenu;

@@ -7,11 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
-import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
@@ -73,7 +70,7 @@ public class ServletManual extends HttpServlet
 		//int	userID = CFW.Context.Request.getUser().id();
 		
 		JSONResponse jsonResponse = new JSONResponse();
-		
+
 		switch(action.toLowerCase()) {
 		
 			case "fetch": 			
