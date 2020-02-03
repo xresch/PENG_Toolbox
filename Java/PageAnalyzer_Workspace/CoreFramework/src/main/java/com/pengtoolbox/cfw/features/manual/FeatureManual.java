@@ -38,6 +38,14 @@ public class FeatureManual extends CFWAppFeature {
 		ManualPage quickstart = new ManualPage("Quickstart").faicon("fas fa-fighter-jet").addPermission(PERMISSION_ADMIN_MANUAL);
 		dev.addChild(quickstart);
 		
+		
+		
+		quickstart.addChild(new ManualPage("Setup, Run and Export")
+				.faicon("fas fa-star")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_setup_run_export.html")
+			);
+		
 		quickstart.addChild(new ManualPage("Overview")
 				.faicon("fas fa-eye")
 				.addPermission(PERMISSION_ADMIN_MANUAL)
