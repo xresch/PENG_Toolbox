@@ -1,7 +1,7 @@
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
  
@@ -315,6 +315,9 @@
 	margin-right: 10px;
 }
 
+/*************************************************************************
+ * Autocomplete
+ *************************************************************************/
 .cfw-autocomplete {
   /*the container must be positioned relative:*/
   position: relative;
