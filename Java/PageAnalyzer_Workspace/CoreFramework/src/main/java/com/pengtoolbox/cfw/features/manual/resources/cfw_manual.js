@@ -27,6 +27,11 @@ function cfw_manual_printMenu(data){
 	
 	parent.append(htmlString);
 	
+	var page = CFW.http.getURLParamsDecoded()["page"];
+	if(page != undefined){
+		console.log($('a[data-path="'+page+'"]'))
+		cfw_manual_printContent($('a[data-path="'+page+'"]').get(0));
+	}
 }
 
 /******************************************************************
@@ -64,7 +69,7 @@ function cfw_manual_createMenuItem(pageData){
 	//-------------------------
 	// Put everything together
 	var htmlString = '<li>';
-	htmlString += arrow+'<a id="'+CFW_MANUAL_COUNTER+'" '+onclick+' '+dataToggle+'>'+faicon+' <span>'+pageData.title+'</span> </a>';
+	htmlString += arrow+'<a id="'+CFW_MANUAL_COUNTER+'" data-path="'+pageData.path+'" '+onclick+' '+dataToggle+'>'+faicon+' <span>'+pageData.title+'</span> </a>';
 	htmlString += '</li>';
 	
 	//-------------------------
@@ -94,6 +99,9 @@ function cfw_manual_printContent(domElement){
 	CFW.http.fetchAndCacheData("./manual", {action: "fetch", item: "page", path: page.path}, "page"+page.path, function (data){
 		if(data.payload != undefined){
 			var pageData = data.payload;
+			
+			CFW.http.setURLParam("page", pageData.path);
+			
 			target.html(pageData.content);
 			target.prepend('<h1>'+pageData.title+'</h1>');
 			

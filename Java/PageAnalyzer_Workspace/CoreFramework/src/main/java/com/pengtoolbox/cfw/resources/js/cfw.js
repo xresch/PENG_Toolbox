@@ -1269,11 +1269,40 @@ function cfw_readCookie(name) {
  * @param 
  * @return object
  ******************************************************************/
+function cfw_getURLParamsDecoded()
+{
+    var vars = {};
+    
+    var keyValuePairs = [];
+    if ( window.location.href.indexOf('?') > -1){
+    	var keyValuePairs = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    }
+    
+    for(var i = 0; i < keyValuePairs.length; i++)
+    {
+        splitted = keyValuePairs[i].split('=');
+        var key = cfw_secureDecodeURI(splitted[0])
+        vars[key] = cfw_secureDecodeURI(splitted[1]);
+    }
+    
+    return vars;
+}
+
+/******************************************************************
+ * Reads the parameters from the URL and returns an object containing
+ * name/value pairs like {"name": "value", "name2": "value2" ...}.
+ * @param 
+ * @return object
+ ******************************************************************/
 function cfw_getURLParams()
 {
     var vars = {};
     
-    var keyValuePairs = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    var keyValuePairs = [];
+    if ( window.location.href.indexOf('?') > -1){
+    	var keyValuePairs = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    }
+    
     for(var i = 0; i < keyValuePairs.length; i++)
     {
         splitted = keyValuePairs[i].split('=');
@@ -1281,6 +1310,37 @@ function cfw_getURLParams()
     }
     
     return vars;
+}
+
+/******************************************************************
+ * Reads the parameters from the URL and returns an object containing
+ * name/value pairs like {"name": "value", "name2": "value2" ...}.
+ * @param 
+ * @return object
+ ******************************************************************/
+function cfw_setURLParam(name, value){
+
+	//------------------------------
+	// Set or replace param value
+	var params = cfw_getURLParams();
+    params[name] = encodeURIComponent(value);
+    
+	//------------------------------
+	// Create Query String
+    var queryString = "";
+    for(var key in params)
+    {
+    	queryString = queryString + key +"="+params[key]+"&";
+    }
+    //Remove last '&'
+    queryString = queryString.substring(0, queryString.length-1);
+    
+	//------------------------------
+	// Recreate URL
+    var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?'+queryString;
+    window.history.pushState({ path: newurl }, '', newurl);
+
+    
 }
 
 /**************************************************************************************
@@ -1651,6 +1711,8 @@ var CFW = {
 	http: {
 		readCookie: cfw_readCookie,
 		getURLParams: cfw_getURLParams,
+		getURLParamsDecoded: cfw_getURLParamsDecoded,
+		setURLParam: cfw_setURLParam,
 		secureDecodeURI: cfw_secureDecodeURI,
 		getJSON: cfw_getJSON,
 		postJSON: cfw_postJSON,
