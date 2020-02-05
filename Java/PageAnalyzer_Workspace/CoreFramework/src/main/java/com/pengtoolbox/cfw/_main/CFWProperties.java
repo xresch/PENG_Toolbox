@@ -15,6 +15,9 @@ public class CFWProperties {
 
 	public static final LinkedProperties configProperties = new LinkedProperties();
 	
+	//##########################################################################################
+	// APPLICATION
+	//##########################################################################################
 	/** Application name, will be used for creating the base url (Property=cfw_application_name, Default="myapp") */
 	public static String APPLICATION_NAME = "myapp";
 	
@@ -27,8 +30,15 @@ public class CFWProperties {
 	/** Reset the admin password on the next restart. (Property=cfw_reset_admin_pw, Default=false) */
 	public static boolean RESET_ADMIN_PW = false;
 	
+	
+	//##########################################################################################
+	// HTTP
+	//##########################################################################################
 	/** Enables or disables the HTTP connector. (Property=cfw_http_enabled, Default=true) */
 	public static boolean HTTP_ENABLED = true;
+	
+	/** The port for the HTTP connector. (Property=cfw_http_connector_host, "0.0.0.0") */
+	public static String HTTP_CONNECTOR_HOST = "0.0.0.0";
 	
 	/** The port for the HTTP connector. (Property=cfw_http_port, Default=80) */
 	public static int HTTP_PORT = 80;
@@ -50,13 +60,21 @@ public class CFWProperties {
 	
 	/**  (Property=cfw_https_keymanager_password, Default="") */
 	public static String HTTPS_KEYMANAGER_PASSWORD = "";
-			
+	
+	
+	//##########################################################################################
+	// PERFORMANCE
+	//##########################################################################################		
 	/** Session Time in Seconds. (Property=cfw_session_timeout, Default=36000) */
 	public static int SESSION_TIMEOUT = 36000;
 	
 	/** Time in seconds to cache resources. (Property=cfw_browser_resource_maxage, Default="36000") */
 	public static int BROWSER_RESOURCE_MAXAGE = 36000;
 	
+	
+	//##########################################################################################
+	// AUTHENTICATION
+	//##########################################################################################	
 	/** Enables or disables the Authentication. (Property=cfw_authentication_enabled, Default="false") */
 	public static boolean AUTHENTICATION_ENABLED = false;
 	
@@ -93,9 +111,10 @@ public class CFWProperties {
 	/** The name of the attribute storing the lastname of the user.  (Property=authentication_ldap_attribute_lastname, Default="") */
 	public static String LDAP_ATTRIBUTE_LASTNAME = "";
 	
-	
-	
-	
+
+	//##########################################################################################
+	// MAILING
+	//##########################################################################################	
 	
 	/** Choose if you want the application to send mails.  (Property=cfw_mail_enabled, Default="false") */
 	public static boolean MAIL_ENABLED = false;
@@ -123,7 +142,9 @@ public class CFWProperties {
 	
 
 	
-	
+	//##########################################################################################
+	// DATABASE
+	//##########################################################################################	
 	
 	/** The name of the database server. (Property=cfw_h2_server, Default="localhost") */
 	public static String DB_SERVER = "localhost";
@@ -158,8 +179,9 @@ public class CFWProperties {
 		APPLICATION_NAME				= CFWProperties.configAsString("cfw_application_name", APPLICATION_NAME);
 		APPLICATION_MAX_UPLOADSIZE		= CFWProperties.configAsInt("cfw_application_max_uploadsize", APPLICATION_MAX_UPLOADSIZE);
 		RESET_ADMIN_PW 					= CFWProperties.configAsBoolean("cfw_reset_admin_pw", RESET_ADMIN_PW);
-				
+						
 		HTTP_ENABLED 					= CFWProperties.configAsBoolean("cfw_http_enabled", HTTP_ENABLED);
+		HTTP_CONNECTOR_HOST				= CFWProperties.configAsString("cfw_http_connector_host", HTTP_CONNECTOR_HOST);
 		HTTP_PORT 						= CFWProperties.configAsInt("cfw_http_port", HTTP_PORT);
 		HTTP_REDIRECT_TO_HTTPS			= CFWProperties.configAsBoolean("cfw_http_redirect_to_https", HTTP_REDIRECT_TO_HTTPS);
 

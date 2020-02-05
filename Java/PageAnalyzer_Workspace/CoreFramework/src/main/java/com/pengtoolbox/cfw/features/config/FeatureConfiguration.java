@@ -6,7 +6,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppFeature;
-import com.pengtoolbox.cfw._main.CFWApplication;
+import com.pengtoolbox.cfw._main.CFWApplicationExecutor;
 import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.features.usermgmt.Role;
@@ -15,7 +15,7 @@ import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class FeatureConfiguration extends CFWAppFeature {
@@ -70,7 +70,7 @@ public class FeatureConfiguration extends CFWAppFeature {
 	}
 
 	@Override
-	public void addFeature(CFWApplication app) {	
+	public void addFeature(CFWApplicationExecutor app) {	
 		app.addAppServlet(ServletConfiguration.class,  "/configuration");
 	}
 

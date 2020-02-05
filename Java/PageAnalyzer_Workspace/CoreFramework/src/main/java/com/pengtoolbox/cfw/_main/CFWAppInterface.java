@@ -2,7 +2,7 @@ package com.pengtoolbox.cfw._main;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public interface CFWAppInterface {
@@ -21,7 +21,7 @@ public interface CFWAppInterface {
 	 * Add servlets and start the application.
 	 * Make sure to call app.start();
 	 ************************************************************************************/
-	public void startApp(CFWApplication app);
+	public void startApp(CFWApplicationExecutor app);
 	
 	
 	/************************************************************************************

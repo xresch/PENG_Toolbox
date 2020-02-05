@@ -2,13 +2,13 @@ package com.pengtoolbox.cfw.features.manual;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppFeature;
-import com.pengtoolbox.cfw._main.CFWApplication;
+import com.pengtoolbox.cfw._main.CFWApplicationExecutor;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class FeatureManual extends CFWAppFeature {
@@ -114,7 +114,7 @@ public class FeatureManual extends CFWAppFeature {
 	}
 
 	@Override
-	public void addFeature(CFWApplication app) {	
+	public void addFeature(CFWApplicationExecutor app) {	
     	app.addAppServlet(ServletManual.class,  "/manual");
 	}
 

@@ -8,7 +8,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppInterface;
-import com.pengtoolbox.cfw._main.CFWApplication;
+import com.pengtoolbox.cfw._main.CFWApplicationExecutor;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
@@ -149,7 +149,7 @@ public class Main extends Application implements CFWAppInterface {
 	}
 
 	@Override
-	public void startApp(CFWApplication app) {
+	public void startApp(CFWApplicationExecutor app) {
 			//------------------------------------
 			// Initialize YSlow Singleton
 			// prevents error on first analysis request.

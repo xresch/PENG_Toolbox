@@ -2,18 +2,18 @@ package com.pengtoolbox.cfw._main;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWContextApp {
 	
-	private static CFWApplication app;
+	private static CFWApplicationExecutor app;
 
-	public static CFWApplication getApp() {
+	public static CFWApplicationExecutor getApp() {
 		return app;
 	}
 
-	public static void setApp(CFWApplication app) {
+	public static void setApp(CFWApplicationExecutor app) {
 		CFWContextApp.app = app;
 	}
 	

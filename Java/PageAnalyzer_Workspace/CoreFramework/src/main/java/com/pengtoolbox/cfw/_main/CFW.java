@@ -142,7 +142,7 @@ public class CFW {
 	    //--------------------------------
 	    // Handle Shutdown reguest.
 	    if (CFW.CLI.isArgumentLoaded(CLI.STOP)) {
-    		CFWApplication.stop();
+    		CFWApplicationExecutor.stop();
     		appToStart.stopApp();
 			System.exit(0);
     		return;
@@ -164,7 +164,7 @@ public class CFW {
     	
 	    //--------------------------------
 	    // Start Application
-		CFWApplication app = new CFWApplication(args);
+		CFWApplicationExecutor app = new CFWApplicationExecutor(args, appToStart);
 		
 		for(CFWAppFeature feature : features) {
 			feature.addFeature(app);
@@ -228,7 +228,7 @@ public class CFW {
 		
 		//---------------------------
 		// Start Database 
-		CFW.DB.startDatabase(); 
+		CFW.DB.startDBServer(); 
 		
 		//---------------------------
 		// Iterate over Registered Objects

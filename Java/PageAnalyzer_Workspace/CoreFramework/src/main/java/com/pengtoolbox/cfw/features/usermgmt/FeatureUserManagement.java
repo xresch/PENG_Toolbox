@@ -2,12 +2,12 @@ package com.pengtoolbox.cfw.features.usermgmt;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppFeature;
-import com.pengtoolbox.cfw._main.CFWApplication;
+import com.pengtoolbox.cfw._main.CFWApplicationExecutor;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class FeatureUserManagement extends CFWAppFeature {
@@ -48,7 +48,7 @@ public class FeatureUserManagement extends CFWAppFeature {
 	}
 
 	@Override
-	public void addFeature(CFWApplication app) {	
+	public void addFeature(CFWApplicationExecutor app) {	
 		app.addAppServlet(ServletUserManagement.class,  "/usermanagement");
 		app.addAppServlet(ServletPermissions.class,  "/usermanagement/permissions");
 		app.addAppServlet(SevletUserManagementAPI.class, "/usermanagement/data"); 

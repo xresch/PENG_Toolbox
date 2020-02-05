@@ -9,11 +9,11 @@ import org.junit.BeforeClass;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppInterface;
-import com.pengtoolbox.cfw._main.CFWApplication;
+import com.pengtoolbox.cfw._main.CFWApplicationExecutor;
 
 public class WebTestMaster {
 
-	protected static CFWApplication APP;
+	protected static CFWApplicationExecutor APP;
 	protected static String TEST_URL;
 	
 	// context path on "/test"
@@ -53,7 +53,7 @@ public class WebTestMaster {
 			}
 			
 			@Override
-			public void startApp(CFWApplication app) {
+			public void startApp(CFWApplicationExecutor app) {
 				APP  = app;
 				
 				//testContext = APP.getUnsecureContext("/test");

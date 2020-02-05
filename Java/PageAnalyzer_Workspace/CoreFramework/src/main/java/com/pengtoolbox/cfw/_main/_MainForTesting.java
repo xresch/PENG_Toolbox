@@ -53,7 +53,7 @@ public class _MainForTesting implements CFWAppInterface {
 	}
 
 	@Override
-	public void startApp(CFWApplication app) {
+	public void startApp(CFWApplicationExecutor app) {
 
         app.addUnsecureServlet(GeneralTestServlet.class, "/test/general");
         app.addUnsecureServlet(FormTestServlet.class, "/test/form");

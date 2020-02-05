@@ -2,7 +2,7 @@ package com.pengtoolbox.cfw._main;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public abstract class CFWAppFeature {
@@ -21,7 +21,7 @@ public abstract class CFWAppFeature {
 	 * Add servlets to the application.
 	 * This is executed before the application is started.
 	 ************************************************************************************/
-	public abstract void addFeature(CFWApplication app);
+	public abstract void addFeature(CFWApplicationExecutor app);
 	
 	/************************************************************************************
 	 * Start scheduled tasks

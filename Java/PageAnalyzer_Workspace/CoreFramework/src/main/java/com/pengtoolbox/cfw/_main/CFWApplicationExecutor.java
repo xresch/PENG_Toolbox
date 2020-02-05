@@ -5,7 +5,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.MultipartConfigElement;
@@ -25,7 +24,6 @@ import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.ShutdownHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
@@ -59,16 +57,10 @@ import com.pengtoolbox.cfw.utils.HandlerChainBuilder;
  * @author Reto Scheiwiller, � 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class CFWApplication {
+public class CFWApplicationExecutor {
 	
 	private Server server;
 	private MultipartConfigElement globalMultipartConfig;
-	
-	// HashMap contains Context Path and Context
-	private static LinkedHashMap<String, ContextHandler> unsecureContextArray = new LinkedHashMap<String, ContextHandler>();
-	private static LinkedHashMap<String, ContextHandler> secureContextArray = new LinkedHashMap<String, ContextHandler>();
-	
-	private static LinkedHashMap<String, ServletContextHandler> servletContextArray = new LinkedHashMap<String, ServletContextHandler>();	
 	
 	ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
 	
@@ -80,18 +72,17 @@ public class CFWApplication {
 	
 	public WebAppContext applicationContext;
 	
-	public CFWApplication(String[] args) throws Exception {
-		    	       
-		sessionHandler = CFWApplication.createSessionHandler("/");
+	public CFWApplicationExecutor(String[] args, CFWAppInterface application) throws Exception {  
+		sessionHandler = CFWApplicationExecutor.createSessionHandler("/");
 		
     	//---------------------------------------
     	// Create Server 
-        server = CFWApplication.createServer();
+        server = CFWApplicationExecutor.createServer();
         applicationContext = new WebAppContext();
         applicationContext.setContextPath("/");
         applicationContext.setServer(server);
         applicationContext.setSessionHandler(sessionHandler);
-        applicationContext.setErrorHandler(CFWApplication.createErrorHandler());
+        applicationContext.setErrorHandler(CFWApplicationExecutor.createErrorHandler());
 
     	//---------------------------------------
     	// Default Multipart Config
@@ -99,37 +90,6 @@ public class CFWApplication {
         globalMultipartConfig = new MultipartConfigElement(null, maxSize, maxSize, maxSize);
          
 	}
-	
-//	/**************************************************************************************************
-//	 * Returns a ServletContextHandler that can be accesses without a user login.
-//	 * Adds several handlers like gzipHandler, SessionHandler and RequestHandler.
-//	 * 
-//	 * @param the relative path of the context, CFWConfig.BASE_URL will be prepended.
-//	 **************************************************************************************************/
-//	public ServletContextHandler getUnsecureContext(String relativePath){
-//		//-------------------------------
-//        // Check if exists
-//        //-------------------------------
-//		if(servletContextArray.containsKey(relativePath)) {
-//			return servletContextArray.get(relativePath);
-//		}
-//		
-//        //----------------------------------
-//        // Build Handler Chain
-//        ContextHandler unsecureContextHandler = new ContextHandler(CFWProperties.BASE_URL+""+relativePath);	
-//        ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);   
-//        servletContext.setSessionHandler(createSessionHandler(relativePath));
-//        
-//        new HandlerChainBuilder(unsecureContextHandler)
-//	        .chain(new GzipHandler())
-//	    	.chain(new RequestHandler())
-//	        .chain(new AuthenticationHandler())
-//	        .chain(servletContext);
-//        
-//        unsecureContextArray.put(relativePath, unsecureContextHandler);
-//        servletContextArray.put(relativePath, servletContext);
-//        return servletContext;
-//	}
 	
 	/**************************************************************************************************
 	 * Adds a servlet to the secure application context that needs authentication to access.
@@ -303,7 +263,7 @@ public class CFWApplication {
 	    SessionHandler sessionHandler = new SessionHandler();
 	    
 	    
-	    sessionHandler.setSessionIdManager(CFWApplication.idmanager);
+	    sessionHandler.setSessionIdManager(CFWApplicationExecutor.idmanager);
 	    // workaround maxInactiveInterval=-1 issue
 	    // set inactive interval in RequestHandler
 	    sessionHandler.setMaxInactiveInterval(CFW.Properties.SESSION_TIMEOUT);
@@ -366,8 +326,8 @@ public class CFWApplication {
 		Server server = new Server();
 		ArrayList<Connector> connectorArray = new ArrayList<Connector>();
 		
-		CFWApplication.idmanager = new DefaultSessionIdManager(server);
-	    server.setSessionIdManager(CFWApplication.idmanager);
+		CFWApplicationExecutor.idmanager = new DefaultSessionIdManager(server);
+	    server.setSessionIdManager(CFWApplicationExecutor.idmanager);
 	    
 		
 		if(CFWProperties.HTTP_ENABLED) {
@@ -377,7 +337,7 @@ public class CFWApplication {
 			
 			ServerConnector httpConnector = new ServerConnector(server, new HttpConnectionFactory(httpConf));
 			httpConnector.setName("unsecured");
-			httpConnector.setHost("127.0.0.1");
+			httpConnector.setHost(CFWProperties.HTTP_CONNECTOR_HOST);
 			httpConnector.setPort(CFWProperties.HTTP_PORT);
 			connectorArray.add(httpConnector);
 		}
@@ -397,7 +357,7 @@ public class CFWApplication {
 					new SslConnectionFactory(sslContextFactory, "http/1.1"),
 					new HttpConnectionFactory(httpsConf));
 			httpsConnector.setName("secured");
-			httpsConnector.setHost("127.0.0.1");
+			httpsConnector.setHost(CFWProperties.HTTP_CONNECTOR_HOST);
 			httpsConnector.setPort(CFWProperties.HTTPS_PORT);
 			
 			connectorArray.add(httpsConnector);
@@ -444,7 +404,7 @@ public class CFWApplication {
         handlerArray.add(new ShutdownHandler(CFW.Properties.APPLICATION_ID, true, true));
         handlerArray.add(new HTTPSRedirectHandler());
         handlerArray.add(new RedirectDefaultPageHandler(defaultURL));
-        handlerArray.add(CFWApplication.createResourceHandler());
+        handlerArray.add(CFWApplicationExecutor.createResourceHandler());
         handlerArray.add(contextHandler);
         
         HandlerCollection handlerCollection = new HandlerCollection();

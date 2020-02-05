@@ -49,7 +49,7 @@ public class CFWDB {
 	/********************************************************************************************
 	 *
 	 ********************************************************************************************/
-	public static void startDatabase() {
+	public static void startDBServer() {
 		
     	//---------------------------------------
     	// Get variables
@@ -98,9 +98,6 @@ public class CFWDB {
 			
 			CFWDB.isInitialized = true;
 			
-			//initializeTables();
-			//createDefaultEntries();
-			
 		} catch (SQLException e) {
 			CFWDB.isInitialized = false;
 			new CFWLog(CFWDB.logger)
@@ -109,6 +106,17 @@ public class CFWDB {
 			e.printStackTrace();
 		}
 	}
+	
+	/********************************************************************************************
+	 *
+	 ********************************************************************************************/
+	public static void stopDBServer() {
+		
+		server.stop();
+   	
+	}
+	
+	
 	
 	public static void resetAdminPW() {
 		

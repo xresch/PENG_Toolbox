@@ -1,0 +1,37 @@
+
+TODO
+====
+- Manual: Highlight menu entry on page-parameter links
+- Implement custom shutdown stopping database, application, features, etc...
+
+- FormField.SINGLECOMPLETE
+  - how to load key and label? 
+  
+- CFWField: Add initFormField(method)
+
+- Spaces!!!
+  - Fetch As JSON Hierarchy
+  - HTML Selector
+  - SpacePermissions in SessionData
+  - Selected Space in SessionData
+  - CFQSQL partial query, select entries for user
+  
+- Image Upload for Summernote Editor
+- SQL Query Cache Overview (hit statistics?)
+- Truncate too long toasts.
+- Show previous toasts all toasts button
+
+- Form errors add to field.
+
+- Add Rule for HTTP2
+  - Num requests Http 1.1
+  - Num requests > 200
+- Add Support info for async calls
+
+- Support Info: Use default Modal, make exceptions unique.
+- Custom Error page CFW.App.createErrorHandler();
+- SPNEGO/Kerberos Authentication
+
+DONE
+====
+
