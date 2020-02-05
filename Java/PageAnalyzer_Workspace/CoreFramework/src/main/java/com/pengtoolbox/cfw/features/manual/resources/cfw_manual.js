@@ -27,13 +27,18 @@ function cfw_manual_printMenu(data){
 	
 	parent.append(htmlString);
 	
-	var page = CFW.http.getURLParamsDecoded()["page"];
-	if(page != undefined){
-		console.log($('a[data-path="'+page+'"]'))
-		cfw_manual_printContent($('a[data-path="'+page+'"]').get(0));
+	var pagePath = CFW.http.getURLParamsDecoded()["page"];
+	if(pagePath != undefined){
+		cfw_manual_loadPage(pagePath);
 	}
 }
 
+/******************************************************************
+ * 
+ ******************************************************************/
+function cfw_manual_loadPage(pagePath){
+	cfw_manual_printContent($('a[data-path="'+pagePath+'"]').get(0));
+}
 /******************************************************************
  * 
  ******************************************************************/
