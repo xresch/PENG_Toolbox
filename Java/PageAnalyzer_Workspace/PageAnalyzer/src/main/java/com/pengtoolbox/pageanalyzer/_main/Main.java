@@ -3,13 +3,14 @@ package com.pengtoolbox.pageanalyzer._main;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppInterface;
 import com.pengtoolbox.cfw._main.CFWApplicationExecutor;
-import com.pengtoolbox.cfw.features.usermgmt.Permission;
+import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
+import com.pengtoolbox.cfw.features.manual.FeatureManual;
+import com.pengtoolbox.cfw.features.manual.ManualPage;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
@@ -20,7 +21,6 @@ import com.pengtoolbox.pageanalyzer.servlets.CompareServlet;
 import com.pengtoolbox.pageanalyzer.servlets.CustomContentServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DataServlet;
 import com.pengtoolbox.pageanalyzer.servlets.DeleteResultServlet;
-import com.pengtoolbox.pageanalyzer.servlets.DocuServlet;
 import com.pengtoolbox.pageanalyzer.servlets.GanttChartServlet;
 import com.pengtoolbox.pageanalyzer.servlets.HARUploadServlet;
 import com.pengtoolbox.pageanalyzer.servlets.ManageResultsServlet;
@@ -41,6 +41,8 @@ import javafx.stage.Stage;
  **************************************************************************************************************/
 public class Main extends Application implements CFWAppInterface {
 	
+	public static final String RESOURCE_PACKAGE = "com.pengtoolbox.pageanalyzer.resources";
+	
 	public static Logger logger = CFWLog.getLogger(Main.class.getName());
 	protected static CFWLog log = new CFWLog(logger);
 	
@@ -54,6 +56,10 @@ public class Main extends Application implements CFWAppInterface {
 	@Override
 	public void register() {
     	
+		//----------------------------------
+		// Register Package
+		CFW.Files.addAllowedPackage(RESOURCE_PACKAGE);
+				
 		//----------------------------------
 		// Register Objects
     	CFW.Registry.Objects.addCFWObject(Result.class);
@@ -81,12 +87,12 @@ public class Main extends Application implements CFWAppInterface {
 					.href("./resultlist")
 				, null);
 			
-		CFW.Registry.Components.addRegularMenuItem(
-				(MenuItem)new MenuItem("Docu")
-					.faicon("fas fa-book")
-					.addPermission(PAPermissions.VIEW_DOCU)
-					.href("./docu")
-				, null);
+//		CFW.Registry.Components.addRegularMenuItem(
+//				(MenuItem)new MenuItem("Docu")
+//					.faicon("fas fa-book")
+//					.addPermission(PAPermissions.VIEW_DOCU)
+//					.href("./docu")
+//				, null);
 		
 		CFW.Registry.Components.addRegularMenuItem(
 				(MenuItem)new MenuItem("Summary")
@@ -131,7 +137,67 @@ public class Main extends Application implements CFWAppInterface {
 		//----------------------------------
 		// Register Footer
     	CFW.Registry.Components.setDefaultFooter(PageAnalyzerFooter.class);
+    	
+    	
+		//----------------------------------
+		// Register Manual Pages
+		ManualPage pageAnalyzer = new ManualPage("Page Analyzer").faicon("fas fa-search")
+				.addPermission(FeatureManual.PERMISSION_MANUAL);
+		
+		CFW.Registry.Manual.addManualPage(null, pageAnalyzer);
+		
+			pageAnalyzer.addChild(
+				new ManualPage("Introduction")
+					.faicon("fas fa-star")
+					.addPermission(FeatureManual.PERMISSION_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "z_manual_intro.html")
+			);
+			
+			pageAnalyzer.addChild(
+				new ManualPage("Analyze a Har File")
+					.faicon("fas fa-cogs")
+					.addPermission(FeatureManual.PERMISSION_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "z_manual_analyzehar.html")
+			);
+			
+			ManualPage views = new ManualPage("Views").faicon("fas fa-binoculars")
+					.addPermission(FeatureManual.PERMISSION_MANUAL);
+			pageAnalyzer.addChild(views);
+			
+				views.addChild(
+					new ManualPage("Result View")
+						.faicon("fas fa-traffic-light")
+						.addPermission(FeatureManual.PERMISSION_MANUAL)
+						.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "z_manual_views_result.html")
+				);
+				
+				views.addChild(
+						new ManualPage("History View")
+							.faicon("fas fa-history")
+							.addPermission(FeatureManual.PERMISSION_MANUAL)
+							.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "z_manual_views_history.html")
+					);
     			
+				views.addChild(
+						new ManualPage("Gantt View")
+							.faicon("fas fa-signal fa-rotate-90")
+							.addPermission(FeatureManual.PERMISSION_MANUAL)
+							.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "z_manual_views_gantt.html")
+					);
+				
+				views.addChild(
+						new ManualPage("Comparison View")
+							.faicon("fas fa-not-equal")
+							.addPermission(FeatureManual.PERMISSION_MANUAL)
+							.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "z_manual_views_comparison.html")
+					);
+				
+			pageAnalyzer.addChild(
+					new ManualPage("See Also")
+						.faicon("fas fa-eye")
+						.addPermission(FeatureManual.PERMISSION_MANUAL)
+						.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "z_manual_seealso.html")
+				);
 	}
 
 	@Override
@@ -185,7 +251,7 @@ public class Main extends Application implements CFWAppInterface {
 	        app.addAppServlet(ResultListServlet.class, "/resultlist");
 	        app.addAppServlet(GanttChartServlet.class, "/ganttchart");
 	        app.addAppServlet(ManageResultsServlet.class, "/manageresults");
-	        app.addAppServlet(DocuServlet.class, "/docu");
+	        //app.addAppServlet(DocuServlet.class, "/docu");
 	        app.addAppServlet(CustomContentServlet.class, "/custom");
 	        	        
 	        //###################################################################
