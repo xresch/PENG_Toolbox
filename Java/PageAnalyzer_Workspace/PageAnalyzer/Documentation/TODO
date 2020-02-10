@@ -1,6 +1,7 @@
 TODO
 ====
-
+- Fix har download, use Plaintext response
+- History View - max width for URL or table
 
 - Check if url exists and prompt for compare
 - Add modal panel for comparing rules.
