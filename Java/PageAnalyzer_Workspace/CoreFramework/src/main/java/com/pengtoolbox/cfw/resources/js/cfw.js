@@ -65,6 +65,17 @@ class CFWDate{
 }
 
 /**************************************************************************************
+ * Either executes a function or evaluates a string a s javascript code.
+ * 
+ *************************************************************************************/
+function cfw_executeCodeOrFunction(jsCodeOrFunction){
+	if(typeof jsCodeOrFunction === "function"){
+		jsCodeOrFunction();
+	}else{
+		eval(jsCodeOrFunction);
+	}
+}
+/**************************************************************************************
  * Filters items in the selected DOM nodes.
  * The items that should be filtered(based on their HTML content) have to be found with
  * the itemSelector.
@@ -1177,7 +1188,7 @@ function cfw_showSmallModal(modalTitle, modalBody, jsCode){
  * @param jsCode the javascript to execute when confirmed
  * @return nothing
  *************************************************************************************/
-function cfw_confirmExecution(message, confirmLabel, jsCode){
+function cfw_confirmExecution(message, confirmLabel, jsCodeOrFunction){
 	
 	var body = $("body");
 	var modalID = 'cfw-confirm-dialog';
@@ -1214,7 +1225,7 @@ function cfw_confirmExecution(message, confirmLabel, jsCode){
 	var confirmButton = $('<button type="button" class="btn btn-primary">'+confirmLabel+'</button>');
 	confirmButton.attr('onclick', 'cfw_confirmExecution_Execute(this, \'confirm\')');
 	confirmButton.data('modalID', modalID);
-	confirmButton.data('jsCode', jsCode);
+	confirmButton.data('jsCode', jsCodeOrFunction);
 	
 	modal.find('.modal-header').append(closeButton);
 	modal.find('.modal-footer').append(cancelButton).append(confirmButton);
@@ -1232,7 +1243,7 @@ function cfw_confirmExecution_Execute(source, action){
 	var modal = $('#'+modalID);
 	
 	if(action == 'confirm'){
-		eval(jsCode);
+		CFW.utils.executeCodeOrFunction(jsCode);
 	}
 	
 	//remove modal
@@ -1647,23 +1658,6 @@ function  cfw_hasPermission(permissionName){
 	return false;
 }
 
-/**************************************************************************************
- * Checks if the user has the specified permission
- * @param permissionName the name of the Permission
- *************************************************************************************/
-function  cfw_getUserID(){
-	$.ajaxSetup({async: false});
-		cfw_fetchAndCacheData("./usermanagement/permissions", null, "userPermissions")
-	$.ajaxSetup({async: true});
-	
-	if(CFW.cache.data["userPermissions"] != null
-	&& CFW.cache.data["userPermissions"].payload.includes(permissionName)){
-		return true;
-	}
-	
-	return false;
-}
-
 
 /**************************************************************************************
  * Checks if the user has the specified permission
@@ -1724,7 +1718,9 @@ var CFW = {
 	selection: {
 		selectElementContent: cfw_selectElementContent
 	},
-
+	utils: {
+		executeCodeOrFunction: cfw_executeCodeOrFunction
+	},
 	ui: {
 		createTable: cfw_createTable,
 		createToggleButton: cfw_createToggleButton,

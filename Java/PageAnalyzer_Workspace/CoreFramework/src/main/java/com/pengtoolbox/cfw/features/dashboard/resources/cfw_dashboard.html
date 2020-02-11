@@ -1,8 +1,20 @@
 
 <div id="cfw-dashboard-control-panel">
-	<button id="addWidget" class="btn btn-sm btn-success"  title="Add Widget" onclick="cfw_dashboard_addNewWidget()">
+	
+	<div class="btn-group">
+	  <button id="addWidget" class="btn btn-sm btn-success"  title="Add Widget" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 		<i class="fas fa-plus-circle"></i>&nbsp;Add Widget
-	</button>
+	  </button>
+	  <ul class="dropdown dropdown-menu">
+	    <li class="dropdown dropdown-submenu show">
+			<a href="#" class="dropdown-item dropdown-toggle" id="cfwMenuDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><div class="cfw-fa-box"><i class="fas fa-th-large"></i></div><span class="cfw-menuitem-label">Default Widgets</span><span class="caret"></span></a>
+			<ul class="dropdown-menu dropdown-submenu" aria-labelledby="cfwMenuDropdown">	
+				<li class=""><a class="dropdown-item" onclick="cfw_dashboard_createWidgetByName('cfw_plainText')" ><div class="cfw-fa-box"><i class="fas fa-font"></i></div><span class="cfw-menuitem-label">Plain Text</span></a></li>
+			</ul>
+		</li>		
+	  </ul>
+	</div>
+	
 </div>
 
 <div class="grid-stack">

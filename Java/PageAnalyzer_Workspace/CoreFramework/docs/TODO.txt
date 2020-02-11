@@ -9,7 +9,7 @@ TODO
 - Create loading mechanism for features as plugins
 - Create own file cfw_components.js
 - change cookie name
-- Manual: Highlight menu entry on page-parameter links
+- Manual: Highlight and expand menu entry on page-parameter links
 - Manual: Change chevron icon wen page gets expanded/collapsed
 - Implement custom shutdown stopping database, application, features, etc...
 - Dashboard: Create a dashboard using gridstack.js or similar >> https://dzone.com/articles/7-javascript-libraries-for-dashboards 
