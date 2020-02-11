@@ -1,0 +1,13 @@
+
+#cfw-content  {
+	padding: 10px;
+}
+#cfw-container  {
+	max-width: 100%;
+}
+
+.cfw-dashboard-widget-footer {
+	position: absolute;
+    bottom: 0px;
+    margin-bottom: 15px;
+}

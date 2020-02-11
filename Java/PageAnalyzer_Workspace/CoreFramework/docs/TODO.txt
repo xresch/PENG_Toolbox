@@ -1,7 +1,12 @@
 
+ALWAYS ON
+=========
+- Use addJSFileBottomSingle() instead of addJSFileBottomAssembly() where applicable
+
 
 TODO
 ====
+- Create loading mechanism for features as plugins
 - Create own file cfw_components.js
 - change cookie name
 - Manual: Highlight menu entry on page-parameter links
@@ -27,11 +32,6 @@ TODO
 - Show previous toasts all toasts button
 
 - Form errors add to field.
-
-- Add Rule for HTTP2
-  - Num requests Http 1.1
-  - Num requests > 200
-- Add Support info for async calls
 
 - Support Info: Use default Modal, make exceptions unique.
 - Custom Error page CFW.App.createErrorHandler();

@@ -16,6 +16,7 @@ import com.pengtoolbox.cfw.features.api.FeatureAPI;
 import com.pengtoolbox.cfw.features.config.CFWDBConfig;
 import com.pengtoolbox.cfw.features.config.FeatureConfiguration;
 import com.pengtoolbox.cfw.features.cpusampling.FeatureCPUSampling;
+import com.pengtoolbox.cfw.features.dashboard.FeatureDashboard;
 import com.pengtoolbox.cfw.features.manual.CFWRegistryManual;
 import com.pengtoolbox.cfw.features.manual.FeatureManual;
 import com.pengtoolbox.cfw.features.usermgmt.CFWDBPermission;
@@ -194,6 +195,7 @@ public class CFW {
 		CFW.Registry.Features.addFeature(FeatureAPI.class);	
 		CFW.Registry.Features.addFeature(FeatureCPUSampling.class);		
 		CFW.Registry.Features.addFeature(FeatureManual.class);		
+		CFW.Registry.Features.addFeature(FeatureDashboard.class);	
 		
 		//---------------------------
 		// Application Register
