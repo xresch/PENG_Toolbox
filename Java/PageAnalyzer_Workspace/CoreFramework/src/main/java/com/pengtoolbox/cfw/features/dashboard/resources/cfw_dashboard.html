@@ -1,3 +1,10 @@
+
+<div id="cfw-dashboard-control-panel">
+	<button id="addWidget" class="btn btn-sm btn-success"  title="Add Widget" onclick="cfw_dashboard_addNewWidget()">
+		<i class="fas fa-plus-circle"></i>&nbsp;Add Widget
+	</button>
+</div>
+
 <div class="grid-stack">
   <div class="grid-stack-item card" data-gs-x="0" data-gs-y="0" data-gs-width="4" data-gs-height="2">
     <div class="grid-stack-item-content">my first widget</div>
@@ -19,23 +26,23 @@
     </div>
   </div>
   
-   <div class="grid-stack-item" data-gs-width="3" data-gs-height="4">
-    <div class="grid-stack-item-content card">
-     	<div class="card-body h-100">
-		  <h5 class="card-title">Special title treatment</h5>
-		  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-		  <a href="#" class="btn btn-primary">Go somewhere</a>
-		  <div class="cfw-dashboard-widget-footer">
-		    2 days ago
-		  </div>
-		</div>
-    </div>
-  </div>
   
   <div class="grid-stack-item" data-gs-width="6" data-gs-height="3">
     <div class="grid-stack-item-content card bg-primary">
      	<div class="card-body h-100">
-		  <h5 class="card-title">Special title treatment</h5>
+     	  
+     	  <div class="card-title">
+		  	<h5>Special title treatment</h5>
+			  <a type="button" role ="button" class="cfw-dashboard-widget-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			    <i class="fas fa-cog"></i>
+			  </a>
+			  <div class="dropdown-menu">
+			    <a class="dropdown-item" href="#">Settings</a>
+				<div class="dropdown-divider"></div>
+				<a class="dropdown-item text-danger" href="#">Remove</a>
+			  </div>
+		  </div>
+
 		  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
 		  <a href="#" class="btn btn-primary">Go somewhere</a>
 		 <div class="cfw-dashboard-widget-footer">
@@ -44,4 +51,6 @@
 		</div>
     </div>
   </div>
+  
+  
 </div>

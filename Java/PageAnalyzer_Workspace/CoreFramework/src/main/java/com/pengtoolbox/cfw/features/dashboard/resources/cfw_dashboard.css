@@ -6,8 +6,18 @@
 	max-width: 100%;
 }
 
+#cfw-dashboard-control-panel{
+	padding: 15px;
+}
+
 .cfw-dashboard-widget-footer {
 	position: absolute;
     bottom: 0px;
     margin-bottom: 15px;
+}
+
+.cfw-dashboard-widget-settings{
+	position: absolute;
+	top: 8px;
+    right: 8px;
 }
