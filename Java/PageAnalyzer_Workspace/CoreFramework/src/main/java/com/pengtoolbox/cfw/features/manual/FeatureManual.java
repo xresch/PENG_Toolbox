@@ -105,16 +105,14 @@ public class FeatureManual extends CFWAppFeature {
 		// 
 		CFW.DB.Permissions.oneTimeCreate(
 				new Permission(PERMISSION_MANUAL, "user")
-					.description("Can access the manual pages. Adds the manual menu item to the menu bar.")
-					.isDeletable(false),
+					.description("Can access the manual pages. Adds the manual menu item to the menu bar."),
 					true,
 					true
 				);
 			
 		CFW.DB.Permissions.oneTimeCreate(
 				new Permission(PERMISSION_ADMIN_MANUAL, "user")
-					.description("Can access the manual pages for admins and developers.")
-					.isDeletable(false),
+					.description("Can access the manual pages for admins and developers."),
 					true,
 					false
 				);

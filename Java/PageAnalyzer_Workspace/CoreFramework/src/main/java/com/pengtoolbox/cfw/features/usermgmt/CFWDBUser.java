@@ -286,7 +286,7 @@ public class CFWDBUser {
 				.queryCache(CFWDBUser.class, "deleteByID")
 				.delete()
 				.where(UserFields.PK_ID.toString(), id)
-				.and(PermissionFields.IS_DELETABLE.toString(), true)
+				.and(UserFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 		
 			

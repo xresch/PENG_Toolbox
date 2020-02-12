@@ -374,18 +374,7 @@ function cfw_usermgmt_printPermissionList(data){
 			htmlString += '<tr>';
 			htmlString += '<td>'+current.PK_ID+'</td>';
 			htmlString += '<td>'+current.NAME+'</td>';
-			htmlString += '<td>'+current.DESCRIPTION+'</td>';
-			
-			//Delete Button
-			if(current.IS_DELETABLE){
-				htmlString += '<td><button class="btn btn-danger btn-sm" alt="Delete" title="Delete" '
-					+'onclick="CFW.ui.confirmExecute(\'Do you want to delete the role?\', \'Delete\', \'cfw_usermgmt_delete(\\\'permissions\\\','+current.PK_ID+');\')">'
-					+ '<i class="fa fa-trash"></i>'
-					+ '</button></td>';
-			}else{
-				htmlString += '<td>&nbsp;</td>';
-			}
-			
+			htmlString += '<td>'+current.DESCRIPTION+'</td>';			
 			htmlString += '</tr>';
 		}
 		

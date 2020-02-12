@@ -480,10 +480,13 @@ function cfw_dashboard_draw(){
 	cfw_dashboard_initializeGridstack();
 	
 	// Test Data
+	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 2, gswidth: 2, title: "Test Success", bgcolor: "success", textcolor: "light"});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:11, y:0, gsheight: 5, gswidth: 2, title: "Test Danger", bgcolor: "danger", textcolor: "light"});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:8, y:0, gsheight: 3, gswidth: 2, title: "Test Primary", bgcolor: "primary", textcolor: "light"});
 	cfw_dashboard_createWidgetByType('cfw_html', {x:7, y:0, gsheight: 1, gswidth: 3, title: "Test Light", bgcolor: "light", textcolor: "secondary"});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:2, y:0, gsheight: 2, gswidth: 4, title: "Test Matrix", bgcolor: "dark", textcolor: "success", content: "I have awaited you, Mr. Anderson."});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:2, y:0, gsheight: 2, gswidth: 4, title: "Test Matrix", bgcolor: "dark", textcolor: "success", content: "Mister ÄÄÄÄÄÄÄÄÄÄÄnderson."});
 	cfw_dashboard_createWidgetByType('cfw_html', {x:9, y:0, gsheight: 2, gswidth: 4, title: "Test Warning", bgcolor: "warning", textcolor: "dark"});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:4, y:0, gsheight: 4, gswidth: 4});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:3, y:0, gsheight: 4, gswidth: 5});
 	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 3, gswidth: 3});
 	cfw_dashboard_createWidgetByType('cfw_html');
 	

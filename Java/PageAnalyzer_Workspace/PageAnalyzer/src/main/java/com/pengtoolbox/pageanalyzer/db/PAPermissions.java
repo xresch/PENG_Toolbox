@@ -29,8 +29,7 @@ public class PAPermissions {
 		if(!CFW.DB.Permissions.checkExistsByName(MANAGE_RESULTS)) {
 			Permission manageResults = 
 					new Permission(MANAGE_RESULTS, "user")
-						.description("Manage all Page Analyzer results results in the DB.")
-						.isDeletable(false);
+						.description("Manage all Page Analyzer results results in the DB.");
 			
 			CFW.DB.Permissions.create(manageResults);
 			
@@ -44,7 +43,7 @@ public class PAPermissions {
 			Permission analyzeHAR = 
 					new Permission(ANALYZE_HAR, "user")
 						.description("Upload and analyze HAR files.")
-						.isDeletable(false);
+;
 			
 			CFW.DB.Permissions.create(analyzeHAR);
 			analyzeHAR = CFW.DB.Permissions.selectByName(ANALYZE_HAR);
@@ -56,8 +55,7 @@ public class PAPermissions {
 		if(!CFW.DB.Permissions.checkExistsByName(DOWNLOAD_HAR)) {
 			Permission downloadHAR = 
 					new Permission(DOWNLOAD_HAR, "user")
-						.description("Download HAR files from the result history and analyze Gantt Charts.")
-						.isDeletable(false);
+						.description("Download HAR files from the result history and analyze Gantt Charts.");
 			
 			CFW.DB.Permissions.create(downloadHAR);
 			downloadHAR = CFW.DB.Permissions.selectByName(DOWNLOAD_HAR);
@@ -70,8 +68,7 @@ public class PAPermissions {
 		if(!CFW.DB.Permissions.checkExistsByName(ANALYZE_URL)) {
 			Permission analyzeURL = 
 					new Permission(ANALYZE_URL, "user")
-						.description("Analyze a web application by using a URL.")
-						.isDeletable(false);
+						.description("Analyze a web application by using a URL.");
 			
 			CFW.DB.Permissions.create(analyzeURL);
 			analyzeURL = CFW.DB.Permissions.selectByName(ANALYZE_URL);
@@ -84,8 +81,7 @@ public class PAPermissions {
 		if(!CFW.DB.Permissions.checkExistsByName(VIEW_HISTORY)) {
 			Permission viewHistory = 
 					new Permission(VIEW_HISTORY, "user")
-						.description("View the history of the saved results.")
-						.isDeletable(false);
+						.description("View the history of the saved results.");
 			
 			CFW.DB.Permissions.create(viewHistory);
 			viewHistory = CFW.DB.Permissions.selectByName(VIEW_HISTORY);
@@ -98,8 +94,7 @@ public class PAPermissions {
 		if(!CFW.DB.Permissions.checkExistsByName(DELETE_RESULT)) {
 			Permission deleteResult = 
 					new Permission(DELETE_RESULT, "user")
-						.description("Delete results from the result history.")
-						.isDeletable(false);
+						.description("Delete results from the result history.");
 			
 			CFW.DB.Permissions.create(deleteResult);
 			deleteResult = CFW.DB.Permissions.selectByName(DELETE_RESULT);
@@ -111,8 +106,7 @@ public class PAPermissions {
 		if(!CFW.DB.Permissions.checkExistsByName(VIEW_DOCU)) {
 			Permission viewDocu = 
 					new Permission(VIEW_DOCU, "user")
-						.description("View the documentation page of the page analyzer.")
-						.isDeletable(false);
+						.description("View the documentation page of the page analyzer.");
 			
 			CFW.DB.Permissions.create(viewDocu);
 			viewDocu = CFW.DB.Permissions.selectByName(VIEW_DOCU);

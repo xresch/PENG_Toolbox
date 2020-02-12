@@ -56,8 +56,7 @@ public class FeatureCPUSampling extends CFWAppFeature {
 		if(!CFW.DB.Permissions.checkExistsByName(PERMISSION_CPU_SAMPlING)) {
 			Permission permission = 
 					new Permission(PERMISSION_CPU_SAMPlING, "user")
-						.description("Analyze CPU sampling data with the CPU smapling feature.")
-						.isDeletable(false);
+						.description("Analyze CPU sampling data with the CPU smapling feature.");
 			
 			CFW.DB.Permissions.create(permission);
 			

@@ -455,7 +455,6 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// CREATE
 		CFW.DB.Permissions.create(new Permission(permissionname, "user")
 				.description("Testdescription")
-				.isDeletable(false)
 				);
 		
 		Assertions.assertTrue(CFW.DB.Permissions.checkExistsByName(permissionname), "Permission created successfully, checkPermissionExists(String) works.");
@@ -471,7 +470,6 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		Assertions.assertTrue(permission != null);
 		Assertions.assertTrue(permission.name().equals(permissionname));
 		Assertions.assertTrue(permission.description().equals("Testdescription"));
-		Assertions.assertTrue(permission.isDeletable() == false);
 		
 		//--------------------------------------
 		// CHECK NOT DELETABLE
@@ -481,8 +479,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		//--------------------------------------
 		// UPDATE
 		permission.name(permissionnameUpdated)
-			.description("Testdescription2")
-			.isDeletable(true);
+			.description("Testdescription2");
 		
 		CFW.DB.Permissions.update(permission);
 		
@@ -496,7 +493,6 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		Assertions.assertTrue(permission != null);
 		Assertions.assertTrue(permission.name().equals(permissionnameUpdated));
 		Assertions.assertTrue(permission.description().equals("Testdescription2"));
-		Assertions.assertTrue(permission.isDeletable() == true);
 		
 		//--------------------------------------
 		// SELECT BY ID

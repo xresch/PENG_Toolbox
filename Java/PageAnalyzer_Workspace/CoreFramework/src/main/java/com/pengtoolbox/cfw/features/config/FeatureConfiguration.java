@@ -59,7 +59,6 @@ public class FeatureConfiguration extends CFWAppFeature {
 			
 			CFW.DB.Permissions.create(new Permission(PERMISSION_CONFIGURATION, "user")
 				.description("Gives the user the ability to view and update the configurations in the database.")
-				.isDeletable(false)
 			);
 			
 			Permission permission = CFW.DB.Permissions.selectByName(PERMISSION_CONFIGURATION);

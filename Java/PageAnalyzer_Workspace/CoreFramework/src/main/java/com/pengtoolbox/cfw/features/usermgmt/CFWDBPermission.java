@@ -210,7 +210,7 @@ public class CFWDBPermission {
 	public static boolean deleteByID(int id) {
 		
 		Permission permission = selectByID(id);
-		if(permission != null && permission.isDeletable() == false) {
+		if(permission != null) {
 			new CFWLog(logger)
 			.method("deleteByID")
 			.severe("The permission '"+permission.name()+"' cannot be deleted as it is marked as not deletable.");
@@ -221,7 +221,6 @@ public class CFWDBPermission {
 				.queryCache(CFWDBPermission.class, "deleteByID")
 				.delete()
 				.where(PermissionFields.PK_ID.toString(), id)
-				.and(PermissionFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 			
 	}
@@ -246,7 +245,6 @@ public class CFWDBPermission {
 				.queryCache(CFWDBPermission.class, "deleteMultipleByID")
 				.delete()
 				.whereIn(PermissionFields.PK_ID.toString(), resultIDs)
-				.and(PermissionFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 			
 	}
@@ -259,7 +257,7 @@ public class CFWDBPermission {
 	public static boolean deleteByName(String name) {
 		
 		Permission permission = selectByName(name);
-		if(permission != null && permission.isDeletable() == false) {
+		if(permission != null) {
 			new CFWLog(logger)
 			.method("deleteByName")
 			.severe("The permission '"+permission.name()+"' cannot be deleted as it is marked as not deletable.");
@@ -270,7 +268,6 @@ public class CFWDBPermission {
 				.queryCache(CFWDBPermission.class, "deleteByName")
 				.delete()
 				.where(PermissionFields.NAME.toString(), name)
-				.and(PermissionFields.IS_DELETABLE.toString(), true)
 				.executeDelete();
 			
 	}

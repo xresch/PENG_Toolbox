@@ -29,8 +29,7 @@ public class Permission extends CFWObject{
 		PK_ID, 
 		CATEGORY,
 		NAME,
-		DESCRIPTION,
-		IS_DELETABLE,
+		DESCRIPTION
 	}
 	
 	private static Logger logger = CFWLog.getLogger(Permission.class.getName());
@@ -69,10 +68,6 @@ public class Permission extends CFWObject{
 											.setDescription("The description of the permission.")
 											.addValidator(new LengthValidator(-1, 2000000));
 	
-	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, PermissionFields.IS_DELETABLE.toString())
-											.setColumnDefinition("BOOLEAN")
-											.setDescription("Flag to define if the permission can be deleted or not.")
-											.setValue(true);
 
 	public Permission() {
 		initializeFields();
@@ -91,7 +86,7 @@ public class Permission extends CFWObject{
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.addFields(id, category, name, description, isDeletable);
+		this.addFields(id, category, name, description);
 	}
 	
 	
@@ -133,7 +128,6 @@ public class Permission extends CFWObject{
 		if(!CFW.DB.Permissions.checkExistsByName(Permission.CFW_USER_MANAGEMENT)) {
 			CFW.DB.Permissions.create(new Permission(Permission.CFW_USER_MANAGEMENT, "user")
 				.description("Gives the user the ability to view, create, update and delete users.")
-				.isDeletable(false)
 			);
 			
 			Permission userManagement = CFW.DB.Permissions.selectByName(Permission.CFW_USER_MANAGEMENT);
@@ -164,7 +158,6 @@ public class Permission extends CFWObject{
 						PermissionFields.CATEGORY.toString(),
 						PermissionFields.NAME.toString(),
 						PermissionFields.DESCRIPTION.toString(),
-						PermissionFields.IS_DELETABLE.toString(),	
 				};
 
 		//----------------------------------
@@ -219,18 +212,5 @@ public class Permission extends CFWObject{
 		this.description.setValue(description);
 		return this;
 	}
-
-	public boolean isDeletable() {
-		return isDeletable.getValue();
-	}
-	
-	public Permission isDeletable(boolean isDeletable) {
-		this.isDeletable.setValue(isDeletable);
-		return this;
-	}	
 		
-
-
-	
-	
 }

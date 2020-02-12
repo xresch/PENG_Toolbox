@@ -2,13 +2,9 @@ package com.pengtoolbox.cfw.features.api;
 
 import java.util.logging.Logger;
 
-import org.eclipse.jetty.servlet.ServletContextHandler;
-
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppFeature;
 import com.pengtoolbox.cfw._main.CFWApplicationExecutor;
-import com.pengtoolbox.cfw.features.cpusampling.CPUSample;
-import com.pengtoolbox.cfw.features.cpusampling.CPUSampleSignature;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.features.usermgmt.Role;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -57,7 +53,6 @@ public class FeatureAPI extends CFWAppFeature {
 		if(!CFW.DB.Permissions.checkExistsByName(PERMISSION_CFW_API)) {
 			CFW.DB.Permissions.create(new Permission(PERMISSION_CFW_API, "user")
 				.description("User can access the API.")
-				.isDeletable(false)
 			);
 			
 			Permission permission = CFW.DB.Permissions.selectByName(PERMISSION_CFW_API);
