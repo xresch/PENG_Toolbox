@@ -88,56 +88,80 @@ function cfw_dashboard_createFormField(label, infotext, fieldHTML){
  * 
  ************************************************************************************************/
 function cfw_dashboard_editWidget(widgetGUID){
-	var widget = $('#'+widgetGUID);
-	var widgetData = widget.data("widgetData");
-	console.log(widget);
+	var widgetInstance = $('#'+widgetGUID);
+	var widgetData = widgetInstance.data("widgetData");
+	console.log(widgetInstance);
 	console.log(widgetData);
 	
+	//##################################################
+	// Show Form for Default values
+	//##################################################
 	var defaultForm = '<h2>Widget Default Settings</h2><form id="form-edit-'+widgetGUID+'">';
 	
-		//------------------------------
-		// Title
-		defaultForm += cfw_dashboard_createFormField("Title", 'The title of the widget.', '<input type="text" class="form-control" name="title" placeholder="Title" value="'+widgetData.title+'">');
-		
-		//------------------------------
-		// Footer
-		defaultForm += cfw_dashboard_createFormField("Footer", 'The footer of the widget.', '<textarea class="form-control" rows="10" name="footer" placeholder="Footer Contents">'+widgetData.footer+'</textarea>');
-		
-		//------------------------------
-		// Background Color
-		var styles = ["", "primary", "secondary", "info", "success", "warning", "danger", "dark", "light"];
-		
-		var bgSelectHTML = '<select class="form-control" name="bgcolor" value="'+widgetData.bgcolor+'">';
-			for(key in styles){
-				var current = styles[key];
-				var selected = "";
-				if(styles[key] == widgetData.bgcolor){
-					selected =' selected="selected" ';
-				}
-				bgSelectHTML += '<option value="'+current+'" '+selected+'>'+current+'</option>';
-			}
-		bgSelectHTML += '</select>';
-		defaultForm += cfw_dashboard_createFormField("Background Style:", 'Define the color used for the background.', bgSelectHTML);
+	//------------------------------
+	// Title
+	defaultForm += cfw_dashboard_createFormField("Title", 'The title of the widget.', '<input type="text" class="form-control" name="title" placeholder="Title" value="'+widgetData.title+'">');
 	
-		//------------------------------
-		// Text Color
-		var textcolorSelectHTML = '<select class="form-control" name="textcolor" value="'+widgetData.textcolor+'">';
-			for(key in styles){
-				var current = styles[key];
-				var selected = "";
-				if(styles[key] == widgetData.textcolor){
-					selected =' selected="selected" ';
-				}
-				textcolorSelectHTML += '<option value="'+current+'" '+selected+'>'+current+'</option>';
-			}
-		textcolorSelectHTML += '</select>';
-		defaultForm += cfw_dashboard_createFormField("Text Style:", 'Define the color used for the background.', textcolorSelectHTML);
+	//------------------------------
+	// Footer
+	defaultForm += cfw_dashboard_createFormField("Footer", 'The footer of the widget.', '<textarea class="form-control" rows="10" name="footer" placeholder="Footer Contents">'+widgetData.footer+'</textarea>');
 	
-		//------------------------------
-		// Save Button
-		defaultForm += '<input type="button" onclick="cfw_dashboard_saveDefaultSettings(\''+widgetGUID+'\')" class="form-control btn-primary" value="Save">';
-		
-		CFW.ui.showModal("Edit Widget", defaultForm, "CFW.cache.clearCache();");
+	//------------------------------
+	// Background Color
+	var styles = ["", "primary", "secondary", "info", "success", "warning", "danger", "dark", "light"];
+	
+	var bgSelectHTML = '<select class="form-control" name="bgcolor" value="'+widgetData.bgcolor+'">';
+		for(key in styles){
+			var current = styles[key];
+			var selected = "";
+			if(styles[key] == widgetData.bgcolor){
+				selected =' selected="selected" ';
+			}
+			bgSelectHTML += '<option value="'+current+'" '+selected+'>'+current+'</option>';
+		}
+	bgSelectHTML += '</select>';
+	defaultForm += cfw_dashboard_createFormField("Background Style:", 'Define the color used for the background.', bgSelectHTML);
+
+	//------------------------------
+	// Text Color
+	var textcolorSelectHTML = '<select class="form-control" name="textcolor" value="'+widgetData.textcolor+'">';
+		for(key in styles){
+			var current = styles[key];
+			var selected = "";
+			if(styles[key] == widgetData.textcolor){
+				selected =' selected="selected" ';
+			}
+			textcolorSelectHTML += '<option value="'+current+'" '+selected+'>'+current+'</option>';
+		}
+	textcolorSelectHTML += '</select>';
+	defaultForm += cfw_dashboard_createFormField("Text Style:", 'Define the color used for the background.', textcolorSelectHTML);
+
+	//------------------------------
+	// Save Button
+	defaultForm += '<input type="button" onclick="cfw_dashboard_saveDefaultSettings(\''+widgetGUID+'\')" class="form-control btn-primary" value="Save">';
+	
+	//##################################################
+	// Create Widget Specific Form
+	//##################################################
+	var widgetDef = CFW.dashboard.getWidget(widgetData.widgetType);
+	var customForm = $(widgetDef.getEditForm(widgetData));
+	var buttons = customForm.find('button');
+	if(buttons.length > 0){
+		buttons.remove();
+	}
+	var customFormButton = '<input type="button" onclick="cfw_dashboard_saveCustomSettings(this, \''+widgetGUID+'\')" class="form-control btn-primary" value="Save">';
+	
+	customForm.append(customFormButton)
+//	
+	//##################################################
+	// Create and show Modal
+	//##################################################
+	var compositeDiv = $('<div>');
+	compositeDiv.append(defaultForm);
+	compositeDiv.append('<h2>Settings for '+widgetDef.menulabel+' Widget</h2>');
+	compositeDiv.append(customForm);
+	
+	CFW.ui.showModal("Edit Widget", compositeDiv, "CFW.cache.clearCache();");
 }
 
 /************************************************************************************************
@@ -153,6 +177,23 @@ function cfw_dashboard_saveDefaultSettings(widgetGUID){
 	widgetData.bgcolor = settingsForm.find('select[name="bgcolor"]').val();
 	widgetData.textcolor = settingsForm.find('select[name="textcolor"]').val();
 	
+	cfw_dashboard_rerenderWidget(widgetGUID);
+	
+}
+
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_dashboard_saveCustomSettings(formButton, widgetGUID){
+	var widget = $('#'+widgetGUID);
+	var widgetData = widget.data("widgetData");
+	var settingsForm = $('#form-edit-'+widgetGUID);
+	console.log("====== Before =======");
+	console.log(widgetData);
+	var widgetDef = CFW.dashboard.getWidget(widgetData.widgetType);
+	widgetDef.onSave($(formButton).parent(), widgetData);
+	console.log("====== After =======");
+	console.log(widgetData);
 	cfw_dashboard_rerenderWidget(widgetGUID);
 	
 }
@@ -224,8 +265,6 @@ function cfw_dashboard_createWidget(widgetData){
 				}
 		htmlString += '</div>';
 	}
-	
-
 	
 	htmlString += '</div>';
 	
@@ -319,31 +358,7 @@ CFW.dashboard.registerRenderer("text",
 		}
 });
 
-
 CFW.dashboard.registerWidget("cfw_html",
-		{
-			category: "Default Widgets",
-			menulabel: "HTML",
-			menuicon: "fas fa-code",
-			renderers: [],
-			defaultValues: {
-    			title: "New Widget", 
-    			content: null, 
-    			footer: null,
-    			bgcolor: "primary",
-    			color: "light"
-    		},
-    		createWidgetInstance: function (widgetData) {
-				
-				var merged = Object.assign({}, this.defaults, widgetData);
-				var textRenderer = CFW.dashboard.getRenderer('text');
-				
-				return textRenderer.createWidget(merged);
-			}
-		}
-);
-
-CFW.dashboard.registerWidget("cfw_html2",
 		{
 			category: "Default Widgets",
 			menulabel: "Test HTML",
@@ -366,7 +381,26 @@ CFW.dashboard.registerWidget("cfw_html2",
 				var textRenderer = CFW.dashboard.getRenderer('text');
 
 				return textRenderer.createWidget(merged);
+			},
+    		getEditForm: function (widgetData) {
+    			
+    			var customForm = '<form>';
+    			
+    			//------------------------------
+    			// Content
+    			customForm += cfw_dashboard_createFormField("Content", 'The html content of the widget.', '<textarea class="form-control" rows="10" name="content" placeholder="HTML Content">'+widgetData.content+'</textarea>');
+    			customForm += '</form>';
+    			
+    			return customForm;
+    		},
+			onSave: function (form, widgetData) {
+				console.log(" ==== onSave =====");
+				console.log(form);
+				var settingsForm = $(form);
+				
+				widgetData.content = settingsForm.find('textarea[name="content"]').val();
 			}
+    		
 		}
 );
 
