@@ -220,6 +220,9 @@ function cfw_dashboard_removeWidget(widgetGUID) {
  * 
  ************************************************************************************************/
 function cfw_dashboard_createWidget(widgetData){
+	
+	//---------------------------------------
+	// Merge Data
 	CFW_DASHBOARD_WIDGET_GUID++;
 	var defaultOptions = {
 			guid: 'widget-'+CFW_DASHBOARD_WIDGET_GUID,
@@ -227,14 +230,28 @@ function cfw_dashboard_createWidget(widgetData){
 			title: "",
 			content: "",
 			footer: "",
-			bgcolor: "dark",
-			textcolor: "light",
+			bgcolor: "",
+			textcolor: "",
 	}
 	
 	var merged = Object.assign({}, defaultOptions, widgetData);
 	
+	//---------------------------------------
+	// Resolve Classes
+	var textcolorClass = '';
+	var borderClass = '';
+	if(merged.textcolor != null && merged.textcolor.trim().length > 0){
+		textcolorClass = 'text-'+merged.textcolor;
+		borderClass = 'border-'+merged.textcolor;
+	}
+	
+	var bgcolorClass = '';
+	if(merged.bgcolor != null && merged.bgcolor.trim().length > 0){
+		bgcolorClass = 'bg-'+merged.bgcolor;
+	}
+	
 	var htmlString =
-		'    <div class="grid-stack-item-content card bg-'+merged.bgcolor+' text-'+merged.textcolor+'">'
+		'    <div class="grid-stack-item-content card '+bgcolorClass+' '+textcolorClass+'">'
 		+'		<a type="button" role ="button" class="cfw-dashboard-widget-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
 		+'			<i class="fas fa-cog"></i>'
 		+'		</a>'
@@ -247,7 +264,7 @@ function cfw_dashboard_createWidget(widgetData){
 		
 	if(merged.title != null && merged.title != ''){
 		htmlString += 
-		 '     	  <div class="cfw-dashboard-widget-title border-bottom border-'+merged.textcolor+'">'
+		 '     	  <div class="cfw-dashboard-widget-title border-bottom '+borderClass+'">'
 		+'		  	<span>'+merged.title+'</span>'
 		+'		  </div>'
 	}
@@ -259,7 +276,7 @@ function cfw_dashboard_createWidget(widgetData){
 				
 				if(merged.footer != null && merged.footer != ''){
 					htmlString +=
-					'		 <div class="cfw-dashboard-widget-footer border-top border-'+merged.textcolor+'"">'
+					'		 <div class="cfw-dashboard-widget-footer border-top '+borderClass+'">'
 					+			merged.footer
 					+'		  </div>'
 				}
@@ -338,10 +355,17 @@ CFW.dashboard = {
 		createWidget:   	cfw_dashboard_createWidget,
 };
 
+
+/******************************************************************
+ * 
+ ******************************************************************/
 CFW.dashboard.registerCategory("Default Widgets", "fas fa-th-large");
 CFW.dashboard.registerCategory("Test Category", "fas fa-cogs");
 CFW.dashboard.registerCategory("Another Category", "fas fa-book");
 
+/******************************************************************
+ * 
+ ******************************************************************/
 CFW.dashboard.registerRenderer("text",
 	{
 		label: "Text",
@@ -358,6 +382,9 @@ CFW.dashboard.registerRenderer("text",
 		}
 });
 
+/******************************************************************
+ * 
+ ******************************************************************/
 CFW.dashboard.registerWidget("cfw_html",
 		{
 			category: "Default Widgets",
@@ -368,8 +395,6 @@ CFW.dashboard.registerWidget("cfw_html",
     			title: "Some very long title to check overflow", 
     			content: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", 
     			footer: "Some very long footer to test overflow",
-    			bgcolor: "dark",
-    			color: "light"
     		},
     		createWidgetInstance: function (widgetData) {
 				
@@ -422,31 +447,27 @@ function cfw_dashboard_initializeGridstack(){
 	
 	//-----------------------------
 	// Set update on dragstop 
-	$('.grid-stack').on('dragstop', function(event, ui) {
+	$('.grid-stack').on('change', function(event, items) {
 		  var grid = this;
-		  var widgetInstance = $(event.target);
-		  var widgetData 	 = widgetInstance.data("widgetData");
-		  
-		  widgetData.x		 = widgetInstance.attr("data-gs-x");
-		  widgetData.y		 = widgetInstance.attr("data-gs-y");
-		  
-			 console.log("===== Dragged ======");
-			 console.log(widgetData);
-		});
-	
-	//-----------------------------
-	// Set update on dragstop 
-	$('.grid-stack').on('gsresizestop', function(event, element) {
-		 var grid = this;
-		 var widgetInstance = $(element);
-		 var widgetData 	 = widgetInstance.data("widgetData");
-		  
-		 widgetData.gswidth		= widgetInstance.attr("data-gs-width");
-		 widgetData.gsheight	= widgetInstance.attr("data-gs-height");
-		 
-		 console.log("===== Resized ======");
-		 console.log(widgetData);
+		  console.log("======= ITEMS ======= ");
+		  console.log(items);
+		  var i = 0;
+		  for(key in items){
+			  var currentItem = items[key].el;
+			  console.log("======= CHANGE "+(++i)+"======= ");
+			  console.log(currentItem);
+			  var widgetInstance = $(currentItem);
+			  var widgetData 	 = widgetInstance.data("widgetData");
+			  
+			  widgetData.x		 = widgetInstance.attr("data-gs-x");
+			  widgetData.y		 = widgetInstance.attr("data-gs-y");
+			  widgetData.gswidth		= widgetInstance.attr("data-gs-width");
+			  widgetData.gsheight	= widgetInstance.attr("data-gs-height");
+				 console.log("===== Dragged ======");
+				 console.log(widgetData);
+		  }
 	});
+	
 }
 /******************************************************************
  * Main method for building the view.
@@ -457,6 +478,14 @@ function cfw_dashboard_draw(){
 	console.log('draw');
 	
 	cfw_dashboard_initializeGridstack();
+	
+	// Test Data
+	cfw_dashboard_createWidgetByType('cfw_html', {x:7, y:0, gsheight: 1, gswidth: 3, title: "Test Light", bgcolor: "light", textcolor: "secondary"});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:2, y:0, gsheight: 2, gswidth: 4, title: "Test Matrix", bgcolor: "dark", textcolor: "success", content: "I have awaited you, Mr. Anderson."});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:9, y:0, gsheight: 2, gswidth: 4, title: "Test Warning", bgcolor: "warning", textcolor: "dark"});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:4, y:0, gsheight: 4, gswidth: 4});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 3, gswidth: 3});
+	cfw_dashboard_createWidgetByType('cfw_html');
 	
 	CFW.ui.toogleLoader(true);
 	

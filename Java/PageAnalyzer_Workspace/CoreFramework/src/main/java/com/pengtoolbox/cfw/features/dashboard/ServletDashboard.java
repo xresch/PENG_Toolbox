@@ -39,7 +39,7 @@ public class ServletDashboard extends HttpServlet
 			String action = request.getParameter("action");
 			
 			if(action == null) {
-				HTMLResponse html = new HTMLResponse("Manual");
+				HTMLResponse html = new HTMLResponse("Dashboard");
 				StringBuffer content = html.getContent();
 				
 				html.addCSSFile(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "gridstack.min.css");
