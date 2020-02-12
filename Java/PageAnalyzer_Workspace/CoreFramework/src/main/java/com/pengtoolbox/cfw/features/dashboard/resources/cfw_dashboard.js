@@ -1,7 +1,23 @@
 
 var CFW_DASHBOARD_WIDGET_REGISTRY = {};
+var CFW_DASHBOARD_RENDERER_REGISTRY = {};
 
 var CFW_DASHBOARD_WIDGET_GUID = 0;
+
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_dashboard_registerRenderer(rendererUniqueName, rendererObject){
+	
+	CFW_DASHBOARD_RENDERER_REGISTRY[rendererUniqueName] = rendererObject;
+}
+
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_dashboard_getRenderer(rendererUniqueName){
+	return CFW_DASHBOARD_RENDERER_REGISTRY[rendererUniqueName];
+}
 
 /************************************************************************************************
  * 
@@ -9,6 +25,22 @@ var CFW_DASHBOARD_WIDGET_GUID = 0;
 function cfw_dashboard_registerWidget(widgetUniqueName, widgetObject){
 	
 	CFW_DASHBOARD_WIDGET_REGISTRY[widgetUniqueName] = widgetObject;
+	
+	var category =  widgetObject.category;
+	var menulabel =  widgetObject.menulabel;
+	var menuicon = widgetObject.menuicon;
+	
+	var categorySubmenu = $('ul[data-submenuof="'+category+'"]');
+	console.log(categorySubmenu);
+	
+	var menuitemHTML = 
+		'<li><a class="dropdown-item" onclick="cfw_dashboard_createWidgetByName(\''+widgetUniqueName+'\')" >'
+			+'<div class="cfw-fa-box"><i class="'+menuicon+'"></i></div>'
+			+'<span class="cfw-menuitem-label">'+menulabel+'</span>'
+		+'</a></li>';
+	
+	categorySubmenu.append(menuitemHTML);
+	
 }
 
 /************************************************************************************************
@@ -17,6 +49,21 @@ function cfw_dashboard_registerWidget(widgetUniqueName, widgetObject){
 function cfw_dashboard_getWidget(widgetUniqueName){
 	
 	return CFW_DASHBOARD_WIDGET_REGISTRY[widgetUniqueName];
+}
+
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_dashboard_registerCategory(categoryName, faiconClasses){
+	
+	var categoryHTML = 
+		'<li class="dropdown dropdown-submenu show">'
+			+'<a href="#" class="dropdown-item dropdown-toggle" id="cfwMenuDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><div class="cfw-fa-box"><i class="'+faiconClasses+'"></i></div><span class="cfw-menuitem-label">'+categoryName+'</span><span class="caret"></span></a>'
+			+'<ul class="dropdown-menu dropdown-submenu" aria-labelledby="cfwMenuDropdown" data-submenuof="'+categoryName+'">'
+			+'</ul>'
+		+'</li>'
+		
+	$('#addWidgetDropdown').append(categoryHTML);
 }
 
 /************************************************************************************************
@@ -44,7 +91,7 @@ function cfw_dashboard_createWidgetHTML(options){
 			guid: 'widget-'+CFW_DASHBOARD_WIDGET_GUID,
 			widgetID: null,
 			title: "",
-			body: "",
+			content: "",
 			footer: "",
 			bgcolor: "",
 			textColor: "",
@@ -55,37 +102,41 @@ function cfw_dashboard_createWidgetHTML(options){
 	var htmlString =
 		'<div id="'+merged.guid+'" data-id="'+merged.widgetID+'"  class="grid-stack-item" data-gs-width="6" data-gs-height="3">'
 		+'    <div class="grid-stack-item-content card bg-'+merged.bgcolor+' text-'+merged.textColor+'">'
-		+'     	<div class="card-body h-100">';
+		+'		<a type="button" role ="button" class="cfw-dashboard-widget-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+		+'			<i class="fas fa-cog"></i>'
+		+'		</a>'
+		+'		<div class="dropdown-menu" style="z-index: 128;">'
+		+'			<a class="dropdown-item">Settings</a>'
+		+'			<div class="dropdown-divider"></div>'
+		+'				<a class="dropdown-item text-danger" onclick="cfw_dashboard_removeWidget(\''+merged.guid+'\')"><i class="fas fa-trash"></i>&nbsp;Remove</a>'
+		+'			</div>'
+
 		
 	if(merged.title != null && merged.title != ''){
 		htmlString += 
-		 '     	  <div class="card-title">'
-		+'		  	<h5>'+merged.title+'</h5>'
+		 '     	  <div class="cfw-dashboard-widget-title border-bottom border-'+merged.textColor+'">'
+		+'		  	<span>'+merged.title+'</span>'
 		+'		  </div>'
 	}
 	
-	htmlString +=
-		 '			  <a type="button" role ="button" class="cfw-dashboard-widget-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
-		+'			    <i class="fas fa-cog"></i>'
-		+'			  </a>'
-		+'			  <div class="dropdown-menu" style="z-index: 128;">'
-		+'			    <a class="dropdown-item" href="#">Settings</a>'
-		+'				<div class="dropdown-divider"></div>'
-		+'				<a class="dropdown-item text-danger" href="#" onclick="cfw_dashboard_removeWidget(\''+merged.guid+'\')"><i class="fas fa-trash"></i>&nbsp;Remove</a>'
-		+'			  </div>'
-		
-	if(merged.body != null && merged.body != ''){
-		htmlString +='		  <div>'+merged.body+'</div>'
+
+	
+	if(merged.content != null && merged.content != ''){
+		htmlString += 
+			'<div class="cfw-dashboard-widget-body">'
+				+ merged.content
+			+'</div>';
 	}
 	
 	if(merged.footer != null && merged.footer != ''){
 		htmlString +=
-		'		 <div class="cfw-dashboard-widget-footer">'
+		'		 <div class="cfw-dashboard-widget-footer  border-top border-'+merged.textColor+'"">'
 		+			merged.footer
 		+'		  </div>'
 	}
-		+'		</div>'
-		+'    </div>'
+	
+	htmlString += 
+		'    </div>'
 		+'</div>';
 	
 	return htmlString;
@@ -113,7 +164,7 @@ function cfw_dashboard_addNewWidget() {
 		cfw_dashboard_createWidgetHTML(
     		{
     			title: "New Widget", 
-    			body: "Some Text", 
+    			content: "Some Text", 
     			footer: "Some Footer",
     		}
     	);
@@ -123,35 +174,80 @@ function cfw_dashboard_addNewWidget() {
 }
 
 /******************************************************************
- * Main method for building the view.
  * 
  ******************************************************************/
 CFW.dashboard = {
 		registerWidget: 	cfw_dashboard_registerWidget,
+		getWidget: 			cfw_dashboard_getWidget,
+		registerRenderer: 	cfw_dashboard_registerRenderer,
+		getRenderer: 		cfw_dashboard_getRenderer,
+		registerCategory: 	cfw_dashboard_registerCategory,
 		createWidgetHTML:   cfw_dashboard_createWidgetHTML,
-		getWidget: cfw_dashboard_getWidget
 };
 
-CFW.dashboard.registerWidget("cfw_plainText",
+CFW.dashboard.registerCategory("Default Widgets", "fas fa-th-large");
+CFW.dashboard.registerCategory("Test Category", "fas fa-cogs");
+CFW.dashboard.registerCategory("Another Category", "fas fa-book");
+
+CFW.dashboard.registerRenderer("text",
+	{
+		label: "Text",
+		defaultValues: {
+			title: "Text Widget", 
+			content: null, 
+			footer: null,
+		},
+		createWidgetHTML: function (widgetData) {
+		
+			var merged = Object.assign({}, this.defaults, widgetData);
+			
+			return CFW.dashboard.createWidgetHTML(merged);
+		}
+});
+
+
+CFW.dashboard.registerWidget("cfw_html",
 		{
-			topmenu: "Default Widgets",
-			topmenuicon: "fas fa-th-large",
-			menulabel: "Text",
-			menuicon: "fas fa-font",
+			category: "Default Widgets",
+			menulabel: "HTML",
+			menuicon: "fas fa-code",
+			renderers: [],
 			defaultValues: {
     			title: "New Widget", 
-    			body: null, 
+    			content: null, 
     			footer: null,
-    			bgcolor: "primary"
-    			
+    			bgcolor: "primary",
+    			color: "light"
     		},
 			getWidgetHTML: function (widgetData) {
 				
 				var merged = Object.assign({}, this.defaults, widgetData);
+				var textRenderer = CFW.dashboard.getRenderer('text');
 				
-				return CFW.dashboard.createWidgetHTML(
-						merged
-			    	);
+				return textRenderer.createWidgetHTML(merged);
+			}
+		}
+);
+
+CFW.dashboard.registerWidget("cfw_html2",
+		{
+			category: "Default Widgets",
+			menulabel: "Test HTML",
+			menuicon: "fas fa-code",
+			renderers: [],
+			defaultValues: {
+    			title: "Some very long title to check overflow", 
+    			content: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", 
+    			footer: "Some very long footer to test overflow",
+    			bgcolor: "primary",
+    			color: "light"
+    		},
+			getWidgetHTML: function (widgetData) {
+				
+				var merged = Object.assign({}, this.defaults, widgetData);
+				var textRenderer = CFW.dashboard.getRenderer('text');
+				
+				return textRenderer.createWidgetHTML(merged);
 			}
 		}
 );
