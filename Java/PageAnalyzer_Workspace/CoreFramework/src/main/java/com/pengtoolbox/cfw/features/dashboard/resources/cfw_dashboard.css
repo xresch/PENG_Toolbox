@@ -36,13 +36,19 @@
     padding: 0.7rem;
     overflow-x: hidden;
     overflow-y: auto; 
+    background: inherit;
 }
 
 .cfw-dashboard-widget-footer {
 	padding: 0.7rem;
     padding-right: 1.5rem;
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    right: 0px;
     overflow-y: hidden;
     overflow-y: hidden; 
+    background: inherit;
 }
 
 .cfw-dashboard-widget-settings{

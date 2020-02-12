@@ -25,9 +25,9 @@ function cfw_dashboard_getRenderer(rendererUniqueName){
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_registerWidget(widgetUniqueName, widgetObject){
+function cfw_dashboard_registerWidget(widgetUniqueType, widgetObject){
 	
-	CFW_DASHBOARD_WIDGET_REGISTRY[widgetUniqueName] = widgetObject;
+	CFW_DASHBOARD_WIDGET_REGISTRY[widgetUniqueType] = widgetObject;
 	
 	var category =  widgetObject.category;
 	var menulabel =  widgetObject.menulabel;
@@ -37,7 +37,7 @@ function cfw_dashboard_registerWidget(widgetUniqueName, widgetObject){
 	console.log(categorySubmenu);
 	
 	var menuitemHTML = 
-		'<li><a class="dropdown-item" onclick="cfw_dashboard_createWidgetByName(\''+widgetUniqueName+'\')" >'
+		'<li><a class="dropdown-item" onclick="cfw_dashboard_createWidgetByType(\''+widgetUniqueType+'\')" >'
 			+'<div class="cfw-fa-box"><i class="'+menuicon+'"></i></div>'
 			+'<span class="cfw-menuitem-label">'+menulabel+'</span>'
 		+'</a></li>';
@@ -49,9 +49,9 @@ function cfw_dashboard_registerWidget(widgetUniqueName, widgetObject){
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_getWidget(widgetUniqueName){
+function cfw_dashboard_getWidget(widgetUniqueType){
 	
-	return CFW_DASHBOARD_WIDGET_REGISTRY[widgetUniqueName];
+	return CFW_DASHBOARD_WIDGET_REGISTRY[widgetUniqueType];
 }
 
 /************************************************************************************************
@@ -69,33 +69,111 @@ function cfw_dashboard_registerCategory(categoryName, faiconClasses){
 	$('#addWidgetDropdown').append(categoryHTML);
 }
 
+function cfw_dashboard_createFormField(label, infotext, fieldHTML){
+	
+	var html = 	
+	  '<div class="form-group row ml-1">'
+		+'<label class="col-sm-3 col-form-label" for="3">'+label+':</label>'
+		+'<div class="col-sm-9">'
+			+'<span class="badge badge-info cfw-decorator" data-toggle="tooltip" data-placement="top" data-delay="500" title=""'
+				+'data-original-title="'+infotext+'"><i class="fa fa-sm fa-info"></i></span>'
+				+ fieldHTML
+		+'</div>'
+	+'</div>';
+	
+	return html;
+}
 
 /************************************************************************************************
  * 
  ************************************************************************************************/
 function cfw_dashboard_editWidget(widgetGUID){
-
-		var widget = $('#'+widgetGUID);
-		var widgetData = widget.data("widgetData");
-		console.log(widget);
-		console.log(widgetData);
+	var widget = $('#'+widgetGUID);
+	var widgetData = widget.data("widgetData");
+	console.log(widget);
+	console.log(widgetData);
+	
+	var defaultForm = '<h2>Widget Default Settings</h2><form id="form-edit-'+widgetGUID+'">';
+	
+		//------------------------------
+		// Title
+		defaultForm += cfw_dashboard_createFormField("Title", 'The title of the widget.', '<input type="text" class="form-control" name="title" placeholder="Title" value="'+widgetData.title+'">');
+		
+		//------------------------------
+		// Footer
+		defaultForm += cfw_dashboard_createFormField("Footer", 'The footer of the widget.', '<textarea class="form-control" rows="10" name="footer" placeholder="Footer Contents">'+widgetData.footer+'</textarea>');
+		
+		//------------------------------
+		// Background Color
+		var styles = ["", "primary", "secondary", "info", "success", "warning", "danger", "dark", "light"];
+		
+		var bgSelectHTML = '<select class="form-control" name="bgcolor" value="'+widgetData.bgcolor+'">';
+			for(key in styles){
+				var current = styles[key];
+				var selected = "";
+				if(styles[key] == widgetData.bgcolor){
+					selected =' selected="selected" ';
+				}
+				bgSelectHTML += '<option value="'+current+'" '+selected+'>'+current+'</option>';
+			}
+		bgSelectHTML += '</select>';
+		defaultForm += cfw_dashboard_createFormField("Background Style:", 'Define the color used for the background.', bgSelectHTML);
+	
+		//------------------------------
+		// Text Color
+		var textcolorSelectHTML = '<select class="form-control" name="textcolor" value="'+widgetData.textcolor+'">';
+			for(key in styles){
+				var current = styles[key];
+				var selected = "";
+				if(styles[key] == widgetData.textcolor){
+					selected =' selected="selected" ';
+				}
+				textcolorSelectHTML += '<option value="'+current+'" '+selected+'>'+current+'</option>';
+			}
+		textcolorSelectHTML += '</select>';
+		defaultForm += cfw_dashboard_createFormField("Text Style:", 'Define the color used for the background.', textcolorSelectHTML);
+	
+		//------------------------------
+		// Save Button
+		defaultForm += '<input type="button" onclick="cfw_dashboard_saveDefaultSettings(\''+widgetGUID+'\')" class="form-control btn-primary" value="Save">';
+		
+		CFW.ui.showModal("Edit Widget", defaultForm, "CFW.cache.clearCache();");
 }
 
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_removeWidget(widgetGUID){
+function cfw_dashboard_saveDefaultSettings(widgetGUID){
+	var widget = $('#'+widgetGUID);
+	var widgetData = widget.data("widgetData");
+	var settingsForm = $('#form-edit-'+widgetGUID);
+			
+	widgetData.title = settingsForm.find('input[name="title"]').val();
+	widgetData.footer = settingsForm.find('textarea[name="footer"]').val();
+	widgetData.bgcolor = settingsForm.find('select[name="bgcolor"]').val();
+	widgetData.textcolor = settingsForm.find('select[name="textcolor"]').val();
 	
-	CFW.ui.confirmExecute('Do you really want to remove this widget?', 'Remove', function () {
-		
-		var widget = $('#'+widgetGUID);
-		console.log(widget);
-		
-		var grid = $('.grid-stack').data('gridstack');
-		grid.removeWidget(widget);
-	});
+	cfw_dashboard_rerenderWidget(widgetGUID);
 	
 }
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_dashboard_removeWidgetConfirmed(widgetGUID){
+	CFW.ui.confirmExecute('Do you really want to remove this widget?', 'Remove', cfw_dashboard_removeWidget(widgetGUID) );
+}
+
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_dashboard_removeWidget(widgetGUID) {
+	var widget = $('#'+widgetGUID);
+	console.log("#### Add remove from Database.");
+	
+	var grid = $('.grid-stack').data('gridstack');
+	grid.removeWidget(widget);
+};
+
 
 /************************************************************************************************
  * 
@@ -109,26 +187,26 @@ function cfw_dashboard_createWidget(widgetData){
 			content: "",
 			footer: "",
 			bgcolor: "dark",
-			textColor: "light",
+			textcolor: "light",
 	}
 	
 	var merged = Object.assign({}, defaultOptions, widgetData);
 	
 	var htmlString =
-		'    <div class="grid-stack-item-content card bg-'+merged.bgcolor+' text-'+merged.textColor+'">'
+		'    <div class="grid-stack-item-content card bg-'+merged.bgcolor+' text-'+merged.textcolor+'">'
 		+'		<a type="button" role ="button" class="cfw-dashboard-widget-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
 		+'			<i class="fas fa-cog"></i>'
 		+'		</a>'
 		+'		<div class="dropdown-menu">'
 		+'			<a class="dropdown-item" onclick="cfw_dashboard_editWidget(\''+merged.guid+'\')"><i class="fas fa-pen"></i>&nbsp;Edit</a>'
 		+'			<div class="dropdown-divider"></div>'
-		+'				<a class="dropdown-item text-danger" onclick="cfw_dashboard_removeWidget(\''+merged.guid+'\')"><i class="fas fa-trash"></i>&nbsp;Remove</a>'
+		+'				<a class="dropdown-item text-danger" onclick="cfw_dashboard_removeWidgetConfirmed(\''+merged.guid+'\')"><i class="fas fa-trash"></i>&nbsp;Remove</a>'
 		+'			</div>'
 
 		
 	if(merged.title != null && merged.title != ''){
 		htmlString += 
-		 '     	  <div class="cfw-dashboard-widget-title border-bottom border-'+merged.textColor+'">'
+		 '     	  <div class="cfw-dashboard-widget-title border-bottom border-'+merged.textcolor+'">'
 		+'		  	<span>'+merged.title+'</span>'
 		+'		  </div>'
 	}
@@ -137,15 +215,17 @@ function cfw_dashboard_createWidget(widgetData){
 		htmlString += 
 			'<div class="cfw-dashboard-widget-body">'
 				+ merged.content
-			+'</div>';
+				
+				if(merged.footer != null && merged.footer != ''){
+					htmlString +=
+					'		 <div class="cfw-dashboard-widget-footer border-top border-'+merged.textcolor+'"">'
+					+			merged.footer
+					+'		  </div>'
+				}
+		htmlString += '</div>';
 	}
 	
-	if(merged.footer != null && merged.footer != ''){
-		htmlString +=
-		'		 <div class="cfw-dashboard-widget-footer  border-top border-'+merged.textColor+'"">'
-		+			merged.footer
-		+'		  </div>'
-	}
+
 	
 	htmlString += '</div>';
 	
@@ -159,32 +239,52 @@ function cfw_dashboard_createWidget(widgetData){
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_createWidgetByName(widgetUniqueName) {
+function cfw_dashboard_rerenderWidget(widgetGUID) {
+	var widget = $('#'+widgetGUID);
+	var widgetData = widget.data("widgetData");
 	
-	var widget = CFW.dashboard.getWidget(widgetUniqueName);
-	var widgetInstance = widget.createWidgetInstance(widget.defaultValues);
+	cfw_dashboard_removeWidget(widgetGUID);
+	cfw_dashboard_createWidgetByType(widgetData.widgetType, widgetData)
 	
-    var grid = $('.grid-stack').data('gridstack');
-    
-    grid.addWidget($(widgetInstance), 0, 0, 2, 2, true);
 }
-
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_addNewWidget() {
+function cfw_dashboard_createWidgetByType(widgetType, widgetData) {
 	
-	var widgetHTML =
-		cfw_dashboard_createWidgetHTML(
-    		{
-    			title: "New Widget", 
-    			content: "Some Text", 
-    			footer: "Some Footer",
-    		}
-    	);
+	var widget = CFW.dashboard.getWidget(widgetType);
+	
+	var x = 0;
+	var y = 0;
+	var gswidth = 2;
+	var gsheight = 2;
+	var doAutoposition = true;
+	
+	if(widgetData != null){
+		x = widgetData.x;
+		y = widgetData.y;
+		gswidth = widgetData.gswidth;
+		gsheight = widgetData.gsheight;
+		doAutoposition = false;
+	}else{
+		widgetData = widget.defaultValues;
+	}
+	
+	var widgetInstance = widget.createWidgetInstance(widgetData);
+	
     var grid = $('.grid-stack').data('gridstack');
     
-    grid.addWidget($(widgetHTML), 0, 0, 2, 2, true);
+    grid.addWidget($(widgetInstance), x, y, gswidth, gsheight, doAutoposition);
+    
+    //----------------------------
+    // Update Data
+    var widgetData = widgetInstance.data('widgetData');
+    
+    widgetData.widgetType	= widgetType;
+    widgetData.gswidth	= widgetInstance.attr("data-gs-width");
+    widgetData.gsheight	= widgetInstance.attr("data-gs-height");
+    widgetData.x		= widgetInstance.attr("data-gs-x");
+    widgetData.y		= widgetInstance.attr("data-gs-y");
 }
 
 /******************************************************************
@@ -253,7 +353,7 @@ CFW.dashboard.registerWidget("cfw_html2",
     			title: "Some very long title to check overflow", 
     			content: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", 
     			footer: "Some very long footer to test overflow",
-    			bgcolor: "primary",
+    			bgcolor: "dark",
     			color: "light"
     		},
     		createWidgetInstance: function (widgetData) {
@@ -274,9 +374,10 @@ CFW.dashboard.registerWidget("cfw_html2",
  * Main method for building the view.
  * 
  ******************************************************************/
-function cfw_dashboard_draw(){
+function cfw_dashboard_initializeGridstack(){
 	
-	console.log('draw');
+	//-----------------------------
+	// Set options 
 	$('.grid-stack').gridstack({
 		alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
 		resizable: {
@@ -284,6 +385,44 @@ function cfw_dashboard_draw(){
 		  },
 		cellHeight: 60
 	});
+	
+	//-----------------------------
+	// Set update on dragstop 
+	$('.grid-stack').on('dragstop', function(event, ui) {
+		  var grid = this;
+		  var widgetInstance = $(event.target);
+		  var widgetData 	 = widgetInstance.data("widgetData");
+		  
+		  widgetData.x		 = widgetInstance.attr("data-gs-x");
+		  widgetData.y		 = widgetInstance.attr("data-gs-y");
+		  
+			 console.log("===== Dragged ======");
+			 console.log(widgetData);
+		});
+	
+	//-----------------------------
+	// Set update on dragstop 
+	$('.grid-stack').on('gsresizestop', function(event, element) {
+		 var grid = this;
+		 var widgetInstance = $(element);
+		 var widgetData 	 = widgetInstance.data("widgetData");
+		  
+		 widgetData.gswidth		= widgetInstance.attr("data-gs-width");
+		 widgetData.gsheight	= widgetInstance.attr("data-gs-height");
+		 
+		 console.log("===== Resized ======");
+		 console.log(widgetData);
+	});
+}
+/******************************************************************
+ * Main method for building the view.
+ * 
+ ******************************************************************/
+function cfw_dashboard_draw(){
+	
+	console.log('draw');
+	
+	cfw_dashboard_initializeGridstack();
 	
 	CFW.ui.toogleLoader(true);
 	
