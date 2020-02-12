@@ -2,6 +2,9 @@
 var CFW_DASHBOARD_WIDGET_REGISTRY = {};
 var CFW_DASHBOARD_RENDERER_REGISTRY = {};
 
+//saved with guid
+var CFW_DASHBOARD_WIDGET_DATA = {};
+
 var CFW_DASHBOARD_WIDGET_GUID = 0;
 
 /************************************************************************************************
@@ -66,6 +69,18 @@ function cfw_dashboard_registerCategory(categoryName, faiconClasses){
 	$('#addWidgetDropdown').append(categoryHTML);
 }
 
+
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_dashboard_editWidget(widgetGUID){
+
+		var widget = $('#'+widgetGUID);
+		var widgetData = widget.data("widgetData");
+		console.log(widget);
+		console.log(widgetData);
+}
+
 /************************************************************************************************
  * 
  ************************************************************************************************/
@@ -85,28 +100,27 @@ function cfw_dashboard_removeWidget(widgetGUID){
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_createWidgetHTML(options){
+function cfw_dashboard_createWidget(widgetData){
 	CFW_DASHBOARD_WIDGET_GUID++;
 	var defaultOptions = {
 			guid: 'widget-'+CFW_DASHBOARD_WIDGET_GUID,
-			widgetID: null,
+			widgetid: null,
 			title: "",
 			content: "",
 			footer: "",
-			bgcolor: "",
-			textColor: "",
+			bgcolor: "dark",
+			textColor: "light",
 	}
 	
-	var merged = Object.assign({}, defaultOptions, options);
+	var merged = Object.assign({}, defaultOptions, widgetData);
 	
 	var htmlString =
-		'<div id="'+merged.guid+'" data-id="'+merged.widgetID+'"  class="grid-stack-item" data-gs-width="6" data-gs-height="3">'
-		+'    <div class="grid-stack-item-content card bg-'+merged.bgcolor+' text-'+merged.textColor+'">'
+		'    <div class="grid-stack-item-content card bg-'+merged.bgcolor+' text-'+merged.textColor+'">'
 		+'		<a type="button" role ="button" class="cfw-dashboard-widget-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
 		+'			<i class="fas fa-cog"></i>'
 		+'		</a>'
-		+'		<div class="dropdown-menu" style="z-index: 128;">'
-		+'			<a class="dropdown-item">Settings</a>'
+		+'		<div class="dropdown-menu">'
+		+'			<a class="dropdown-item" onclick="cfw_dashboard_editWidget(\''+merged.guid+'\')"><i class="fas fa-pen"></i>&nbsp;Edit</a>'
 		+'			<div class="dropdown-divider"></div>'
 		+'				<a class="dropdown-item text-danger" onclick="cfw_dashboard_removeWidget(\''+merged.guid+'\')"><i class="fas fa-trash"></i>&nbsp;Remove</a>'
 		+'			</div>'
@@ -118,8 +132,6 @@ function cfw_dashboard_createWidgetHTML(options){
 		+'		  	<span>'+merged.title+'</span>'
 		+'		  </div>'
 	}
-	
-
 	
 	if(merged.content != null && merged.content != ''){
 		htmlString += 
@@ -135,11 +147,13 @@ function cfw_dashboard_createWidgetHTML(options){
 		+'		  </div>'
 	}
 	
-	htmlString += 
-		'    </div>'
-		+'</div>';
+	htmlString += '</div>';
 	
-	return htmlString;
+	var widgetItem = $('<div id="'+merged.guid+'" data-id="'+merged.widgetID+'"  class="grid-stack-item">');
+	widgetItem.append(htmlString);
+	widgetItem.data("widgetData", merged)
+	console.log(merged);
+	return widgetItem;
 }
 
 /************************************************************************************************
@@ -148,11 +162,11 @@ function cfw_dashboard_createWidgetHTML(options){
 function cfw_dashboard_createWidgetByName(widgetUniqueName) {
 	
 	var widget = CFW.dashboard.getWidget(widgetUniqueName);
-	var widgetHTML = widget.getWidgetHTML(widget.defaultValues);
+	var widgetInstance = widget.createWidgetInstance(widget.defaultValues);
 	
     var grid = $('.grid-stack').data('gridstack');
     
-    grid.addWidget($(widgetHTML), 0, 0, 2, 2, true);
+    grid.addWidget($(widgetInstance), 0, 0, 2, 2, true);
 }
 
 /************************************************************************************************
@@ -182,7 +196,7 @@ CFW.dashboard = {
 		registerRenderer: 	cfw_dashboard_registerRenderer,
 		getRenderer: 		cfw_dashboard_getRenderer,
 		registerCategory: 	cfw_dashboard_registerCategory,
-		createWidgetHTML:   cfw_dashboard_createWidgetHTML,
+		createWidget:   	cfw_dashboard_createWidget,
 };
 
 CFW.dashboard.registerCategory("Default Widgets", "fas fa-th-large");
@@ -197,11 +211,11 @@ CFW.dashboard.registerRenderer("text",
 			content: null, 
 			footer: null,
 		},
-		createWidgetHTML: function (widgetData) {
+		createWidget: function (widgetData) {
 		
 			var merged = Object.assign({}, this.defaults, widgetData);
 			
-			return CFW.dashboard.createWidgetHTML(merged);
+			return CFW.dashboard.createWidget(merged);
 		}
 });
 
@@ -219,12 +233,12 @@ CFW.dashboard.registerWidget("cfw_html",
     			bgcolor: "primary",
     			color: "light"
     		},
-			getWidgetHTML: function (widgetData) {
+    		createWidgetInstance: function (widgetData) {
 				
 				var merged = Object.assign({}, this.defaults, widgetData);
 				var textRenderer = CFW.dashboard.getRenderer('text');
 				
-				return textRenderer.createWidgetHTML(merged);
+				return textRenderer.createWidget(merged);
 			}
 		}
 );
@@ -242,12 +256,16 @@ CFW.dashboard.registerWidget("cfw_html2",
     			bgcolor: "primary",
     			color: "light"
     		},
-			getWidgetHTML: function (widgetData) {
+    		createWidgetInstance: function (widgetData) {
+				
+				widgetData.deepoptions = {
+						bla: { array: [ "test", "bla", "blub"] }
+				}
 				
 				var merged = Object.assign({}, this.defaults, widgetData);
 				var textRenderer = CFW.dashboard.getRenderer('text');
-				
-				return textRenderer.createWidgetHTML(merged);
+
+				return textRenderer.createWidget(merged);
 			}
 		}
 );
