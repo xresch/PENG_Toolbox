@@ -89,6 +89,13 @@ public class FeatureManual extends CFWAppFeature {
 					.addPermission(PERMISSION_ADMIN_MANUAL)
 					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_registry_manualpages.html")
 				);
+		
+		quickstart.addChild(
+				new ManualPage("Working with CFWObjects")
+					.faicon("fas fa-th-large")
+					.addPermission(PERMISSION_ADMIN_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_cfwobject.html")
+				);
 	}
 
 	@Override

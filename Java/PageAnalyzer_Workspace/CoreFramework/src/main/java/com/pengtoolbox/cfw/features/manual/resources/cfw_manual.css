@@ -1,3 +1,16 @@
+
+h1, h2{
+	margin-top: 30px;
+}
+
+h2, h3, h4, h5{
+	margin-top: 25px;
+}
+
+p{
+	margin-top: 10px;
+}
+
 #cfw-content  {
 	padding: 0px;
 }
