@@ -7,6 +7,130 @@
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
+/******************************************************************
+ * Class to wrap a date for easier formatting.
+ * 
+ ******************************************************************/
+class CFWFormField{
+	
+	 constructor(customOptions){
+		 
+		 this.defaultOptions = {
+			type: "text",
+			name: null,
+			label: null,
+			value: null,
+			description: null,
+			attributes: {},
+			options: []
+		 };
+		 
+		 this.options = Object.assign({}, this.defaultOptions, customOptions);
+		 
+		 if(this.options.label == null){
+			 this.options.label = this.fieldNameToLabel(this.options.name);
+		 }
+		 
+		 if(this.options.attributes.placeholder == null){
+			 this.options.attributes.placeholder = this.options.label;
+		 }
+		 
+	 }
+	
+	 /********************************************
+	  * Returns a String in the format YYYY-MM-DD
+	  ********************************************/
+	 createHTML(){
+		 var type = this.options.type.trim().toUpperCase();
+		 
+		 //----------------------------
+		 // Start and Label
+		 if(type != "HIDDEN"){
+			 var htmlString =
+			  '<div class="form-group row ml-1">'
+				+'<label class="col-sm-3 col-form-label" for="3">'+this.options.label+':</label>'
+				+'<div class="col-sm-9">'
+				
+			 //----------------------------
+			 // Description Decorator
+			 if(this.options.description != null){	
+				 htmlString +=
+					'<span class="badge badge-info cfw-decorator" data-toggle="tooltip" data-placement="top" data-delay="500" title=""'
+						+'data-original-title="'+this.options.description+'"><i class="fa fa-sm fa-info"></i></span>'
+			 }
+		 }
+		 
+		 //----------------------------
+		 // Field HTML
+		 this.options.attributes.name = this.options.name;
+		 
+		 switch(type){
+		 	case 'TEXT': 		htmlString += '<input type="text" class="form-control" '+this.getAttributesString()+'/>';
+		 						break;
+		 					
+		 	case 'NUMBER':  	htmlString += '<input type="number" class="form-control" '+this.getAttributesString()+'/>';
+								break;
+			
+		 	case 'EMAIL':  		htmlString += '<input type="email" class="form-control" '+this.getAttributesString()+'/>';
+		 						break;
+		 						
+		 	case 'PASSWORD':  	htmlString += '<input type="password" class="form-control" '+this.getAttributesString()+'/>';
+								break;
+		 }
+		 //----------------------------
+		 // End
+		if(type != "HIDDEN"){
+			htmlString +=
+					'</div>'
+				+'</div>';
+		}
+
+		 return htmlString;
+	 }
+	 
+	 /********************************************
+	  * 
+	  ********************************************/
+	 getAttributesString(){
+		 var result = '';
+			for(var key in this.options.attributes) {
+				var value = this.options.attributes[key];
+				
+				if(value != null && value !== "") {
+					result += ' '+key+'="'+value+'" ';
+				}
+			}
+			return result;
+	 }
+	 /********************************************
+	  * 
+	  ********************************************/
+	 fieldNameToLabel(fieldName){
+			
+			var splitted = fieldName.split("[-_]");
+			
+			var result = '';
+			for(var i = 0; i < splitted.length; i++) {
+				result += (this.capitalize(splitted[i]));
+				
+				//only do if not last
+				if(i+1 < splitted.length) {
+					result.append(" ");
+				}
+			}
+			
+			return result.toString();
+		}
+	 
+	 /********************************************
+	  * 
+	  ********************************************/
+	 capitalize(string) {
+		 if(string == null) return '';
+		 return string.substring(0,1).toUpperCase() + string.substring(1).toLowerCase();
+	 }
+	 
+}
 
 /******************************************************************
  * Class to wrap a date for easier formatting.

@@ -100,7 +100,8 @@ function cfw_dashboard_editWidget(widgetGUID){
 	
 	//------------------------------
 	// Title
-	defaultForm += cfw_dashboard_createFormField("Title", 'The title of the widget.', '<input type="text" class="form-control" name="title" placeholder="Title" value="'+widgetData.title+'">');
+	
+	defaultForm += new CFWFormField({ type: "text", name: "title", value: widgetData.title, description: 'The title of the widget.' }).createHTML();;
 	
 	//------------------------------
 	// Footer

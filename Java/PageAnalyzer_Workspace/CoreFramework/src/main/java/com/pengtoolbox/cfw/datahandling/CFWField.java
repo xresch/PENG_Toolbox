@@ -299,7 +299,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			}
 		}
 		//---------------------------------------------
-		// Close Form
+		// Close Field
 		//---------------------------------------------
 		if(formFieldType != FormFieldType.HIDDEN && formFieldType != FormFieldType.NONE) {
 			html.append("</div>");
