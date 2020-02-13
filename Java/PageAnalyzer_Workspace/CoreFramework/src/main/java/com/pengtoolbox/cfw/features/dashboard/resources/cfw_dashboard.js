@@ -697,7 +697,7 @@ function addTestdata(){
 	cfw_dashboard_createWidgetByType('cfw_html', {x:3, y:0, gsheight: 4, gswidth: 5});
 	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 3, gswidth: 3});
 	cfw_dashboard_createWidgetByType('cfw_html');
-	cfw_dashboard_createWidgetByType('cfw_iframe', {x:0, y:0, gsheight: 6, gswidth: 7, title: "iFrame test", url: "https://api.jquery.com/data/" });
+	cfw_dashboard_createWidgetByType('cfw_iframe', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", url: "https://api.jquery.com/data/" });
 	
 	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 4, gswidth: 5, title: "Table Test", data: rendererTestdata });
 	
