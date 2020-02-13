@@ -6,11 +6,11 @@ ALWAYS ON
 
 TODO
 ====
+- Finish javascript CFWFormField
 - Configuration: do not send Passwords to Browser
 - Create Encryption/Decryption for DB
 - Create loading mechanism for features as plugins
 - Create own file cfw_components.js
-- change cookie name
 - Manual: Highlight and expand menu entry on page-parameter links
 - Manual: Change chevron icon wen page gets expanded/collapsed
 - Implement custom shutdown stopping database, application, features, etc...
@@ -41,4 +41,4 @@ TODO
 
 DONE
 ====
-
+- change cookie name to CFWSESSIONID

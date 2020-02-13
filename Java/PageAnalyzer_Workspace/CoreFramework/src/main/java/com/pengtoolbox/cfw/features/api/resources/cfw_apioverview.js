@@ -46,8 +46,8 @@ function cfw_apioverview_formResult(data, status, xhr){
 	//-------------------------------
 	// Sample CURL
 	curl = $('#cfw-apioverview-samplecurl');
-	cookie = CFW.http.readCookie("JSESSIONID");
-	curlString = 'curl -H "Cookie: JSESSIONID='+cookie+'" -X GET "'+url+'"';
+	cookie = CFW.http.readCookie("CFWSESSIONID");
+	curlString = 'curl -H "Cookie: CFWSESSIONID='+cookie+'" -X GET "'+url+'"';
 	curl.text(curlString);
 	hljs.highlightBlock(curl.get(0));
 	//-------------------------------
@@ -121,14 +121,14 @@ function cfw_apioverview_printLoginPanel(parent){
 	html += '  <li><b>password: </b>The password of the user.</li>';
 	html += '</ul>';
 	html += '<p>To use the APIs, add the cookie you have recieved to the HTTP Header "Cookie" of the requests. For example:</p>';
-	html += '<pre class="cfwApiOverviewCode"><code>Cookie: JSESSIONID=node01ab2c3d4e5f61xhc7f6puqsab1</code></pre>';
+	html += '<pre class="cfwApiOverviewCode"><code>Cookie: CFWSESSIONID=node01ab2c3d4e5f61xhc7f6puqsab1</code></pre>';
 	
 	html += '<p>Here is an example login request using curl that will return the SessionID string:</p>';
 	html += '<pre class="cfwApiOverviewCode"><code>curl -X POST --data \'username=apiUser&password=apiUserPW\' \'http://localhost:8888/cfw/apilogin\'</code></pre>';
 	
-	cookie = CFW.http.readCookie("JSESSIONID");
+	cookie = CFW.http.readCookie("CFWSESSIONID");
 	html += '<p>Afterwards you can use the SessionID to access the API, here is an example. You can create examples for each API using the :</p>';
-	html += '<pre class="cfwApiOverviewCode"><code>curl -H "Cookie: JSESSIONID='+cookie+'" -X GET \''+window.location.href+'?apiName=User&actionName=fetchData\'</code></pre>';
+	html += '<pre class="cfwApiOverviewCode"><code>curl -H "Cookie: CFWSESSIONID='+cookie+'" -X GET \''+window.location.href+'?apiName=User&actionName=fetchData\'</code></pre>';
 	
 	//---------------------------
 	// Create Panel

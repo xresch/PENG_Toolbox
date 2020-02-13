@@ -275,6 +275,7 @@ public class CFWApplicationExecutor {
 	    trackingModes.add(SessionTrackingMode.COOKIE);
 	    sessionHandler.setSessionTrackingModes(trackingModes);
 	    sessionHandler.getSessionCookieConfig().setPath("/");
+	    sessionHandler.getSessionCookieConfig().setName("CFWSESSIONID");
 	    
 	    //prevent URL rewrite
 	    sessionHandler.setSessionIdPathParameterName("none");

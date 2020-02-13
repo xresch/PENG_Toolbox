@@ -82,7 +82,7 @@ public class ServletAPILogin extends HttpServlet
 					// Create session in other context
 					if(CFW.Context.Request.hasPermission(FeatureAPI.PERMISSION_CFW_API)) {
 						data.triggerLogin();
-						plaintext.getContent().append("JSESSIONID="+CFW.Context.Request.getRequest().getSession().getId());
+						plaintext.getContent().append("CFWSESSIONID="+CFW.Context.Request.getRequest().getSession().getId());
 					}else {
 						plaintext.getContent().append("ERROR: Access Denied.");
 					}
