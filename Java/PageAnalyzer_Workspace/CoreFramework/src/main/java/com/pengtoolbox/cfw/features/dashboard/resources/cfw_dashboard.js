@@ -1,5 +1,6 @@
 
 var CFW_DASHBOARD_EDIT_MODE = true;
+var CFW_DASHBOARD_FULLSCREEN_MODE = false;
 
 var CFW_DASHBOARD_WIDGET_REGISTRY = {};
 var CFW_DASHBOARD_RENDERER_REGISTRY = {};
@@ -601,8 +602,42 @@ CFW.dashboard.registerWidget("cfw_html",
 /******************************************************************
  * 
  ******************************************************************/
+function cfw_dashboard_toggleFullscreenMode(){
+	var grid = $('.grid-stack').data('gridstack');
+	
+	if(CFW_DASHBOARD_FULLSCREEN_MODE){
+		CFW_DASHBOARD_FULLSCREEN_MODE = false;
+
+		$('.hideOnFullScreen').css('display', '');
+		$('.navbar').css('display', '');
+		$('#cfw-dashboard-control-panel').css('padding', '');
+		
+		$('#fullscreenButton')
+			.removeClass('fullscreened-button');
+		
+		$('#fullscreenButtonIcon')
+			.removeClass('fa-compress')
+			.addClass('fa-expand');
+		
+	}else{
+		CFW_DASHBOARD_FULLSCREEN_MODE = true;
+		$('.hideOnFullScreen').css('display', 'none');
+		$('.navbar').css('display', 'none');
+		$('#cfw-dashboard-control-panel').css('padding', '0px');
+		
+		$('#fullscreenButton')
+		.addClass('fullscreened-button');
+		$('#fullscreenButtonIcon')
+			.removeClass('fa-expand')
+			.addClass('fa-compress');
+	}
+}
+
+/******************************************************************
+ * 
+ ******************************************************************/
 function cfw_dashboard_toggleEditMode(){
-	var grid = $('.grid-stack').data('gridstack')
+	var grid = $('.grid-stack').data('gridstack');
 	if(CFW_DASHBOARD_EDIT_MODE){
 		CFW_DASHBOARD_EDIT_MODE = false;
 		$('.cfw-dashboard-widget-settings').css('display', 'none');

@@ -81,3 +81,10 @@
 	top: -12.5px;
     right: -8px;
 }
+
+.fullscreened-button{
+	position: absolute;
+    z-index: 1024;
+    top: 0px;
+    right: 0px;
+}
