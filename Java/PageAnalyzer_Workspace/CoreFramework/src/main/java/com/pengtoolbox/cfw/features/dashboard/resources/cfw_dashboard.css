@@ -17,6 +17,30 @@
     overflow-y: visible; 
 }
 
+/**************************************************************
+ * Scrollbar
+ **************************************************************/
+/* width */
+::-webkit-scrollbar {
+  width: 15px;
+  height: 15px;
+  direction: rtl;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--light);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--gray);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-dark);
+}
 
 /**************************************************************
  * Dashboard styling
@@ -26,26 +50,27 @@
 }
 
 .cfw-dashboard-widget-title {
-    padding: 0.7rem;
+    padding: 0.4rem 0.7rem;
     padding-right: 1.5rem;
-    font-size: 20px;
+    font-size: medium;
     font-weight: 600;
 }
 
 .cfw-dashboard-widget-body {
-    padding: 0.7rem;
-    overflow-x: hidden;
+    padding: 0.4rem;
+    overflow-x: auto;
     overflow-y: auto; 
     background: inherit;
 }
 
 .cfw-dashboard-widget-footer {
-	padding: 0.7rem;
+	padding: 0.4rem 0.7rem;
     padding-right: 1.5rem;
     position: absolute;
     width: 100%;
     bottom: 0px;
     right: 0px;
+    opacity: 0.85;
     overflow-y: hidden;
     overflow-y: hidden; 
     background: inherit;
@@ -53,6 +78,6 @@
 
 .cfw-dashboard-widget-settings{
 	position: absolute;
-	top: 8px;
-    right: 8px;
+	top: -12.5px;
+    right: -8px;
 }

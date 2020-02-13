@@ -1,10 +1,11 @@
 
+var CFW_DASHBOARD_EDIT_MODE = true;
+
 var CFW_DASHBOARD_WIDGET_REGISTRY = {};
 var CFW_DASHBOARD_RENDERER_REGISTRY = {};
 
 //saved with guid
 var CFW_DASHBOARD_WIDGET_DATA = {};
-
 var CFW_DASHBOARD_WIDGET_GUID = 0;
 
 var rendererTestdata = {
@@ -15,7 +16,7 @@ var rendererTestdata = {
 	data: [
 		{id: 0, firstname: "Jane", lastname: "Doe", city: "Nirwana", postal_code: 8008},
 		{id: 1, firstname: "Testika", lastname: "Testonia", city: "Manhattan", postal_code: 9000},
-		{id: 1, firstname: "Theus", lastname: "De Nator", city: "Termi-Nation", postal_code: 666},
+		{id: 2, firstname: "Theus", lastname: "De Nator", city: "Termi-Nation", postal_code: 666},
 	],
 	actionButtons: [ 
 		function (data, id){ return '<button class="btn btn-sm btn-primary" onclick="alert(\'Edit record '+id+'\')"><i class="fas fa-pen"></i></button>'},
@@ -355,7 +356,7 @@ function cfw_dashboard_createWidgetByType(widgetType, widgetData) {
     
     //----------------------------
     // Update Data
-    var widgetData = widgetInstance.data('widgetData');
+    var widgetData = $(widgetInstance).data('widgetData');
     
     widgetData.widgetType	= widgetType;
     widgetData.gswidth	= widgetInstance.attr("data-gs-width");
@@ -597,6 +598,22 @@ CFW.dashboard.registerWidget("cfw_html",
 		}
 );
 
+/******************************************************************
+ * 
+ ******************************************************************/
+function cfw_dashboard_toggleEditMode(){
+	var grid = $('.grid-stack').data('gridstack')
+	if(CFW_DASHBOARD_EDIT_MODE){
+		CFW_DASHBOARD_EDIT_MODE = false;
+		$('.cfw-dashboard-widget-settings').css('display', 'none');
+		grid.disable();
+		
+	}else{
+		CFW_DASHBOARD_EDIT_MODE = true;
+		$('.cfw-dashboard-widget-settings').css('display', '');
+		grid.enable();
+	}
+}
 /******************************************************************
  * Main method for building the view.
  * 
