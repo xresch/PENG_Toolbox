@@ -342,7 +342,6 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		
 		this.removeAttribute("value");
 		
-		
 		String stringVal = (value == null) ? "" : value.toString();
 
 		html.append("<select class=\"form-control\" "+this.getAttributesString()+" >");

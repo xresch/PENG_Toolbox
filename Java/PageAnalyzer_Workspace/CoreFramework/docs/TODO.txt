@@ -6,6 +6,8 @@ ALWAYS ON
 
 TODO
 ====
+- Configuration: do not send Passwords to Browser
+- Create Encryption/Decryption for DB
 - Create loading mechanism for features as plugins
 - Create own file cfw_components.js
 - change cookie name

@@ -105,38 +105,42 @@ function cfw_dashboard_editWidget(widgetGUID){
 	
 	//------------------------------
 	// Footer
-	defaultForm += cfw_dashboard_createFormField("Footer", 'The footer of the widget.', '<textarea class="form-control" rows="10" name="footer" placeholder="Footer Contents">'+widgetData.footer+'</textarea>');
+	defaultForm += new CFWFormField({ type: "textarea", name: "footer", value: widgetData.footer, description: 'The contents of the footer of the widget.' }).createHTML();;
+	
+	//defaultForm += cfw_dashboard_createFormField("Footer", 'The footer of the widget.', '<textarea class="form-control" rows="10" name="footer" placeholder="Footer Contents">'+widgetData.footer+'</textarea>');
 	
 	//------------------------------
-	// Background Color
-	var styles = ["", "primary", "secondary", "info", "success", "warning", "danger", "dark", "light"];
+	// Color Selectors
+	var selectOptions = {
+			"Default": "", 
+			"Primary": "primary", 
+			"Secondary": "secondary",
+			"Info": "info", 
+			"Success": "success", 
+			"Warning": "warning", 
+			"Danger": "danger", 
+			"Dark": "dark", 
+			"Light": "light"
+	};
 	
-	var bgSelectHTML = '<select class="form-control" name="bgcolor" value="'+widgetData.bgcolor+'">';
-		for(key in styles){
-			var current = styles[key];
-			var selected = "";
-			if(styles[key] == widgetData.bgcolor){
-				selected =' selected="selected" ';
-			}
-			bgSelectHTML += '<option value="'+current+'" '+selected+'>'+current+'</option>';
-		}
-	bgSelectHTML += '</select>';
-	defaultForm += cfw_dashboard_createFormField("Background Style:", 'Define the color used for the background.', bgSelectHTML);
-
-	//------------------------------
-	// Text Color
-	var textcolorSelectHTML = '<select class="form-control" name="textcolor" value="'+widgetData.textcolor+'">';
-		for(key in styles){
-			var current = styles[key];
-			var selected = "";
-			if(styles[key] == widgetData.textcolor){
-				selected =' selected="selected" ';
-			}
-			textcolorSelectHTML += '<option value="'+current+'" '+selected+'>'+current+'</option>';
-		}
-	textcolorSelectHTML += '</select>';
-	defaultForm += cfw_dashboard_createFormField("Text Style:", 'Define the color used for the background.', textcolorSelectHTML);
-
+	defaultForm += new CFWFormField({ 
+		type: "select", 
+		name: "bgcolor", 
+		label: "Background Color", 
+		value: widgetData.bgcolor, 
+		options: selectOptions,
+		description: 'Define the color used for the background.' 
+	}).createHTML();
+	
+	defaultForm += new CFWFormField({ 
+		type: "select", 
+		name: "textcolor", 
+		label: "Text Color", 
+		value: widgetData.textcolor, 
+		options: selectOptions,
+		description: 'Define the color used for the text and borders.' 
+	}).createHTML();
+	
 	//------------------------------
 	// Save Button
 	defaultForm += '<input type="button" onclick="cfw_dashboard_saveDefaultSettings(\''+widgetGUID+'\')" class="form-control btn-primary" value="Save">';
@@ -270,19 +274,20 @@ function cfw_dashboard_createWidget(widgetData){
 		+'		  </div>'
 	}
 	
-	if(merged.content != null && merged.content != ''){
-		htmlString += 
-			'<div class="cfw-dashboard-widget-body">'
-				+ merged.content
-				
-				if(merged.footer != null && merged.footer != ''){
-					htmlString +=
-					'		 <div class="cfw-dashboard-widget-footer border-top '+borderClass+'">'
-					+			merged.footer
-					+'		  </div>'
-				}
-		htmlString += '</div>';
-	}
+
+	htmlString += 
+		'<div class="cfw-dashboard-widget-body">';
+			if(merged.content != null && merged.content != ''){
+				htmlString += merged.content
+			}
+			if(merged.footer != null && merged.footer != ''){
+				htmlString +=
+				'		 <div class="cfw-dashboard-widget-footer border-top '+borderClass+'">'
+				+			merged.footer
+				+'		  </div>'
+			}
+	htmlString += '</div>';
+	
 	
 	htmlString += '</div>';
 	
@@ -414,7 +419,7 @@ CFW.dashboard.registerWidget("cfw_html",
     			
     			//------------------------------
     			// Content
-    			customForm += cfw_dashboard_createFormField("Content", 'The html content of the widget.', '<textarea class="form-control" rows="10" name="content" placeholder="HTML Content">'+widgetData.content+'</textarea>');
+    			customForm += new CFWFormField({ type: "textarea", name: "content", value: widgetData.content, description: 'The html contents of the widget.' }).createHTML();
     			customForm += '</form>';
     			
     			return customForm;

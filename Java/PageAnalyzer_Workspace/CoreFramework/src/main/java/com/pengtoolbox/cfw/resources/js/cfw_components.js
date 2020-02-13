@@ -22,7 +22,7 @@ class CFWFormField{
 			value: null,
 			description: null,
 			attributes: {},
-			options: []
+			options: {}
 		 };
 		 
 		 this.options = Object.assign({}, this.defaultOptions, customOptions);
@@ -65,16 +65,30 @@ class CFWFormField{
 		 this.options.attributes.name = this.options.name;
 		 
 		 switch(type){
-		 	case 'TEXT': 		htmlString += '<input type="text" class="form-control" '+this.getAttributesString()+'/>';
+		 	case 'TEXT': 		this.options.attributes.value = this.options.value;
+		 						htmlString += '<input type="text" class="form-control" '+this.getAttributesString()+'/>';
 		 						break;
-		 					
-		 	case 'NUMBER':  	htmlString += '<input type="number" class="form-control" '+this.getAttributesString()+'/>';
+		 	
+		 	case 'TEXTAREA': 	htmlString += this.createTextAreaHTML();
+								break;
+		 	
+		 	case 'SELECT': 		htmlString += this.createSelectHTML();
+		 						break;
+			
+		 	case 'NUMBER':  	this.options.attributes.value = this.options.value;
+		 						htmlString += '<input type="number" class="form-control" '+this.getAttributesString()+'/>';
 								break;
 			
-		 	case 'EMAIL':  		htmlString += '<input type="email" class="form-control" '+this.getAttributesString()+'/>';
+		 	case 'HIDDEN':  	this.options.attributes.value = this.options.value;
+								htmlString += '<input type="hidden" '+this.getAttributesString()+'/>';
+								break;
+			
+		 	case 'EMAIL':  		this.options.attributes.value = this.options.value;
+		 						htmlString += '<input type="email" class="form-control" '+this.getAttributesString()+'/>';
 		 						break;
 		 						
-		 	case 'PASSWORD':  	htmlString += '<input type="password" class="form-control" '+this.getAttributesString()+'/>';
+		 	case 'PASSWORD':  	this.options.attributes.value = this.options.value;
+		 						htmlString += '<input type="password" class="form-control" '+this.getAttributesString()+'/>';
 								break;
 		 }
 		 //----------------------------
@@ -88,9 +102,59 @@ class CFWFormField{
 		 return htmlString;
 	 }
 	 
-	 /********************************************
-	  * 
-	  ********************************************/
+	/***********************************************************************************
+	 * Create a text area
+	 ***********************************************************************************/
+	createTextAreaHTML() {
+		
+		if(this.options.attributes.rows == null) {
+			this.options.attributes.rows = 5;
+		}
+		
+		var value = "";
+		if(this.options.value !== null && this.options.value !== undefined ) {
+			value = this.options.value;
+		}
+		
+		return "<textarea class=\"form-control\" "+this.getAttributesString()+">"+value+"</textarea>";
+	}
+
+	/***********************************************************************************
+	 * Create a select
+	 ***********************************************************************************/
+	createSelectHTML() {
+			
+		var value = "";
+		if(this.options.value !== null && this.options.value !== undefined ) {
+			value = this.options.value;
+		}
+		
+		var html = '<select class="form-control" '+this.getAttributesString()+' >';
+		
+		//-----------------------------------
+		// handle options
+		var options = this.options.options;
+		
+		if(options != null) {
+			for(var label in options) {
+				var currentVal = options[label];
+				
+				if(currentVal == value) {
+					html += '<option value="'+currentVal+'" selected>' + label + '</option>';
+				}else {
+					html += '<option value="'+currentVal+'">' + label + '</option>';
+				}
+			}
+		}
+		
+		html += '</select>';
+		
+		return html;
+	}
+	 
+	/********************************************
+	 * 
+	 ********************************************/
 	 getAttributesString(){
 		 var result = '';
 			for(var key in this.options.attributes) {
@@ -107,7 +171,8 @@ class CFWFormField{
 	  ********************************************/
 	 fieldNameToLabel(fieldName){
 			
-			var splitted = fieldName.split("[-_]");
+		 	var regex = /[-_]/;
+			var splitted = fieldName.split(regex);
 			
 			var result = '';
 			for(var i = 0; i < splitted.length; i++) {
