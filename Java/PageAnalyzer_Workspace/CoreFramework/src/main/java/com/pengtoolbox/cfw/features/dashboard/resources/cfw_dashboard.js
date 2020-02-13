@@ -7,6 +7,22 @@ var CFW_DASHBOARD_WIDGET_DATA = {};
 
 var CFW_DASHBOARD_WIDGET_GUID = 0;
 
+var rendererTestdata = {
+ 	idfield: 'id',
+ 	titlefields: ['firstname', 'lastname'],
+ 	titledelimiter: ' ',
+ 	visiblefields: ['firstname', 'lastname', 'code', 'postal_code'],
+	data: [
+		{id: 0, firstname: "Jane", lastname: "Doe", city: "Nirwana", postal_code: 8008},
+		{id: 1, firstname: "Testika", lastname: "Testonia", city: "Manhattan", postal_code: 9000},
+		{id: 1, firstname: "Theus", lastname: "De Nator", city: "Termi-Nation", postal_code: 666},
+	],
+	actionButtons: [ 
+		function (data, id){ return '<button class="btn btn-sm btn-primary" onclick="alert(\'Edit record '+id+'\')"><i class="fas fa-pen"></i></button>'},
+		function (data, id){ return '<button class="btn btn-sm btn-danger" onclick="alert(\'Delete record '+id+'\')"><i class="fas fa-trash"></i></button>'},
+	]
+}
+
 /************************************************************************************************
  * 
  ************************************************************************************************/
@@ -206,7 +222,7 @@ function cfw_dashboard_saveCustomSettings(formButton, widgetGUID){
  * 
  ************************************************************************************************/
 function cfw_dashboard_removeWidgetConfirmed(widgetGUID){
-	CFW.ui.confirmExecute('Do you really want to remove this widget?', 'Remove', cfw_dashboard_removeWidget(widgetGUID) );
+	CFW.ui.confirmExecute('Do you really want to remove this widget?', 'Remove', "cfw_dashboard_removeWidget('"+widgetGUID+"')" );
 }
 
 /************************************************************************************************
@@ -256,7 +272,7 @@ function cfw_dashboard_createWidget(widgetData){
 	}
 	
 	var htmlString =
-		'    <div class="grid-stack-item-content card '+bgcolorClass+' '+textcolorClass+'">'
+		'    <div class="grid-stack-item-content card d-flex '+bgcolorClass+' '+textcolorClass+'">'
 		+'		<a type="button" role ="button" class="cfw-dashboard-widget-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
 		+'			<i class="fas fa-cog"></i>'
 		+'		</a>'
@@ -276,10 +292,7 @@ function cfw_dashboard_createWidget(widgetData){
 	
 
 	htmlString += 
-		'<div class="cfw-dashboard-widget-body">';
-			if(merged.content != null && merged.content != ''){
-				htmlString += merged.content
-			}
+		'<div class="cfw-dashboard-widget-body d-flex flex-grow-1">';
 			if(merged.footer != null && merged.footer != ''){
 				htmlString +=
 				'		 <div class="cfw-dashboard-widget-footer border-top '+borderClass+'">'
@@ -287,13 +300,15 @@ function cfw_dashboard_createWidget(widgetData){
 				+'		  </div>'
 			}
 	htmlString += '</div>';
-	
-	
 	htmlString += '</div>';
 	
 	var widgetItem = $('<div id="'+merged.guid+'" data-id="'+merged.widgetID+'"  class="grid-stack-item">');
 	widgetItem.append(htmlString);
 	widgetItem.data("widgetData", merged)
+	
+	if(merged.content != null && merged.content != ''){
+		widgetItem.find('.cfw-dashboard-widget-body').append(merged.content);
+	}
 	console.log(merged);
 	return widgetItem;
 }
@@ -365,53 +380,200 @@ CFW.dashboard = {
 /******************************************************************
  * 
  ******************************************************************/
-CFW.dashboard.registerCategory("Default Widgets", "fas fa-th-large");
+CFW.dashboard.registerCategory("Static Widgets", "fas fa-th-large");
 CFW.dashboard.registerCategory("Test Category", "fas fa-cogs");
 CFW.dashboard.registerCategory("Another Category", "fas fa-book");
+
 
 /******************************************************************
  * 
  ******************************************************************/
-CFW.dashboard.registerRenderer("text",
-	{
-		label: "Text",
-		defaultValues: {
-			title: "Text Widget", 
-			content: null, 
-			footer: null,
-		},
-		createWidget: function (widgetData) {
-		
-			var merged = Object.assign({}, this.defaults, widgetData);
-			
-			return CFW.dashboard.createWidget(merged);
+
+CFW.dashboard.registerRenderer("html",
+	new CFWRenderer(
+		function (renderDefinition) {
+			if(typeof renderDefinition.data == "object"){
+				return CFW.format.objectToHTMLList(renderDefinition.data)
+			}else{
+				return renderDefinition.data;
+			}
+		})
+);
+
+CFW.dashboard.registerRenderer("table",
+		new CFWRenderer(
+			function (renderDef) {
+				
+				console.log('===========Render Def =============');
+				console.log(renderDef);
+				//-----------------------------------
+				// Check Data
+				if(renderDef.datatype != "array"){
+					return "<span>Unable to convert data into table.</span>";
+				}
+				
+				//===================================================
+				// Create Table
+				//===================================================
+				var cfwTable = CFW.ui.createTable();
+				cfwTable.tableFilter = false;
+				
+				//-----------------------------------
+				// Create Headers
+				for(var key in renderDef.visiblefields){
+					cfwTable.addHeader(
+						CFW.format.fieldNameToLabel(renderDef.visiblefields[key])
+					);
+				}
+				
+				for(var key in renderDef.actionButtons){
+					cfwTable.addHeader("&nbsp;");
+				}
+				
+				//-----------------------------------
+				// Create Headers
+				var count = renderDef.data.length;
+				
+				for(var i = 0; i < count; i++ ){
+					var currentRecord = renderDef.data[i];
+					var row = $('<tr>');
+					
+					//-------------------------
+					// Add field Values as Cells
+					for(var key in renderDef.visiblefields){
+						var fieldname = renderDef.visiblefields[key];
+						
+						row.append('<td>'+currentRecord[fieldname]+'</td>');
+					}
+					
+					//-------------------------
+					// Add Action buttons
+					var id = null;
+					if(renderDef.idfield != null){
+						id = currentRecord[renderDef.idfield];
+					}
+					for(var fieldKey in renderDef.actionButtons){
+						
+						row.append('<td>'+renderDef.actionButtons[fieldKey](currentRecord, id )+'</td>');
+					}
+					
+					cfwTable.addRow(row);
+				}
+				
+				return cfwTable.getTable();
+		})
+);
+
+/******************************************************************
+ * 
+ ******************************************************************/
+CFW.dashboard.registerWidget("cfw_table",
+		{
+			category: "Static Widgets",
+			menulabel: "Table",
+			menuicon: "fas fa-table",
+			renderers: [],
+			defaultValues: {
+    			title: "Table", 
+    			data: "",
+    		},
+    		createWidgetInstance: function (widgetData) {
+								
+				var merged = Object.assign({}, this.defaultValues, widgetData);
+				var tableRenderer = CFW.dashboard.getRenderer('table');
+
+				var cfwTable = tableRenderer.render(merged.data);
+				
+				merged.content = cfwTable;
+				return CFW.dashboard.createWidget(merged);
+				
+			},
+    		getEditForm: function (widgetData) {
+    			
+    			var customForm = '<form>';
+    			
+    			//------------------------------
+    			// Content
+    			customForm += new CFWFormField({ type: "textarea", name: "userTableData", value: widgetData.userTableData, description: 'Values separated by semicolon, first row will be used as header.' }).createHTML();
+    			customForm += '</form>';
+    			
+    			return customForm;
+    		},
+			onSave: function (form, widgetData) {
+				console.log(form);
+				var settingsForm = $(form);
+				
+				widgetData.userTableData = settingsForm.find('textarea[name="userTableData"]').val();
+			}
+    		
 		}
-});
+);
+
+/******************************************************************
+ * 
+ ******************************************************************/
+CFW.dashboard.registerWidget("cfw_iframe",
+		{
+			category: "Static Widgets",
+			menulabel: "iFrame",
+			menuicon: "far fa-square",
+			renderers: [],
+			defaultValues: {
+    			title: "iFrame", 
+    			data: "",
+    		},
+    		createWidgetInstance: function (widgetData) {
+								
+				var merged = Object.assign({}, this.defaultValues, widgetData);
+				var textRenderer = CFW.dashboard.getRenderer('html');
+
+				merged.content = textRenderer.render({data: '<iframe class="w-100 flex-grow-1" src="'+widgetData.url+'">'});
+				return CFW.dashboard.createWidget(merged);
+				
+			},
+    		getEditForm: function (widgetData) {
+    			
+    			var customForm = '<form>';
+    			
+    			//------------------------------
+    			// Content
+    			customForm += new CFWFormField({ type: "text", name: "url", value: widgetData.url, description: 'The url uf the page that should be displayed in the iFrame.' }).createHTML();
+    			customForm += '</form>';
+    			
+    			return customForm;
+    		},
+			onSave: function (form, widgetData) {
+				console.log(form);
+				var settingsForm = $(form);
+				
+				widgetData.url = settingsForm.find('input[name="url"]').val();
+			}
+    		
+		}
+);
 
 /******************************************************************
  * 
  ******************************************************************/
 CFW.dashboard.registerWidget("cfw_html",
 		{
-			category: "Default Widgets",
-			menulabel: "Test HTML",
+			category: "Static Widgets",
+			menulabel: "HTML",
 			menuicon: "fas fa-code",
 			renderers: [],
 			defaultValues: {
     			title: "Some very long title to check overflow", 
-    			content: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", 
+    			data: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", 
     			footer: "Some very long footer to test overflow",
     		},
     		createWidgetInstance: function (widgetData) {
-				
-				widgetData.deepoptions = {
-						bla: { array: [ "test", "bla", "blub"] }
-				}
-				
-				var merged = Object.assign({}, this.defaults, widgetData);
-				var textRenderer = CFW.dashboard.getRenderer('text');
+								
+				var merged = Object.assign({}, this.defaultValues, widgetData);
+				var textRenderer = CFW.dashboard.getRenderer('html');
 
-				return textRenderer.createWidget(merged);
+				merged.content = textRenderer.render({data: merged.data});
+				return CFW.dashboard.createWidget(merged);
+				
 			},
     		getEditForm: function (widgetData) {
     			
@@ -455,24 +617,37 @@ function cfw_dashboard_initializeGridstack(){
 	// Set update on dragstop 
 	$('.grid-stack').on('change', function(event, items) {
 		  var grid = this;
-		  console.log("======= ITEMS ======= ");
-		  console.log(items);
 		  var i = 0;
 		  for(key in items){
 			  var currentItem = items[key].el;
-			  console.log("======= CHANGE "+(++i)+"======= ");
-			  console.log(currentItem);
+
 			  var widgetInstance = $(currentItem);
 			  var widgetData 	 = widgetInstance.data("widgetData");
 			  
-			  widgetData.x		 = widgetInstance.attr("data-gs-x");
-			  widgetData.y		 = widgetInstance.attr("data-gs-y");
-			  widgetData.gswidth		= widgetInstance.attr("data-gs-width");
+			  widgetData.x			= widgetInstance.attr("data-gs-x");
+			  widgetData.y		 	= widgetInstance.attr("data-gs-y");
+			  widgetData.gswidth	= widgetInstance.attr("data-gs-width");
 			  widgetData.gsheight	= widgetInstance.attr("data-gs-height");
-				 console.log("===== Dragged ======");
-				 console.log(widgetData);
+
 		  }
 	});
+	
+}
+
+function addTestdata(){
+	
+	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 2, gswidth: 2, title: "Test Success", bgcolor: "success", textcolor: "light"});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:11, y:0, gsheight: 5, gswidth: 2, title: "Test Danger", bgcolor: "danger", textcolor: "light"});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:8, y:0, gsheight: 3, gswidth: 2, title: "Test Primary and Object", bgcolor: "primary", textcolor: "light", data: {firstname: "Jane", lastname: "Doe", street: "Fantasyroad 22", city: "Nirwana", postal_code: "8008" }});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:7, y:0, gsheight: 5, gswidth: 3, title: "Test Light and Array", bgcolor: "light", textcolor: "secondary", data: ["Test", "Foo", "Bar", 3, 2, 1]});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:2, y:0, gsheight: 2, gswidth: 4, title: "Test Matrix", bgcolor: "dark", textcolor: "success", data: "Mister ÄÄÄÄÄÄÄÄÄÄÄnderson."});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:9, y:0, gsheight: 2, gswidth: 4, title: "Test Warning", bgcolor: "warning", textcolor: "dark"});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:3, y:0, gsheight: 4, gswidth: 5});
+	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 3, gswidth: 3});
+	cfw_dashboard_createWidgetByType('cfw_html');
+	cfw_dashboard_createWidgetByType('cfw_iframe', {x:0, y:0, gsheight: 6, gswidth: 7, title: "iFrame test", url: "https://api.jquery.com/data/" });
+	
+	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 4, gswidth: 5, title: "Table Test", data: rendererTestdata });
 	
 }
 /******************************************************************
@@ -486,15 +661,7 @@ function cfw_dashboard_draw(){
 	cfw_dashboard_initializeGridstack();
 	
 	// Test Data
-	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 2, gswidth: 2, title: "Test Success", bgcolor: "success", textcolor: "light"});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:11, y:0, gsheight: 5, gswidth: 2, title: "Test Danger", bgcolor: "danger", textcolor: "light"});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:8, y:0, gsheight: 3, gswidth: 2, title: "Test Primary", bgcolor: "primary", textcolor: "light"});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:7, y:0, gsheight: 1, gswidth: 3, title: "Test Light", bgcolor: "light", textcolor: "secondary"});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:2, y:0, gsheight: 2, gswidth: 4, title: "Test Matrix", bgcolor: "dark", textcolor: "success", content: "Mister ÄÄÄÄÄÄÄÄÄÄÄnderson."});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:9, y:0, gsheight: 2, gswidth: 4, title: "Test Warning", bgcolor: "warning", textcolor: "dark"});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:3, y:0, gsheight: 4, gswidth: 5});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 3, gswidth: 3});
-	cfw_dashboard_createWidgetByType('cfw_html');
+	addTestdata();
 	
 	CFW.ui.toogleLoader(true);
 	

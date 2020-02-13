@@ -7,8 +7,93 @@
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
+
 /******************************************************************
- * Class to wrap a date for easier formatting.
+ * Class to render HTML from JSON data.
+ * 
+ ******************************************************************/
+class CFWRenderer{
+	
+	 constructor(renderFunction){
+		 
+		 this.renderFunction = renderFunction;
+		 
+		 this.defaultRenderDefinition = {
+			// name of the field that is used as the identifier of the data (optional)
+		 	idfield: null,
+		 	// names of the fields that are used for a titles. Takes the first field if null
+		 	titlefields: null,
+		 	// the delimiter used for multiple titles
+		 	titledelimiter: ' ',
+		 	// Names of the fields that should be rendered. Uses all fields if null or undefined
+		 	visiblefields: null,
+		    // the data that should be rendered
+		 	data: null,
+		 	// array of functions that return html for buttons
+		 	actionButtons: [ ]
+		 };
+		  
+	 }
+	 
+	 /********************************************
+	  * Returns a String in the format YYYY-MM-DD
+	  ********************************************/
+	 prepareDefinition(definition){
+		 var data = definition.data;
+		 var firstObject = null;
+		 
+		 //---------------------------
+		 // get first object
+		 if(Array.isArray(data)){
+			 definition.datatype = "array";
+			 if(data.length > 0){
+				 firstObject = data[0];
+			 }
+		 }else if(typeof data == "object"){
+			 definition.datatype = "array";
+			 definition.data = [data];
+			 firstObject = data;
+		 }else {
+			 definition.datatype = typeof data;
+		 }
+		 
+		 //---------------------------
+		 // get 
+		 if(firstObject != null && typeof firstObject == 'object'){
+			 
+			 //--------------------------
+			 // resolve default visible fields
+			 if(definition.visiblefields == null){ 
+				 definition.visiblefields = [];
+				 for(var key in firstObject){
+					 definition.visiblefields.push(key);
+				 }
+			 }
+			 
+			 //--------------------------
+			 // resolve title fields
+			 if(definition.titlefields == null){ 
+				 if(definition.visiblefields.length > 0){ 
+					 definition.titlefields = [definition.visiblefields[0]];
+				 }
+			 }
+		 }
+	 }
+	 
+	 /********************************************
+	  * Returns a html string 
+	  ********************************************/
+	 render(renderDefinition){
+		 var definition = Object.assign({}, this.defaultRenderDefinition, renderDefinition);	
+		 
+		 this.prepareDefinition(definition);
+		 
+		 return this.renderFunction(definition);
+	 }
+}
+
+/******************************************************************
+ * Class to create form fields
  * 
  ******************************************************************/
 class CFWFormField{
@@ -28,7 +113,7 @@ class CFWFormField{
 		 this.options = Object.assign({}, this.defaultOptions, customOptions);
 		 
 		 if(this.options.label == null){
-			 this.options.label = this.fieldNameToLabel(this.options.name);
+			 this.options.label = CFW.format.fieldNameToLabel(this.options.name);
 		 }
 		 
 		 if(this.options.attributes.placeholder == null){
@@ -166,35 +251,6 @@ class CFWFormField{
 			}
 			return result;
 	 }
-	 /********************************************
-	  * 
-	  ********************************************/
-	 fieldNameToLabel(fieldName){
-			
-		 	var regex = /[-_]/;
-			var splitted = fieldName.split(regex);
-			
-			var result = '';
-			for(var i = 0; i < splitted.length; i++) {
-				result += (this.capitalize(splitted[i]));
-				
-				//only do if not last
-				if(i+1 < splitted.length) {
-					result.append(" ");
-				}
-			}
-			
-			return result.toString();
-		}
-	 
-	 /********************************************
-	  * 
-	  ********************************************/
-	 capitalize(string) {
-		 if(string == null) return '';
-		 return string.substring(0,1).toUpperCase() + string.substring(1).toLowerCase();
-	 }
-	 
 }
 
 /******************************************************************
@@ -329,15 +385,16 @@ class CFWDate{
 	  * Append the table to the jquery object.
 	  * @param parent JQuery object
 	  ********************************************/
-	 appendTo(parent){
+	 getTable(){
 		  
 		 if(this.isStriped){		this.table.addClass('table-striped'); }
 		 if(this.isHover){			this.table.addClass('table-hover'); }
 		 if(this.isNarrow){			this.table.addClass('table-sm'); }
 		 
+		 var wrapper = $('<div class="flex-grow-1">');
 		 if(this.tableFilter){
 			 var filter = $('<input type="text" class="form-control" onkeyup="cfw_filterTable(this)" placeholder="Filter Table...">');
-			 parent.append(filter);
+			 wrapper.append(filter);
 			 //jqueryObject.append('<span style="font-size: xx-small;"><strong>Hint:</strong> The filter searches through the innerHTML of the table rows. Use &quot;&gt;&quot; and &quot;&lt;&quot; to search for the beginning and end of a cell content(e.g. &quot;&gt;Test&lt;&quot; )</span>');
 			 filter.data("table", this.table);
 		 }
@@ -352,10 +409,20 @@ class CFWDate{
 			var responsiveDiv = $('<div class="table-responsive">');
 			responsiveDiv.append(this.table);
 			
-			parent.append(responsiveDiv);
+			wrapper.append(responsiveDiv);
 		 }else{
-			 parent.append(this.table);
+			 wrapper.append(this.table);
 		 }
+		 
+		 return wrapper;
+	 }
+	 
+	 /********************************************
+	  * Append the table to the jquery object.
+	  * @param parent JQuery object
+	  ********************************************/
+	 appendTo(parent){
+		 parent.append(this.getTable());
 	 }
 }
 
@@ -438,10 +505,7 @@ class CFWPanel{
 		collapseContainer.append(panelBody);
 		panelBody.append(this.body);
 		
-		
 		 parent.append(this.panel);
-		 
-		 
 		 
 	 }
  }

@@ -11,7 +11,7 @@
 
 /**************************************************************************************
  * Either executes a function or evaluates a string a s javascript code.
- * 
+ *
  *************************************************************************************/
 function cfw_executeCodeOrFunction(jsCodeOrFunction){
 	if(typeof jsCodeOrFunction === "function"){
@@ -487,6 +487,80 @@ function cfw_epochToDate(epoch){
   var time = year + '-' + month + '-' + day ;
   return time;
 }
+
+/**************************************************************************************
+ * 
+ *************************************************************************************/
+function cfw_fieldNameToLabel(fieldName){
+	
+ 	var regex = /[-_]/;
+	var splitted = fieldName.split(regex);
+	
+	var result = '';
+	for(var i = 0; i < splitted.length; i++) {
+		result += (CFW.format.capitalize(splitted[i]));
+		
+		//only do if not last
+		if(i+1 < splitted.length) {
+			result += " ";
+		}
+	}
+	
+	return result;
+}
+
+/**************************************************************************************
+ * 
+ *************************************************************************************/
+function cfw_capitalize(string) {
+	 if(string == null) return '';
+	 return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+
+/**************************************************************************************
+ * Creates an HTML ul-list out of an object
+ * @param convert a json object to html
+ * @return html string
+ *************************************************************************************/
+function cfw_objectToHTMLList(object){
+	
+	htmlString = '<ul>';
+	
+	if(Array.isArray(object)){
+		for(var i = 0; i < object.length; i++ ){
+			var currentItem = object[i];
+			if(typeof currentItem == "object"){
+				htmlString += '<li><strong>Object:&nbsp;</strong>'
+					+ cfw_objectToHTMLList(currentItem)
+				+'</li>';
+			}else{
+				htmlString += '<li>'+currentItem+'</li>';
+			}
+			
+		}
+	}else if(typeof object == "object"){
+		
+		for(var key in object){
+			var currentValue = object[key];
+			if(typeof currentValue == "object"){
+				htmlString += '<li><strong>'+CFW.format.fieldNameToLabel(key)+':&nbsp;</strong>'
+					+ cfw_objectToHTMLList(currentValue)
+				+'</li>';
+				
+			}else{
+				htmlString += '<li><strong>'+CFW.format.fieldNameToLabel(key)+':&nbsp;</strong>'
+					+ currentValue
+				+'</li>';
+			}
+			
+		}
+	}
+	htmlString += '</ul>';
+	
+	return htmlString;
+		
+}
+
 /**************************************************************************************
  * Add an alert message to the message section.
  * Ignores duplicated messages.
@@ -1341,7 +1415,10 @@ var CFW = {
 	},
 	format: {
 		epochToTimestamp: cfw_epochToTimestamp,
-		epochToDate: cfw_epochToDate
+		epochToDate: cfw_epochToDate,
+		objectToHTMLList: cfw_objectToHTMLList,
+		fieldNameToLabel: cfw_fieldNameToLabel,
+		capitalize: cfw_capitalize,
 	},
 	
 	http: {
@@ -1409,7 +1486,6 @@ $(function () {
 		  $(this).parents('li.nav-item.dropdown.show').on('hidden.bs.dropdown', function(e) {
 		    $('.dropdown-submenu .show').removeClass("show");
 		  });
-
 
 		  return false;
 		});
