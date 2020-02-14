@@ -3,7 +3,6 @@ var CFW_DASHBOARD_EDIT_MODE = true;
 var CFW_DASHBOARD_FULLSCREEN_MODE = false;
 
 var CFW_DASHBOARD_WIDGET_REGISTRY = {};
-var CFW_DASHBOARD_RENDERER_REGISTRY = {};
 
 //saved with guid
 var CFW_DASHBOARD_WIDGET_DATA = {};
@@ -40,21 +39,6 @@ var rendererTestdataMinimal = {
 			{id: 2, firstname: "Theus", lastname: "De Nator", city: "Termi-Nation", postal_code: 666, status: 'blocked', bgstyle: 'danger', textstyle: 'dark'},
 		],
 	};
-
-/************************************************************************************************
- * 
- ************************************************************************************************/
-function cfw_dashboard_registerRenderer(rendererUniqueName, rendererObject){
-	
-	CFW_DASHBOARD_RENDERER_REGISTRY[rendererUniqueName] = rendererObject;
-}
-
-/************************************************************************************************
- * 
- ************************************************************************************************/
-function cfw_dashboard_getRenderer(rendererUniqueName){
-	return CFW_DASHBOARD_RENDERER_REGISTRY[rendererUniqueName];
-}
 
 /************************************************************************************************
  * 
@@ -388,8 +372,6 @@ function cfw_dashboard_createWidgetByType(widgetType, widgetData) {
 CFW.dashboard = {
 		registerWidget: 	cfw_dashboard_registerWidget,
 		getWidget: 			cfw_dashboard_getWidget,
-		registerRenderer: 	cfw_dashboard_registerRenderer,
-		getRenderer: 		cfw_dashboard_getRenderer,
 		registerCategory: 	cfw_dashboard_registerCategory,
 		createWidget:   	cfw_dashboard_createWidget,
 };
@@ -401,105 +383,6 @@ CFW.dashboard = {
 CFW.dashboard.registerCategory("Static Widgets", "fas fa-th-large");
 CFW.dashboard.registerCategory("Test Category", "fas fa-cogs");
 CFW.dashboard.registerCategory("Another Category", "fas fa-book");
-
-
-/******************************************************************
- * 
- ******************************************************************/
-
-CFW.dashboard.registerRenderer("html",
-	new CFWRenderer(
-		function (renderDefinition) {
-			if(typeof renderDefinition.data == "object"){
-				return CFW.format.objectToHTMLList(renderDefinition.data)
-			}else{
-				return renderDefinition.data;
-			}
-		})
-);
-
-CFW.dashboard.registerRenderer("table",
-		new CFWRenderer(
-			function (renderDef) {
-				
-				console.log('===========Render Def =============');
-				console.log(renderDef);
-				//-----------------------------------
-				// Check Data
-				if(renderDef.datatype != "array"){
-					return "<span>Unable to convert data into table.</span>";
-				}
-				
-				//===================================================
-				// Create Table
-				//===================================================
-				var cfwTable = CFW.ui.createTable();
-				cfwTable.tableFilter = false;
-				
-				//-----------------------------------
-				// Create Headers
-				for(var key in renderDef.visiblefields){
-					var fieldname = renderDef.visiblefields[key];
-					cfwTable.addHeader(renderDef.labels[fieldname]);
-				}
-				
-				for(var key in renderDef.actionButtons){
-					cfwTable.addHeader("&nbsp;");
-				}
-				
-				//-----------------------------------
-				// Print Records
-				var count = renderDef.data.length;
-				
-				for(var i = 0; i < count; i++ ){
-					var currentRecord = renderDef.data[i];
-					var row = $('<tr>');
-					
-					//-------------------------
-					// Check Style
-					if(renderDef.bgstylefield != null){
-						row.addClass('table-'+currentRecord[renderDef.bgstylefield]);
-					}
-					
-					if(renderDef.textstylefield != null){
-						row.addClass('text-'+currentRecord[renderDef.textstylefield]);
-					}
-					//-------------------------
-					// Add field Values as Cells
-					var cellHTML = '';
-					for(var key in renderDef.visiblefields){
-						var fieldname = renderDef.visiblefields[key];
-						var value = currentRecord[fieldname];
-						
-						if(renderDef.customizers[fieldname] == null){
-							if(value != null){
-								cellHTML += '<td>'+value+'</td>';
-							}else{
-								cellHTML += '<td>&nbsp;</td>';
-							}
-						}else{
-							var customizer = renderDef.customizers[fieldname];
-							cellHTML += '<td>'+customizer(currentRecord, value)+'</td>';
-						}
-					}
-					
-					//-------------------------
-					// Add Action buttons
-					var id = null;
-					if(renderDef.idfield != null){
-						id = currentRecord[renderDef.idfield];
-					}
-					for(var fieldKey in renderDef.actionButtons){
-						
-						cellHTML += '<td>'+renderDef.actionButtons[fieldKey](currentRecord, id )+'</td>';
-					}
-					row.append(cellHTML);
-					cfwTable.addRow(row);
-				}
-				
-				return cfwTable.getTable();
-		})
-);
 
 /******************************************************************
  * 
@@ -517,7 +400,7 @@ CFW.dashboard.registerWidget("cfw_table",
     		createWidgetInstance: function (widgetData) {
 								
 				var merged = Object.assign({}, this.defaultValues, widgetData);
-				var tableRenderer = CFW.dashboard.getRenderer('table');
+				var tableRenderer = CFW.render.getRenderer('table');
 
 				var cfwTable = tableRenderer.render(merged.data);
 				
@@ -562,7 +445,7 @@ CFW.dashboard.registerWidget("cfw_iframe",
     		createWidgetInstance: function (widgetData) {
 								
 				var merged = Object.assign({}, this.defaultValues, widgetData);
-				var textRenderer = CFW.dashboard.getRenderer('html');
+				var textRenderer = CFW.render.getRenderer('html');
 
 				merged.content = textRenderer.render({data: '<iframe class="w-100 flex-grow-1" src="'+widgetData.url+'">'});
 				return CFW.dashboard.createWidget(merged);
@@ -606,7 +489,7 @@ CFW.dashboard.registerWidget("cfw_html",
     		createWidgetInstance: function (widgetData) {
 								
 				var merged = Object.assign({}, this.defaultValues, widgetData);
-				var textRenderer = CFW.dashboard.getRenderer('html');
+				var textRenderer = CFW.render.getRenderer('html');
 
 				merged.content = textRenderer.render({data: merged.data});
 				return CFW.dashboard.createWidget(merged);

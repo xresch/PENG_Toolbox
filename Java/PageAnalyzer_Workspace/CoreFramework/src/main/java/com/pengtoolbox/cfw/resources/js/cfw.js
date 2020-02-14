@@ -1392,6 +1392,20 @@ function  cfw_getUserID(){
 	return false;
 }
 
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_registerRenderer(rendererUniqueName, rendererObject){
+	CFW.render.registry[rendererUniqueName] = rendererObject;
+}
+
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_getRenderer(rendererUniqueName){
+	return CFW.render.registry[rendererUniqueName];
+}
+
 /********************************************************************
  * CFW FRAMEWORK STRUCTURE
  * -----------------------
@@ -1409,6 +1423,11 @@ var CFW = {
 		data: {},
 		removeFromCache: cfw_removeFromCache,
 		clearCache: cfw_clearCache
+	},
+	render: {
+		registry: {},
+		registerRenderer: cfw_registerRenderer,
+		getRenderer: cfw_getRenderer,
 	},
 	array: {
 		sortArrayByValueOfObject: cfw_sortArrayByValueOfObject
@@ -1458,9 +1477,6 @@ var CFW = {
 	hasPermission: cfw_hasPermission,
 
 }
-
-
-
 
 
 /********************************************************************
