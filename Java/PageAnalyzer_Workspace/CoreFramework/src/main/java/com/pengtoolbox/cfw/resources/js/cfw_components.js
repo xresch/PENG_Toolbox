@@ -32,7 +32,9 @@ class CFWRenderer{
 		 	textstylefield: null,
 		 	customizers: {},
 		 	// array of functions that return html for buttons
-		 	actionButtons: [ ],
+		 	actions: [ ],
+			// list of functions that should be working with multiple items. fieldname will be used as the button label
+		 	multiActions: null,
 			// the data that should be rendered
 		 	data: null,
 		 };
@@ -331,7 +333,9 @@ class CFWDate{
  class CFWTable{
 	
 	 constructor(){
-		 this.table = $('<table class="table">');
+		 
+		 this.id = 'cfwtable-'+CFW.utils.randomString(16);
+		 this.table = $('<table id="'+this.id +'" class="table">');
 		 
 		 this.thead = $('<thead>');
 		 this.table.append(this.thead);
@@ -363,8 +367,10 @@ class CFWDate{
 	 /********************************************
 	  * Adds a header using a string.
 	  ********************************************/
-	 addHeader(label){
-		 this.thead.append('<th>'+label+'</th>');
+	 addHeader(header){
+		 var th = $('<th>');
+		 th.append(header);
+		 this.thead.append(th);
 	 }
 	 
 	 /********************************************

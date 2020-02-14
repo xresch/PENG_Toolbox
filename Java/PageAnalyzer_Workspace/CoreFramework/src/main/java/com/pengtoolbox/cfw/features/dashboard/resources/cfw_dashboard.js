@@ -8,38 +8,6 @@ var CFW_DASHBOARD_WIDGET_REGISTRY = {};
 var CFW_DASHBOARD_WIDGET_DATA = {};
 var CFW_DASHBOARD_WIDGET_GUID = 0;
 
-var rendererTestdata = {
- 	idfield: 'id',
- 	bgstylefield: 'bgstyle',
- 	textstylefield: 'textstyle',
- 	titlefields: ['firstname', 'lastname'],
- 	titledelimiter: ' ',
- 	visiblefields: ['id', 'firstname', 'lastname', 'postal_code', 'status'],
- 	labels: {
- 		id: 'ID'
- 	},
- 	customizers: {
- 		status: function(record, value) { return (value == 'active') ? '<div class="badge badge-success">'+value+'</div>' : '<div class="badge badge-danger">'+value+'</div>' }
- 	},
-	actionButtons: [ 
-		function (record, id){ return '<button class="btn btn-sm btn-primary" onclick="alert(\'Edit record '+id+'\')"><i class="fas fa-pen"></i></button>'},
-		function (record, id){ return '<button class="btn btn-sm btn-danger" onclick="alert(\'Delete record '+id+'\')"><i class="fas fa-trash"></i></button>'},
-	],
-	data: [
-		{id: 0, firstname: "Jane", lastname: "Doe", city: "Nirwana", postal_code: 8008, status: 'active'},
-		{id: 1, firstname: "Testika", lastname: "Testonia", city: "Manhattan", postal_code: 9000, status: 'active', bgstyle: 'success', textstyle: 'dark'},
-		{id: 2, firstname: "Theus", lastname: "De Nator", city: "Termi-Nation", postal_code: 666, status: 'blocked', bgstyle: 'danger', textstyle: 'dark'},
-	],
-};
-
-var rendererTestdataMinimal = {
-		data: [
-			{id: 0, firstname: "Jane", lastname: "Doe", city: "Nirwana", postal_code: 8008, status: 'active'},
-			{id: 1, firstname: "Testika", lastname: "Testonia", city: "Manhattan", postal_code: 9000, status: 'active', bgstyle: 'success', textstyle: 'dark'},
-			{id: 2, firstname: "Theus", lastname: "De Nator", city: "Termi-Nation", postal_code: 666, status: 'blocked', bgstyle: 'danger', textstyle: 'dark'},
-		],
-	};
-
 /************************************************************************************************
  * 
  ************************************************************************************************/
@@ -255,6 +223,7 @@ function cfw_dashboard_createWidget(widgetData){
 			footer: "",
 			bgcolor: "",
 			textcolor: "",
+			settings: {}
 	}
 	
 	var merged = Object.assign({}, defaultOptions, widgetData);
@@ -335,8 +304,8 @@ function cfw_dashboard_createWidgetByType(widgetType, widgetData) {
 	
 	var x = 0;
 	var y = 0;
-	var gswidth = 2;
-	var gsheight = 2;
+	var gswidth = 3;
+	var gsheight = 3;
 	var doAutoposition = true;
 	
 	if(widgetData != null){
@@ -465,6 +434,43 @@ function cfw_dashboard_initializeGridstack(){
 
 function addTestdata(){
 	
+	var rendererTestdata = {
+		 	idfield: 'id',
+		 	bgstylefield: 'bgstyle',
+		 	textstylefield: 'textstyle',
+		 	titlefields: ['firstname', 'lastname'],
+		 	titledelimiter: ' ',
+		 	visiblefields: ['id', 'firstname', 'lastname', 'postal_code', 'status'],
+		 	labels: {
+		 		id: 'ID'
+		 	},
+		 	customizers: {
+		 		status: function(record, value) { return (value == 'active') ? '<div class="badge badge-success">'+value+'</div>' : '<div class="badge badge-danger">'+value+'</div>' }
+		 	},
+			actions: [ 
+				function (record, id){ return '<button class="btn btn-sm btn-primary" onclick="alert(\'Edit record '+id+'\')"><i class="fas fa-pen"></i></button>'},
+				function (record, id){ return '<button class="btn btn-sm btn-danger" onclick="alert(\'Delete record '+id+'\')"><i class="fas fa-trash"></i></button>'},
+			],
+			multiActions: {
+				"Edit": function (elements, records, values){ alert('Edit records '+values.join(',')+'!'); },
+				"Delete": function (elements, records, values){ $(elements).remove(); },
+			},
+			data: [
+				{id: 0, firstname: "Jane", lastname: "Doe", city: "Nirwana", postal_code: 8008, status: 'active'},
+				{id: 1, firstname: "Testika", lastname: "Testonia", city: "Manhattan", postal_code: 9000, status: 'active', bgstyle: 'success', textstyle: 'dark'},
+				{id: 2, firstname: "Theus", lastname: "De Natore", city: "Termi-Nation", postal_code: 666, status: 'blocked', bgstyle: 'danger', textstyle: 'dark'},
+				{id: 3, firstname: "Jane", lastname: "De Natore", city: "Termi-Nation", postal_code: 666, status: 'blocked', bgstyle: 'info', textstyle: 'dark'},
+			],
+		};
+
+		var rendererTestdataMinimal = {
+				data: [
+					{id: 0, firstname: "Jane", lastname: "Doe", city: "Nirwana", postal_code: 8008, status: 'active'},
+					{id: 1, firstname: "Testika", lastname: "Testonia", city: "Manhattan", postal_code: 9000, status: 'active', bgstyle: 'success', textstyle: 'dark'},
+					{id: 2, firstname: "Theus", lastname: "De Nator", city: "Termi-Nation", postal_code: 666, status: 'blocked', bgstyle: 'danger', textstyle: 'dark'},
+				],
+			};
+		
 	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 2, gswidth: 2, title: "Test Success", bgcolor: "success", textcolor: "light"});
 	cfw_dashboard_createWidgetByType('cfw_html', {x:11, y:0, gsheight: 5, gswidth: 2, title: "Test Danger", bgcolor: "danger", textcolor: "light"});
 	cfw_dashboard_createWidgetByType('cfw_html', {x:8, y:0, gsheight: 3, gswidth: 2, title: "Test Primary and Object", bgcolor: "primary", textcolor: "light", data: {firstname: "Jane", lastname: "Doe", street: "Fantasyroad 22", city: "Nirwana", postal_code: "8008" }});
@@ -475,11 +481,19 @@ function addTestdata(){
 	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 3, gswidth: 3});
 	cfw_dashboard_createWidgetByType('cfw_html');
 	
-	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 4, gswidth: 5, title: "Table Test Minimal", data: rendererTestdataMinimal });
+	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 4, gswidth: 5, title: "Table Test Minimal", 
+		settings: {
+			tableData: rendererTestdataMinimal 
+		}
+	});
 	
 	cfw_dashboard_createWidgetByType('cfw_iframe', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", url: "https://api.jquery.com/data/" });
 	
-	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 4, gswidth: 5, title: "Table Test Maximal", data: rendererTestdata });
+	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 5, gswidth: 5, title: "Table Test Maximal",
+		settings: {
+			tableData: rendererTestdata
+		}
+	});
 	
 }
 /******************************************************************

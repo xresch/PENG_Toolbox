@@ -22,6 +22,15 @@ function cfw_executeCodeOrFunction(jsCodeOrFunction){
 }
 
 /**************************************************************************************
+ * returns a random string
+ *
+ *************************************************************************************/
+function cfw_randomString(maxChars){
+	return Math.random().toString(maxChars).substring(2, maxChars /2) + Math.random().toString(36).substring(2, maxChars /2);
+}
+
+
+/**************************************************************************************
  * Filters items in the selected DOM nodes.
  * The items that should be filtered(based on their HTML content) have to be found with
  * the itemSelector.
@@ -508,6 +517,43 @@ function cfw_fieldNameToLabel(fieldName){
 	
 	return result;
 }
+/**************************************************************************************
+ * 
+ *************************************************************************************/
+function cfw_csvToObjectArray(csvString, delimiter){
+	
+ 	var lines = csvString.trim().split(/\r\n|\r|\n/);
+ 	
+ 	//------------------------------
+ 	// Check has at least one record
+ 	if(lines.length < 2){
+ 		return [];
+ 	}
+ 	 	
+ 	//------------------------------
+ 	// Get Headers
+ 	var headers = lines[0].trim().split(delimiter);
+ 	
+ 	//------------------------------
+ 	// Create Objects
+ 	var resultArray = [];
+ 	
+ 	for(var i = 1; i < lines.length; i++){
+ 		var line = lines[i];
+ 		var values = line.split(delimiter);
+ 		var object = {};
+ 		
+ 	 	for(var j = 0; j < headers.length && j < values.length; j++){
+ 	 		var header = headers[j];
+ 	 		object[header] = values[j];
+ 	 	}
+ 	 	resultArray.push(object);
+ 	 	
+ 	}
+	
+	return resultArray;
+}
+
 
 /**************************************************************************************
  * 
@@ -1436,6 +1482,7 @@ var CFW = {
 		epochToTimestamp: cfw_epochToTimestamp,
 		epochToDate: cfw_epochToDate,
 		objectToHTMLList: cfw_objectToHTMLList,
+		csvToObjectArray: cfw_csvToObjectArray,
 		fieldNameToLabel: cfw_fieldNameToLabel,
 		capitalize: cfw_capitalize,
 	},
@@ -1457,7 +1504,8 @@ var CFW = {
 		selectElementContent: cfw_selectElementContent
 	},
 	utils: {
-		executeCodeOrFunction: cfw_executeCodeOrFunction
+		executeCodeOrFunction: cfw_executeCodeOrFunction,
+		randomString: cfw_randomString
 	},
 	ui: {
 		createTable: cfw_createTable,

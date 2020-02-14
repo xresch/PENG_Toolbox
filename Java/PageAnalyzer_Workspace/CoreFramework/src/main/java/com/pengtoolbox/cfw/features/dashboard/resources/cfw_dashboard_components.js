@@ -13,19 +13,39 @@ CFW.dashboard.registerCategory("Another Category", "fas fa-book");
 CFW.dashboard.registerWidget("cfw_table",
 		{
 			category: "Static Widgets",
-			menulabel: "Table",
+			menulabel: "CSV Table",
 			menuicon: "fas fa-table",
 			renderers: [],
 			defaultValues: {
     			title: "Table", 
-    			data: "",
+    			settings: {
+    				delimiter: ';',
+    				tableData: "ID;Firstname;Lastname\r\n0;Jane;Doe\r\n1;Testika;Testonia",
+    			}
     		},
     		createWidgetInstance: function (widgetData) {
-								
+					
+				//--------------------------
+				// Get Values
 				var merged = Object.assign({}, this.defaultValues, widgetData);
+				var delimiter = merged.settings.delimiter;
+				var tableData = merged.settings.tableData;
+				
+				var dataToRender = tableData;
+				
+				if(typeof tableData == 'string'){
+					var objectArray = CFW.format.csvToObjectArray(tableData, delimiter)
+					
+					dataToRender = {data: objectArray};
+				}
+				
+				console.log('==== render Table ====');
+				console.log(objectArray);
+				
+				//--------------------------
+				// Get Values
 				var tableRenderer = CFW.render.getRenderer('table');
-
-				var cfwTable = tableRenderer.render(merged.data);
+				var cfwTable = tableRenderer.render(dataToRender);
 				
 				merged.content = cfwTable;
 				return CFW.dashboard.createWidget(merged);
@@ -37,7 +57,8 @@ CFW.dashboard.registerWidget("cfw_table",
     			
     			//------------------------------
     			// Content
-    			customForm += new CFWFormField({ type: "textarea", name: "userTableData", value: widgetData.userTableData, description: 'Values separated by semicolon, first row will be used as header.' }).createHTML();
+    			customForm += new CFWFormField({ type: "text", name: "delimiter", value: widgetData.settings.delimiter, description: 'The delimiter used for the data.' }).createHTML();
+    			customForm += new CFWFormField({ type: "textarea", name: "tableData", value: widgetData.settings.tableData, description: 'Values separated by the delimiter, first row will be used as header.' }).createHTML();
     			customForm += '</form>';
     			
     			return customForm;
@@ -45,8 +66,8 @@ CFW.dashboard.registerWidget("cfw_table",
 			onSave: function (form, widgetData) {
 				console.log(form);
 				var settingsForm = $(form);
-				
-				widgetData.userTableData = settingsForm.find('textarea[name="userTableData"]').val();
+				widgetData.settings.delimiter = settingsForm.find('input[name="delimiter"]').val();
+				widgetData.settings.tableData = settingsForm.find('textarea[name="tableData"]').val();
 			}
     		
 		}
