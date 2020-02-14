@@ -48,7 +48,7 @@ public class ServletDashboard extends HttpServlet
 				//html.addJSFileBottomSingle(new FileDefinition(HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".js", "cfw_usermgmt.js"));
 				html.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "gridstack.all.js");
 				html.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_dashboard.js");
-				
+				html.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_dashboard_components.js");
 				
 				content.append(CFW.Files.readPackageResource(FeatureDashboard.RESOURCE_PACKAGE, "cfw_dashboard.html"));
 				
