@@ -67,7 +67,13 @@ CFW.render.registerRenderer("table",
 					}
 					
 					if(renderDef.textstylefield != null){
-						row.addClass('text-'+currentRecord[renderDef.textstylefield]);
+						if(currentRecord[renderDef.textstylefield] != null){
+							row.addClass('text-'+currentRecord[renderDef.textstylefield]);
+						}else{
+							if(renderDef.bgstylefield != null && currentRecord[renderDef.bgstylefield] != null){
+								row.addClass('text-dark');
+							}
+						}
 					}
 					
 					//-------------------------

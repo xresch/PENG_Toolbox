@@ -37,6 +37,8 @@ class CFWRenderer{
 		 	multiActions: null,
 			// the data that should be rendered
 		 	data: null,
+		 	// settings specific for the renderer
+		 	rendererSettings: {}
 		 };
 		  
 	 }

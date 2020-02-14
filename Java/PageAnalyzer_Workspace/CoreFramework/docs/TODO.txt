@@ -6,6 +6,8 @@ ALWAYS ON
 
 TODO
 ====
+- Render Specific Settings
+- Create Pagination Renderer
 - XSS: Prevent and create Permissions Allow HTML and Allow Javascript
 - Finish javascript CFWFormField
 - Configuration: do not send Passwords to Browser
