@@ -11,19 +11,35 @@ var CFW_DASHBOARD_WIDGET_GUID = 0;
 
 var rendererTestdata = {
  	idfield: 'id',
+ 	bgstylefield: 'bgstyle',
+ 	textstylefield: 'textstyle',
  	titlefields: ['firstname', 'lastname'],
  	titledelimiter: ' ',
- 	visiblefields: ['firstname', 'lastname', 'code', 'postal_code'],
-	data: [
-		{id: 0, firstname: "Jane", lastname: "Doe", city: "Nirwana", postal_code: 8008},
-		{id: 1, firstname: "Testika", lastname: "Testonia", city: "Manhattan", postal_code: 9000},
-		{id: 2, firstname: "Theus", lastname: "De Nator", city: "Termi-Nation", postal_code: 666},
-	],
+ 	visiblefields: ['id', 'firstname', 'lastname', 'postal_code', 'status'],
+ 	labels: {
+ 		id: 'ID'
+ 	},
+ 	customizers: {
+ 		status: function(record, value) { return (value == 'active') ? '<div class="badge badge-success">'+value+'</div>' : '<div class="badge badge-danger">'+value+'</div>' }
+ 	},
 	actionButtons: [ 
-		function (data, id){ return '<button class="btn btn-sm btn-primary" onclick="alert(\'Edit record '+id+'\')"><i class="fas fa-pen"></i></button>'},
-		function (data, id){ return '<button class="btn btn-sm btn-danger" onclick="alert(\'Delete record '+id+'\')"><i class="fas fa-trash"></i></button>'},
-	]
-}
+		function (record, id){ return '<button class="btn btn-sm btn-primary" onclick="alert(\'Edit record '+id+'\')"><i class="fas fa-pen"></i></button>'},
+		function (record, id){ return '<button class="btn btn-sm btn-danger" onclick="alert(\'Delete record '+id+'\')"><i class="fas fa-trash"></i></button>'},
+	],
+	data: [
+		{id: 0, firstname: "Jane", lastname: "Doe", city: "Nirwana", postal_code: 8008, status: 'active'},
+		{id: 1, firstname: "Testika", lastname: "Testonia", city: "Manhattan", postal_code: 9000, status: 'active', bgstyle: 'success', textstyle: 'dark'},
+		{id: 2, firstname: "Theus", lastname: "De Nator", city: "Termi-Nation", postal_code: 666, status: 'blocked', bgstyle: 'danger', textstyle: 'dark'},
+	],
+};
+
+var rendererTestdataMinimal = {
+		data: [
+			{id: 0, firstname: "Jane", lastname: "Doe", city: "Nirwana", postal_code: 8008, status: 'active'},
+			{id: 1, firstname: "Testika", lastname: "Testonia", city: "Manhattan", postal_code: 9000, status: 'active', bgstyle: 'success', textstyle: 'dark'},
+			{id: 2, firstname: "Theus", lastname: "De Nator", city: "Termi-Nation", postal_code: 666, status: 'blocked', bgstyle: 'danger', textstyle: 'dark'},
+		],
+	};
 
 /************************************************************************************************
  * 
@@ -423,9 +439,8 @@ CFW.dashboard.registerRenderer("table",
 				//-----------------------------------
 				// Create Headers
 				for(var key in renderDef.visiblefields){
-					cfwTable.addHeader(
-						CFW.format.fieldNameToLabel(renderDef.visiblefields[key])
-					);
+					var fieldname = renderDef.visiblefields[key];
+					cfwTable.addHeader(renderDef.labels[fieldname]);
 				}
 				
 				for(var key in renderDef.actionButtons){
@@ -433,7 +448,7 @@ CFW.dashboard.registerRenderer("table",
 				}
 				
 				//-----------------------------------
-				// Create Headers
+				// Print Records
 				var count = renderDef.data.length;
 				
 				for(var i = 0; i < count; i++ ){
@@ -441,11 +456,31 @@ CFW.dashboard.registerRenderer("table",
 					var row = $('<tr>');
 					
 					//-------------------------
+					// Check Style
+					if(renderDef.bgstylefield != null){
+						row.addClass('table-'+currentRecord[renderDef.bgstylefield]);
+					}
+					
+					if(renderDef.textstylefield != null){
+						row.addClass('text-'+currentRecord[renderDef.textstylefield]);
+					}
+					//-------------------------
 					// Add field Values as Cells
+					var cellHTML = '';
 					for(var key in renderDef.visiblefields){
 						var fieldname = renderDef.visiblefields[key];
+						var value = currentRecord[fieldname];
 						
-						row.append('<td>'+currentRecord[fieldname]+'</td>');
+						if(renderDef.customizers[fieldname] == null){
+							if(value != null){
+								cellHTML += '<td>'+value+'</td>';
+							}else{
+								cellHTML += '<td>&nbsp;</td>';
+							}
+						}else{
+							var customizer = renderDef.customizers[fieldname];
+							cellHTML += '<td>'+customizer(currentRecord, value)+'</td>';
+						}
 					}
 					
 					//-------------------------
@@ -456,9 +491,9 @@ CFW.dashboard.registerRenderer("table",
 					}
 					for(var fieldKey in renderDef.actionButtons){
 						
-						row.append('<td>'+renderDef.actionButtons[fieldKey](currentRecord, id )+'</td>');
+						cellHTML += '<td>'+renderDef.actionButtons[fieldKey](currentRecord, id )+'</td>';
 					}
-					
+					row.append(cellHTML);
 					cfwTable.addRow(row);
 				}
 				
@@ -697,9 +732,12 @@ function addTestdata(){
 	cfw_dashboard_createWidgetByType('cfw_html', {x:3, y:0, gsheight: 4, gswidth: 5});
 	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 3, gswidth: 3});
 	cfw_dashboard_createWidgetByType('cfw_html');
+	
+	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 4, gswidth: 5, title: "Table Test Minimal", data: rendererTestdataMinimal });
+	
 	cfw_dashboard_createWidgetByType('cfw_iframe', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", url: "https://api.jquery.com/data/" });
 	
-	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 4, gswidth: 5, title: "Table Test", data: rendererTestdata });
+	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 4, gswidth: 5, title: "Table Test Maximal", data: rendererTestdata });
 	
 }
 /******************************************************************

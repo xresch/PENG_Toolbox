@@ -25,12 +25,16 @@ class CFWRenderer{
 		 	titlefields: null,
 		 	// the delimiter used for multiple titles
 		 	titledelimiter: ' ',
-		 	// Names of the fields that should be rendered. Uses all fields if null or undefined
+		 	// Names of the fields that should be rendered and in the currect order. Uses all fields if null or undefined
 		 	visiblefields: null,
-		    // the data that should be rendered
-		 	data: null,
+		 	labels: {},
+		 	stylefield: null,
+		 	textstylefield: null,
+		 	customizers: {},
 		 	// array of functions that return html for buttons
-		 	actionButtons: [ ]
+		 	actionButtons: [ ],
+			// the data that should be rendered
+		 	data: null,
 		 };
 		  
 	 }
@@ -58,7 +62,7 @@ class CFWRenderer{
 		 }
 		 
 		 //---------------------------
-		 // get 
+		 // Get Visible Fields
 		 if(firstObject != null && typeof firstObject == 'object'){
 			 
 			 //--------------------------
@@ -78,6 +82,16 @@ class CFWRenderer{
 				 }
 			 }
 		 }
+		 
+		 //---------------------------
+		 // Create Labels
+		 for(var key in definition.visiblefields){
+			var fieldname = definition.visiblefields[key];
+			if(definition.labels[fieldname] == null){
+				definition.labels[fieldname] = CFW.format.fieldNameToLabel(fieldname);
+			}
+		}
+		 
 	 }
 	 
 	 /********************************************

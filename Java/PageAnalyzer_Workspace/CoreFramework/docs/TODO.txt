@@ -2,10 +2,11 @@
 ALWAYS ON
 =========
 - Use addJSFileBottomSingle() instead of addJSFileBottomAssembly() where applicable
-
+- Create Manual Pages
 
 TODO
 ====
+- XSS: Prevent and create Permissions Allow HTML and Allow Javascript
 - Finish javascript CFWFormField
 - Configuration: do not send Passwords to Browser
 - Create Encryption/Decryption for DB
