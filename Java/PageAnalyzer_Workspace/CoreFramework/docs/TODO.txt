@@ -45,3 +45,4 @@ DONE
 ====
 - change cookie name to CFWSESSIONID
 - Create own file cfw_components.js
+- Splitted assembly js/css into CFW defaults and customs for performance improvements.

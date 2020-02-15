@@ -16,8 +16,11 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 	protected String pageTitle;
 	
 	protected FileAssembly headjs = new FileAssembly("js_assembly_jshead", "js");
-	protected FileAssembly bottomjs = new FileAssembly("js_assembly_bottom", "js");
-	protected FileAssembly assemblyCSS = new FileAssembly("css_assembly", "css");
+	protected FileAssembly bottomjsCFW = new FileAssembly("js_assembly_cfw", "js");
+	protected FileAssembly bottomjsCustom = new FileAssembly("js_assembly_custom", "js");
+	protected FileAssembly assemblyCSSCFW = new FileAssembly("css_assembly_cfw", "css");
+	protected FileAssembly assemblyCSSCustom = new FileAssembly("css_assembly_custom", "css");
+	
 	protected ArrayList<FileDefinition> singleJSBottom = new ArrayList<FileDefinition>();
 	
 	protected StringBuffer head = new StringBuffer();
@@ -50,8 +53,11 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 		headjs.addFile(type, path, filename);
 	}
 	
+	protected void addJSFileBottomAssemblyCFW(FileDefinition.HandlingType type, String path, String filename){
+		bottomjsCFW.addFile(type, path, filename);
+	}
 	public void addJSFileBottomAssembly(FileDefinition.HandlingType type, String path, String filename){
-		bottomjs.addFile(type, path, filename);
+		bottomjsCustom.addFile(type, path, filename);
 	}
 	
 	/***************************************************************************
@@ -81,8 +87,11 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 
 	}
 	
+	protected void addCSSFileCFW(FileDefinition.HandlingType type, String path, String filename){
+		assemblyCSSCFW.addFile(type, path, filename);
+	}
 	public void addCSSFile(FileDefinition.HandlingType type, String path, String filename){
-		assemblyCSS.addFile(type, path, filename);
+		assemblyCSSCustom.addFile(type, path, filename);
 	}
 	
 	public void addSupportInfo(String key, String value){

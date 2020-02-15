@@ -34,29 +34,29 @@ public class HTMLResponse extends AbstractHTMLResponse {
 		//this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap.min.css");
 		String theme = CFW.DB.Config.getConfigAsString(Configuration.THEME);
 		if(theme.equals("custom")) {
-			this.addCSSFile(FileDefinition.HandlingType.FILE, "./resources/css", "bootstrap-theme-custom.css");
+			this.addCSSFileCFW(FileDefinition.HandlingType.FILE, "./resources/css", "bootstrap-theme-custom.css");
 		}else {
-			this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap-theme-"+CFW.DB.Config.getConfigAsString(Configuration.THEME)+".css");
+			this.addCSSFileCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap-theme-"+CFW.DB.Config.getConfigAsString(Configuration.THEME)+".css");
 		}
-		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap-tagsinput.css");
-		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "summernote-bs4.css");
+		this.addCSSFileCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap-tagsinput.css");
+		this.addCSSFileCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "summernote-bs4.css");
 		//this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "jquery-ui.min.css");
-		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "font-awesome.css");
-		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "highlightjs_"+CFW.DB.Config.getConfigAsString(Configuration.CODE_THEME)+".css");
-		this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "cfw.css");
-		this.addCSSFile(FileDefinition.HandlingType.FILE, "./resources/css", "custom.css");
+		this.addCSSFileCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "font-awesome.css");
+		this.addCSSFileCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "highlightjs_"+CFW.DB.Config.getConfigAsString(Configuration.CODE_THEME)+".css");
+		this.addCSSFileCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "cfw.css");
+		this.addCSSFileCFW(FileDefinition.HandlingType.FILE, "./resources/css", "custom.css");
 		
-		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "jquery-3.4.1.min.js");
+		this.addJSFileBottomAssemblyCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "jquery-3.4.1.min.js");
 		//this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "jquery-ui-1.12.3.min.js");
-		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap.bundle.min.js");
-		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap-tagsinput.js");
+		this.addJSFileBottomAssemblyCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap.bundle.min.js");
+		this.addJSFileBottomAssemblyCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap-tagsinput.js");
 		
-		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "summernote-bs4.min.js");
-		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "highlight.js");
-		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "cfw_components.js");
-		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "cfw.js");
-		this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "cfw_renderer.js");
-		this.addJSFileBottomAssembly(FileDefinition.HandlingType.FILE, "./resources/js", "custom.js");
+		this.addJSFileBottomAssemblyCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "summernote-bs4.min.js");
+		this.addJSFileBottomAssemblyCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "highlight.js");
+		this.addJSFileBottomAssemblyCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "cfw_components.js");
+		this.addJSFileBottomAssemblyCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "cfw.js");
+		this.addJSFileBottomAssemblyCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "cfw_renderer.js");
+		this.addJSFileBottomAssemblyCFW(FileDefinition.HandlingType.FILE, "./resources/js", "custom.js");
 		      
 	}
 		
@@ -76,8 +76,11 @@ public class HTMLResponse extends AbstractHTMLResponse {
 		    	buildedPage.append("<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/resources/images/favicon.ico\"/>");
 				buildedPage.append("<title>").append(this.pageTitle).append("</title>");
 				buildedPage.append(head);
-				if(assemblyCSS.hasFiles()) {
-					buildedPage.append("<link rel=\"stylesheet\" href=\""+assemblyCSS.assemble().cache().getAssemblyServletPath()+"\" />");
+				if(assemblyCSSCFW.hasFiles()) {
+					buildedPage.append("<link rel=\"stylesheet\" href=\""+assemblyCSSCFW.assemble().cache().getAssemblyServletPath()+"\" />");
+				}
+				if(assemblyCSSCustom.hasFiles()) {
+					buildedPage.append("<link rel=\"stylesheet\" href=\""+assemblyCSSCustom.assemble().cache().getAssemblyServletPath()+"\" />");
 				}
 				if(headjs.hasFiles()) {
 					buildedPage.append("<script src=\""+headjs.assemble().cache().getAssemblyServletPath()+"\"></script>");
@@ -149,10 +152,13 @@ public class HTMLResponse extends AbstractHTMLResponse {
 				this.appendSectionTitle(buildedPage, "Javascript");
 				buildedPage.append("<div id=\"javascripts\">");
 								
-				if(bottomjs.hasFiles()) {
-					buildedPage.append("<script src=\""+bottomjs.assemble().cache().getAssemblyServletPath()+"\"></script>");
+				if(bottomjsCFW.hasFiles()) {
+					buildedPage.append("<script src=\""+bottomjsCFW.assemble().cache().getAssemblyServletPath()+"\"></script>");
 				}
 				
+				if(bottomjsCustom.hasFiles()) {
+					buildedPage.append("<script src=\""+bottomjsCustom.assemble().cache().getAssemblyServletPath()+"\"></script>");
+				}
 				for(FileDefinition fileDef : singleJSBottom) {
 					buildedPage.append("\n").append(fileDef.getJavascriptTag()).append("\n");
 				}
@@ -173,7 +179,6 @@ public class HTMLResponse extends AbstractHTMLResponse {
 					buildedPage.append("<!-- FAILED TO LOAD SUPPORT INFO! -->");
 				}
 					
-				
 				
 			buildedPage.append("</body>\n");
 			
