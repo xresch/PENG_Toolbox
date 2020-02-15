@@ -132,12 +132,35 @@ CFW.render.registerRenderer("table",
 				}else{
 					var wrapperDiv = cfwTable.getTable();
 					
+					var actionsDivTop  = $('<div class="m-1">');
+					var actionsDivBottom  = $('<div class="m-1">');
 					for(var buttonLabel in renderDef.multiActions){
-						var func = renderDef.multiActions[buttonLabel];
-						var button = $('<button class="btn btn-sm btn-primary mr-1" onclick="cfw_internal_executeMultiAction(this)">'+buttonLabel+'</button>');
-						button.data('checkboxSelector', '.'+selectorGroupClass); 
-						button.data("function", func); 
-						wrapperDiv.append(button);
+						//----------------------------
+						// Top 
+						if(renderDef.multiActionsPos == 'both' || renderDef.multiActionsPos == 'top' ){
+							var func = renderDef.multiActions[buttonLabel];
+							var button = $('<button class="btn btn-sm btn-primary mr-1" onclick="cfw_internal_executeMultiAction(this)">'+buttonLabel+'</button>');
+							button.data('checkboxSelector', '.'+selectorGroupClass); 
+							button.data("function", func); 
+							actionsDivTop.append(button);
+						}
+						
+						//----------------------------
+						// Bottom
+						if(renderDef.multiActionsPos == 'both' || renderDef.multiActionsPos == 'bottom' ){
+							var func = renderDef.multiActions[buttonLabel];
+							var button = $('<button class="btn btn-sm btn-primary mr-1" onclick="cfw_internal_executeMultiAction(this)">'+buttonLabel+'</button>');
+							button.data('checkboxSelector', '.'+selectorGroupClass); 
+							button.data("function", func); 
+							actionsDivBottom.append(button);
+						}
+					}
+					
+					if(renderDef.multiActionsPos == 'both' || renderDef.multiActionsPos == 'top' ){
+						wrapperDiv.prepend(actionsDivTop);
+					}
+					if(renderDef.multiActionsPos == 'both' || renderDef.multiActionsPos == 'bottom' ){
+						wrapperDiv.append(actionsDivBottom);
 					}
 					
 					return wrapperDiv;

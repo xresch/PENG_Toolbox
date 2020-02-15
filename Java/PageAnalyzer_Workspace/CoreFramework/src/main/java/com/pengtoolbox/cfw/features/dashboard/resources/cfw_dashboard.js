@@ -455,6 +455,7 @@ function addTestdata(){
 				"Edit": function (elements, records, values){ alert('Edit records '+values.join(',')+'!'); },
 				"Delete": function (elements, records, values){ $(elements).remove(); },
 			},
+			multiActionsPos: "both",
 			data: [
 				{id: 0, firstname: "Jane", lastname: "Doe", city: "Nirwana", postal_code: 8008, status: 'active'},
 				{id: 1, firstname: "Testika", lastname: "Testonia", city: "Manhattan", postal_code: 9000, status: 'active', bgstyle: 'success'},

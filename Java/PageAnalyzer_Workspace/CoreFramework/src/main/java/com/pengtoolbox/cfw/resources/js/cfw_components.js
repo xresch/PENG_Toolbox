@@ -35,6 +35,8 @@ class CFWRenderer{
 		 	actions: [ ],
 			// list of functions that should be working with multiple items. fieldname will be used as the button label
 		 	multiActions: null,
+		 	// position of the multi actions, either top|bottom|both|none
+		 	multiActionsPos: "top",
 			// the data that should be rendered
 		 	data: null,
 		 	// settings specific for the renderer
@@ -95,6 +97,9 @@ class CFWRenderer{
 				definition.labels[fieldname] = CFW.format.fieldNameToLabel(fieldname);
 			}
 		}
+		 //---------------------------
+		 // Lovercase
+		 definition.multiActionsPos = definition.multiActionsPos.toLowerCase();
 		 
 	 }
 	 
