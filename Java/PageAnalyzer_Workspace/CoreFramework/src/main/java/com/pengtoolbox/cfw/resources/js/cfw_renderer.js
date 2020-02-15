@@ -21,6 +21,16 @@ CFW.render.registerRenderer("table",
 		new CFWRenderer(
 			function (renderDef) {
 				
+				// renderDef.rendererSettings.table same as CFWTable Settings
+//				{
+//					filterable: true,
+//					responsive: true,
+//					hover: true,
+//					striped: true,
+//					narrow: false,
+//					stickyheader: false, 
+//				 }
+				
 				//-----------------------------------
 				// Check Data
 				if(renderDef.datatype != "array"){
@@ -30,15 +40,14 @@ CFW.render.registerRenderer("table",
 				//===================================================
 				// Create Table
 				//===================================================
-				var cfwTable = CFW.ui.createTable();
-				cfwTable.tableFilter = false;
+				var cfwTable = new CFWTable(renderDef.rendererSettings.table);
 				
 				//-----------------------------------
 				// Create Headers
 				var selectorGroupClass;
-				if(renderDef.multiActions != null){
+				if(renderDef.bulkActions != null){
 					selectorGroupClass = "table-checkboxes-"+CFW.utils.randomString(16);
-					var checkbox = $('<input type="checkbox" onclick="$(\'.'+selectorGroupClass+'\').prop(\'checked\', $(this).is(\':checked\') )" >');
+					var checkbox = $('<input type="checkbox" onclick="$(\'.'+selectorGroupClass+':visible\').prop(\'checked\', $(this).is(\':checked\') )" >');
 					
 					cfwTable.addHeader(checkbox);
 				}
@@ -79,7 +88,7 @@ CFW.render.registerRenderer("table",
 					//-------------------------
 					// Checkboxes for selects
 					var cellHTML = '';
-					if(renderDef.multiActions != null){
+					if(renderDef.bulkActions != null){
 						
 						var value = "";
 						if(renderDef.idfield != null){
@@ -127,18 +136,18 @@ CFW.render.registerRenderer("table",
 				
 				//----------------------------------
 				// Create multi buttons
-				if(renderDef.multiActions == null){
+				if(renderDef.bulkActions == null){
 					return cfwTable.getTable();
 				}else{
 					var wrapperDiv = cfwTable.getTable();
 					
 					var actionsDivTop  = $('<div class="m-1">');
 					var actionsDivBottom  = $('<div class="m-1">');
-					for(var buttonLabel in renderDef.multiActions){
+					for(var buttonLabel in renderDef.bulkActions){
 						//----------------------------
 						// Top 
-						if(renderDef.multiActionsPos == 'both' || renderDef.multiActionsPos == 'top' ){
-							var func = renderDef.multiActions[buttonLabel];
+						if(renderDef.bulkActionsPos == 'both' || renderDef.bulkActionsPos == 'top' ){
+							var func = renderDef.bulkActions[buttonLabel];
 							var button = $('<button class="btn btn-sm btn-primary mr-1" onclick="cfw_internal_executeMultiAction(this)">'+buttonLabel+'</button>');
 							button.data('checkboxSelector', '.'+selectorGroupClass); 
 							button.data("function", func); 
@@ -147,8 +156,8 @@ CFW.render.registerRenderer("table",
 						
 						//----------------------------
 						// Bottom
-						if(renderDef.multiActionsPos == 'both' || renderDef.multiActionsPos == 'bottom' ){
-							var func = renderDef.multiActions[buttonLabel];
+						if(renderDef.bulkActionsPos == 'both' || renderDef.bulkActionsPos == 'bottom' ){
+							var func = renderDef.bulkActions[buttonLabel];
 							var button = $('<button class="btn btn-sm btn-primary mr-1" onclick="cfw_internal_executeMultiAction(this)">'+buttonLabel+'</button>');
 							button.data('checkboxSelector', '.'+selectorGroupClass); 
 							button.data("function", func); 
@@ -156,10 +165,10 @@ CFW.render.registerRenderer("table",
 						}
 					}
 					
-					if(renderDef.multiActionsPos == 'both' || renderDef.multiActionsPos == 'top' ){
+					if(renderDef.bulkActionsPos == 'both' || renderDef.bulkActionsPos == 'top' ){
 						wrapperDiv.prepend(actionsDivTop);
 					}
-					if(renderDef.multiActionsPos == 'both' || renderDef.multiActionsPos == 'bottom' ){
+					if(renderDef.bulkActionsPos == 'both' || renderDef.bulkActionsPos == 'bottom' ){
 						wrapperDiv.append(actionsDivBottom);
 					}
 					

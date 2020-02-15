@@ -210,13 +210,8 @@ function cfw_apioverview_printOverview(data){
 				if(sub.params != undefined && sub.params.length > 0){
 					content.append('<h3>Parameters:</h3>');
 					
-					var cfwTable = CFW.ui.createTable();
-					cfwTable.isNarrow = true;
-					cfwTable.isHover = true;
-					cfwTable.isResponsive = true;
-					cfwTable.isStriped = true;
-					cfwTable.filter(false);
-					
+					var cfwTable = new CFWTable({filterable: false, narrow: true});
+
 					cfwTable.addHeaders(['Name','Type','Description']);
 					
 					htmlRows = '';
@@ -239,12 +234,7 @@ function cfw_apioverview_printOverview(data){
 				if(sub.returnValues != undefined && sub.returnValues.length > 0){
 					content.append('<h3>Return Values:</h3>');
 					
-					var returnTable = CFW.ui.createTable();
-					returnTable.isNarrow = true;
-					returnTable.isHover = true;
-					returnTable.isResponsive = true;
-					returnTable.isStriped = true;
-					returnTable.filter(false);
+					var returnTable = new CFWTable({filterable: false, narrow: true});
 					
 					returnTable.addHeaders(['Name','Type','Description']);
 					

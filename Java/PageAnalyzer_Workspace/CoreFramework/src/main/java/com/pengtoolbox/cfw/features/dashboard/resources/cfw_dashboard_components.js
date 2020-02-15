@@ -19,6 +19,9 @@ CFW.dashboard.registerWidget("cfw_table",
 			defaultValues: {
     			title: "Table", 
     			settings: {
+    				narrow: false,
+    				filterable: false,
+    				striped: true,
     				delimiter: ';',
     				tableData: "ID;Firstname;Lastname\r\n0;Jane;Doe\r\n1;Testika;Testonia",
     			}
@@ -36,7 +39,17 @@ CFW.dashboard.registerWidget("cfw_table",
 				if(typeof tableData == 'string'){
 					var objectArray = CFW.format.csvToObjectArray(tableData, delimiter)
 					
-					dataToRender = {data: objectArray};
+					dataToRender = {
+						data: objectArray,
+						rendererSettings:{
+							table: {
+								narrow: 		merged.settings.narrow,
+								filterable: 	merged.settings.filterable,
+								striped: 		merged.settings.striped,
+							}
+					}};
+					
+					
 				}
 				
 				console.log('==== render Table ====');
@@ -57,8 +70,11 @@ CFW.dashboard.registerWidget("cfw_table",
     			
     			//------------------------------
     			// Content
-    			customForm += new CFWFormField({ type: "text", name: "delimiter", value: widgetData.settings.delimiter, description: 'The delimiter used for the data.' }).createHTML();
     			customForm += new CFWFormField({ type: "textarea", name: "tableData", value: widgetData.settings.tableData, description: 'Values separated by the delimiter, first row will be used as header.' }).createHTML();
+    			customForm += new CFWFormField({ type: "text", name: "delimiter", value: widgetData.settings.delimiter, description: 'The delimiter used for the data.' }).createHTML();
+    			customForm += new CFWFormField({ type: "boolean", name: "narrow", value: widgetData.settings.narrow, description: 'Define if the table row height should be narrow or wide.' }).createHTML();
+    			customForm += new CFWFormField({ type: "boolean", name: "filterable", value: widgetData.settings.filterable, description: 'Shall a filter be added to the table or not.' }).createHTML();
+    			customForm += new CFWFormField({ type: "boolean", name: "striped", value: widgetData.settings.striped, description: 'Define if the table should have striped rows.' }).createHTML();
     			customForm += '</form>';
     			
     			return customForm;
@@ -66,8 +82,11 @@ CFW.dashboard.registerWidget("cfw_table",
 			onSave: function (form, widgetData) {
 				console.log(form);
 				var settingsForm = $(form);
-				widgetData.settings.delimiter = settingsForm.find('input[name="delimiter"]').val();
-				widgetData.settings.tableData = settingsForm.find('textarea[name="tableData"]').val();
+				widgetData.settings.delimiter 	= settingsForm.find('input[name="delimiter"]').val();
+				widgetData.settings.tableData 	= settingsForm.find('textarea[name="tableData"]').val();
+				widgetData.settings.narrow 		= ( settingsForm.find('input[name="narrow"]:checked').val() == "true" );
+				widgetData.settings.filterable 	= ( settingsForm.find('input[name="filterable"]:checked').val() == "true" );
+				widgetData.settings.striped 	= ( settingsForm.find('input[name="striped"]:checked').val() == "true" );
 			}
     		
 		}

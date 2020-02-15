@@ -25,7 +25,7 @@ function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 			if(data.payload != null){
 				var htmlString = "";
 				htmlString += '';
-				var cfwTable = CFW.ui.createTable();
+				var cfwTable = new CFWTable();
 				
 				cfwTable.addHeaders(['&nbsp;','Name','Description']);
 				var resultCount = data.payload.length;
@@ -209,7 +209,7 @@ function cfw_usermgmt_printUserList(data){
 	
 	parent = $("#tab-content");
 	
-	var cfwTable = CFW.ui.createTable();
+	var cfwTable = new CFWTable();
 	
 	//--------------------------------
 	// Button
@@ -303,7 +303,7 @@ function cfw_usermgmt_printRoleList(data){
 	//--------------------------------
 	// Table
 	
-	var cfwTable = CFW.ui.createTable();
+	var cfwTable = new CFWTable();
 	cfwTable.addHeaders(['ID', "Name", "Description"]);
 	
 	if(data.payload != undefined){
@@ -358,7 +358,7 @@ function cfw_usermgmt_printPermissionList(data){
 	
 	parent = $("#tab-content");
 	
-	var cfwTable = CFW.ui.createTable();
+	var cfwTable = new CFWTable();
 	cfwTable.addHeaders(['ID', "Name", "Description"]);
 	
 	if(data.payload != undefined){

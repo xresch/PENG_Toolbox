@@ -608,12 +608,8 @@ function printGanttChart(parent, data){
 	
 	//----------------------------------
 	// Create Table Header
-	var cfwTable = CFW.ui.createTable();
-	cfwTable.isNarrow = true;
-	cfwTable.isHover = true;
-	cfwTable.isResponsive = true;
-	cfwTable.isStriped = true;
-	cfwTable.tableFilter = true;
+	var cfwTable = new CFWTable({filterable: true, narrow: true});;
+
 	cfwTable.addHeaders(['&nbsp;','Timings','Status','Duration','URL']);
 
 	//----------------------------------
@@ -909,8 +905,7 @@ function printResultList(parent, data){
 	//----------------------------------
 	// Create Table Header
 	
-	var cfwTable = CFW.ui.createTable();
-	cfwTable.isSticky = true;
+	var cfwTable = new CFWTable({stickyheader: false});;
 	
 	cfwTable.addHeaders(['&nbsp;', 'Timestamp']);
 	if(data[0] != null && data[0].USER_ID != undefined){
@@ -1308,7 +1303,7 @@ function printTable(parent, data, title){
 	
 	parent.append("<h3>"+title+"</h3>");
 	
-	var cfwTable = CFW.ui.createTable();
+	var cfwTable = new CFWTable();
 
 	// add all keys from the first object in the array as headers
 	for(var key in data[0]){

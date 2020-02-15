@@ -27,17 +27,21 @@ class CFWRenderer{
 		 	titledelimiter: ' ',
 		 	// Names of the fields that should be rendered and in the currect order. Uses all fields if null or undefined
 		 	visiblefields: null,
+		 	// custom labels for fields, add them as "{fieldname}: {label}"
 		 	labels: {},
-		 	stylefield: null,
+		 	// field containing the bootstrap style (primary, info, danger ...) that should be used as the background
+		 	bgstylefield: null,
+		    // field containing the bootstrap style (primary, info, danger ...) that should be used as for texts
 		 	textstylefield: null,
+		 	// functions that return a customized htmlString to display a customized format, add as "{fieldname}: function"
 		 	customizers: {},
 		 	// array of functions that return html for buttons
 		 	actions: [ ],
 			// list of functions that should be working with multiple items. fieldname will be used as the button label
-		 	multiActions: null,
+		 	bulkActions: null,
 		 	// position of the multi actions, either top|bottom|both|none
-		 	multiActionsPos: "top",
-			// the data that should be rendered
+		 	bulkActionsPos: "top",
+			// the data that should be rendered as an array
 		 	data: null,
 		 	// settings specific for the renderer
 		 	rendererSettings: {}
@@ -99,7 +103,7 @@ class CFWRenderer{
 		}
 		 //---------------------------
 		 // Lovercase
-		 definition.multiActionsPos = definition.multiActionsPos.toLowerCase();
+		 definition.bulkActionsPos = definition.bulkActionsPos.toLowerCase();
 		 
 	 }
 	 
@@ -129,6 +133,7 @@ class CFWFormField{
 			label: null,
 			value: null,
 			description: null,
+			disabled: false,
 			attributes: {},
 			options: {}
 		 };
@@ -141,6 +146,10 @@ class CFWFormField{
 		 
 		 if(this.options.attributes.placeholder == null){
 			 this.options.attributes.placeholder = this.options.label;
+		 }
+		 
+		 if(this.options.disabled == true){
+			 this.options.attributes.disabled = "disabled";
 		 }
 		 
 	 }
@@ -180,6 +189,9 @@ class CFWFormField{
 		 	case 'TEXTAREA': 	htmlString += this.createTextAreaHTML();
 								break;
 		 	
+		 	case 'BOOLEAN': 	htmlString += this.createBooleanRadios();
+								break;
+				
 		 	case 'SELECT': 		htmlString += this.createSelectHTML();
 		 						break;
 			
@@ -225,6 +237,40 @@ class CFWFormField{
 		}
 		
 		return "<textarea class=\"form-control\" "+this.getAttributesString()+">"+value+"</textarea>";
+	}
+	
+	/***********************************************************************************
+	 * Create Boolean Radio Buttons
+	 ***********************************************************************************/
+	createBooleanRadios() {
+		
+		var falseChecked = "";
+		var trueChecked = "";
+		
+		var value = this.options.value;
+		
+		if(value != null && value.toString().toLowerCase() == "true") {
+			console.log('createBooleanRadios true: '+value+" "+this.options.name)
+			trueChecked = "checked";
+		}else {
+			console.log('createBooleanRadios false: '+value+" "+this.options.name)
+			falseChecked = "checked";
+		}
+		
+		var disabled = "";
+		if(this.options.disabled) {	disabled = "disabled=\"disabled\""; };
+		
+		htmlString = '<div class="form-check form-check-inline col-form-labelmt-5">'
+			+ '  <input class="form-check-input" type="radio" value="true" name='+this.options.name+' '+disabled+' '+trueChecked+'/>'
+			+ '  <label class="form-check-label" for="inlineRadio1">true</label>'
+			+ '</div>'
+			+ '<div class="form-check form-check-inline col-form-label">'
+			+ '  <input class="form-check-input" type="radio" value="false" name='+this.options.name+' '+disabled+' '+falseChecked+'/>'
+			+ '  <label class="form-check-label" for="inlineRadio1">false</label>'
+			+ '</div>'; 
+		
+		console.log(htmlString);
+		return htmlString;
 	}
 
 	/***********************************************************************************
@@ -331,15 +377,24 @@ class CFWDate{
 		
 	}
 }
-
-
 /******************************************************************
  * Creates a CFWTable.
  * 
  ******************************************************************/
  class CFWTable{
 	
-	 constructor(){
+	 constructor(customSettings){
+		 
+		 this.settings = {
+			filterable: true,
+			responsive: true,
+			hover: true,
+			striped: true,
+			narrow: false,
+			stickyheader: false, 
+		 }
+		 
+		 Object.assign(this.settings, customSettings);
 		 
 		 this.id = 'cfwtable-'+CFW.utils.randomString(16);
 		 this.table = $('<table id="'+this.id +'" class="table">');
@@ -350,26 +405,8 @@ class CFWDate{
 		 this.tbody = $('<tbody>');
 		 this.table.append(this.tbody);
 		 
-		 this.tableFilter = true;
-		 this.isResponsive = true;
-		 this.isHover = true;
-		 this.isStriped = true;
-		 this.isNarrow = false;
-		 this.isSticky = false;
 	 }
 	
-	 /********************************************
-	  * Toggle the table filter, default is true.
-	  ********************************************/
-	 filter(isFilter){
-		 this.tableFilter = isFilter;
-	 }
-	 /********************************************
-	  * Toggle the table filter, default is true.
-	  ********************************************/
-	 responsive(isResponsive){
-		 this.isResponsive = isResponsive;
-	 }
 	 
 	 /********************************************
 	  * Adds a header using a string.
@@ -414,25 +451,25 @@ class CFWDate{
 	  ********************************************/
 	 getTable(){
 		  
-		 if(this.isStriped){		this.table.addClass('table-striped'); }
-		 if(this.isHover){			this.table.addClass('table-hover'); }
-		 if(this.isNarrow){			this.table.addClass('table-sm'); }
+		 if(this.settings.striped){		this.table.addClass('table-striped'); }
+		 if(this.settings.hover){		this.table.addClass('table-hover'); }
+		 if(this.settings.narrow){		this.table.addClass('table-sm'); }
 		 
 		 var wrapper = $('<div class="flex-grow-1">');
-		 if(this.tableFilter){
-			 var filter = $('<input type="text" class="form-control" onkeyup="cfw_filterTable(this)" placeholder="Filter Table...">');
+		 if(this.settings.filterable){
+			 var filter = $('<input type="text" class="form-control form-control-sm" onkeyup="cfw_filterTable(this)" placeholder="Filter Table...">');
 			 wrapper.append(filter);
 			 //jqueryObject.append('<span style="font-size: xx-small;"><strong>Hint:</strong> The filter searches through the innerHTML of the table rows. Use &quot;&gt;&quot; and &quot;&lt;&quot; to search for the beginning and end of a cell content(e.g. &quot;&gt;Test&lt;&quot; )</span>');
 			 filter.data("table", this.table);
 		 }
 		 
-		 if(this.isSticky){
+		 if(this.settings.stickyheader){
 			 this.thead.find("th").addClass("cfw-sticky-th bg-dark text-light");
 			 this.isResponsive = false;
 			 this.table.css("width", "100%");
 		 }
 		 
-		 if(this.isResponsive){
+		 if(this.settings.responsive){
 			var responsiveDiv = $('<div class="table-responsive">');
 			responsiveDiv.append(this.table);
 			
@@ -453,10 +490,7 @@ class CFWDate{
 	 }
 }
 
-function cfw_createTable(){
-	return new CFWTable();
-}
-
+ 
 /******************************************************************
  * Creates a CFWPanel 
  * 

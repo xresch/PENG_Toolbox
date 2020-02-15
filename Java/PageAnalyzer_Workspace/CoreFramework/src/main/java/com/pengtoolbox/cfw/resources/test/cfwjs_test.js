@@ -15,7 +15,7 @@ function cfw_test_createTable(parent){
 	
 	//---------------------------------
 	// Create Table
-	var cfwTable = CFW.ui.createTable();
+	var cfwTable = new CFWTable();
 	cfwTable.addHeaders(["FirstCol","2ndCol","III Column"]);
 	cfwTable.addHeader("AnotherCol");
 	
@@ -42,7 +42,7 @@ function cfw_test_createTable(parent){
 	//---------------------------------
 	// Add to Page
 	var resultDiv = $('<div id="createTableTest">');
-	resultDiv.html("<h1> Test CFW.ui.createTable()</h1>");
+	resultDiv.html("<h1> Test new CFWTable()</h1>");
 	cfwTable.appendTo(resultDiv);
 	parent.append(resultDiv);
 	

@@ -142,17 +142,21 @@ function cfw_dashboard_editWidget(widgetGUID){
 	}
 	var customFormButton = '<input type="button" onclick="cfw_dashboard_saveCustomSettings(this, \''+widgetGUID+'\')" class="form-control btn-primary" value="Save">';
 	
-	customForm.append(customFormButton)
+	customForm.append(customFormButton);
 //	
 	//##################################################
 	// Create and show Modal
 	//##################################################
-	var compositeDiv = $('<div>');
+	var compositeDiv = $('<div id="editWidgetComposite">');
 	compositeDiv.append(defaultForm);
 	compositeDiv.append('<h2>Settings for '+widgetDef.menulabel+' Widget</h2>');
 	compositeDiv.append(customForm);
 	
 	CFW.ui.showModal("Edit Widget", compositeDiv, "CFW.cache.clearCache();");
+	
+	  //-----------------------------------
+	  // Initialize tooltipy
+	  $('#editWidgetComposite [data-toggle="tooltip"]').tooltip();
 }
 
 /************************************************************************************************
@@ -399,11 +403,12 @@ function cfw_dashboard_toggleEditMode(){
  * Main method for building the view.
  * 
  ******************************************************************/
-function cfw_dashboard_initializeGridstack(){
+function cfw_dashboard_initializeGridstack(gridStackElementSelector){
 	
 	//-----------------------------
 	// Set options 
-	$('.grid-stack').gridstack({
+
+	$(gridStackElementSelector).gridstack({
 		alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
 		resizable: {
 		    handles: 'e, se, s, sw, w'
@@ -413,7 +418,7 @@ function cfw_dashboard_initializeGridstack(){
 	
 	//-----------------------------
 	// Set update on dragstop 
-	$('.grid-stack').on('change', function(event, items) {
+	$(gridStackElementSelector).on('change', function(event, items) {
 		  var grid = this;
 		  var i = 0;
 		  for(key in items){
@@ -451,17 +456,20 @@ function addTestdata(){
 				function (record, id){ return '<button class="btn btn-sm btn-primary" onclick="alert(\'Edit record '+id+'\')"><i class="fas fa-pen"></i></button>'},
 				function (record, id){ return '<button class="btn btn-sm btn-danger" onclick="alert(\'Delete record '+id+'\')"><i class="fas fa-trash"></i></button>'},
 			],
-			multiActions: {
+			bulkActions: {
 				"Edit": function (elements, records, values){ alert('Edit records '+values.join(',')+'!'); },
 				"Delete": function (elements, records, values){ $(elements).remove(); },
 			},
-			multiActionsPos: "both",
+			bulkActionsPos: "both",
 			data: [
 				{id: 0, firstname: "Jane", lastname: "Doe", city: "Nirwana", postal_code: 8008, status: 'active'},
 				{id: 1, firstname: "Testika", lastname: "Testonia", city: "Manhattan", postal_code: 9000, status: 'active', bgstyle: 'success'},
 				{id: 2, firstname: "Theus", lastname: "De Natore", city: "Termi-Nation", postal_code: 666, status: 'blocked', bgstyle: 'danger'},
 				{id: 3, firstname: "Jane", lastname: "De Natore", city: "Termi-Nation", postal_code: 666, status: 'blocked', bgstyle: 'info', textstyle: 'white'},
 			],
+			rendererSettings: {
+				table: {narrow: true, filterable: true}
+			},
 		};
 
 		var rendererTestdataMinimal = {
@@ -505,7 +513,7 @@ function cfw_dashboard_draw(){
 	
 	console.log('draw');
 	
-	cfw_dashboard_initializeGridstack();
+	cfw_dashboard_initializeGridstack('.grid-stack');
 	
 	// Test Data
 	addTestdata();

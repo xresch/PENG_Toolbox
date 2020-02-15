@@ -1508,7 +1508,6 @@ var CFW = {
 		randomString: cfw_randomString
 	},
 	ui: {
-		createTable: cfw_createTable,
 		createToggleButton: cfw_createToggleButton,
 		toc: cfw_table_toc,
 		addToast: cfw_addToast,
