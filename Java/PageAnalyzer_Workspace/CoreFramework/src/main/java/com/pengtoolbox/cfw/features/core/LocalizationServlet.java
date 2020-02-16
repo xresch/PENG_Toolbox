@@ -37,7 +37,7 @@ public class LocalizationServlet extends HttpServlet
 		//-----------------------
 		// Fetch Assembly
 		String localeID = request.getParameter("id");
-		Properties languagePack = CFW.Localization.getLanguagePack(localeID);
+		Properties languagePack = CFW.Localization.getLanguagePackForRequest();
 
 		int fileEtag = languagePack.hashCode();
 		

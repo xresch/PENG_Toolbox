@@ -106,14 +106,17 @@ public class CFWLocalization {
 		return builder.toString().toLowerCase();
 	}
 	
-
-	
 	/******************************************************************************************
 	 * 
+	 * @param request
+	 * @param response
+	 * @return 
+	 * @throws IOException
 	 ******************************************************************************************/
-	public static Properties getLanguagePack(String localeIdentifier) {
-		return languageCache.get(localeIdentifier);
+	public static Properties getLanguagePackForRequest() {
+		return getLanguagePack(getLocalesForRequest());
 	}
+	
 	/******************************************************************************************
 	 * 
 	 * @param request
