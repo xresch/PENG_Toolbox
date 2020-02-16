@@ -236,7 +236,6 @@ public class CFWApplicationExecutor {
 		// Resource Servlets
 	    servletContext.addServlet(AssemblyServlet.class, "/cfw/assembly"); 
 	    servletContext.addServlet(JARResourceServlet.class, "/cfw/jarresource");
-
 	    	    
 	}
 	

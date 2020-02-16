@@ -36,6 +36,7 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 		String requestID = (String)request.getAttribute(CFW.REQUEST_ATTR_ID);
 		long startNanos = (long)request.getAttribute(CFW.REQUEST_ATTR_STARTNANOS);
 		
+		this.addJavascriptData("localeIdentifier", CFW.Localization.getLocaleIdentifierForRequest() );
 		this.addJavascriptData(CFW.REQUEST_ATTR_ID, requestID );
 		this.addJavascriptData(CFW.REQUEST_ATTR_STARTNANOS, String.valueOf(startNanos) );
 		

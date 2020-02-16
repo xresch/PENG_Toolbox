@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Properties;
 
 public class LinkedProperties extends Properties {
@@ -27,4 +28,10 @@ public class LinkedProperties extends Properties {
         keys.add(key);
         return super.put(key, value);
     }
+    
+    public void putAll(Map<? extends Object, ? extends Object> map) {
+        keys.addAll(map.keySet());
+        super.putAll(map);
+    }
 }
+

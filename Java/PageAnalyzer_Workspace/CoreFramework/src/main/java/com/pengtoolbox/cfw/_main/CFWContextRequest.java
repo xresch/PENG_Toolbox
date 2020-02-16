@@ -7,6 +7,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.features.usermgmt.Role;
 import com.pengtoolbox.cfw.features.usermgmt.User;
@@ -29,11 +30,15 @@ public class CFWContextRequest {
 	
 	private static InheritableThreadLocal<HashMap<String,AlertMessage>> messageArray = new InheritableThreadLocal<HashMap<String,AlertMessage>>();
 		
+	private static int localeFilesID = 0;
+	private static HashMap<String, FileDefinition> localeFiles = new HashMap<String, FileDefinition>();
+	
 	public static void clearRequestContext() {
 		httpRequest.set(null);
 		responseContent.set(null);
 		sessionData.set(null);
 		messageArray.set(null);
+		localeFilesID = 0;
 	}
 	
 	public static HttpServletRequest getRequest() {

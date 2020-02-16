@@ -29,7 +29,7 @@ public class _MainForTesting implements CFWAppInterface {
 	@Override
 	public void register() {
 		
-		CFW.Localization.registerLocaleFile(Locale.ENGLISH, new FileDefinition(HandlingType.FILE, "./testdata", "testlang_en.properties"));
+		CFW.Localization.registerLocaleFile(Locale.ENGLISH, "/general", new FileDefinition(HandlingType.FILE, "./testdata", "testlang_en.properties"));
 		
 		CFW.Registry.Components.addRegularMenuItem(
 				(MenuItem)new MenuItem("Test Pages")

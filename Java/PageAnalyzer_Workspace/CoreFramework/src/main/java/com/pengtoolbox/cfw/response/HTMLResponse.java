@@ -31,7 +31,6 @@ public class HTMLResponse extends AbstractHTMLResponse {
 		
 		this.pageTitle = pageTitle;
 		
-		//this.addCSSFile(HandlingType.JAR_RESOURCE, FileAssembly.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap.min.css");
 		String theme = CFW.DB.Config.getConfigAsString(Configuration.THEME);
 		if(theme.equals("custom")) {
 			this.addCSSFileCFW(FileDefinition.HandlingType.FILE, "./resources/css", "bootstrap-theme-custom.css");

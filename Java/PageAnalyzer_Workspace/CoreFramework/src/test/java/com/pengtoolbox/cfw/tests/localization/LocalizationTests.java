@@ -19,9 +19,9 @@ public class LocalizationTests {
 		
 		CFW.Files.addAllowedPackage(RESOURCE_PACKAGE);
 		
-		CFW.Localization.registerLocaleFile(Locale.ENGLISH, new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "testlang_en.properties"));
-		CFW.Localization.registerLocaleFile(Locale.ENGLISH, new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "testlangoverride_en.properties"));
-		CFW.Localization.registerLocaleFile(Locale.GERMAN, new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "testlang_de.properties"));
+		CFW.Localization.registerLocaleFile(Locale.ENGLISH, "", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "testlang_en.properties"));
+		CFW.Localization.registerLocaleFile(Locale.ENGLISH, "", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "testlangoverride_en.properties"));
+		CFW.Localization.registerLocaleFile(Locale.GERMAN, "", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "testlang_de.properties"));
 		
 		Properties result = CFW.Localization.getLanguagePack(new Locale[] {Locale.ENGLISH, Locale.GERMAN});
 		

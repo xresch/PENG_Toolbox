@@ -19,6 +19,7 @@ TODO
 - Manual: Change chevron icon when page gets expanded/collapsed
 - Implement custom shutdown stopping database, application, features, etc...
 - Dashboard: Create a dashboard using gridstack.js or similar >> https://dzone.com/articles/7-javascript-libraries-for-dashboards 
+- Configuration: Add feature to listen for config changes.
 
 - FormField.SINGLECOMPLETE
   - how to load key and label? 
