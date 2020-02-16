@@ -15,6 +15,7 @@ import com.pengtoolbox.cfw.features.usermgmt.Permission;
  **************************************************************************************************************/
 public class MenuItem extends HierarchicalHTMLItem {
 	
+	private String menuName = "&nbsp;";
 	private String label = "&nbsp;";
 	private String faiconClasses = "";
 	private String alignRightClass = "";
@@ -24,13 +25,20 @@ public class MenuItem extends HierarchicalHTMLItem {
 	private HashSet<String> permissions = new HashSet<String>();
 	private LinkedHashMap<String, MenuItem> childMenuItems = new LinkedHashMap<String, MenuItem>();
 	
-	public MenuItem(String label) {
+	public MenuItem(String name) {
+		this.menuName = name;
+		this.label = name;
+		this.addAttribute("href", "#");
+	}
+	
+	public MenuItem(String name, String label) {
+		this.menuName = name;
 		this.label = label;
 		this.addAttribute("href", "#");
 	}
 	
 	public MenuItem(String label, HashSet<String> permissions) {
-		this.label = label;
+		this.menuName = label;
 		this.permissions = permissions;
 		this.addAttribute("href", "#");
 	}
@@ -89,7 +97,7 @@ public class MenuItem extends HierarchicalHTMLItem {
 		
 		//----------------------------------
 		// Render Menu Item
-		if(this.label.isEmpty()) {
+		if(this.menuName.isEmpty()) {
 			this.addCssClass("menu-item-icon-only");
 		}
 		String cssClass = this.popAttributeValue("class");
@@ -179,7 +187,7 @@ public class MenuItem extends HierarchicalHTMLItem {
 	 *  
 	 *****************************************************************************/
 	public String getLabel() {
-		return label;
+		return menuName;
 	}
 	
 	/*****************************************************************************
@@ -187,7 +195,7 @@ public class MenuItem extends HierarchicalHTMLItem {
 	 *****************************************************************************/
 	public MenuItem setLabel(String label) {
 		fireChange();
-		this.label = label;
+		this.menuName = label;
 		return this;
 	}
 	
@@ -235,6 +243,7 @@ public class MenuItem extends HierarchicalHTMLItem {
 		
 		//------------------------------------
 		// Copy Menu Fields
+		targetItem.menuName = this.menuName;
 		targetItem.label = this.label;
 		targetItem.alignRightClass = this.alignRightClass;
 		targetItem.faiconClasses = this.faiconClasses;

@@ -178,7 +178,7 @@ public class CFWRegistryComponents {
 			if(CFW.Registry.Manual.getManualPagesForUserAsJSON().size() > 0
 			&& CFW.Context.Request.hasPermission(FeatureManual.PERMISSION_MANUAL)) {
 				menu.addRightMenuItem(
-						(MenuItem)new MenuItem("Manual")
+						(MenuItem)new MenuItem("Manual", "{!cfw_core_manual!}") 
 						.faicon("fas fa-book")
 						.addPermission(FeatureManual.PERMISSION_MANUAL)
 						.href("./manual")

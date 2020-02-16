@@ -10,8 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWProperties;
-import com.pengtoolbox.cfw.caching.FileAssembly;
-import com.pengtoolbox.cfw.response.PlaintextResponse;
+import com.pengtoolbox.cfw.response.JSONResponse;
 
 /**************************************************************************************************************
  * 
@@ -32,7 +31,6 @@ public class LocalizationServlet extends HttpServlet
 		//-----------------------
 		// Response Settings
 		response.addHeader("Cache-Control", "max-age="+CFWProperties.BROWSER_RESOURCE_MAXAGE);
-		response.setContentType("application/json");
 		
 		//-----------------------
 		// Fetch Assembly
@@ -41,7 +39,7 @@ public class LocalizationServlet extends HttpServlet
 
 		int fileEtag = languagePack.hashCode();
 		
-		PlaintextResponse plain = new PlaintextResponse();
+		JSONResponse json = new JSONResponse();
 		
 		if(languagePack != null) {
 			//-----------------------
@@ -57,13 +55,14 @@ public class LocalizationServlet extends HttpServlet
 			
 			//-----------------------
 			// Return Assembly
-			plain.getContent().append(CFW.JSON.toJSON(languagePack));
+			json.getContent().append(CFW.JSON.toJSON(languagePack));
 			response.addHeader("ETag", ""+fileEtag);
 			
 	        response.setStatus(HttpServletResponse.SC_OK);
-	        
+	        json.setSuccess(true);
 	    }else {
 	    	response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	    	json.setSuccess(false);
 	    }
 		
 		//Done by RequestHandler

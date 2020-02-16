@@ -1452,6 +1452,46 @@ function cfw_getRenderer(rendererUniqueName){
 	return CFW.render.registry[rendererUniqueName];
 }
 
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_loadLocalization(){
+	//-----------------------------------
+	// 
+	if(CFW.cache.lang == null){
+		$.ajaxSetup({async: false});
+			cfw_getJSON("/cfw/locale", {id: JSDATA.localeIdentifier}, function(data, status, xhr){
+				console.log("status"+status);
+				console.log("xhr.status"+xhr.status);
+				
+				var object;
+				if (xhr.status == 200){
+					window.localStorage.setItem("lang-"+JSDATA.localeIdentifier, JSON.stringify(data.payload) );
+					object = data.payload;
+				}else if (xhr.status == 304){
+					object = JSON.parse(window.localStorage.getItem("lang-"+JSDATA.localeIdentifier));
+				}
+				
+				CFW.cache.lang = object;
+			});
+		$.ajaxSetup({async: true});
+	}
+}
+
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_lang(key, defaultValue){
+
+	var value = CFW.cache.lang[key];
+	console.log(CFW.cache.lang);
+	if(value != null){
+		return value;
+	}else{
+		return defaultValue;
+	}
+
+}
 /********************************************************************
  * CFW FRAMEWORK STRUCTURE
  * -----------------------
@@ -1459,7 +1499,13 @@ function cfw_getRenderer(rendererUniqueName){
 
 var CFW = {
 	global: {
-		autocompleteCounter: 0 
+		autocompleteCounter: 0,
+		isLocaleFetching: null,
+		
+	},
+	lang: {
+		get: cfw_lang,
+		loadLocalization: cfw_loadLocalization,
 	},
 	config: {
 		toastDelay: 	 3000,
@@ -1467,6 +1513,7 @@ var CFW = {
 	},
 	cache: { 
 		data: {},
+		lang: null,
 		removeFromCache: cfw_removeFromCache,
 		clearCache: cfw_clearCache
 	},
@@ -1531,14 +1578,6 @@ var CFW = {
  ********************************************************************/
 
 $(function () {
-	  
-	//-----------------------------------
-	// Initialize tooltipy
-	cfw_getJSON("/cfw/locale", {id: JSDATA.localeIdentifier}, function(data){
-		console.log('========== Locale ==========');
-		console.log(JSDATA.localeIdentifier);
-		console.log(data);
-	});
 	
 	//-----------------------------------
 	// Initialize tooltipy

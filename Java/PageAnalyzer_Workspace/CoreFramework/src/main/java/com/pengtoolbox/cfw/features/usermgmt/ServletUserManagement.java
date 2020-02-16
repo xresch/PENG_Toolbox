@@ -55,7 +55,7 @@ public class ServletUserManagement extends HttpServlet
 			
 			content.append(CFW.Files.readPackageResource(FileDefinition.CFW_JAR_RESOURCES_PATH + ".html", "cfw_usermgmt.html"));
 			
-			html.addJavascriptCode("cfw_usermgmt_draw({tab: 'users'});");
+			html.addJavascriptCode("cfw_usermgmt_initialDraw({tab: 'users'});");
 			
 	        response.setContentType("text/html");
 	        response.setStatus(HttpServletResponse.SC_OK);

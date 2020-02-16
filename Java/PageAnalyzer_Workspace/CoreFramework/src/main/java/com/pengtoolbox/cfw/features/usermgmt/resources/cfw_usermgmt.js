@@ -27,7 +27,9 @@ function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 				htmlString += '';
 				var cfwTable = new CFWTable();
 				
-				cfwTable.addHeaders(['&nbsp;','Name','Description']);
+				cfwTable.addHeaders(['&nbsp;',
+					CFW.lang.get('cfw_usermgmt_name'),
+					CFW.lang.get('cfw_usermgmt_description')]);
 				var resultCount = data.payload.length;
 				if(resultCount == 0){
 					CFW.ui.addAlert("info", "Hmm... seems there aren't any roles in the list.");
@@ -213,8 +215,8 @@ function cfw_usermgmt_printUserList(data){
 	
 	//--------------------------------
 	// Button
-	var createButton = $('<button class="btn btn-success mb-2" alt="Create" title="Create" onclick="cfw_usermgmt_createUser()">'
-							+ '<i class="fas fa-plus-circle"></i> Create User'
+	var createButton = $('<button class="btn btn-success mb-2" onclick="cfw_usermgmt_createUser()">'
+							+ '<i class="fas fa-plus-circle"></i> '+ CFW.lang.get('cfw_usermgmt_createUser')
 					   + '</button>');
 	
 	parent.append(createButton);
@@ -294,8 +296,8 @@ function cfw_usermgmt_printRoleList(data){
 	
 	//--------------------------------
 	// Button
-	var createButton = $('<button class="btn btn-success mb-2" alt="Create" title="Delete" onclick="cfw_usermgmt_createRole()">'
-							+ '<i class="fas fa-plus-circle"></i> Create Role'
+	var createButton = $('<button class="btn btn-success mb-2" onclick="cfw_usermgmt_createRole()">'
+							+ '<i class="fas fa-plus-circle"></i> '+ CFW.lang.get('cfw_usermgmt_createRole')
 					   + '</button>');
 	
 	parent.append(createButton);
@@ -395,6 +397,12 @@ function cfw_usermgmt_printPermissionList(data){
  *  }
  * @return 
  ******************************************************************/
+
+function cfw_usermgmt_initialDraw(options){
+	CFW.lang.loadLocalization();
+	cfw_usermgmt_draw(options);
+}
+
 function cfw_usermgmt_draw(options){
 	
 	cfw_usermgmt_reset();
@@ -404,6 +412,7 @@ function cfw_usermgmt_draw(options){
 	window.setTimeout( 
 	function(){
 
+		
 		url = "./usermanagement/data"
 		switch(options.tab){
 		

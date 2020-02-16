@@ -38,7 +38,7 @@ public class FeatureConfiguration extends CFWAppFeature {
     	// Register Regular Menu
 		
 		CFW.Registry.Components.addAdminCFWMenuItem(
-				(MenuItem)new MenuItem("Configuration")
+				(MenuItem)new MenuItem("Configuration", "{!cfw_core_configuration!}")
 					.faicon("fas fa-cog")
 					.addPermission(PERMISSION_CONFIGURATION)
 					.href("./configuration")	

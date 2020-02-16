@@ -1,8 +1,12 @@
 package com.pengtoolbox.cfw.features.usermgmt;
 
+import java.util.Locale;
+
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppFeature;
 import com.pengtoolbox.cfw._main.CFWApplicationExecutor;
+import com.pengtoolbox.cfw.caching.FileDefinition;
+import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 
 /**************************************************************************************************************
@@ -24,6 +28,11 @@ public class FeatureUserManagement extends CFWAppFeature {
 		CFW.Files.addAllowedPackage(RESOURCE_PACKAGE);
 		
 		//----------------------------------
+		// Register Languages
+		CFW.Localization.registerLocaleFile(Locale.ENGLISH, "", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "lang_en.properties"));
+		CFW.Localization.registerLocaleFile(Locale.GERMAN, "", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "lang_de.properties"));
+		
+		//----------------------------------
 		// Register Objects
 		CFW.Registry.Objects.addCFWObject(User.class);
 		CFW.Registry.Objects.addCFWObject(Role.class);
@@ -35,7 +44,7 @@ public class FeatureUserManagement extends CFWAppFeature {
     	// Register Regular Menu
 				
 		CFW.Registry.Components.addAdminCFWMenuItem(
-				(MenuItem)new MenuItem("Manage Users")
+				(MenuItem)new MenuItem("Manage Users", "{!cfw_core_manage_users!}") 
 					.faicon("fas fa-users")
 					.addPermission(Permission.CFW_USER_MANAGEMENT)
 					.href("./usermanagement")	
