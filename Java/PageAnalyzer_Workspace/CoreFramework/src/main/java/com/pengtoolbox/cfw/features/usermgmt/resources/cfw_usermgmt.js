@@ -215,7 +215,7 @@ function cfw_usermgmt_printUserList(data){
 	
 	//--------------------------------
 	// Button
-	var createButton = $('<button class="btn btn-success mb-2" onclick="cfw_usermgmt_createUser()">'
+	var createButton = $('<button class="btn btn-sm btn-success mb-2" onclick="cfw_usermgmt_createUser()">'
 							+ '<i class="fas fa-plus-circle"></i> '+ CFW.lang.get('cfw_usermgmt_createUser')
 					   + '</button>');
 	
@@ -296,7 +296,7 @@ function cfw_usermgmt_printRoleList(data){
 	
 	//--------------------------------
 	// Button
-	var createButton = $('<button class="btn btn-success mb-2" onclick="cfw_usermgmt_createRole()">'
+	var createButton = $('<button class="btn btn-sm btn-success mb-2" onclick="cfw_usermgmt_createRole()">'
 							+ '<i class="fas fa-plus-circle"></i> '+ CFW.lang.get('cfw_usermgmt_createRole')
 					   + '</button>');
 	
