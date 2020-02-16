@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.response.JSONResponse;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 /**************************************************************************************************************
  * 
@@ -34,14 +35,13 @@ public class LocalizationServlet extends HttpServlet
 		
 		//-----------------------
 		// Fetch Assembly
-		String localeID = request.getParameter("id");
 		Properties languagePack = CFW.Localization.getLanguagePackForRequest();
 
 		int fileEtag = languagePack.hashCode();
 		
 		JSONResponse json = new JSONResponse();
-		
-		if(languagePack != null) {
+
+		if(languagePack.size() > 0) {
 			//-----------------------
 			// Check ETag
 			String requestEtag = request.getHeader("If-None-Match");
@@ -54,7 +54,7 @@ public class LocalizationServlet extends HttpServlet
 			}
 			
 			//-----------------------
-			// Return Assembly
+			// Return Content
 			json.getContent().append(CFW.JSON.toJSON(languagePack));
 			response.addHeader("ETag", ""+fileEtag);
 			
@@ -62,6 +62,7 @@ public class LocalizationServlet extends HttpServlet
 	        json.setSuccess(true);
 	    }else {
 	    	response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	    	CFW.Context.Request.addAlertMessage(MessageType.WARNING, "Language could not be loaded. Try to refresh the page.");
 	    	json.setSuccess(false);
 	    }
 		

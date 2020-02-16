@@ -231,7 +231,6 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 		});
 	}
 	
-	console.log($(inputField));
 	//--------------------------------------------------------------
 	// execute a function presses a key on the keyboard
 	//--------------------------------------------------------------
@@ -856,15 +855,8 @@ function cfw_showModal(modalTitle, modalBody, jsCode){
 	//---------------------------------
 	// Add Callback
 	if(jsCode != null){
-		console.log("jsCode:"+jsCode);
 		defaultModal.on('hidden.bs.modal', function () {
-			if(typeof jsCode === "function"){
-				console.log("function");
-				jsCode();
-			}else{
-				console.log("code");
-				eval(jsCode);
-			}
+			cfw_executeCodeOrFunction(jsCode);
 			$("#"+modalID).off('hidden.bs.modal');
 		});	
 	}
@@ -921,15 +913,9 @@ function cfw_showSmallModal(modalTitle, modalBody, jsCode){
 	//---------------------------------
 	// Add Callback
 	if(jsCode != null){
-		console.log("jsCode:"+jsCode);
+
 		defaultModal.on('hidden.bs.modal', function () {
-			if(typeof jsCode === "function"){
-				console.log("function");
-				jsCode();
-			}else{
-				console.log("code");
-				eval(jsCode);
-			}
+			cfw_executeCodeOrFunction(jsCode);
 			$("#"+modalID).off('hidden.bs.modal');
 		});	
 	}
@@ -1191,9 +1177,10 @@ function cfw_getJSON(url, params, callbackFunc){
 		    //alert( "done" );
 			  callbackFunc(response, status, xhr);
 		  })
-		  .fail(function(response) {
-			  console.error("Request failed: "+url);
+		  .fail(function(xhr, status, thrownError) {
 			  CFW.ui.addToast("Request failed", "URL: "+url, "danger", CFW.config.toastErrorDelay)
+			  var response = JSON.parse(xhr.responseText);
+			  cfw_handleMessages(response);
 			  //callbackFunc(response);
 		  })
 		  .always(function(response) {
@@ -1229,9 +1216,10 @@ function cfw_postJSON(url, params, callbackFunc){
 		    //alert( "done" );
 			  if(callbackFunc != null) callbackFunc(response, status, xhr);
 		  })
-		  .fail(function(response) {
-			  console.error("Request failed: "+url);
-			  CFW.ui.addToast("Request failed", "URL: "+url, "danger", CFW.config.toastErrorDelay)
+		  .fail(function(xhr, status, errorThrown) {
+			  CFW.ui.addToast("Request failed", "URL: "+url, "danger", CFW.config.toastErrorDelay);
+			  var response = JSON.parse(xhr.responseText);
+			  cfw_handleMessages(response);
 			  //callbackFunc(response);
 		  })
 		  .always(function(response) {
@@ -1267,10 +1255,11 @@ function cfw_getForm(formid, targetElement){
 		      formID = $(targetElement).find('form').attr("id");
               eval("intializeForm_"+formID+"();");
 		  })
-		  .fail(function(response) {
+		  .fail(function(xhr, status, errorThrown) {
 			  console.error("Request failed: "+url);
 			  CFW.ui.addToast("Request failed", "URL: "+url, "danger", CFW.config.toastErrorDelay)
-
+			  var response = JSON.parse(xhr.responseText);
+			  cfw_handleMessages(response);
 		  })
 		  .always(function(response) {
 			  cfw_handleMessages(response);			  
@@ -1461,20 +1450,21 @@ function cfw_loadLocalization(){
 	if(CFW.cache.lang == null){
 		$.ajaxSetup({async: false});
 			cfw_getJSON("/cfw/locale", {id: JSDATA.localeIdentifier}, function(data, status, xhr){
-				console.log("status"+status);
-				console.log("xhr.status"+xhr.status);
 				
-				var object;
 				if (xhr.status == 200){
 					window.localStorage.setItem("lang-"+JSDATA.localeIdentifier, JSON.stringify(data.payload) );
-					object = data.payload;
+					CFW.cache.lang = data.payload;
 				}else if (xhr.status == 304){
-					object = JSON.parse(window.localStorage.getItem("lang-"+JSDATA.localeIdentifier));
+					CFW.cache.lang = JSON.parse(window.localStorage.getItem("lang-"+JSDATA.localeIdentifier));
 				}
-				
-				CFW.cache.lang = object;
+
 			});
 		$.ajaxSetup({async: true});
+		
+		//if load not successful, try to fall back to localStorage
+		if(CFW.cache.lang == null){
+			CFW.cache.lang = JSON.parse(window.localStorage.getItem("lang-"+JSDATA.localeIdentifier));
+		}
 	}
 }
 
@@ -1484,7 +1474,7 @@ function cfw_loadLocalization(){
 function cfw_lang(key, defaultValue){
 
 	var value = CFW.cache.lang[key];
-	console.log(CFW.cache.lang);
+
 	if(value != null){
 		return value;
 	}else{

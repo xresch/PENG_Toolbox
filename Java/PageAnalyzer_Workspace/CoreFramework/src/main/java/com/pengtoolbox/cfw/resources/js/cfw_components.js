@@ -250,10 +250,8 @@ class CFWFormField{
 		var value = this.options.value;
 		
 		if(value != null && value.toString().toLowerCase() == "true") {
-			console.log('createBooleanRadios true: '+value+" "+this.options.name)
 			trueChecked = "checked";
 		}else {
-			console.log('createBooleanRadios false: '+value+" "+this.options.name)
 			falseChecked = "checked";
 		}
 		
@@ -269,7 +267,6 @@ class CFWFormField{
 			+ '  <label class="form-check-label" for="inlineRadio1">false</label>'
 			+ '</div>'; 
 		
-		console.log(htmlString);
 		return htmlString;
 	}
 
