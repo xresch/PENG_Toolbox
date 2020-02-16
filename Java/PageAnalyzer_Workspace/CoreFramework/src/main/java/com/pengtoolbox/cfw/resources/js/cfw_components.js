@@ -43,7 +43,7 @@ class CFWRenderer{
 		 	bulkActionsPos: "top",
 			// the data that should be rendered as an array
 		 	data: null,
-		 	// settings specific for the renderer
+		 	// settings specific for the renderer, add as "rendererSettings.{rendererName}.{render setting}"
 		 	rendererSettings: {}
 		 };
 		  

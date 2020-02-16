@@ -3,10 +3,12 @@ ALWAYS ON
 =========
 - Use addJSFileBottomSingle() instead of addJSFileBottomAssembly() where applicable
 - Create Manual Pages
+- Cleanup console.log() and System.out.println()
 
 TODO
 ====
-- Render Specific Settings
+- Tile Fullscreen
+- add description to widget
 - Create Pagination Renderer
 - XSS: Prevent and create Permissions Allow HTML and Allow Javascript
 - Finish javascript CFWFormField
@@ -14,7 +16,7 @@ TODO
 - Create Encryption/Decryption for DB
 - Create loading mechanism for features as plugins
 - Manual: Highlight and expand menu entry on page-parameter links
-- Manual: Change chevron icon wen page gets expanded/collapsed
+- Manual: Change chevron icon when page gets expanded/collapsed
 - Implement custom shutdown stopping database, application, features, etc...
 - Dashboard: Create a dashboard using gridstack.js or similar >> https://dzone.com/articles/7-javascript-libraries-for-dashboards 
 
@@ -43,6 +45,7 @@ TODO
 
 DONE
 ====
+- Render Specific Settings
 - change cookie name to CFWSESSIONID
 - Create own file cfw_components.js
 - Splitted assembly js/css into CFW defaults and customs for performance improvements.

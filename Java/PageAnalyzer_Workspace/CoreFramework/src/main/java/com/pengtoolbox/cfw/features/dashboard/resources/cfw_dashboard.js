@@ -496,7 +496,17 @@ function addTestdata(){
 		}
 	});
 	
-	cfw_dashboard_createWidgetByType('cfw_iframe', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", url: "https://api.jquery.com/data/" });
+	cfw_dashboard_createWidgetByType('cfw_iframe', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", url: "./cpusampling" });
+	
+	cfw_dashboard_createWidgetByType('cfw_table', {x:6, y:0, gsheight: 5, gswidth: 7, title: "Table Test Lot of Data", 
+		settings: {
+			delimiter: ';',
+			narrow: true,
+			striped: true,
+			filter: true,
+			tableData: "PK_ID;TIME;FK_ID_SIGNATURE;FK_ID_PARENT;COUNT;MIN;AVG;MAX;GRANULARITY\n2943;2020-02-01 15:51:21.606;1;null;540;180;180;180;15\n2944;2020-02-01 15:51:21.606;2;null;540;180;180;180;15\n2945;2020-02-01 15:51:21.606;3;2;540;180;180;180;15\n2946;2020-02-01 15:51:21.606;4;3;540;180;180;180;15\n2947;2020-02-01 15:51:21.606;4;53;540;180;180;180;15\n2948;2020-02-01 15:51:21.606;4;74;2430;690;810;1020;15\n2949;2020-02-01 15:51:21.606;5;4;3510;1050;1170;1380;15\n2950;2020-02-01 15:51:21.606;5;67;1080;340;360;380;15\n2951;2020-02-01 15:51:21.606;6;null;540;180;180;180;15\n2952;2020-02-01 15:51:21.606;7;6;540;180;180;180;15\n2953;2020-02-01 15:51:21.606;7;12;540;180;180;180;15\n2954;2020-02-01 15:51:21.606;8;7;1080;360;360;360;15\n2955;2020-02-01 15:51:21.606;9;8;1080;360;360;360;15\n2956;2020-02-01 15:51:21.606;10;9;1080;360;360;360;15\n2957;2020-02-01 15:51:21.606;11;10;540;180;180;180;15\n2958;2020-02-01 15:51:21.606;12;11;540;180;180;180;15\n2959;2020-02-01 15:51:21.606;13;10;540;180;180;180;15"
+		}
+	});
 	
 	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 5, gswidth: 5, title: "Table Test Maximal",
 		settings: {

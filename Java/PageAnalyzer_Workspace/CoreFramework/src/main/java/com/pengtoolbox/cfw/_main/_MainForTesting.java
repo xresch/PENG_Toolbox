@@ -1,9 +1,10 @@
 package com.pengtoolbox.cfw._main;
 
+import java.util.Locale;
 import java.util.logging.Logger;
 
-import org.eclipse.jetty.servlet.ServletContextHandler;
-
+import com.pengtoolbox.cfw.caching.FileDefinition;
+import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.features.config.Configuration;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
@@ -27,6 +28,8 @@ public class _MainForTesting implements CFWAppInterface {
 
 	@Override
 	public void register() {
+		
+		CFW.Localization.registerLocaleFile(Locale.ENGLISH, new FileDefinition(HandlingType.FILE, "./testdata", "testlang_en.properties"));
 		
 		CFW.Registry.Components.addRegularMenuItem(
 				(MenuItem)new MenuItem("Test Pages")
@@ -55,12 +58,12 @@ public class _MainForTesting implements CFWAppInterface {
 	@Override
 	public void startApp(CFWApplicationExecutor app) {
 
-        app.addUnsecureServlet(GeneralTestServlet.class, "/test/general");
-        app.addUnsecureServlet(FormTestServlet.class, "/test/form");
+        app.addUnsecureServlet(GeneralTestServlet.class, "/general");
+        app.addUnsecureServlet(FormTestServlet.class, "/form");
         //###################################################################
         // Startup
         //###################################################################
-        app.setDefaultURL("/test/general", false);
+        app.setDefaultURL("/general", false);
         try {
 			app.start();
 		} catch (Exception e) {

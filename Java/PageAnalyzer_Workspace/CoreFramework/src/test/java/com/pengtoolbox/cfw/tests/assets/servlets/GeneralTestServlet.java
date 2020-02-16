@@ -76,8 +76,8 @@ public class GeneralTestServlet extends HttpServlet
 		//------------------------------
 		// Test Localization
 		//------------------------------
-		content.append("<p><strong>Localization Test(success):</strong> {!cfw_lang_test_key!}<p>");
-		content.append("<p><strong>Localization Test(fail):</strong> {!lang.does.not.exist!}<p>");
+		content.append("<p><strong>Localization Test(success if 'Edit'):</strong> {!cfw_test_edit!}<p>");
+		content.append("<p><strong>Localization Test(success if 'lang.does.not.exist'):</strong> {!lang.does.not.exist!}<p>");
 		
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
