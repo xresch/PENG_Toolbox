@@ -13,8 +13,33 @@
  *Override gridstack
  **************************************************************/
 .grid-stack > .grid-stack-item > .grid-stack-item-content {
+	right: 5px;
+	left: 5px;
     overflow-x: visible;
     overflow-y: visible; 
+}
+
+.grid-stack>.grid-stack-item>.ui-resizable-se {
+    right: 5px;
+}
+
+.grid-stack>.grid-stack-item>.ui-resizable-sw {
+    left: 5px;
+}
+
+.grid-stack>.grid-stack-item>.ui-resizable-s {
+    height: 7px;
+    left: 25px;
+    bottom: -5px;
+    right: 25px;
+}
+
+.grid-stack>.grid-stack-item>.ui-resizable-e {
+    cursor: e-resize;
+    width: 7px;
+    right: -2px;
+    top: 25px;
+    bottom: 25px;
 }
 
 /**************************************************************
@@ -22,7 +47,7 @@
  **************************************************************/
 /* width */
 ::-webkit-scrollbar {
-  width: 15px;
+  width: 10px;
   height: 15px;
   direction: rtl;
 }

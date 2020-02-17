@@ -413,7 +413,8 @@ function cfw_dashboard_initializeGridstack(gridStackElementSelector){
 		resizable: {
 		    handles: 'e, se, s, sw, w'
 		  },
-		cellHeight: 60
+		cellHeight: 60,
+		verticalMargin: 10
 	});
 	
 	//-----------------------------
