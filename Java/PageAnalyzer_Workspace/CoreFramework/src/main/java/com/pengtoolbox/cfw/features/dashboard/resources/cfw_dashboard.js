@@ -510,7 +510,7 @@ function addTestdata(){
 		}
 	});
 	
-	cfw_dashboard_createWidgetByType('cfw_iframe', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", url: "./cpusampling" });
+	cfw_dashboard_createWidgetByType('cfw_iframe', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", settings: { url: "./cpusampling" } } );
 	
 	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 4, gswidth: 5, title: "Table Test Minimal", 
 		settings: {
@@ -518,7 +518,7 @@ function addTestdata(){
 		}
 	});
 	
-	cfw_dashboard_createWidgetByType('cfw_image', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", url: "/resources/images/login_background.jpg" });
+	cfw_dashboard_createWidgetByType('cfw_image', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", settings: { url: "/resources/images/login_background.jpg" } } );
 	
 	cfw_dashboard_createWidgetByType('cfw_text', {x:0, y:0, gsheight: 2, gswidth: 2, title: "Test Success", bgcolor: "success", textcolor: "light"});
 	cfw_dashboard_createWidgetByType('cfw_text', {x:11, y:0, gsheight: 5, gswidth: 2, title: "Test Danger", bgcolor: "danger", textcolor: "light"});
