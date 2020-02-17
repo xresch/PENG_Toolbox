@@ -258,7 +258,7 @@ class CFWFormField{
 		var disabled = "";
 		if(this.options.disabled) {	disabled = "disabled=\"disabled\""; };
 		
-		htmlString = '<div class="form-check form-check-inline col-form-labelmt-5">'
+		var htmlString = '<div class="form-check form-check-inline col-form-labelmt-5">'
 			+ '  <input class="form-check-input" type="radio" value="true" name='+this.options.name+' '+disabled+' '+trueChecked+'/>'
 			+ '  <label class="form-check-label" for="inlineRadio1">true</label>'
 			+ '</div>'

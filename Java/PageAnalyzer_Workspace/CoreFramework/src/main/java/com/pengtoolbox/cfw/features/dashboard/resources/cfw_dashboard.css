@@ -114,3 +114,10 @@
     top: 0px;
     right: 0px;
 }
+
+.dashboard-image {
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}

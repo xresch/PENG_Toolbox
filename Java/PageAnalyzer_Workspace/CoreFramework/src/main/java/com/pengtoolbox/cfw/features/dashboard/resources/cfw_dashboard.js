@@ -42,12 +42,18 @@ function cfw_dashboard_getWidget(widgetUniqueType){
 
 /************************************************************************************************
  * 
+ * @param faiconClasses
+ * @param the name of the category, used to reference the category
+ * @param the label of the category, used for localization
  ************************************************************************************************/
-function cfw_dashboard_registerCategory(categoryName, faiconClasses){
+function cfw_dashboard_registerCategory(faiconClasses, categoryName, categoryLabel){
 	
+	if(categoryLabel == null){
+		categoryLabel = categoryName;
+	}
 	var categoryHTML = 
 		'<li class="dropdown dropdown-submenu show">'
-			+'<a href="#" class="dropdown-item dropdown-toggle" id="cfwMenuDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><div class="cfw-fa-box"><i class="'+faiconClasses+'"></i></div><span class="cfw-menuitem-label">'+categoryName+'</span><span class="caret"></span></a>'
+			+'<a href="#" class="dropdown-item dropdown-toggle" id="cfwMenuDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><div class="cfw-fa-box"><i class="'+faiconClasses+'"></i></div><span class="cfw-menuitem-label">'+categoryLabel+'</span><span class="caret"></span></a>'
 			+'<ul class="dropdown-menu dropdown-submenu" aria-labelledby="cfwMenuDropdown" data-submenuof="'+categoryName+'">'
 			+'</ul>'
 		+'</li>'
@@ -76,13 +82,16 @@ function cfw_dashboard_createFormField(label, infotext, fieldHTML){
 function cfw_dashboard_editWidget(widgetGUID){
 	var widgetInstance = $('#'+widgetGUID);
 	var widgetData = widgetInstance.data("widgetData");
+	var widgetDef = CFW.dashboard.getWidget(widgetData.widgetType);
 	console.log(widgetInstance);
 	console.log(widgetData);
 	
 	//##################################################
 	// Show Form for Default values
 	//##################################################
-	var defaultForm = '<h2>Widget Default Settings</h2><form id="form-edit-'+widgetGUID+'">';
+	var defaultForm = 
+		'<h2>Description</h2><p>'+widgetDef.description+'</p>'
+		+'<h2>Widget Default Settings</h2><form id="form-edit-'+widgetGUID+'">';
 	
 	//------------------------------
 	// Title
@@ -134,7 +143,6 @@ function cfw_dashboard_editWidget(widgetGUID){
 	//##################################################
 	// Create Widget Specific Form
 	//##################################################
-	var widgetDef = CFW.dashboard.getWidget(widgetData.widgetType);
 	var customForm = $(widgetDef.getEditForm(widgetData));
 	var buttons = customForm.find('button');
 	if(buttons.length > 0){
@@ -486,39 +494,42 @@ function addTestdata(){
 			};
 	
 		
-		cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 5, gswidth: 5, title: "Table Test Maximal",
-			settings: {
-				tableData: rendererTestdata
-			}
-		});
-		
-		cfw_dashboard_createWidgetByType('cfw_table', {x:6, y:0, gsheight: 5, gswidth: 7, title: "Table Test Lot of Data", 
-			settings: {
-				delimiter: ';',
-				narrow: true,
-				striped: true,
-				filter: true,
-				tableData: "PK_ID;TIME;FK_ID_SIGNATURE;FK_ID_PARENT;COUNT;MIN;AVG;MAX;GRANULARITY\n2943;2020-02-01 15:51:21.606;1;null;540;180;180;180;15\n2944;2020-02-01 15:51:21.606;2;null;540;180;180;180;15\n2945;2020-02-01 15:51:21.606;3;2;540;180;180;180;15\n2946;2020-02-01 15:51:21.606;4;3;540;180;180;180;15\n2947;2020-02-01 15:51:21.606;4;53;540;180;180;180;15\n2948;2020-02-01 15:51:21.606;4;74;2430;690;810;1020;15\n2949;2020-02-01 15:51:21.606;5;4;3510;1050;1170;1380;15\n2950;2020-02-01 15:51:21.606;5;67;1080;340;360;380;15\n2951;2020-02-01 15:51:21.606;6;null;540;180;180;180;15\n2952;2020-02-01 15:51:21.606;7;6;540;180;180;180;15\n2953;2020-02-01 15:51:21.606;7;12;540;180;180;180;15\n2954;2020-02-01 15:51:21.606;8;7;1080;360;360;360;15\n2955;2020-02-01 15:51:21.606;9;8;1080;360;360;360;15\n2956;2020-02-01 15:51:21.606;10;9;1080;360;360;360;15\n2957;2020-02-01 15:51:21.606;11;10;540;180;180;180;15\n2958;2020-02-01 15:51:21.606;12;11;540;180;180;180;15\n2959;2020-02-01 15:51:21.606;13;10;540;180;180;180;15"
-			}
-		});
-		
-		cfw_dashboard_createWidgetByType('cfw_iframe', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", url: "./cpusampling" });
-		
-		cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 4, gswidth: 5, title: "Table Test Minimal", 
-			settings: {
-				tableData: rendererTestdataMinimal 
-			}
-		});
-		
-	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 2, gswidth: 2, title: "Test Success", bgcolor: "success", textcolor: "light"});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:11, y:0, gsheight: 5, gswidth: 2, title: "Test Danger", bgcolor: "danger", textcolor: "light"});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:8, y:0, gsheight: 3, gswidth: 2, title: "Test Primary and Object", bgcolor: "primary", textcolor: "light", data: {firstname: "Jane", lastname: "Doe", street: "Fantasyroad 22", city: "Nirwana", postal_code: "8008" }});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:7, y:0, gsheight: 5, gswidth: 3, title: "Test Light and Array", bgcolor: "light", textcolor: "secondary", data: ["Test", "Foo", "Bar", 3, 2, 1]});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:2, y:0, gsheight: 2, gswidth: 4, title: "Test Matrix", bgcolor: "dark", textcolor: "success", data: "Mister ÄÄÄÄÄÄÄÄÄÄÄnderson."});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:9, y:0, gsheight: 2, gswidth: 4, title: "Test Warning", bgcolor: "warning", textcolor: "dark"});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:3, y:0, gsheight: 4, gswidth: 5});
-	cfw_dashboard_createWidgetByType('cfw_html', {x:0, y:0, gsheight: 3, gswidth: 3});
-	cfw_dashboard_createWidgetByType('cfw_html');
+	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 5, gswidth: 5, title: "Table Test Maximal",
+		settings: {
+			tableData: rendererTestdata
+		}
+	});
+	
+	cfw_dashboard_createWidgetByType('cfw_table', {x:6, y:0, gsheight: 5, gswidth: 7, title: "Table Test Lot of Data", 
+		settings: {
+			delimiter: ';',
+			narrow: true,
+			striped: true,
+			filter: true,
+			tableData: "PK_ID;TIME;FK_ID_SIGNATURE;FK_ID_PARENT;COUNT;MIN;AVG;MAX;GRANULARITY\n2943;2020-02-01 15:51:21.606;1;null;540;180;180;180;15\n2944;2020-02-01 15:51:21.606;2;null;540;180;180;180;15\n2945;2020-02-01 15:51:21.606;3;2;540;180;180;180;15\n2946;2020-02-01 15:51:21.606;4;3;540;180;180;180;15\n2947;2020-02-01 15:51:21.606;4;53;540;180;180;180;15\n2948;2020-02-01 15:51:21.606;4;74;2430;690;810;1020;15\n2949;2020-02-01 15:51:21.606;5;4;3510;1050;1170;1380;15\n2950;2020-02-01 15:51:21.606;5;67;1080;340;360;380;15\n2951;2020-02-01 15:51:21.606;6;null;540;180;180;180;15\n2952;2020-02-01 15:51:21.606;7;6;540;180;180;180;15\n2953;2020-02-01 15:51:21.606;7;12;540;180;180;180;15\n2954;2020-02-01 15:51:21.606;8;7;1080;360;360;360;15\n2955;2020-02-01 15:51:21.606;9;8;1080;360;360;360;15\n2956;2020-02-01 15:51:21.606;10;9;1080;360;360;360;15\n2957;2020-02-01 15:51:21.606;11;10;540;180;180;180;15\n2958;2020-02-01 15:51:21.606;12;11;540;180;180;180;15\n2959;2020-02-01 15:51:21.606;13;10;540;180;180;180;15"
+		}
+	});
+	
+	cfw_dashboard_createWidgetByType('cfw_iframe', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", url: "./cpusampling" });
+	
+	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 4, gswidth: 5, title: "Table Test Minimal", 
+		settings: {
+			tableData: rendererTestdataMinimal 
+		}
+	});
+	
+	cfw_dashboard_createWidgetByType('cfw_image', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", url: "/resources/images/login_background.jpg" });
+	
+	cfw_dashboard_createWidgetByType('cfw_text', {x:0, y:0, gsheight: 2, gswidth: 2, title: "Test Success", bgcolor: "success", textcolor: "light"});
+	cfw_dashboard_createWidgetByType('cfw_text', {x:11, y:0, gsheight: 5, gswidth: 2, title: "Test Danger", bgcolor: "danger", textcolor: "light"});
+	cfw_dashboard_createWidgetByType('cfw_text', {x:8, y:0, gsheight: 3, gswidth: 2, title: "Test Primary and Object", bgcolor: "primary", textcolor: "light", data: {firstname: "Jane", lastname: "Doe", street: "Fantasyroad 22", city: "Nirwana", postal_code: "8008" }});
+	cfw_dashboard_createWidgetByType('cfw_text', {x:7, y:0, gsheight: 5, gswidth: 3, title: "Test Light and Array", bgcolor: "light", textcolor: "secondary", data: ["Test", "Foo", "Bar", 3, 2, 1]});
+	cfw_dashboard_createWidgetByType('cfw_text', {x:2, y:0, gsheight: 2, gswidth: 4, title: "Test Matrix", bgcolor: "dark", textcolor: "success", data: "Mister ÄÄÄÄÄÄÄÄÄÄÄnderson."});
+	cfw_dashboard_createWidgetByType('cfw_text', {x:9, y:0, gsheight: 2, gswidth: 4, title: "Test Warning", bgcolor: "warning", textcolor: "dark"});
+	cfw_dashboard_createWidgetByType('cfw_text', {x:3, y:0, gsheight: 4, gswidth: 5});
+	cfw_dashboard_createWidgetByType('cfw_text', {x:0, y:0, gsheight: 3, gswidth: 3});
+	cfw_dashboard_createWidgetByType('cfw_text');
+	
 	
 
 	
@@ -551,3 +562,8 @@ function cfw_dashboard_draw(){
 	}, 100);
 }
 
+/******************************************************************
+ * Initialize Localization
+ * has to be done before widgets are registered
+ ******************************************************************/
+CFW.lang.loadLocalization();

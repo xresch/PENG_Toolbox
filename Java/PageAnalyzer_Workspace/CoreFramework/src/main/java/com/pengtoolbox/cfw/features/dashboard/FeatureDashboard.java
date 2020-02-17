@@ -1,8 +1,12 @@
 package com.pengtoolbox.cfw.features.dashboard;
 
+import java.util.Locale;
+
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWAppFeature;
 import com.pengtoolbox.cfw._main.CFWApplicationExecutor;
+import com.pengtoolbox.cfw.caching.FileDefinition;
+import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 
@@ -19,6 +23,12 @@ public class FeatureDashboard extends CFWAppFeature {
 	
 	@Override
 	public void register() {
+		
+		//----------------------------------
+		// Register Languages
+		CFW.Localization.registerLocaleFile(Locale.ENGLISH, "/app/dashboard", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "lang_en_dashboard.properties"));
+		CFW.Localization.registerLocaleFile(Locale.GERMAN, "/app/dashboard", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "lang_de_dashboard.properties"));
+		
 		//----------------------------------
 		// Register Package
 		CFW.Files.addAllowedPackage(RESOURCE_PACKAGE);
