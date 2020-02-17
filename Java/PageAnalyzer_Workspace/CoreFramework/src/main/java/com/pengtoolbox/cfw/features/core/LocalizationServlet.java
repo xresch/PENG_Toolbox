@@ -34,8 +34,9 @@ public class LocalizationServlet extends HttpServlet
 		response.addHeader("Cache-Control", "max-age="+CFWProperties.BROWSER_RESOURCE_MAXAGE);
 		
 		//-----------------------
-		// Fetch Assembly
-		Properties languagePack = CFW.Localization.getLanguagePackForRequest();
+		// Fetch LanguagePack
+		String localeIdentifier = request.getParameter("id");
+		Properties languagePack = CFW.Localization.getLanguagePackeByIdentifier(localeIdentifier);
 
 		int fileEtag = languagePack.hashCode();
 		

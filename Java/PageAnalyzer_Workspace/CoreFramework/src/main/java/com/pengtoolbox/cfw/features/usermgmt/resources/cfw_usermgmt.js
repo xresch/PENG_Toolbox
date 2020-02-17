@@ -28,8 +28,8 @@ function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 				var cfwTable = new CFWTable();
 				
 				cfwTable.addHeaders(['&nbsp;',
-					CFW.lang.get('cfw_usermgmt_name'),
-					CFW.lang.get('cfw_usermgmt_description')]);
+					CFWL('cfw_usermgmt_name'),
+					CFWL('cfw_usermgmt_description')]);
 				var resultCount = data.payload.length;
 				if(resultCount == 0){
 					CFW.ui.addAlert("info", "Hmm... seems there aren't any roles in the list.");
@@ -75,7 +75,7 @@ function cfw_usermgmt_createUser(){
 
 	CFW.http.getForm('cfwCreateUserForm', html);
 	
-	CFW.ui.showModal("Create User", html, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'users'})");
+	CFW.ui.showModal(CFWL('cfw_usermgmt_createUser', "Create User"), html, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'users'})");
 	
 }
 
@@ -91,14 +91,14 @@ function cfw_usermgmt_editUser(userID){
 	// User Details
 	//-----------------------------------
 	var detailsDiv = $('<div id="cfw-usermgmt-details">');
-	detailsDiv.append('<h2>User Details</h2>');
+	detailsDiv.append('<h2>'+CFWL('cfw_usermgmt_user', 'User')+'Details</h2>');
 	allDiv.append(detailsDiv);
 	
 	//-----------------------------------
 	// Roles
 	//-----------------------------------
 	var roleDiv = $('<div id="cfw-usermgmt-roles">');
-	roleDiv.append('<h2>Roles</h2>');
+	roleDiv.append('<h2>'+CFWL('cfw_usermgmt_roles', "Roles")+'</h2>');
 	allDiv.append(roleDiv);
 	
 	cfw_usermgmt_createToggleTable(roleDiv, "userrolemap", userID)
@@ -145,7 +145,7 @@ function cfw_usermgmt_createRole(){
 
 	CFW.http.getForm('cfwCreateRoleForm', html);
 	
-	CFW.ui.showModal("Create Role", html, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'roles'})");
+	CFW.ui.showModal(CFWL('cfw_usermgmt_createRole', "Create Role"), html, "CFW.cache.clearCache(); cfw_usermgmt_draw({tab: 'roles'})");
 	
 }
 /******************************************************************
@@ -159,14 +159,14 @@ function cfw_usermgmt_editRole(roleID){
 	// Role Details
 	//-----------------------------------
 	var detailsDiv = $('<div id="cfw-usermgmt-details">');
-	detailsDiv.append('<h2>Role Details</h2>');
+	detailsDiv.append('<h2>'+CFWL('cfw_usermgmt_role', "Role")+' Details</h2>');
 	allDiv.append(detailsDiv);
 	
 	//-----------------------------------
 	// Permissions
 	//-----------------------------------
 	var permissionDiv = $('<div id="cfw-usermgmt-roles">');
-	permissionDiv.append('<h2>Permissions</h2>');
+	permissionDiv.append('<h2>'+CFWL('cfw_usermgmt_permissions', "Permissions")+'</h2>');
 	allDiv.append(permissionDiv);
 	
 	cfw_usermgmt_createToggleTable(permissionDiv, "rolepermissionmap", roleID)
@@ -216,7 +216,7 @@ function cfw_usermgmt_printUserList(data){
 	//--------------------------------
 	// Button
 	var createButton = $('<button class="btn btn-sm btn-success mb-2" onclick="cfw_usermgmt_createUser()">'
-							+ '<i class="fas fa-plus-circle"></i> '+ CFW.lang.get('cfw_usermgmt_createUser')
+							+ '<i class="fas fa-plus-circle"></i> '+ CFWL('cfw_usermgmt_createUser')
 					   + '</button>');
 	
 	parent.append(createButton);
@@ -297,7 +297,7 @@ function cfw_usermgmt_printRoleList(data){
 	//--------------------------------
 	// Button
 	var createButton = $('<button class="btn btn-sm btn-success mb-2" onclick="cfw_usermgmt_createRole()">'
-							+ '<i class="fas fa-plus-circle"></i> '+ CFW.lang.get('cfw_usermgmt_createRole')
+							+ '<i class="fas fa-plus-circle"></i> '+ CFWL('cfw_usermgmt_createRole')
 					   + '</button>');
 	
 	parent.append(createButton);

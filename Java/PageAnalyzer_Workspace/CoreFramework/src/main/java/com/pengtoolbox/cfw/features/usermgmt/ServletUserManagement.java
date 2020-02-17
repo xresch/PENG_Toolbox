@@ -53,7 +53,7 @@ public class ServletUserManagement extends HttpServlet
 			//html.addJSFileBottomSingle(new FileDefinition(HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".js", "cfw_usermgmt.js"));
 			html.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FeatureUserManagement.RESOURCE_PACKAGE, "cfw_usermgmt.js");
 			
-			content.append(CFW.Files.readPackageResource(FileDefinition.CFW_JAR_RESOURCES_PATH + ".html", "cfw_usermgmt.html"));
+			content.append(CFW.Files.readPackageResource(FeatureUserManagement.RESOURCE_PACKAGE, "cfw_usermgmt.html"));
 			
 			html.addJavascriptCode("cfw_usermgmt_initialDraw({tab: 'users'});");
 			

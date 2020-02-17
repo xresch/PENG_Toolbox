@@ -1486,6 +1486,7 @@ function cfw_lang(key, defaultValue){
  * CFW FRAMEWORK STRUCTURE
  * -----------------------
  ********************************************************************/
+var CFWL = cfw_lang;
 
 var CFW = {
 	global: {

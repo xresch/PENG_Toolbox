@@ -108,6 +108,12 @@ public class CFWLocalization {
 	
 	/******************************************************************************************
 	 * 
+	 ******************************************************************************************/
+	public static Properties getLanguagePackeByIdentifier(String localeIdentifier) {
+		return languageCache.get(localeIdentifier);
+	}
+	/******************************************************************************************
+	 * 
 	 * @param request
 	 * @param response
 	 * @return 
@@ -142,7 +148,18 @@ public class CFWLocalization {
 			
 			LinkedProperties mergedPorperties = new LinkedProperties();
 	
+			Locale lastlocale = null;
 			for(Locale locale : locales) {
+				
+				//----------------------------
+				// Skip reoccuring language
+				if(lastlocale != null && locale.getLanguage().equals(lastlocale.getLanguage()) ) {
+					lastlocale = locale;
+					continue;
+				}else {
+					lastlocale = locale;
+				}
+				
 				String language = locale.getLanguage().toLowerCase(); 
 				for(Entry<String, FileDefinition> entry : localeFiles.entrySet()) {
 					String entryID = entry.getKey();
