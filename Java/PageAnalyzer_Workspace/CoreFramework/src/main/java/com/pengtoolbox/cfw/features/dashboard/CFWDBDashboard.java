@@ -100,6 +100,7 @@ public class CFWDBDashboard {
 				.queryCache(CFWDBDashboard.class, "getDashboardAsJSON")
 				.select()
 				.where(DashboardFields.FK_ID_USER.toString(), CFW.Context.Request.getUser().id())
+				.or(DashboardFields.IS_SHARED.toString(), true)
 				.where(DashboardFields.PK_ID.toString(), Integer.parseInt(id))
 				.getAsJSON();
 		
@@ -122,6 +123,22 @@ public class CFWDBDashboard {
 	}
 	
 	/***************************************************************
+	 * Return a list of all user dashboards
+	 * 
+	 * @return Returns a resultSet with all dashboards or null.
+	 ****************************************************************/
+	public static ResultSet getSharedDashboardList() {
+		
+		return new Dashboard()
+				.queryCache(CFWDBDashboard.class, "getSharedDashboardList")
+				.select()
+				.where(DashboardFields.IS_SHARED.toString(), true)
+				.orderby(DashboardFields.NAME.toString())
+				.getResultSet();
+		
+	}
+	
+	/***************************************************************
 	 * Return a list of all user dashboards as json string.
 	 * 
 	 * @return Returns a result set with all users or null.
@@ -132,6 +149,21 @@ public class CFWDBDashboard {
 				.queryCache(CFWDBDashboard.class, "getUserDashboardListAsJSON")
 				.select()
 				.where(DashboardFields.FK_ID_USER.toString(), CFW.Context.Request.getUser().id())
+				.orderby(DashboardFields.NAME.toString())
+				.getAsJSON();
+	}
+	
+	/***************************************************************
+	 * Return a list of all user dashboards as json string.
+	 * 
+	 * @return Returns a result set with all users or null.
+	 ****************************************************************/
+	public static String getSharedDashboardListAsJSON() {
+		
+		return new Dashboard()
+				.queryCache(CFWDBDashboard.class, "getSharedDashboardListAsJSON")
+				.select()
+				.where(DashboardFields.IS_SHARED.toString(), true)
 				.orderby(DashboardFields.NAME.toString())
 				.getAsJSON();
 	}

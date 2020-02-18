@@ -32,6 +32,7 @@ public class Dashboard extends CFWObject {
 		//CATEGORY,
 		NAME,
 		DESCRIPTION,
+		IS_SHARED,
 		IS_DELETABLE,
 		IS_RENAMABLE,
 	}
@@ -78,6 +79,11 @@ public class Dashboard extends CFWObject {
 			.setDescription("The description of the dashboard.")
 			.addValidator(new LengthValidator(-1, 2000000));
 	
+	private CFWField<Boolean> isShared = CFWField.newBoolean(FormFieldType.BOOLEAN, DashboardFields.IS_SHARED.toString())
+			.apiFieldType(FormFieldType.TEXT)
+			.setDescription("Make the dashboard shared with other people or keep it private.")
+			.setValue(false);
+	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, DashboardFields.IS_DELETABLE.toString())
 			.setDescription("Flag to define if the dashboard can be deleted or not.")
 			.setColumnDefinition("BOOLEAN")
@@ -118,7 +124,7 @@ public class Dashboard extends CFWObject {
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.addFields(id, foreignKeyUser, /*category,*/ name, description, isDeletable, isRenamable);
+		this.addFields(id, foreignKeyUser, /*category,*/ name, description, isShared, isDeletable, isRenamable);
 	}
 	
 	/**************************************************************************************
@@ -159,6 +165,7 @@ public class Dashboard extends CFWObject {
 //						DashboardFields.CATEGORY.toString(),
 						DashboardFields.NAME.toString(),
 						DashboardFields.DESCRIPTION.toString(),
+						DashboardFields.IS_SHARED.toString(),
 						DashboardFields.IS_DELETABLE.toString(),
 						DashboardFields.IS_RENAMABLE.toString(),		
 				};
@@ -224,6 +231,14 @@ public class Dashboard extends CFWObject {
 		return this;
 	}
 
+	public boolean isShared() {
+		return isShared.getValue();
+	}
+	
+	public Dashboard isShared(boolean isShared) {
+		this.isShared.setValue(isShared);
+		return this;
+	}
 	public boolean isDeletable() {
 		return isDeletable.getValue();
 	}

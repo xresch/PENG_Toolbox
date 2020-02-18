@@ -83,6 +83,10 @@ public class ServletDashboardList extends HttpServlet
 				switch(item.toLowerCase()) {
 					case "mydashboards": 		jsonResponse.getContent().append(CFW.DB.Dashboards.getUserDashboardListAsJSON());
 	  											break;
+	  											
+					case "shareddashboards": 	jsonResponse.getContent().append(CFW.DB.Dashboards.getSharedDashboardListAsJSON());
+												break;							
+	  											
 	  																					
 					default: 					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 												break;
