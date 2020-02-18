@@ -21,13 +21,13 @@ CFW.dashboard.registerWidget("cfw_text",
 			data: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", 
 			footer: "Some very long footer to test overflow",
 		},
-		createWidgetInstance: function (widgetData) {
+		createWidgetInstance: function (widgetData, callback) {
 							
 			var merged = Object.assign({}, this.defaultValues, widgetData);
 			var textRenderer = CFW.render.getRenderer('html');
 
-			merged.content = textRenderer.render({data: merged.data});
-			return CFW.dashboard.createWidget(merged);
+			var content = textRenderer.render({data: merged.data});
+			callback(widgetData, content);
 			
 		},
 		getEditForm: function (widgetData) {
@@ -71,7 +71,7 @@ CFW.dashboard.registerWidget("cfw_table",
 				tableData: "ID;Firstname;Lastname\r\n0;Jane;Doe\r\n1;Testika;Testonia",
 			}
 		},
-		createWidgetInstance: function (widgetData) {
+		createWidgetInstance: function (widgetData, callback) {
 				
 			//--------------------------
 			// Get Values
@@ -97,17 +97,12 @@ CFW.dashboard.registerWidget("cfw_table",
 				
 			}
 			
-			console.log('==== render Table ====');
-			console.log(objectArray);
-			
 			//--------------------------
 			// Get Values
 			var tableRenderer = CFW.render.getRenderer('table');
 			var cfwTable = tableRenderer.render(dataToRender);
-			
-			merged.content = cfwTable;
-			return CFW.dashboard.createWidget(merged);
-			
+
+			callback(widgetData, cfwTable);
 		},
 		getEditForm: function (widgetData) {
 			
@@ -149,16 +144,16 @@ CFW.dashboard.registerWidget("cfw_image",
 		defaultValues: {
 			title: CFWL('cfw_dashboard_widget_cfwimage', "Image"), 
 		},
-		createWidgetInstance: function (widgetData) {
+		createWidgetInstance: function (widgetData, callback) {
 							
 			var merged = Object.assign({}, this.defaultValues, widgetData);
-			var textRenderer = 
 
-			merged.content = 
+			var content = 
 				CFW.render.getRenderer('html').render({
 					data: '<div class="dashboard-image flex-grow-1" style="background-image: url(\''+widgetData.settings.url+'\');">'
 				});
-			return CFW.dashboard.createWidget(merged);
+			
+			callback(widgetData, content);
 			
 		},
 		getEditForm: function (widgetData) {
@@ -195,13 +190,13 @@ CFW.dashboard.registerWidget("cfw_iframe",
 			data: "",
 			url: "/resources/images/login_background.jpg"
 		},
-		createWidgetInstance: function (widgetData) {
+		createWidgetInstance: function (widgetData, callback) {
 							
 			var merged = Object.assign({}, this.defaultValues, widgetData);
 			var textRenderer = CFW.render.getRenderer('html');
 
-			merged.content = textRenderer.render({data: '<iframe class="w-100 flex-grow-1" src="'+widgetData.settings.url+'">'});
-			return CFW.dashboard.createWidget(merged);
+			content = textRenderer.render({data: '<iframe class="w-100 flex-grow-1" src="'+widgetData.settings.url+'">'});
+			callback(widgetData, content);
 			
 		},
 		getEditForm: function (widgetData) {

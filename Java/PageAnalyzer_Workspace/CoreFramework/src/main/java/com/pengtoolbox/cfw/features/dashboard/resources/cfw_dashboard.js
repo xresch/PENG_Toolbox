@@ -330,23 +330,26 @@ function cfw_dashboard_createWidgetByType(widgetType, widgetData) {
 		widgetData = widget.defaultValues;
 	}
 	
-	var widgetInstance = widget.createWidgetInstance(widgetData);
+	var widgetInstance = widget.createWidgetInstance(widgetData, function(widgetData, widgetContent){
+		
+		widgetData.content = widgetContent;
+		var widgetInstance = CFW.dashboard.createWidget(widgetData);
+		
+		var grid = $('.grid-stack').data('gridstack');
+		    
+	    grid.addWidget($(widgetInstance), x, y, gswidth, gsheight, doAutoposition);
+	    
+	    //----------------------------
+	    // Update Data
+	    var widgetData = $(widgetInstance).data('widgetData');
+	    
+	    widgetData.widgetType	= widgetType;
+	    widgetData.gswidth	= widgetInstance.attr("data-gs-width");
+	    widgetData.gsheight	= widgetInstance.attr("data-gs-height");
+	    widgetData.x		= widgetInstance.attr("data-gs-x");
+	    widgetData.y		= widgetInstance.attr("data-gs-y");
+	});
 	
-    var grid = $('.grid-stack').data('gridstack');
-    
-	console.log('widgetData.x'+x);
-	console.log('widgetData.y'+y);
-    grid.addWidget($(widgetInstance), x, y, gswidth, gsheight, doAutoposition);
-    
-    //----------------------------
-    // Update Data
-    var widgetData = $(widgetInstance).data('widgetData');
-    
-    widgetData.widgetType	= widgetType;
-    widgetData.gswidth	= widgetInstance.attr("data-gs-width");
-    widgetData.gsheight	= widgetInstance.attr("data-gs-height");
-    widgetData.x		= widgetInstance.attr("data-gs-x");
-    widgetData.y		= widgetInstance.attr("data-gs-y");
 }
 
 /******************************************************************
@@ -529,13 +532,6 @@ function addTestdata(){
 	cfw_dashboard_createWidgetByType('cfw_text', {x:3, y:0, gsheight: 4, gswidth: 5});
 	cfw_dashboard_createWidgetByType('cfw_text', {x:0, y:0, gsheight: 3, gswidth: 3});
 	cfw_dashboard_createWidgetByType('cfw_text');
-	
-	
-
-	
-
-	
-
 	
 }
 /******************************************************************
