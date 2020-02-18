@@ -162,12 +162,11 @@ function cfw_dashboardlist_printDashboards(data, type){
 				actions: [ 
 					//-------------------------
 					// View Button
-//					function (record, id){ 
-//						return '<td><button class="btn btn-success btn-sm" data-id="'+id+'" alt="View" title="View" '
-//						+'onclick="om_quotes_viewQuoteDetails(this);">'
-//						+ '<i class="fa fa-eye"></i>'
-//						+ '</button>&nbsp;</td>';
-//					},
+					function (record, id){ 
+						return '<td><a class="btn btn-success btn-sm" role="button" href="/app/dashboard/view?id='+id+'" alt="View" title="View" >'
+						+ '<i class="fa fa-eye"></i>'
+						+ '</a></td>';
+					},
 					//-------------------------
 					// Edit Button
 					function (record, id){ 
