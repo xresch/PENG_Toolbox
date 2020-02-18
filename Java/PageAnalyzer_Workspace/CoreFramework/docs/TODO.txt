@@ -7,7 +7,8 @@ ALWAYS ON
 
 TODO
 ====
-- Tile Fullscreen
+- Move core stuff to core feature
+- Dashboard Tile Fullscreen
 - add description to widget
 - Create Pagination Renderer
 - XSS: Prevent and create Permissions Allow HTML and Allow Javascript

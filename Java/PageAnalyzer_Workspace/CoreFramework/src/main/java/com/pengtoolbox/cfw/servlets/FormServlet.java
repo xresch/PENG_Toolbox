@@ -36,6 +36,8 @@ public class FormServlet extends HttpServlet
 		CFWForm form = CFW.Context.Session.getForm(id);
 		
     	JSONResponse json = new JSONResponse();
+    	json.useGlobaleLocale(true);
+    	
     	if(form == null) {
     		json.setSuccess(false);
     		new CFWLog(logger)
@@ -63,13 +65,14 @@ public class FormServlet extends HttpServlet
     	
     }
 	
-	
     protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
 	{
     	String formID = request.getParameter(CFWForm.FORM_ID);
     	CFWForm form = CFW.Context.Session.getForm(formID);
     	
     	JSONResponse json = new JSONResponse();
+    	json.useGlobaleLocale(true);
+    	
     	if(form == null) {
     		json.setSuccess(false);
     		new CFWLog(logger)

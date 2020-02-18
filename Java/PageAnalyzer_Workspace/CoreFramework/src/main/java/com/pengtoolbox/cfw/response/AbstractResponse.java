@@ -6,13 +6,14 @@ import com.pengtoolbox.cfw._main.CFW;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public abstract class AbstractResponse {
 
 	protected StringBuffer content = new StringBuffer();
 	protected HttpServletRequest request;
+	protected boolean useGlobaleLocale = false;
 	
 	public AbstractResponse(){
 		this.request = CFW.Context.Request.getRequest();
@@ -35,5 +36,15 @@ public abstract class AbstractResponse {
 	// Setters
 	//##############################################################################
 	public void setContent(StringBuffer content) {this.content = content;}
+
+	public boolean useGlobaleLocale() {
+		return this.useGlobaleLocale;
+	}
+	
+	public void useGlobaleLocale(boolean useGlobaleLocale) {
+		this.useGlobaleLocale = useGlobaleLocale;
+	}
+	
+	
 	
 }

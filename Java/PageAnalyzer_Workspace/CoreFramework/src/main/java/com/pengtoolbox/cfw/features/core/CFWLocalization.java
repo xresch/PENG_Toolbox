@@ -276,8 +276,12 @@ public class CFWLocalization {
 		AbstractResponse template = CFW.Context.Request.getResponse();
 		
 		if(template != null){
-	
-			Properties langMap = getLanguagePack(getLocalesForRequest());
+			Properties langMap;
+			if(template.useGlobaleLocale() == false) {
+				langMap = getLanguagePack(getLocalesForRequest());
+			}else {
+				langMap = getAllProperties();
+			}
 			
 			StringBuffer sb = template.buildResponse();
 			
