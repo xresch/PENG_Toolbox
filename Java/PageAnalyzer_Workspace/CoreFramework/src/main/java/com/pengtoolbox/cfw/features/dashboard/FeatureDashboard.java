@@ -23,24 +23,40 @@ public class FeatureDashboard extends CFWAppFeature {
 	
 	@Override
 	public void register() {
+		//----------------------------------
+		// Register Package
+		CFW.Files.addAllowedPackage(RESOURCE_PACKAGE);
 		
 		//----------------------------------
 		// Register Languages
 		CFW.Localization.registerLocaleFile(Locale.ENGLISH, "/app/dashboard", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "lang_en_dashboard.properties"));
 		CFW.Localization.registerLocaleFile(Locale.GERMAN, "/app/dashboard", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "lang_de_dashboard.properties"));
 		
-		//----------------------------------
-		// Register Package
-		CFW.Files.addAllowedPackage(RESOURCE_PACKAGE);
+    	//----------------------------------
+    	// Register Objects
+		CFW.Registry.Objects.addCFWObject(Dashboard.class);
 
     	//----------------------------------
     	// Register Regular Menu
 		CFW.Registry.Components.addRegularMenuItem(
-				(MenuItem)new MenuItem("Dashboard")
-					.faicon("fas fa-tachometer")
+				(MenuItem)new MenuItem("Dashboards")
+					.faicon("fas fa-tachometer-alt")
 					.addPermission(PERMISSION_DASHBOARDING)
-					.href("./dashboard")
 				, null);
+		
+		CFW.Registry.Components.addRegularMenuItem(
+				(MenuItem)new MenuItem("Dashboard Test View")
+					.faicon("fas fa-flask")
+					.addPermission(PERMISSION_DASHBOARDING)
+					.href("/app/dashboard/view")
+				, "Dashboards");
+		
+		CFW.Registry.Components.addRegularMenuItem(
+				(MenuItem)new MenuItem("Dashboard List")
+					.faicon("fas fa-images")
+					.addPermission(PERMISSION_DASHBOARDING)
+					.href("/app/dashboard/list")
+				, "Dashboards");
 		
 	}
 
@@ -58,7 +74,8 @@ public class FeatureDashboard extends CFWAppFeature {
 
 	@Override
 	public void addFeature(CFWApplicationExecutor app) {	
-    	app.addAppServlet(ServletDashboard.class,  "/dashboard");
+    	app.addAppServlet(ServletDashboardList.class,  "/dashboard/list");
+    	app.addAppServlet(ServletDashboardView.class,  "/dashboard/view");
 	}
 
 	@Override

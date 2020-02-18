@@ -21,7 +21,7 @@ import com.pengtoolbox.cfw.utils.LinkedProperties;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWLocalization {
@@ -41,6 +41,50 @@ public class CFWLocalization {
 		
 	private static final LinkedHashMap<String,Properties> languageCache = new LinkedHashMap<String, Properties>();
 	
+	// contains all properties
+	private static LinkedProperties globalProperties = new LinkedProperties();
+	
+	/******************************************************************************************
+	 * 
+	 ******************************************************************************************/
+	public static Properties getAllProperties() {
+		if (CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING)) {
+			return globalProperties;
+		}else {
+			//--------------------------
+			// Merged
+			LinkedProperties mergedPorperties = new LinkedProperties();
+			
+			for(Entry<String, FileDefinition> entry : localeFiles.entrySet()) {
+
+				FileDefinition def = entry.getValue();
+
+				StringReader reader = null;
+				try {
+					Properties currentProps = new Properties();
+					String propertiesString = def.readContents();
+					if(propertiesString != null) {
+						reader = new StringReader(propertiesString) ;
+						currentProps.load( reader );
+						mergedPorperties.putAll(currentProps);
+					}
+					
+				} catch (IOException e) {
+					new CFWLog(logger)
+						.method("getAllProperties")
+						.severe("Error while reading language pack.", e);
+				}finally {
+					if(reader!= null) {
+						reader.close();
+					}
+				}
+			}
+			
+			return mergedPorperties;
+			
+		}
+	}
+	
 	/******************************************************************************************
 	 * 
 	 * @param locale 
@@ -52,6 +96,31 @@ public class CFWLocalization {
 		String id = locale.getLanguage()+contextPath+"-"+localeFilesID;
 		localeFiles.put(id.toLowerCase(), propertiesFileDefinition);
 		localeFilesID++;
+		
+		//------------------------
+		// Add to all Properties
+		if (CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING)) {
+
+			StringReader reader = null;
+			try {
+				Properties currentProps = new Properties();
+				String propertiesString = propertiesFileDefinition.readContents();
+				if(propertiesString != null) {
+					reader = new StringReader(propertiesString) ;
+					currentProps.load( reader );
+					globalProperties.putAll(currentProps);
+				}
+				
+			} catch (IOException e) {
+				new CFWLog(logger)
+					.method("getLocaleProperties")
+					.severe("Error while reading language pack.", e);
+			}finally {
+				if(reader!= null) {
+					reader.close();
+				}
+			}
+		}
 	}
 	
 	/******************************************************************************************

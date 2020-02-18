@@ -41,7 +41,7 @@ public class FeatureCPUSampling extends CFWAppFeature {
 				(MenuItem)new MenuItem("CPU Sampling")
 					.faicon("fas fa-microchip")
 					.addPermission(PERMISSION_CPU_SAMPlING)
-					.href("./cpusampling")	
+					.href("/app/cpusampling")	
 				, null);
 	}
 

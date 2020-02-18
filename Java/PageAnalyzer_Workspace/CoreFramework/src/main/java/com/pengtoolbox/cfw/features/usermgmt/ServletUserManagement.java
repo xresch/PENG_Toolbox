@@ -24,7 +24,7 @@ import com.pengtoolbox.cfw.validation.PasswordValidator;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class ServletUserManagement extends HttpServlet
@@ -42,13 +42,14 @@ public class ServletUserManagement extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		createForms();
 		
 		HTMLResponse html = new HTMLResponse("User Management");
 		
 		StringBuffer content = html.getContent();
 		
 		if(CFW.Context.Request.hasPermission(Permission.CFW_USER_MANAGEMENT)) {
+			
+			createForms();
 			
 			//html.addJSFileBottomSingle(new FileDefinition(HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".js", "cfw_usermgmt.js"));
 			html.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FeatureUserManagement.RESOURCE_PACKAGE, "cfw_usermgmt.js");
@@ -101,7 +102,6 @@ public class ServletUserManagement extends HttpServlet
 		
 		//--------------------------------------
 		// Create Role Form
-		
 		CFWForm createRoleForm = new Role().toForm("cfwCreateRoleForm", "Create Role");
 		
 		createRoleForm.setFormHandler(new CFWFormHandler() {

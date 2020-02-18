@@ -15,7 +15,7 @@ import com.pengtoolbox.cfw.response.bootstrap.UserMenuItem;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWRegistryComponents {
@@ -181,7 +181,7 @@ public class CFWRegistryComponents {
 						(MenuItem)new MenuItem("Manual", "{!cfw_core_manual!}") 
 						.faicon("fas fa-book")
 						.addPermission(FeatureManual.PERMISSION_MANUAL)
-						.href("./manual")
+						.href("/app/manual")
 				);
 			};
 			
@@ -199,10 +199,10 @@ public class CFWRegistryComponents {
 			}
 		
 			if(!CFW.Context.Request.getUser().isForeign()) {
-				userParentMenu.addChild(new MenuItem("Change Password").faicon("fas fa-key").href("./changepassword"));
+				userParentMenu.addChild(new MenuItem("Change Password").faicon("fas fa-key").href("/app/changepassword"));
 			}
 			
-			userParentMenu.addChild(new MenuItem("Logout").faicon("fas fa-sign-out-alt").href("./logout"));
+			userParentMenu.addChild(new MenuItem("Logout").faicon("fas fa-sign-out-alt").href("/app/logout"));
 			
 		}
 		return menu;

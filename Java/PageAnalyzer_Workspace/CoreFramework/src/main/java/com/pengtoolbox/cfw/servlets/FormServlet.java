@@ -17,7 +17,7 @@ import com.pengtoolbox.cfw.response.JSONResponse;
 /**************************************************************************************************************
  * This servlet is used to handle forms that have a BTFormHandler defined.
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class FormServlet extends HttpServlet
@@ -40,7 +40,7 @@ public class FormServlet extends HttpServlet
     		json.setSuccess(false);
     		new CFWLog(logger)
 	    		.method("doGet")
-	    		.severe("The form with ID '"+id+"' could not be found. TRy to refresh the page");
+	    		.severe("The form with ID '"+id+"' could not be found. Try to refresh the page");
     		return;
     	}
 		

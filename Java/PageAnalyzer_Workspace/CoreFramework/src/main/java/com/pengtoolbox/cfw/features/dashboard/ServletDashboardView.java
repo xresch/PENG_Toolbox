@@ -18,12 +18,12 @@ import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
  * @author Reto Scheiwiller, � 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class ServletDashboard extends HttpServlet
+public class ServletDashboardView extends HttpServlet
 {
 
 	private static final long serialVersionUID = 1L;
 	
-	public ServletDashboard() {
+	public ServletDashboardView() {
 	
 	}
 	

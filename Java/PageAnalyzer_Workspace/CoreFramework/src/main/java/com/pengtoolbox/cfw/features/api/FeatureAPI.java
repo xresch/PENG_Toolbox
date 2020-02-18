@@ -35,7 +35,7 @@ public class FeatureAPI extends CFWAppFeature {
 				(MenuItem)new MenuItem("API")
 					.faicon("fas fa-code")
 					.addPermission(PERMISSION_CFW_API)
-					.href("./api")	
+					.href("/app/api")	
 				, null);
 	}
 
