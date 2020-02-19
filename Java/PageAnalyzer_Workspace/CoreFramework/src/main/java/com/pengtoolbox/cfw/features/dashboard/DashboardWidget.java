@@ -77,11 +77,11 @@ public class DashboardWidget extends CFWObject {
 	
 	private CFWField<Integer> width = CFWField.newInteger(FormFieldType.NUMBER, DashboardWidgetFields.WIDTH.toString())
 			.setDescription("The width of the widget.")
-			.setValue(0);
+			.setValue(3);
 	
 	private CFWField<Integer> height = CFWField.newInteger(FormFieldType.NUMBER, DashboardWidgetFields.HEIGHT.toString())
 			.setDescription("The height of the widget.")
-			.setValue(0);
+			.setValue(3);
 	
 	private CFWField<String> title = CFWField.newString(FormFieldType.TEXT, DashboardWidgetFields.TITLE.toString())
 			.setColumnDefinition("VARCHAR(32767)")
@@ -120,7 +120,7 @@ public class DashboardWidget extends CFWObject {
 		this.setTableName(TABLE_NAME);
 		this.addFields(id, foreignKeyDashboard, type, x, y, width, height, title, footer, bgcolor, fgcolor, settings);
 	}
-	
+		
 	/**************************************************************************************
 	 * Migrate Table
 	 **************************************************************************************/

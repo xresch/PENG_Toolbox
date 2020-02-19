@@ -19,6 +19,7 @@ import com.pengtoolbox.cfw.features.core.CFWLocalization;
 import com.pengtoolbox.cfw.features.core.FeatureCore;
 import com.pengtoolbox.cfw.features.cpusampling.FeatureCPUSampling;
 import com.pengtoolbox.cfw.features.dashboard.CFWDBDashboard;
+import com.pengtoolbox.cfw.features.dashboard.CFWDBDashboardWidget;
 import com.pengtoolbox.cfw.features.dashboard.FeatureDashboard;
 import com.pengtoolbox.cfw.features.manual.CFWRegistryManual;
 import com.pengtoolbox.cfw.features.manual.FeatureManual;
@@ -51,6 +52,7 @@ public class CFW {
 	public static class DB extends CFWDB {
 		public static class Config extends CFWDBConfig{};
 		public static class Dashboards extends CFWDBDashboard{};
+		public static class DashboardWidgets extends CFWDBDashboardWidget{};
 		public static class Users extends CFWDBUser{};
 		public static class Roles extends CFWDBRole{};
 		public static class UserRoleMap extends CFWDBUserRoleMap{};

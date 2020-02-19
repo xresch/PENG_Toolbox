@@ -8,6 +8,10 @@ var CFW_DASHBOARD_WIDGET_REGISTRY = {};
 var CFW_DASHBOARD_WIDGET_DATA = {};
 var CFW_DASHBOARD_WIDGET_GUID = 0;
 
+var CFW_DASHBOARDVIEW_URL = "/app/dashboard/view";
+
+var CFW_DASHBOARDVIEW_PARAMS = CFW.http.getURLParamsDecoded();
+
 /************************************************************************************************
  * 
  ************************************************************************************************/
@@ -299,17 +303,24 @@ function cfw_dashboard_createWidgetElement(widgetData){
  * 
  ************************************************************************************************/
 function cfw_dashboard_addWidget(type) {
-	console.log(type);
+
 	
-	var widgetDefinition = CFW.dashboard.getWidgetDefinition(type);
-	var widgetData = widgetDefinition.defaultValues;
-	widgetData.TYPE = type;
-	widgetData.X = 0;
-	widgetData.Y = 0;
-	widgetData.WIDTH = 0;
-	widgetData.HEIGHT = 0;
+	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, {action: 'create', item: 'widget', type: type, dashboardid: CFW_DASHBOARDVIEW_PARAMS.id }, function(data){
+			widgetData = data.payload;
+			if(widgetData != null){
+				var widgetDefinition = CFW.dashboard.getWidgetDefinition(type);
+				widgetData.TYPE = type;
+								
+				var merged = Object.assign({}, widgetDefinition.defaultValues, widgetData);
+				
+				
+				console.log('WORKS!!!');
+				console.log(merged);
+				cfw_dashboard_createWidgetInstance(merged);
+			}
+		}
+	);
 	
-	cfw_dashboard_createWidgetInstance(widgetData);
 
 }
 /************************************************************************************************

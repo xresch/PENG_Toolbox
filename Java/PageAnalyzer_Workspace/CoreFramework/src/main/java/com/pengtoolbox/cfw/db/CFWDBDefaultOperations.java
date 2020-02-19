@@ -58,6 +58,31 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 	}
 	
 	/********************************************************************************************
+	 * Creates a new item in the DB.
+	 * @param Object with the values that should be inserted. ID will be set by the Database.
+	 * @return true if successful, false otherwise
+	 * 
+	 ********************************************************************************************/
+	public static <O extends CFWObject> Integer createGetPrimaryKey(PrecheckHandler precheck, O object) {
+		
+		if(object == null) {
+			new CFWLog(logger)
+				.method("create")
+				.warn("The object cannot be null", new Throwable());
+			return null;
+		}
+		
+		if(precheck != null && !precheck.doCheck(object)) {
+			return null;
+		}
+		
+		return object
+			.queryCache(object.getClass(), "CFWDBDefaultOperations.insertGetPrimaryKey")
+			.insertGetPrimaryKey();
+
+	}
+	
+	/********************************************************************************************
 	 * Updates multiple items in the DB.
 	 * @param Objects with the values that should be inserted. ID will be set by the Database.
 	 * @return true if all updated successful
@@ -97,7 +122,7 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 	}
 	
 	/***************************************************************
-	 * Deletes the objects selected where the ürecheck returns true.
+	 * Deletes the objects selected where the ï¿½recheck returns true.
 	 * @param object
 	 * @return true or false
 	 ****************************************************************/

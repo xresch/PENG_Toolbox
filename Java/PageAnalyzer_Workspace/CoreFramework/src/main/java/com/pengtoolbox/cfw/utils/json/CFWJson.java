@@ -18,7 +18,7 @@ import com.pengtoolbox.cfw.datahandling.CFWObject;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWJson {
@@ -116,6 +116,9 @@ public class CFWJson {
 	 * 
 	 *************************************************************************************/
 	public static JsonElement jsonStringToJsonElement(String jsonString) {
+		if(jsonString == null || jsonString.isEmpty()) {
+			jsonString = "{}";
+		}
 		return new JsonParser().parse(jsonString);
 	}
 	
@@ -147,6 +150,9 @@ public class CFWJson {
 		Object value = field.getValue();
 		
 		if(name.toUpperCase().startsWith("JSON")) {
+			if(value == null) {
+				value = "";
+			}
 			JsonElement asElement = CFW.JSON.jsonStringToJsonElement(value.toString());
 			target.add(name, asElement);
 		}else {
@@ -154,10 +160,5 @@ public class CFWJson {
 		}
 		
 	}
-	
-	
-	
-	
-	
 
 }

@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
+import com.pengtoolbox.cfw.features.dashboard.Dashboard.DashboardFields;
+import com.pengtoolbox.cfw.features.dashboard.DashboardWidget.DashboardWidgetFields;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
@@ -64,11 +66,27 @@ public class ServletDashboardView extends HttpServlet
 		}
         
     }
+	/*****************************************************************
+	 *
+	 ******************************************************************/
+	@Override
+    protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
+    {
+
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARDING)) {
+			handleDataRequest(request, response);
+		}else {
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied!!!");
+		}
+        
+    }
 	
 	private void handleDataRequest(HttpServletRequest request, HttpServletResponse response) {
 		
 		String action = request.getParameter("action");
 		String item = request.getParameter("item");
+		String type = request.getParameter("type");
+		String dashboardid = request.getParameter("dashboardid");
 		//String ID = request.getParameter("id");
 		//String IDs = request.getParameter("ids");
 		//int	userID = CFW.Context.Request.getUser().id();
@@ -79,19 +97,18 @@ public class ServletDashboardView extends HttpServlet
 		
 			case "fetch": 			
 				switch(item.toLowerCase()) {
-					case "menuitems": 			jsonResponse.getContent().append(CFW.Registry.Manual.getManualPagesForUserAsJSON().toString());
-	  											break;
-	  				
-					case "page": 				String path = request.getParameter("path");
-												//ManualPage page = CFW.Registry.Manual.getPageByPath(path);
-//												if(page != null) {
-//													jsonResponse.getContent().append(page.toJSONObjectWithContent());
-//												}else {
-//													CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The page with the path '"+path+"' was not found.");
-//												}
+//					case "menuitems": 			jsonResponse.getContent().append(CFW.Registry.Manual.getManualPagesForUserAsJSON().toString());
+//	  											break;												
+												
+					default: 					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 												break;
-												
-												
+				}
+				
+			case "create": 			
+				switch(item.toLowerCase()) {
+					case "widget": 				createWidget(jsonResponse, type, dashboardid);
+	  											break;
+	  																
 					default: 					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 												break;
 				}
@@ -101,6 +118,20 @@ public class ServletDashboardView extends HttpServlet
 								break;
 								
 		}
+	}
+	
+	private void createWidget(JSONResponse response, String type, String dashboardid) {
+		
+		DashboardWidget newWidget = new DashboardWidget();
+		newWidget.type(type);
+		newWidget.foreignKeyDashboard(Integer.parseInt(dashboardid));
+		
+		int id = CFW.DB.DashboardWidgets.createGetPrimaryKey(newWidget);
+		newWidget.id(id);
+		
+		
+		response.getContent().append(CFW.JSON.toJSON(newWidget));
+		
 	}
 		
 
