@@ -7,6 +7,8 @@ import com.pengtoolbox.cfw._main.CFWAppFeature;
 import com.pengtoolbox.cfw._main.CFWApplicationExecutor;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
+import com.pengtoolbox.cfw.features.usermgmt.Permission;
+import com.pengtoolbox.cfw.features.usermgmt.Role;
 
 /**************************************************************************************************************
  * 
@@ -16,6 +18,7 @@ import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 public class FeatureCore extends CFWAppFeature {
 
 	public static final String RESOURCE_PACKAGE = "com.pengtoolbox.cfw.features.core.resources";
+	public static final String PERMISSION_APP_ANALYTICS = "Application Analytics";
 	
 	@Override
 	public void register() {
@@ -46,7 +49,16 @@ public class FeatureCore extends CFWAppFeature {
 
 	@Override
 	public void initializeDB() {
-		
+
+		//-----------------------------------
+		// 
+		CFW.DB.Permissions.oneTimeCreate(
+		new Permission(PERMISSION_APP_ANALYTICS, "user")
+			.description("Analyze the application status with tools like cpu sampling."),
+			true,
+			false
+		);	
+
 	}
 
 	@Override

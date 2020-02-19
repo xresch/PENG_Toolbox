@@ -304,7 +304,7 @@ function cfw_dashboard_createWidgetElement(widgetData){
 function cfw_dashboard_addWidget(type) {
 
 	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, {action: 'create', item: 'widget', type: type, dashboardid: CFW_DASHBOARDVIEW_PARAMS.id }, function(data){
-			widgetData = data.payload;
+			var widgetData = data.payload;
 			if(widgetData != null){
 				var widgetDefinition = CFW.dashboard.getWidgetDefinition(type);
 				widgetData.TYPE = type;
@@ -313,8 +313,7 @@ function cfw_dashboard_addWidget(type) {
 				
 				//temporary workaround
 				merged.JSON_SETTINGS = widgetDefinition.defaultValues.JSON_SETTINGS;
-				
-				console.log('WORKS!!!');
+
 				console.log(merged);
 				cfw_dashboard_createWidgetInstance(merged);
 			}

@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
+import com.pengtoolbox.cfw.features.core.FeatureCore;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
@@ -37,7 +38,7 @@ public class ServletCPUSampling extends HttpServlet
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
 
-		if(CFW.Context.Request.hasPermission(FeatureCPUSampling.PERMISSION_CPU_SAMPlING)) {
+		if(CFW.Context.Request.hasPermission(FeatureCore.PERMISSION_APP_ANALYTICS)) {
 			
 			String action = request.getParameter("action");
 			
@@ -96,7 +97,7 @@ public class ServletCPUSampling extends HttpServlet
 	 *************************************************************************************/
 	private static void getCPUSampling(JSONResponse jsonResponse) {
 		
-		if( CFW.Context.Request.hasPermission(FeatureCPUSampling.PERMISSION_CPU_SAMPlING) ) {
+		if( CFW.Context.Request.hasPermission(FeatureCore.PERMISSION_APP_ANALYTICS) ) {
 
 			String signatures = CFWDBCPUSampleSignature.getSignatureListAsJSON();
 			String timeseries =  CFWDBCPUSample.getLatestAsJSON();
