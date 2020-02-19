@@ -132,10 +132,6 @@ public class Dashboard extends CFWObject {
 	 **************************************************************************************/
 	public void migrateTable() {
 		
-		//---------------------------
-		// Rename Table
-		CFWSQL.renameTable("CFW_GROUP", this.getTableName());
-		
 	}
 	
 	/**************************************************************************************
@@ -162,7 +158,7 @@ public class Dashboard extends CFWObject {
 		String[] outputFields = 
 				new String[] {
 						DashboardFields.PK_ID.toString(), 
-//						DashboardFields.CATEGORY.toString(),
+						DashboardFields.FK_ID_USER.toString(),
 						DashboardFields.NAME.toString(),
 						DashboardFields.DESCRIPTION.toString(),
 						DashboardFields.IS_SHARED.toString(),

@@ -28,7 +28,7 @@ import com.pengtoolbox.cfw.validation.IntegerValidator;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T> {

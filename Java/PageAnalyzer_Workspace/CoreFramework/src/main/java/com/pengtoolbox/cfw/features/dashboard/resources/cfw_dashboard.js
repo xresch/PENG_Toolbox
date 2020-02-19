@@ -316,15 +316,15 @@ function cfw_dashboard_createWidgetByType(widgetType, widgetData) {
 	
 	var x = 0;
 	var y = 0;
-	var gswidth = 3;
-	var gsheight = 3;
+	var GS_WIDTH = 3;
+	var GS_HEIGHT = 3;
 	var doAutoposition = true;
 	
 	if(widgetData != null){
-		x = widgetData.x;
-		y = widgetData.y;
-		gswidth = widgetData.gswidth;
-		gsheight = widgetData.gsheight;
+		x = widgetData.X;
+		y = widgetData.Y;
+		GS_WIDTH = widgetData.GS_WIDTH;
+		GS_HEIGHT = widgetData.GS_HEIGHT;
 
 	}else{
 		widgetData = widget.defaultValues;
@@ -337,17 +337,17 @@ function cfw_dashboard_createWidgetByType(widgetType, widgetData) {
 		
 		var grid = $('.grid-stack').data('gridstack');
 		    
-	    grid.addWidget($(widgetInstance), x, y, gswidth, gsheight, doAutoposition);
+	    grid.addWidget($(widgetInstance), x, y, GS_WIDTH, GS_HEIGHT, doAutoposition);
 	    
 	    //----------------------------
 	    // Update Data
 	    var widgetData = $(widgetInstance).data('widgetData');
 	    
 	    widgetData.widgetType	= widgetType;
-	    widgetData.gswidth	= widgetInstance.attr("data-gs-width");
-	    widgetData.gsheight	= widgetInstance.attr("data-gs-height");
-	    widgetData.x		= widgetInstance.attr("data-gs-x");
-	    widgetData.y		= widgetInstance.attr("data-gs-y");
+	    widgetData.GS_WIDTH	= widgetInstance.attr("data-gs-width");
+	    widgetData.GS_HEIGHT	= widgetInstance.attr("data-gs-height");
+	    widgetData.X		= widgetInstance.attr("data-gs-x");
+	    widgetData.Y		= widgetInstance.attr("data-gs-y");
 	});
 	
 }
@@ -443,10 +443,10 @@ function cfw_dashboard_initializeGridstack(gridStackElementSelector){
 			  var widgetInstance = $(currentItem);
 			  var widgetData 	 = widgetInstance.data("widgetData");
 			  
-			  widgetData.x			= widgetInstance.attr("data-gs-x");
-			  widgetData.y		 	= widgetInstance.attr("data-gs-y");
-			  widgetData.gswidth	= widgetInstance.attr("data-gs-width");
-			  widgetData.gsheight	= widgetInstance.attr("data-gs-height");
+			  widgetData.X			= widgetInstance.attr("data-gs-x");
+			  widgetData.Y		 	= widgetInstance.attr("data-gs-y");
+			  widgetData.GS_WIDTH	= widgetInstance.attr("data-gs-width");
+			  widgetData.GS_HEIGHT	= widgetInstance.attr("data-gs-height");
 
 		  }
 	});
@@ -497,13 +497,13 @@ function addTestdata(){
 			};
 	
 		
-	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 5, gswidth: 5, title: "Table Test Maximal",
+	cfw_dashboard_createWidgetByType('cfw_table', {X:0, Y:0, GS_HEIGHT: 5, GS_WIDTH: 5, title: "Table Test Maximal",
 		settings: {
 			tableData: rendererTestdata
 		}
 	});
 	
-	cfw_dashboard_createWidgetByType('cfw_table', {x:6, y:0, gsheight: 5, gswidth: 7, title: "Table Test Lot of Data", 
+	cfw_dashboard_createWidgetByType('cfw_table', {X:6, Y:0, GS_HEIGHT: 5, GS_WIDTH: 7, title: "Table Test Lot of Data", 
 		settings: {
 			delimiter: ';',
 			narrow: true,
@@ -513,24 +513,24 @@ function addTestdata(){
 		}
 	});
 	
-	cfw_dashboard_createWidgetByType('cfw_iframe', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", settings: { url: "./cpusampling" } } );
+	cfw_dashboard_createWidgetByType('cfw_iframe', {X:6, Y:0, GS_HEIGHT: 4, GS_WIDTH: 7, title: "", settings: { url: "./cpusampling" } } );
 	
-	cfw_dashboard_createWidgetByType('cfw_table', {x:0, y:0, gsheight: 4, gswidth: 5, title: "Table Test Minimal", 
+	cfw_dashboard_createWidgetByType('cfw_table', {X:0, Y:0, GS_HEIGHT: 4, GS_WIDTH: 5, title: "Table Test Minimal", 
 		settings: {
 			tableData: rendererTestdataMinimal 
 		}
 	});
 	
-	cfw_dashboard_createWidgetByType('cfw_image', {x:6, y:0, gsheight: 4, gswidth: 7, title: "", settings: { url: "/resources/images/login_background.jpg" } } );
+	cfw_dashboard_createWidgetByType('cfw_image', {X:6, Y:0, GS_HEIGHT: 4, GS_WIDTH: 7, title: "", settings: { url: "/resources/images/login_background.jpg" } } );
 	
-	cfw_dashboard_createWidgetByType('cfw_text', {x:0, y:0, gsheight: 2, gswidth: 2, title: "Test Success", bgcolor: "success", textcolor: "light"});
-	cfw_dashboard_createWidgetByType('cfw_text', {x:11, y:0, gsheight: 5, gswidth: 2, title: "Test Danger", bgcolor: "danger", textcolor: "light"});
-	cfw_dashboard_createWidgetByType('cfw_text', {x:8, y:0, gsheight: 3, gswidth: 2, title: "Test Primary and Object", bgcolor: "primary", textcolor: "light", data: {firstname: "Jane", lastname: "Doe", street: "Fantasyroad 22", city: "Nirwana", postal_code: "8008" }});
-	cfw_dashboard_createWidgetByType('cfw_text', {x:7, y:0, gsheight: 5, gswidth: 3, title: "Test Light and Array", bgcolor: "light", textcolor: "secondary", data: ["Test", "Foo", "Bar", 3, 2, 1]});
-	cfw_dashboard_createWidgetByType('cfw_text', {x:2, y:0, gsheight: 2, gswidth: 4, title: "Test Matrix", bgcolor: "dark", textcolor: "success", data: "Mister ÄÄÄÄÄÄÄÄÄÄÄnderson."});
-	cfw_dashboard_createWidgetByType('cfw_text', {x:9, y:0, gsheight: 2, gswidth: 4, title: "Test Warning", bgcolor: "warning", textcolor: "dark"});
-	cfw_dashboard_createWidgetByType('cfw_text', {x:3, y:0, gsheight: 4, gswidth: 5});
-	cfw_dashboard_createWidgetByType('cfw_text', {x:0, y:0, gsheight: 3, gswidth: 3});
+	cfw_dashboard_createWidgetByType('cfw_text', {X:0, Y:0, GS_HEIGHT: 2, GS_WIDTH: 2, title: "Test Success", bgcolor: "success", textcolor: "light"});
+	cfw_dashboard_createWidgetByType('cfw_text', {X:11, Y:0, GS_HEIGHT: 5, GS_WIDTH: 2, title: "Test Danger", bgcolor: "danger", textcolor: "light"});
+	cfw_dashboard_createWidgetByType('cfw_text', {X:8, Y:0, GS_HEIGHT: 3, GS_WIDTH: 2, title: "Test Primary and Object", bgcolor: "primary", textcolor: "light", data: {firstname: "Jane", lastname: "Doe", street: "Fantasyroad 22", city: "Nirwana", postal_code: "8008" }});
+	cfw_dashboard_createWidgetByType('cfw_text', {X:7, Y:0, GS_HEIGHT: 5, GS_WIDTH: 3, title: "Test Light and Array", bgcolor: "light", textcolor: "secondary", data: ["Test", "Foo", "Bar", 3, 2, 1]});
+	cfw_dashboard_createWidgetByType('cfw_text', {X:2, Y:0, GS_HEIGHT: 2, GS_WIDTH: 4, title: "Test Matrix", bgcolor: "dark", textcolor: "success", data: "Mister ÄÄÄÄÄÄÄÄÄÄÄnderson."});
+	cfw_dashboard_createWidgetByType('cfw_text', {X:9, Y:0, GS_HEIGHT: 2, GS_WIDTH: 4, title: "Test Warning", bgcolor: "warning", textcolor: "dark"});
+	cfw_dashboard_createWidgetByType('cfw_text', {X:3, Y:0, GS_HEIGHT: 4, GS_WIDTH: 5});
+	cfw_dashboard_createWidgetByType('cfw_text', {X:0, Y:0, GS_HEIGHT: 3, GS_WIDTH: 3});
 	cfw_dashboard_createWidgetByType('cfw_text');
 	
 }
