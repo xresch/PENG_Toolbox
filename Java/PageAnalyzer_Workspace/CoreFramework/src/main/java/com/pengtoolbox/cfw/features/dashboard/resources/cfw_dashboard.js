@@ -23,7 +23,7 @@ function cfw_dashboard_registerWidget(widgetUniqueType, widgetObject){
 	console.log(categorySubmenu);
 	
 	var menuitemHTML = 
-		'<li><a class="dropdown-item" onclick="cfw_dashboard_createWidgetByType(\''+widgetUniqueType+'\')" >'
+		'<li><a class="dropdown-item" onclick="cfw_dashboard_addWidget(\''+widgetUniqueType+'\')" >'
 			+'<div class="cfw-fa-box"><i class="'+menuicon+'"></i></div>'
 			+'<span class="cfw-menuitem-label">'+menulabel+'</span>'
 		+'</a></li>';
@@ -35,7 +35,7 @@ function cfw_dashboard_registerWidget(widgetUniqueType, widgetObject){
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_getWidget(widgetUniqueType){
+function cfw_dashboard_getWidgetDefinition(widgetUniqueType){
 	
 	return CFW_DASHBOARD_WIDGET_REGISTRY[widgetUniqueType];
 }
@@ -82,7 +82,7 @@ function cfw_dashboard_createFormField(label, infotext, fieldHTML){
 function cfw_dashboard_editWidget(widgetGUID){
 	var widgetInstance = $('#'+widgetGUID);
 	var widgetData = widgetInstance.data("widgetData");
-	var widgetDef = CFW.dashboard.getWidget(widgetData.widgetType);
+	var widgetDef = CFW.dashboard.getWidgetDefinition(widgetData.TYPE);
 	console.log(widgetInstance);
 	console.log(widgetData);
 	
@@ -96,11 +96,11 @@ function cfw_dashboard_editWidget(widgetGUID){
 	//------------------------------
 	// Title
 	
-	defaultForm += new CFWFormField({ type: "text", name: "title", value: widgetData.title, description: 'The title of the widget.' }).createHTML();;
+	defaultForm += new CFWFormField({ type: "text", name: "title", value: widgetData.TITLE, description: 'The title of the widget.' }).createHTML();;
 	
 	//------------------------------
 	// Footer
-	defaultForm += new CFWFormField({ type: "textarea", name: "footer", value: widgetData.footer, description: 'The contents of the footer of the widget.' }).createHTML();;
+	defaultForm += new CFWFormField({ type: "textarea", name: "footer", value: widgetData.FOOTER, description: 'The contents of the footer of the widget.' }).createHTML();;
 	
 	//defaultForm += cfw_dashboard_createFormField("Footer", 'The footer of the widget.', '<textarea class="form-control" rows="10" name="footer" placeholder="Footer Contents">'+widgetData.footer+'</textarea>');
 	
@@ -120,18 +120,18 @@ function cfw_dashboard_editWidget(widgetGUID){
 	
 	defaultForm += new CFWFormField({ 
 		type: "select", 
-		name: "bgcolor", 
+		name: "BGCOLOR", 
 		label: "Background Color", 
-		value: widgetData.bgcolor, 
+		value: widgetData.BGCOLOR, 
 		options: selectOptions,
 		description: 'Define the color used for the background.' 
 	}).createHTML();
 	
 	defaultForm += new CFWFormField({ 
 		type: "select", 
-		name: "textcolor", 
+		name: "FGCOLOR", 
 		label: "Text Color", 
-		value: widgetData.textcolor, 
+		value: widgetData.FGCOLOR, 
 		options: selectOptions,
 		description: 'Define the color used for the text and borders.' 
 	}).createHTML();
@@ -175,10 +175,10 @@ function cfw_dashboard_saveDefaultSettings(widgetGUID){
 	var widgetData = widget.data("widgetData");
 	var settingsForm = $('#form-edit-'+widgetGUID);
 			
-	widgetData.title = settingsForm.find('input[name="title"]').val();
-	widgetData.footer = settingsForm.find('textarea[name="footer"]').val();
-	widgetData.bgcolor = settingsForm.find('select[name="bgcolor"]').val();
-	widgetData.textcolor = settingsForm.find('select[name="textcolor"]').val();
+	widgetData.TITLE = settingsForm.find('input[name="title"]').val();
+	widgetData.FOOTER = settingsForm.find('textarea[name="footer"]').val();
+	widgetData.BGCOLOR = settingsForm.find('select[name="BGCOLOR"]').val();
+	widgetData.FGCOLOR = settingsForm.find('select[name="FGCOLOR"]').val();
 	
 	cfw_dashboard_rerenderWidget(widgetGUID);
 	
@@ -193,7 +193,7 @@ function cfw_dashboard_saveCustomSettings(formButton, widgetGUID){
 	var settingsForm = $('#form-edit-'+widgetGUID);
 	console.log("====== Before =======");
 	console.log(widgetData);
-	var widgetDef = CFW.dashboard.getWidget(widgetData.widgetType);
+	var widgetDef = CFW.dashboard.getWidgetDefinition(widgetData.TYPE);
 	widgetDef.onSave($(formButton).parent(), widgetData);
 	console.log("====== After =======");
 	console.log(widgetData);
@@ -222,7 +222,7 @@ function cfw_dashboard_removeWidget(widgetGUID) {
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_createWidget(widgetData){
+function cfw_dashboard_createWidgetElement(widgetData){
 	
 	//---------------------------------------
 	// Merge Data
@@ -230,32 +230,31 @@ function cfw_dashboard_createWidget(widgetData){
 	var defaultOptions = {
 			guid: 'widget-'+CFW_DASHBOARD_WIDGET_GUID,
 			widgetid: null,
-			title: "",
-			content: "",
-			footer: "",
-			bgcolor: "",
-			textcolor: "",
-			settings: {}
+			TITLE: "",
+			FOOTER: "",
+			BGCOLOR: "",
+			FGCOLOR: "",
+			JSON_SETTINGS: {}
 	}
 	
 	var merged = Object.assign({}, defaultOptions, widgetData);
 	
 	//---------------------------------------
 	// Resolve Classes
-	var textcolorClass = '';
+	var FGCOLORClass = '';
 	var borderClass = '';
-	if(merged.textcolor != null && merged.textcolor.trim().length > 0){
-		textcolorClass = 'text-'+merged.textcolor;
-		borderClass = 'border-'+merged.textcolor;
+	if(merged.FGCOLOR != null && merged.FGCOLOR.trim().length > 0){
+		FGCOLORClass = 'text-'+merged.FGCOLOR;
+		borderClass = 'border-'+merged.FGCOLOR;
 	}
 	
-	var bgcolorClass = '';
-	if(merged.bgcolor != null && merged.bgcolor.trim().length > 0){
-		bgcolorClass = 'bg-'+merged.bgcolor;
+	var BGCOLORClass = '';
+	if(merged.BGCOLOR != null && merged.BGCOLOR.trim().length > 0){
+		BGCOLORClass = 'bg-'+merged.BGCOLOR;
 	}
 	
 	var htmlString =
-		'    <div class="grid-stack-item-content card d-flex '+bgcolorClass+' '+textcolorClass+'">'
+		'    <div class="grid-stack-item-content card d-flex '+BGCOLORClass+' '+FGCOLORClass+'">'
 		+'		<a type="button" role ="button" class="cfw-dashboard-widget-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
 		+'			<i class="fas fa-cog"></i>'
 		+'		</a>'
@@ -266,20 +265,20 @@ function cfw_dashboard_createWidget(widgetData){
 		+'			</div>'
 
 		
-	if(merged.title != null && merged.title != ''){
+	if(merged.TITLE != null && merged.TITLE != ''){
 		htmlString += 
 		 '     	  <div class="cfw-dashboard-widget-title border-bottom '+borderClass+'">'
-		+'		  	<span>'+merged.title+'</span>'
+		+'		  	<span>'+merged.TITLE+'</span>'
 		+'		  </div>'
 	}
 	
 
 	htmlString += 
 		'<div class="cfw-dashboard-widget-body d-flex flex-grow-1">';
-			if(merged.footer != null && merged.footer != ''){
+			if(merged.FOOTER != null && merged.FOOTER != ''){
 				htmlString +=
 				'		 <div class="cfw-dashboard-widget-footer border-top '+borderClass+'">'
-				+			merged.footer
+				+			merged.FOOTER
 				+'		  </div>'
 			}
 	htmlString += '</div>';
@@ -299,56 +298,62 @@ function cfw_dashboard_createWidget(widgetData){
 /************************************************************************************************
  * 
  ************************************************************************************************/
+function cfw_dashboard_addWidget(type) {
+	console.log(type);
+	
+	var widgetDefinition = CFW.dashboard.getWidgetDefinition(type);
+	var widgetData = widgetDefinition.defaultValues;
+	widgetData.TYPE = type;
+	widgetData.X = 0;
+	widgetData.Y = 0;
+	widgetData.WIDTH = 0;
+	widgetData.HEIGHT = 0;
+	
+	cfw_dashboard_createWidgetInstance(widgetData);
+
+}
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
 function cfw_dashboard_rerenderWidget(widgetGUID) {
 	var widget = $('#'+widgetGUID);
 	var widgetData = widget.data("widgetData");
 	
 	cfw_dashboard_removeWidget(widgetGUID);
-	cfw_dashboard_createWidgetByType(widgetData.widgetType, widgetData)
+	cfw_dashboard_createWidgetInstance(widgetData)
 	
 }
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_createWidgetByType(widgetType, widgetData) {
+function cfw_dashboard_createWidgetInstance(widgetData) {
+	var widgetDefinition = CFW.dashboard.getWidgetDefinition(widgetData.TYPE);	
 	
-	var widget = CFW.dashboard.getWidget(widgetType);
-	
-	var x = 0;
-	var y = 0;
-	var GS_WIDTH = 3;
-	var GS_HEIGHT = 3;
-	var doAutoposition = true;
-	
-	if(widgetData != null){
-		x = widgetData.X;
-		y = widgetData.Y;
-		GS_WIDTH = widgetData.GS_WIDTH;
-		GS_HEIGHT = widgetData.GS_HEIGHT;
-
-	}else{
-		widgetData = widget.defaultValues;
-	}
-	
-	var widgetInstance = widget.createWidgetInstance(widgetData, function(widgetData, widgetContent){
+	var widgetInstance = widgetDefinition.createWidgetInstance(widgetData, 
+			function(widgetData, widgetContent){
 		
-		widgetData.content = widgetContent;
-		var widgetInstance = CFW.dashboard.createWidget(widgetData);
-		
-		var grid = $('.grid-stack').data('gridstack');
-		    
-	    grid.addWidget($(widgetInstance), x, y, GS_WIDTH, GS_HEIGHT, doAutoposition);
-	    
-	    //----------------------------
-	    // Update Data
-	    var widgetData = $(widgetInstance).data('widgetData');
-	    
-	    widgetData.widgetType	= widgetType;
-	    widgetData.GS_WIDTH	= widgetInstance.attr("data-gs-width");
-	    widgetData.GS_HEIGHT	= widgetInstance.attr("data-gs-height");
-	    widgetData.X		= widgetInstance.attr("data-gs-x");
-	    widgetData.Y		= widgetInstance.attr("data-gs-y");
-	});
+				widgetData.content = widgetContent;
+				var widgetInstance = CFW.dashboard.createWidget(widgetData);
+				
+				var grid = $('.grid-stack').data('gridstack');
+				    
+			    grid.addWidget($(widgetInstance),
+			    		widgetData.X, 
+			    		widgetData.Y, 
+			    		widgetData.WIDTH, 
+			    		widgetData.HEIGHT, 
+			    		true);
+			    
+			    //----------------------------
+			    // Update Data
+			    var widgetData = $(widgetInstance).data('widgetData');
+			    
+			    widgetData.WIDTH	= widgetInstance.attr("data-gs-width");
+			    widgetData.HEIGHT	= widgetInstance.attr("data-gs-height");
+			    widgetData.X		= widgetInstance.attr("data-gs-x");
+			    widgetData.Y		= widgetInstance.attr("data-gs-y");
+			}
+	);
 	
 }
 
@@ -356,10 +361,10 @@ function cfw_dashboard_createWidgetByType(widgetType, widgetData) {
  * 
  ******************************************************************/
 CFW.dashboard = {
-		registerWidget: 	cfw_dashboard_registerWidget,
-		getWidget: 			cfw_dashboard_getWidget,
-		registerCategory: 	cfw_dashboard_registerCategory,
-		createWidget:   	cfw_dashboard_createWidget,
+		registerWidget: 		cfw_dashboard_registerWidget,
+		getWidgetDefinition: 	cfw_dashboard_getWidgetDefinition,
+		registerCategory: 		cfw_dashboard_registerCategory,
+		createWidget:   		cfw_dashboard_createWidgetElement,
 };
 
 /******************************************************************
@@ -445,8 +450,8 @@ function cfw_dashboard_initializeGridstack(gridStackElementSelector){
 			  
 			  widgetData.X			= widgetInstance.attr("data-gs-x");
 			  widgetData.Y		 	= widgetInstance.attr("data-gs-y");
-			  widgetData.GS_WIDTH	= widgetInstance.attr("data-gs-width");
-			  widgetData.GS_HEIGHT	= widgetInstance.attr("data-gs-height");
+			  widgetData.WIDTH	= widgetInstance.attr("data-gs-width");
+			  widgetData.HEIGHT	= widgetInstance.attr("data-gs-height");
 
 		  }
 	});
@@ -497,14 +502,14 @@ function addTestdata(){
 			};
 	
 		
-	cfw_dashboard_createWidgetByType('cfw_table', {X:0, Y:0, GS_HEIGHT: 5, GS_WIDTH: 5, title: "Table Test Maximal",
-		settings: {
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_table', X:0, Y:0, HEIGHT: 5, WIDTH: 5, TITLE: "Table Test Maximal",
+		JSON_SETTINGS: {
 			tableData: rendererTestdata
 		}
 	});
 	
-	cfw_dashboard_createWidgetByType('cfw_table', {X:6, Y:0, GS_HEIGHT: 5, GS_WIDTH: 7, title: "Table Test Lot of Data", 
-		settings: {
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_table', X:6, Y:0, HEIGHT: 5, WIDTH: 7, TITLE: "Table Test Lot of Data", 
+		JSON_SETTINGS: {
 			delimiter: ';',
 			narrow: true,
 			striped: true,
@@ -513,25 +518,25 @@ function addTestdata(){
 		}
 	});
 	
-	cfw_dashboard_createWidgetByType('cfw_iframe', {X:6, Y:0, GS_HEIGHT: 4, GS_WIDTH: 7, title: "", settings: { url: "./cpusampling" } } );
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_iframe', X:6, Y:0, HEIGHT: 4, WIDTH: 7, TITLE: "", JSON_SETTINGS: { url: "/app/cpusampling" } } );
 	
-	cfw_dashboard_createWidgetByType('cfw_table', {X:0, Y:0, GS_HEIGHT: 4, GS_WIDTH: 5, title: "Table Test Minimal", 
-		settings: {
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_table', X:0, Y:0, HEIGHT: 4, WIDTH: 5, TITLE: "Table Test Minimal", 
+		JSON_SETTINGS: {
 			tableData: rendererTestdataMinimal 
 		}
 	});
 	
-	cfw_dashboard_createWidgetByType('cfw_image', {X:6, Y:0, GS_HEIGHT: 4, GS_WIDTH: 7, title: "", settings: { url: "/resources/images/login_background.jpg" } } );
+	cfw_dashboard_createWidgetInstance({TYPE: 'cfw_image', X:6, Y:0, HEIGHT: 4, WIDTH: 7, TITLE: "", JSON_SETTINGS: { url: "/resources/images/login_background.jpg" } } );
 	
-	cfw_dashboard_createWidgetByType('cfw_text', {X:0, Y:0, GS_HEIGHT: 2, GS_WIDTH: 2, title: "Test Success", bgcolor: "success", textcolor: "light"});
-	cfw_dashboard_createWidgetByType('cfw_text', {X:11, Y:0, GS_HEIGHT: 5, GS_WIDTH: 2, title: "Test Danger", bgcolor: "danger", textcolor: "light"});
-	cfw_dashboard_createWidgetByType('cfw_text', {X:8, Y:0, GS_HEIGHT: 3, GS_WIDTH: 2, title: "Test Primary and Object", bgcolor: "primary", textcolor: "light", data: {firstname: "Jane", lastname: "Doe", street: "Fantasyroad 22", city: "Nirwana", postal_code: "8008" }});
-	cfw_dashboard_createWidgetByType('cfw_text', {X:7, Y:0, GS_HEIGHT: 5, GS_WIDTH: 3, title: "Test Light and Array", bgcolor: "light", textcolor: "secondary", data: ["Test", "Foo", "Bar", 3, 2, 1]});
-	cfw_dashboard_createWidgetByType('cfw_text', {X:2, Y:0, GS_HEIGHT: 2, GS_WIDTH: 4, title: "Test Matrix", bgcolor: "dark", textcolor: "success", data: "Mister ÄÄÄÄÄÄÄÄÄÄÄnderson."});
-	cfw_dashboard_createWidgetByType('cfw_text', {X:9, Y:0, GS_HEIGHT: 2, GS_WIDTH: 4, title: "Test Warning", bgcolor: "warning", textcolor: "dark"});
-	cfw_dashboard_createWidgetByType('cfw_text', {X:3, Y:0, GS_HEIGHT: 4, GS_WIDTH: 5});
-	cfw_dashboard_createWidgetByType('cfw_text', {X:0, Y:0, GS_HEIGHT: 3, GS_WIDTH: 3});
-	cfw_dashboard_createWidgetByType('cfw_text');
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:0, Y:0, HEIGHT: 2, WIDTH: 2, TITLE: "Test Success", BGCOLOR: "success", FGCOLOR: "light"});
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:11, Y:0, HEIGHT: 5, WIDTH: 2, TITLE: "Test Danger", BGCOLOR: "danger", FGCOLOR: "light"});
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:8, Y:0, HEIGHT: 3, WIDTH: 2, TITLE: "Test Primary and Object", BGCOLOR: "primary", FGCOLOR: "light", data: {firstname: "Jane", lastname: "Doe", street: "Fantasyroad 22", city: "Nirwana", postal_code: "8008" }});
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:7, Y:0, HEIGHT: 5, WIDTH: 3, TITLE: "Test Light and Array", BGCOLOR: "light", FGCOLOR: "secondary", data: ["Test", "Foo", "Bar", 3, 2, 1]});
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:2, Y:0, HEIGHT: 2, WIDTH: 4, TITLE: "Test Matrix", BGCOLOR: "dark", FGCOLOR: "success", data: "Mister ÄÄÄÄÄÄÄÄÄÄÄnderson."});
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:9, Y:0, HEIGHT: 2, WIDTH: 4, TITLE: "Test Warning", BGCOLOR: "warning", FGCOLOR: "dark"});
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:3, Y:0, HEIGHT: 4, WIDTH: 5});
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:0, Y:0, HEIGHT: 3, WIDTH: 3});
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text'});
 	
 }
 /******************************************************************

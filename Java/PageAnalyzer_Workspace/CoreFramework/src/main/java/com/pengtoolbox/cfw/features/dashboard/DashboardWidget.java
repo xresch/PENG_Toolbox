@@ -38,6 +38,10 @@ public class DashboardWidget extends CFWObject {
 		PK_ID,
 		FK_ID_DASHBOARD,
 		TYPE,
+		X,
+		Y,
+		WIDTH,
+		HEIGHT,
 		TITLE,
 		FOOTER,
 		BGCOLOR,
@@ -62,6 +66,22 @@ public class DashboardWidget extends CFWObject {
 	private CFWField<String> type = CFWField.newString(FormFieldType.TEXT, DashboardWidgetFields.TYPE.toString())
 			.setColumnDefinition("VARCHAR(255)")
 			.setDescription("The type of the widget.");
+	
+	private CFWField<Integer> x = CFWField.newInteger(FormFieldType.NUMBER, DashboardWidgetFields.X.toString())
+			.setDescription("The x coordinate of the widget.")
+			.setValue(0);
+	
+	private CFWField<Integer> y = CFWField.newInteger(FormFieldType.NUMBER, DashboardWidgetFields.Y.toString())
+			.setDescription("The y coordinate of the widget.")
+			.setValue(0);
+	
+	private CFWField<Integer> width = CFWField.newInteger(FormFieldType.NUMBER, DashboardWidgetFields.WIDTH.toString())
+			.setDescription("The width of the widget.")
+			.setValue(0);
+	
+	private CFWField<Integer> height = CFWField.newInteger(FormFieldType.NUMBER, DashboardWidgetFields.HEIGHT.toString())
+			.setDescription("The height of the widget.")
+			.setValue(0);
 	
 	private CFWField<String> title = CFWField.newString(FormFieldType.TEXT, DashboardWidgetFields.TITLE.toString())
 			.setColumnDefinition("VARCHAR(32767)")
@@ -98,7 +118,7 @@ public class DashboardWidget extends CFWObject {
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.addFields(id, foreignKeyDashboard, type, title, footer, bgcolor, fgcolor, settings);
+		this.addFields(id, foreignKeyDashboard, type, x, y, width, height, title, footer, bgcolor, fgcolor, settings);
 	}
 	
 	/**************************************************************************************
@@ -133,6 +153,10 @@ public class DashboardWidget extends CFWObject {
 						DashboardWidgetFields.PK_ID.toString(), 
 						DashboardWidgetFields.FK_ID_DASHBOARD.toString(), 
 						DashboardWidgetFields.TYPE.toString(),
+						DashboardWidgetFields.X.toString(),
+						DashboardWidgetFields.Y.toString(),
+						DashboardWidgetFields.WIDTH.toString(),
+						DashboardWidgetFields.HEIGHT.toString(),
 						DashboardWidgetFields.TITLE.toString(),
 						DashboardWidgetFields.FOOTER.toString(),
 						DashboardWidgetFields.BGCOLOR.toString(),
@@ -180,6 +204,42 @@ public class DashboardWidget extends CFWObject {
 	
 	public DashboardWidget type(String type) {
 		this.type.setValue(type);
+		return this;
+	}
+	
+	public Integer x() {
+		return x.getValue();
+	}
+	
+	public DashboardWidget x(Integer x) {
+		this.x.setValue(x);
+		return this;
+	}
+	
+	public Integer y() {
+		return y.getValue();
+	}
+	
+	public DashboardWidget y(Integer y) {
+		this.y.setValue(y);
+		return this;
+	}
+
+	public Integer width() {
+		return width.getValue();
+	}
+	
+	public DashboardWidget width(Integer width) {
+		this.width.setValue(width);
+		return this;
+	}
+	
+	public Integer height() {
+		return height.getValue();
+	}
+	
+	public DashboardWidget height(Integer height) {
+		this.height.setValue(height);
 		return this;
 	}
 	
