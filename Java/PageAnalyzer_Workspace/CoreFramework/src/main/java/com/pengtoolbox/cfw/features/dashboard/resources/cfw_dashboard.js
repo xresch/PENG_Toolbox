@@ -233,7 +233,6 @@ function cfw_dashboard_createWidgetElement(widgetData){
 	CFW_DASHBOARD_WIDGET_GUID++;
 	var defaultOptions = {
 			guid: 'widget-'+CFW_DASHBOARD_WIDGET_GUID,
-			widgetid: null,
 			TITLE: "",
 			FOOTER: "",
 			BGCOLOR: "",
@@ -304,7 +303,6 @@ function cfw_dashboard_createWidgetElement(widgetData){
  ************************************************************************************************/
 function cfw_dashboard_addWidget(type) {
 
-	
 	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, {action: 'create', item: 'widget', type: type, dashboardid: CFW_DASHBOARDVIEW_PARAMS.id }, function(data){
 			widgetData = data.payload;
 			if(widgetData != null){
@@ -313,6 +311,8 @@ function cfw_dashboard_addWidget(type) {
 								
 				var merged = Object.assign({}, widgetDefinition.defaultValues, widgetData);
 				
+				//temporary workaround
+				merged.JSON_SETTINGS = widgetDefinition.defaultValues.JSON_SETTINGS;
 				
 				console.log('WORKS!!!');
 				console.log(merged);
@@ -320,8 +320,27 @@ function cfw_dashboard_addWidget(type) {
 			}
 		}
 	);
-	
+}
 
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_dashboard_saveWidgetState(widgetData) {
+
+	var params = Object.assign({action: 'update', item: 'widget'}, widgetData); 
+	
+	delete params.content;
+	delete params.guid;
+	delete params.JSON_SETTINGS;
+	
+	params.JSON_SETTINGS = JSON.stringify(widgetData.JSON_SETTINGS);
+	
+	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, params, function(data){
+			console.log('======= Saved =======');
+			console.log(data.payload);
+			
+		}
+	);
 }
 /************************************************************************************************
  * 
@@ -342,27 +361,31 @@ function cfw_dashboard_createWidgetInstance(widgetData) {
 	
 	var widgetInstance = widgetDefinition.createWidgetInstance(widgetData, 
 			function(widgetData, widgetContent){
-		
+				
 				widgetData.content = widgetContent;
 				var widgetInstance = CFW.dashboard.createWidget(widgetData);
-				
+
 				var grid = $('.grid-stack').data('gridstack');
-				    
+
 			    grid.addWidget($(widgetInstance),
 			    		widgetData.X, 
 			    		widgetData.Y, 
 			    		widgetData.WIDTH, 
 			    		widgetData.HEIGHT, 
 			    		true);
-			    
+			   
 			    //----------------------------
 			    // Update Data
-			    var widgetData = $(widgetInstance).data('widgetData');
 			    
+			    var widgetData = $(widgetInstance).data('widgetData');
+
 			    widgetData.WIDTH	= widgetInstance.attr("data-gs-width");
 			    widgetData.HEIGHT	= widgetInstance.attr("data-gs-height");
 			    widgetData.X		= widgetInstance.attr("data-gs-x");
 			    widgetData.Y		= widgetInstance.attr("data-gs-y");
+
+			    cfw_dashboard_saveWidgetState(widgetData);
+			    
 			}
 	);
 	
@@ -463,7 +486,8 @@ function cfw_dashboard_initializeGridstack(gridStackElementSelector){
 			  widgetData.Y		 	= widgetInstance.attr("data-gs-y");
 			  widgetData.WIDTH	= widgetInstance.attr("data-gs-width");
 			  widgetData.HEIGHT	= widgetInstance.attr("data-gs-height");
-
+			  
+			  cfw_dashboard_saveWidgetState(widgetData);
 		  }
 	});
 	
@@ -561,7 +585,7 @@ function cfw_dashboard_draw(){
 	cfw_dashboard_initializeGridstack('.grid-stack');
 	
 	// Test Data
-	addTestdata();
+	//addTestdata();
 	
 	CFW.ui.toogleLoader(true);
 	

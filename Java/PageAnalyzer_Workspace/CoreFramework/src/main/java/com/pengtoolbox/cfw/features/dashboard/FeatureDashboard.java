@@ -18,7 +18,8 @@ import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 public class FeatureDashboard extends CFWAppFeature {
 
 	public static final String PERMISSION_DASHBOARDING = "Dashboarding";
-
+	public static final String PERMISSION_DASHBOARD_ADMIN = "Dashboarding Admin";
+	
 	public static final String RESOURCE_PACKAGE = "com.pengtoolbox.cfw.features.dashboard.resources";
 	
 	@Override
@@ -68,6 +69,13 @@ public class FeatureDashboard extends CFWAppFeature {
 		CFW.DB.Permissions.oneTimeCreate(
 				new Permission(PERMISSION_DASHBOARDING, "user")
 					.description("Create and view dashboards"),
+					true,
+					false
+				);	
+		
+		CFW.DB.Permissions.oneTimeCreate(
+				new Permission(PERMISSION_DASHBOARD_ADMIN, "user")
+					.description("View, Edit and Delete all dashboards of all users, regardless of sharing of the dashboards."),
 					true,
 					false
 				);	

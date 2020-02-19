@@ -8,11 +8,9 @@ import java.util.logging.Logger;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.features.api.APIDefinition;
 import com.pengtoolbox.cfw.features.api.APIDefinitionFetch;
-import com.pengtoolbox.cfw.features.usermgmt.User;
-import com.pengtoolbox.cfw.features.usermgmt.User.UserFields;
+import com.pengtoolbox.cfw.features.dashboard.Dashboard.DashboardFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
@@ -58,7 +56,7 @@ public class DashboardWidget extends CFWObject {
 			.setValue(null);
 	
 	private CFWField<Integer> foreignKeyDashboard = CFWField.newInteger(FormFieldType.HIDDEN, DashboardWidgetFields.FK_ID_DASHBOARD)
-			.setForeignKeyCascade(this, User.class, UserFields.PK_ID)
+			.setForeignKeyCascade(this, Dashboard.class, DashboardFields.PK_ID)
 			.setDescription("The id of the dashboard containing the widget.")
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(null);

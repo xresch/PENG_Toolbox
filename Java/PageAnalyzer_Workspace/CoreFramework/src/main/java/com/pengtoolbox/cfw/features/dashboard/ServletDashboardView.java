@@ -86,7 +86,7 @@ public class ServletDashboardView extends HttpServlet
 		String action = request.getParameter("action");
 		String item = request.getParameter("item");
 		String type = request.getParameter("type");
-		String dashboardid = request.getParameter("dashboardid");
+		String dashboardID = request.getParameter("dashboardid");
 		//String ID = request.getParameter("id");
 		//String IDs = request.getParameter("ids");
 		//int	userID = CFW.Context.Request.getUser().id();
@@ -103,10 +103,19 @@ public class ServletDashboardView extends HttpServlet
 					default: 					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 												break;
 				}
-				
 			case "create": 			
 				switch(item.toLowerCase()) {
-					case "widget": 				createWidget(jsonResponse, type, dashboardid);
+					case "widget": 				createWidget(jsonResponse, type, dashboardID);
+	  											break;
+	  																
+					default: 					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
+												break;
+				}
+				break;	
+				
+			case "update": 			
+				switch(item.toLowerCase()) {
+					case "widget": 				updateWidget(request, response, jsonResponse);
 	  											break;
 	  																
 					default: 					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
@@ -120,18 +129,42 @@ public class ServletDashboardView extends HttpServlet
 		}
 	}
 	
-	private void createWidget(JSONResponse response, String type, String dashboardid) {
+	private void createWidget(JSONResponse response, String type, String dashboardID) {
 		
-		DashboardWidget newWidget = new DashboardWidget();
-		newWidget.type(type);
-		newWidget.foreignKeyDashboard(Integer.parseInt(dashboardid));
+		if(CFW.DB.Dashboards.isDashboardOfCurrentUser(dashboardID)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+			
+			DashboardWidget newWidget = new DashboardWidget();
+			newWidget.type(type);
+			newWidget.foreignKeyDashboard(Integer.parseInt(dashboardID));
+			
+			int id = CFW.DB.DashboardWidgets.createGetPrimaryKey(newWidget);
+			newWidget.id(id);
+			
+			response.getContent().append(CFW.JSON.toJSON(newWidget));
+			
+		}else{
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient rights to execute action.");
+		}
+
+	}
+	
+	private void updateWidget(HttpServletRequest request, HttpServletResponse response, JSONResponse json) {
 		
-		int id = CFW.DB.DashboardWidgets.createGetPrimaryKey(newWidget);
-		newWidget.id(id);
+		String dashboardID = request.getParameter("dashboardid");
 		
-		
-		response.getContent().append(CFW.JSON.toJSON(newWidget));
-		
+		if(CFW.DB.Dashboards.isDashboardOfCurrentUser(dashboardID)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+			DashboardWidget widgetToUpdate = new DashboardWidget();
+			
+			widgetToUpdate.mapRequestParameters(request);
+			CFW.DB.DashboardWidgets.update(widgetToUpdate);
+			
+			System.out.println(widgetToUpdate.dumpFieldsAsKeyValueString());
+		}else{
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient rights to execute action.");
+		}
+
 	}
 		
 

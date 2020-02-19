@@ -988,7 +988,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				}else {
 					new CFWLog(logger)
 						.method("mapAndValidateParamsToFields")
-						.severe("The field with name '"+key+"' is unknown for this type.");
+						.silent()
+						.finest("The field with name '"+key+"' is unknown for this type.");
 				}
 			}
 		}

@@ -145,6 +145,9 @@ CFW.dashboard.registerWidget("cfw_image",
 		description: CFWL('cfw_dashboard_widget_cfwimage_desc', "Displays an image."),
 		defaultValues: {
 			TITLE: CFWL('cfw_dashboard_widget_cfwimage', "Image"), 
+			JSON_SETTINGS: {
+				url: '/resources/images/login_background.jpg'
+			}
 		},
 		createWidgetInstance: function (widgetData, callback) {
 							

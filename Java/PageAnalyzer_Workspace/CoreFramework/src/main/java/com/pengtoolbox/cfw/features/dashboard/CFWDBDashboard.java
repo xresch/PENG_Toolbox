@@ -168,6 +168,16 @@ public class CFWDBDashboard {
 				.getAsJSON();
 	}
 	
+	public static boolean isDashboardOfCurrentUser(String dashboardID) {
+		
+		int count = new Dashboard()
+			.select(DashboardFields.FK_ID_USER.toString())
+			.where(DashboardFields.PK_ID.toString(), dashboardID)
+			.and(DashboardFields.FK_ID_USER.toString(), CFW.Context.Request.getUser().id())
+			.getCount();
+		
+		return count > 0;
+	}
 	
 	//####################################################################################################
 	// CHECKS
