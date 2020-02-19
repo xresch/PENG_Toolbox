@@ -40,49 +40,12 @@ public class CFWLocalization {
 	private static LinkedHashMap<String, FileDefinition> localeFiles = new LinkedHashMap<String, FileDefinition>();
 		
 	private static final LinkedHashMap<String,Properties> languageCache = new LinkedHashMap<String, Properties>();
-	
-	// contains all properties
-	private static LinkedProperties globalProperties = new LinkedProperties();
-	
+		
 	/******************************************************************************************
 	 * 
 	 ******************************************************************************************/
 	public static Properties getAllProperties() {
-		if (CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING)) {
-			return globalProperties;
-		}else {
-			//--------------------------
-			// Merged
-			LinkedProperties mergedPorperties = new LinkedProperties();
-			
-			for(Entry<String, FileDefinition> entry : localeFiles.entrySet()) {
-
-				FileDefinition def = entry.getValue();
-
-				StringReader reader = null;
-				try {
-					Properties currentProps = new Properties();
-					String propertiesString = def.readContents();
-					if(propertiesString != null) {
-						reader = new StringReader(propertiesString) ;
-						currentProps.load( reader );
-						mergedPorperties.putAll(currentProps);
-					}
-					
-				} catch (IOException e) {
-					new CFWLog(logger)
-						.method("getAllProperties")
-						.severe("Error while reading language pack.", e);
-				}finally {
-					if(reader!= null) {
-						reader.close();
-					}
-				}
-			}
-			
-			return mergedPorperties;
-			
-		}
+		return getLanguagePack(getLocalesForRequest(), null);
 	}
 	
 	/******************************************************************************************
@@ -97,30 +60,6 @@ public class CFWLocalization {
 		localeFiles.put(id.toLowerCase(), propertiesFileDefinition);
 		localeFilesID++;
 		
-		//------------------------
-		// Add to all Properties
-		if (CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING)) {
-
-			StringReader reader = null;
-			try {
-				Properties currentProps = new Properties();
-				String propertiesString = propertiesFileDefinition.readContents();
-				if(propertiesString != null) {
-					reader = new StringReader(propertiesString) ;
-					currentProps.load( reader );
-					globalProperties.putAll(currentProps);
-				}
-				
-			} catch (IOException e) {
-				new CFWLog(logger)
-					.method("getLocaleProperties")
-					.severe("Error while reading language pack.", e);
-			}finally {
-				if(reader!= null) {
-					reader.close();
-				}
-			}
-		}
 	}
 	
 	/******************************************************************************************
@@ -189,26 +128,26 @@ public class CFWLocalization {
 	 * @throws IOException
 	 ******************************************************************************************/
 	public static Properties getLanguagePackForRequest() {
-		return getLanguagePack(getLocalesForRequest());
+		String requestURI = "";
+		if(CFW.Context.Request.getRequest() != null) {
+			requestURI = CFW.Context.Request.getRequest().getRequestURI();
+		}
+		return getLanguagePack(getLocalesForRequest(), requestURI);
 	}
 	
 	/******************************************************************************************
 	 * 
-	 * @param request
-	 * @param response
+	 * @param locales, later will override earliers
+	 * @param requestURI of the request, provide to get everything for the selected locales
 	 * @return 
 	 * @throws IOException
 	 ******************************************************************************************/
-	public static Properties getLanguagePack(Locale[] locales) {
+	public static Properties getLanguagePack(Locale[] locales, String requestURI) {
 		
 		//------------------------------
 		// Initialize
 		String cacheID = CFW.Localization.getLocaleIdentifier(locales);
 		
-		String requestURI = "";
-		if(CFW.Context.Request.getRequest() != null) {
-			requestURI = CFW.Context.Request.getRequest().getRequestURI();
-		}
 		//------------------------------
 		// Check is Cached
 		if (languageCache.containsKey(cacheID) && CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING)) {
@@ -233,7 +172,9 @@ public class CFWLocalization {
 				for(Entry<String, FileDefinition> entry : localeFiles.entrySet()) {
 					String entryID = entry.getKey();
 
-					if( (language+requestURI).startsWith(entryID.substring(0, entryID.lastIndexOf('-') )) ) {
+					if( (language+requestURI).startsWith(entryID.substring(0, entryID.lastIndexOf('-'))) 
+					|| (requestURI == null && entryID.startsWith(language))
+					) {
 						
 						FileDefinition def = entry.getValue();
 	
@@ -278,7 +219,7 @@ public class CFWLocalization {
 		if(template != null){
 			Properties langMap;
 			if(template.useGlobaleLocale() == false) {
-				langMap = getLanguagePack(getLocalesForRequest());
+				langMap = getLanguagePackForRequest();
 			}else {
 				langMap = getAllProperties();
 			}

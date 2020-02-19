@@ -23,7 +23,7 @@ public class LocalizationTests {
 		CFW.Localization.registerLocaleFile(Locale.ENGLISH, "", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "testlangoverride_en.properties"));
 		CFW.Localization.registerLocaleFile(Locale.GERMAN, "", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "testlang_de.properties"));
 		
-		Properties result = CFW.Localization.getLanguagePack(new Locale[] {Locale.ENGLISH, Locale.GERMAN});
+		Properties result = CFW.Localization.getLanguagePack(new Locale[] {Locale.ENGLISH, Locale.GERMAN}, "");
 		
 		String resultString = result.toString();
 		System.out.println(resultString);
