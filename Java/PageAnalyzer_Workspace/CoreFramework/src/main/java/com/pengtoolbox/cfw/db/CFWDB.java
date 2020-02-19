@@ -43,8 +43,8 @@ public class CFWDB {
 
 	private static Logger logger = CFWLog.getLogger(CFWDB.class.getName());
 	
-	private static InheritableThreadLocal<ArrayList<Connection>> myOpenConnections = new InheritableThreadLocal<ArrayList<Connection>>();
-	private static InheritableThreadLocal<Connection> transactionConnection = new InheritableThreadLocal<Connection>();
+	private static ThreadLocal<ArrayList<Connection>> myOpenConnections = new ThreadLocal<ArrayList<Connection>>();
+	private static ThreadLocal<Connection> transactionConnection = new ThreadLocal<Connection>();
 
 	/********************************************************************************************
 	 *
