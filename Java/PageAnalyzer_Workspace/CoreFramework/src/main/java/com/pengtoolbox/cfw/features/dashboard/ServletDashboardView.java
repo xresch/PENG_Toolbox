@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
-import com.pengtoolbox.cfw.features.dashboard.Dashboard.DashboardFields;
-import com.pengtoolbox.cfw.features.dashboard.DashboardWidget.DashboardWidgetFields;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;

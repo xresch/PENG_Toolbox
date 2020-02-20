@@ -91,20 +91,45 @@ function cfw_dashboard_editWidget(widgetGUID){
 	console.log(widgetData);
 	
 	//##################################################
+	// Create Widget Specific Form
+	//##################################################
+	var customForm = $(widgetDef.getEditForm(widgetData));
+	var buttons = customForm.find('button');
+	if(buttons.length > 0){
+		buttons.remove();
+	}
+	var customFormButton = '<input type="button" onclick="cfw_dashboard_saveCustomSettings(this, \''+widgetGUID+'\')" class="form-control btn-primary" value="Save">';
+	
+	customForm.append(customFormButton);
+	
+	//##################################################
 	// Show Form for Default values
 	//##################################################
 	var defaultForm = 
-		'<h2>Description</h2><p>'+widgetDef.description+'</p>'
-		+'<h2>Widget Default Settings</h2><form id="form-edit-'+widgetGUID+'">';
+		'<h2>Widget Default Settings</h2><form id="form-edit-'+widgetGUID+'">';
 	
 	//------------------------------
 	// Title
 	
-	defaultForm += new CFWFormField({ type: "text", name: "title", value: widgetData.TITLE, description: 'The title of the widget.' }).createHTML();;
+	defaultForm += new CFWFormField({ 
+			type: "text", 
+			name: "title", 
+			label: CFWL('cfw_core_title', 'Title'), 
+			value: widgetData.TITLE, 
+			description: 'The title of the widget.' 
+		}
+	).createHTML();
 	
 	//------------------------------
 	// Footer
-	defaultForm += new CFWFormField({ type: "textarea", name: "footer", value: widgetData.FOOTER, description: 'The contents of the footer of the widget.' }).createHTML();;
+	defaultForm += new CFWFormField({ 
+			type: "textarea", 
+			name: "footer", 
+			label: CFWL('cfw_core_footer', 'Footer'), 
+			value: widgetData.FOOTER, 
+			description: 'The contents of the footer of the widget.' 
+		}
+	).createHTML();;
 	
 	//defaultForm += cfw_dashboard_createFormField("Footer", 'The footer of the widget.', '<textarea class="form-control" rows="10" name="footer" placeholder="Footer Contents">'+widgetData.footer+'</textarea>');
 	
@@ -125,7 +150,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 	defaultForm += new CFWFormField({ 
 		type: "select", 
 		name: "BGCOLOR", 
-		label: "Background Color", 
+		label: CFWL('cfw_core_bgcolor', 'Background Color'), 
 		value: widgetData.BGCOLOR, 
 		options: selectOptions,
 		description: 'Define the color used for the background.' 
@@ -134,7 +159,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 	defaultForm += new CFWFormField({ 
 		type: "select", 
 		name: "FGCOLOR", 
-		label: "Text Color", 
+		label: CFWL('cfw_core_fgcolor', 'Foreground Color'), 
 		value: widgetData.FGCOLOR, 
 		options: selectOptions,
 		description: 'Define the color used for the text and borders.' 
@@ -144,27 +169,18 @@ function cfw_dashboard_editWidget(widgetGUID){
 	// Save Button
 	defaultForm += '<input type="button" onclick="cfw_dashboard_saveDefaultSettings(\''+widgetGUID+'\')" class="form-control btn-primary" value="Save">';
 	
-	//##################################################
-	// Create Widget Specific Form
-	//##################################################
-	var customForm = $(widgetDef.getEditForm(widgetData));
-	var buttons = customForm.find('button');
-	if(buttons.length > 0){
-		buttons.remove();
-	}
-	var customFormButton = '<input type="button" onclick="cfw_dashboard_saveCustomSettings(this, \''+widgetGUID+'\')" class="form-control btn-primary" value="Save">';
-	
-	customForm.append(customFormButton);
-//	
+
+
 	//##################################################
 	// Create and show Modal
 	//##################################################
 	var compositeDiv = $('<div id="editWidgetComposite">');
-	compositeDiv.append(defaultForm);
-	compositeDiv.append('<h2>Settings for '+widgetDef.menulabel+' Widget</h2>');
+	compositeDiv.append('<p>'+widgetDef.description+'</p>');
 	compositeDiv.append(customForm);
+	compositeDiv.append(defaultForm);
+
 	
-	CFW.ui.showModal("Edit Widget", compositeDiv, "CFW.cache.clearCache();");
+	CFW.ui.showModal(CFWL('cfw_core_settings', 'Settings'), compositeDiv, "CFW.cache.clearCache();");
 	
 	  //-----------------------------------
 	  // Initialize tooltipy
@@ -280,9 +296,9 @@ function cfw_dashboard_createWidgetElement(widgetData){
 		+'			<i class="fas fa-cog"></i>'
 		+'		</a>'
 		+'		<div class="dropdown-menu">'
-		+'			<a class="dropdown-item" onclick="cfw_dashboard_editWidget(\''+merged.guid+'\')"><i class="fas fa-pen"></i>&nbsp;Edit</a>'
+		+'			<a class="dropdown-item" onclick="cfw_dashboard_editWidget(\''+merged.guid+'\')"><i class="fas fa-pen"></i>&nbsp;'+CFWL('cfw_core_edit', 'Edit')+'</a>'
 		+'			<div class="dropdown-divider"></div>'
-		+'				<a class="dropdown-item text-danger" onclick="cfw_dashboard_removeWidgetConfirmed(\''+merged.guid+'\')"><i class="fas fa-trash"></i>&nbsp;Remove</a>'
+		+'				<a class="dropdown-item" onclick="cfw_dashboard_removeWidgetConfirmed(\''+merged.guid+'\')"><i class="fas fa-trash"></i>&nbsp;'+CFWL('cfw_core_remove', 'Remove')+'</a>'
 		+'			</div>'
 
 		

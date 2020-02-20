@@ -4,13 +4,13 @@ ALWAYS ON
 - Use addJSFileBottomSingle() instead of addJSFileBottomAssembly() where applicable
 - Create Manual Pages
 - Cleanup console.log() and System.out.println()
+- Localize
 
 TODO
 ====
 
 - Dashboard Tile Fullscreen
 - Change order of Settings for dashboards
-- implement dashboard allow edit only on permissions
 - implement dashboard management page
 - Muuuf widget definition to server side.
 
@@ -52,6 +52,7 @@ TODO
 
 DONE
 ====
+- implement dashboard allow edit only on permissions
 - Implement dashboard load widgets
 - Render Specific Settings
 - change cookie name to CFWSESSIONID
