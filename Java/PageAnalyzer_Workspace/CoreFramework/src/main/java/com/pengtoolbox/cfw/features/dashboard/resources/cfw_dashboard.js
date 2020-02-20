@@ -1,5 +1,5 @@
 
-var CFW_DASHBOARD_EDIT_MODE = true;
+var CFW_DASHBOARD_EDIT_MODE = false;
 var CFW_DASHBOARD_FULLSCREEN_MODE = false;
 
 var CFW_DASHBOARD_WIDGET_REGISTRY = {};
@@ -220,13 +220,19 @@ function cfw_dashboard_removeWidget(widgetGUID) {
 	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, {action: 'delete', item: 'widget', widgetid: widgetData.PK_ID, dashboardid: CFW_DASHBOARDVIEW_PARAMS.id }, function(data){
 
 			if(data.success){
-				var grid = $('.grid-stack').data('gridstack');
-				grid.removeWidget(widget);
+				cfw_dashboard_removeWidgetFromGrid(widget);
 			}
 		}
 	);
-	
+};
 
+
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_dashboard_removeWidgetFromGrid(widgetElement) {
+	var grid = $('.grid-stack').data('gridstack');
+	grid.removeWidget(widgetElement);
 };
 
 
@@ -263,9 +269,14 @@ function cfw_dashboard_createWidgetElement(widgetData){
 		BGCOLORClass = 'bg-'+merged.BGCOLOR;
 	}
 	
+	var settingsDisplayClass = '';
+	if(!CFW_DASHBOARD_EDIT_MODE){
+		settingsDisplayClass = 'd-none';
+	}
+	
 	var htmlString =
 		'    <div class="grid-stack-item-content card d-flex '+BGCOLORClass+' '+FGCOLORClass+'">'
-		+'		<a type="button" role ="button" class="cfw-dashboard-widget-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+		+'		<a type="button" role ="button" class="cfw-dashboard-widget-settings '+settingsDisplayClass+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
 		+'			<i class="fas fa-cog"></i>'
 		+'		</a>'
 		+'		<div class="dropdown-menu">'
@@ -334,21 +345,22 @@ function cfw_dashboard_addWidget(type) {
  * 
  ************************************************************************************************/
 function cfw_dashboard_saveWidgetState(widgetData) {
-
-	var params = Object.assign({action: 'update', item: 'widget'}, widgetData); 
-	
-	delete params.content;
-	delete params.guid;
-	delete params.JSON_SETTINGS;
-	
-	params.JSON_SETTINGS = JSON.stringify(widgetData.JSON_SETTINGS);
-	
-	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, params, function(data){
-			console.log('======= Saved =======');
-			console.log(data.payload);
-			
-		}
-	);
+	if(JSDATA.canEdit == true){
+		var params = Object.assign({action: 'update', item: 'widget'}, widgetData); 
+		
+		delete params.content;
+		delete params.guid;
+		delete params.JSON_SETTINGS;
+		
+		params.JSON_SETTINGS = JSON.stringify(widgetData.JSON_SETTINGS);
+		
+		CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, params, function(data){
+				console.log('======= Saved =======');
+				console.log(data.payload);
+				
+			}
+		);
+	}
 }
 /************************************************************************************************
  * 
@@ -357,7 +369,7 @@ function cfw_dashboard_rerenderWidget(widgetGUID) {
 	var widget = $('#'+widgetGUID);
 	var widgetData = widget.data("widgetData");
 	
-	cfw_dashboard_removeWidget(widgetGUID);
+	cfw_dashboard_removeWidgetFromGrid(widget);
 	cfw_dashboard_createWidgetInstance(widgetData, false);
 	
 }
@@ -423,7 +435,8 @@ function cfw_dashboard_toggleFullscreenMode(){
 		$('#cfw-dashboard-control-panel').css('padding', '');
 		
 		$('#fullscreenButton')
-			.removeClass('fullscreened-button');
+			.removeClass('fullscreened-button')
+			.addClass('fullscreenButton');
 		
 		$('#fullscreenButtonIcon')
 			.removeClass('fa-compress')
@@ -436,7 +449,9 @@ function cfw_dashboard_toggleFullscreenMode(){
 		$('#cfw-dashboard-control-panel').css('padding', '0px');
 		
 		$('#fullscreenButton')
-		.addClass('fullscreened-button');
+			.removeClass('fullscreenButton')
+			.addClass('fullscreened-button');
+		
 		$('#fullscreenButtonIcon')
 			.removeClass('fa-expand')
 			.addClass('fa-compress');
@@ -450,12 +465,14 @@ function cfw_dashboard_toggleEditMode(){
 	var grid = $('.grid-stack').data('gridstack');
 	if(CFW_DASHBOARD_EDIT_MODE){
 		CFW_DASHBOARD_EDIT_MODE = false;
-		$('.cfw-dashboard-widget-settings').css('display', 'none');
+		$('.cfw-dashboard-widget-settings').addClass('d-none');
+		$('#addWidget').addClass('d-none');
 		grid.disable();
 		
 	}else{
 		CFW_DASHBOARD_EDIT_MODE = true;
-		$('.cfw-dashboard-widget-settings').css('display', '');
+		$('.cfw-dashboard-widget-settings').removeClass('d-none');
+		$('#addWidget').removeClass('d-none');
 		grid.enable();
 	}
 }
@@ -463,8 +480,14 @@ function cfw_dashboard_toggleEditMode(){
  * Main method for building the view.
  * 
  ******************************************************************/
-function cfw_dashboard_initializeGridstack(gridStackElementSelector){
+function cfw_dashboard_initialize(gridStackElementSelector){
 	
+	
+	//-----------------------------
+	// Set options 
+	if(JSDATA.canEdit){
+		$('#editButton').removeClass('d-none');
+	}
 	//-----------------------------
 	// Set options 
 
@@ -590,7 +613,7 @@ function cfw_dashboard_draw(){
 	
 	console.log('draw');
 	
-	cfw_dashboard_initializeGridstack('.grid-stack');
+	cfw_dashboard_initialize('.grid-stack');
 	
 	// Test Data
 	//addTestdata();
@@ -607,6 +630,10 @@ function cfw_dashboard_draw(){
 			for(var i = 0;i < widgetArray.length ;i++){
 				cfw_dashboard_createWidgetInstance(widgetArray[i], false);
 			}
+			
+			//-----------------------------
+			// Disable resize & move
+			$('.grid-stack').data('gridstack').disable();
 		});
 		
 		CFW.ui.toogleLoader(false);

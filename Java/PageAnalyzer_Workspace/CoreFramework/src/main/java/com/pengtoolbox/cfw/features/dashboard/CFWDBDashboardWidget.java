@@ -50,7 +50,7 @@ public class CFWDBDashboardWidget {
 			}
 			
 			if(isWidgetOfCurrentUser(widget) == false
-			|| !CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+			&& !CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
 				new CFWLog(logger)
 				.method("doCheck")
 				.severe("You are not allowed to modify this dashboard", new Throwable());
@@ -107,11 +107,11 @@ public class CFWDBDashboardWidget {
 	public static boolean isWidgetOfCurrentUser(DashboardWidget widget) {
 		
 		int count = new Dashboard()
-			.select(DashboardFields.FK_ID_USER.toString())
+			.selectCount()
 			.where(DashboardFields.PK_ID.toString(), widget.foreignKeyDashboard())
 			.and(DashboardFields.FK_ID_USER.toString(), CFW.Context.Request.getUser().id())
 			.getCount();
-		
+		System.out.println("count: "+count);
 		return count > 0;
 	}
 	

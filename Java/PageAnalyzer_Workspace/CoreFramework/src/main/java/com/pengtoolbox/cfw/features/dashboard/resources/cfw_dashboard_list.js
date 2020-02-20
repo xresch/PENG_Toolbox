@@ -163,7 +163,7 @@ function cfw_dashboardlist_printDashboards(data, type){
 					//-------------------------
 					// View Button
 					function (record, id){ 
-						return '<td><a class="btn btn-success btn-sm" role="button" href="/app/dashboard/view?id='+id+'" alt="View" title="View" >'
+						return '<td><a class="btn btn-success btn-sm" role="button" href="/app/dashboard/view?id='+id+'&title='+encodeURIComponent(record.NAME)+'" alt="View" title="View" >'
 						+ '<i class="fa fa-eye"></i>'
 						+ '</a></td>';
 					},

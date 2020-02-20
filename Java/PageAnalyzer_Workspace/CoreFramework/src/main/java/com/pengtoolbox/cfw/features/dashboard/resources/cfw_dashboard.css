@@ -108,11 +108,18 @@
     right: -8px;
 }
 
+.fullscreenButton{
+    position: absolute;
+    right: 20px;
+}
+
 .fullscreened-button{
 	position: absolute;
     z-index: 1024;
     top: 0px;
     right: 0px;
+    padding: 2px;
+    line-height: 4px;
 }
 
 .dashboard-image {

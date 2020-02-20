@@ -36,7 +36,8 @@ public class ServletDashboardView extends HttpServlet
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
 
-		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARDING)) {
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARDING)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
 			
 			String action = request.getParameter("action");
 			
@@ -54,6 +55,7 @@ public class ServletDashboardView extends HttpServlet
 				
 				content.append(CFW.Files.readPackageResource(FeatureDashboard.RESOURCE_PACKAGE, "cfw_dashboard.html"));
 				
+				html.addJavascriptData("canEdit", canEdit(request.getParameter("id")) );
 				html.addJavascriptCode("cfw_dashboard_draw();");
 				
 		        response.setContentType("text/html");
@@ -73,7 +75,8 @@ public class ServletDashboardView extends HttpServlet
     protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
 
-		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARDING)) {
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARDING)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
 			handleDataRequest(request, response);
 		}else {
 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied!!!");
@@ -139,6 +142,7 @@ public class ServletDashboardView extends HttpServlet
 								
 		}
 	}
+	
 	private void fetchWidgets(JSONResponse response, String dashboardID) {
 		
 		Dashboard dashboard = CFW.DB.Dashboards.selectByID(dashboardID);
@@ -155,9 +159,8 @@ public class ServletDashboardView extends HttpServlet
 	}
 	
 	private void createWidget(JSONResponse response, String type, String dashboardID) {
-		
-		if(CFW.DB.Dashboards.isDashboardOfCurrentUser(dashboardID)
-		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+
+		if(canEdit(dashboardID)) {
 			
 			DashboardWidget newWidget = new DashboardWidget();
 			newWidget.type(type);
@@ -176,10 +179,9 @@ public class ServletDashboardView extends HttpServlet
 	
 	private void updateWidget(HttpServletRequest request, HttpServletResponse response, JSONResponse json) {
 		
-		String dashboardID = request.getParameter("dashboardid");
-		
-		if(CFW.DB.Dashboards.isDashboardOfCurrentUser(dashboardID)
-		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+		String dashboardID = request.getParameter("FK_ID_DASHBOARD");
+
+		if(canEdit(dashboardID)) {
 			DashboardWidget widgetToUpdate = new DashboardWidget();
 			
 			widgetToUpdate.mapRequestParameters(request);
@@ -195,8 +197,7 @@ public class ServletDashboardView extends HttpServlet
 		
 		String dashboardID = request.getParameter("dashboardid");
 		
-		if(CFW.DB.Dashboards.isDashboardOfCurrentUser(dashboardID)
-		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+		if(canEdit(dashboardID)) {
 			
 			String widgetID = request.getParameter("widgetid");
 			
@@ -207,5 +208,14 @@ public class ServletDashboardView extends HttpServlet
 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient rights to execute action.");
 		}
 
+	}
+	
+	private boolean canEdit(String dashboardID) {
+		if(CFW.DB.Dashboards.isDashboardOfCurrentUser(dashboardID)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 }

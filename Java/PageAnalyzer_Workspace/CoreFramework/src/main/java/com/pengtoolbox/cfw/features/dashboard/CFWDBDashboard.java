@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.db.CFWDBDefaultOperations;
 import com.pengtoolbox.cfw.db.PrecheckHandler;
 import com.pengtoolbox.cfw.features.dashboard.Dashboard.DashboardFields;
@@ -174,8 +175,8 @@ public class CFWDBDashboard {
 	
 	public static boolean isDashboardOfCurrentUser(String dashboardID) {
 		
-		int count = new Dashboard()
-			.select(DashboardFields.FK_ID_USER.toString())
+		int count = new CFWSQL(new Dashboard())
+			.selectCount()
 			.where(DashboardFields.PK_ID.toString(), dashboardID)
 			.and(DashboardFields.FK_ID_USER.toString(), CFW.Context.Request.getUser().id())
 			.getCount();

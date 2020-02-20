@@ -8,7 +8,7 @@ import com.pengtoolbox.cfw.caching.FileDefinition;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public abstract class AbstractHTMLResponse extends AbstractResponse {
@@ -77,6 +77,11 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 		singleJSBottom.add(new FileDefinition(javascript));
 	}
 	
+	public void addJavascriptData(String key, boolean value){
+		this.javascriptData.append("JSDATA.").append(key)
+				.append(" = ").append(value).append(";\n");
+
+	}
 	public void addJavascriptData(String key, int value){
 		this.javascriptData.append("JSDATA.").append(key)
 				.append(" = ").append(value).append(";\n");

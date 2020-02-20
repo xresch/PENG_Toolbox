@@ -17,7 +17,7 @@ import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWContextRequest {
@@ -101,8 +101,7 @@ public class CFWContextRequest {
 		if(getUserPermissions() != null && getUserPermissions().containsKey(permissionName)) {
 			return true;
 		}
-		
-		CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied!");
+
 		return false;
 	}
 

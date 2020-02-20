@@ -416,6 +416,13 @@ public class CFWObject {
 	public CFWSQL selectWithout(String ...fieldnames) {
 		return new CFWSQL(this).selectWithout(fieldnames);
 	}
+	/****************************************************************
+	 * Begins a SELECT * statement.
+	 * @return CFWQuery for method chaining
+	 ****************************************************************/
+	public CFWSQL selectCount() {
+		return new CFWSQL(this).selectCount();
+	}
 	
 	/****************************************************************
 	 * Creates an insert statement including all fields and executes
