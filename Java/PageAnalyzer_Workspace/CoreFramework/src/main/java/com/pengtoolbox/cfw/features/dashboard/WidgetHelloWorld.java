@@ -13,7 +13,7 @@ import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.response.JSONResponse;
 
-public class WidgetText extends WidgetDefinition {
+public class WidgetHelloWorld extends WidgetDefinition {
 
 	@Override
 	public String getWidgetType() {return "cfw_helloworld";}
@@ -32,8 +32,10 @@ public class WidgetText extends WidgetDefinition {
 
 	@Override
 	public ArrayList<FileDefinition> getJavascriptFiles() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<FileDefinition> array = new ArrayList<FileDefinition>();
+		FileDefinition js = new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_widget_helloworld.js");
+		array.add(js);
+		return array;
 	}
 
 	@Override

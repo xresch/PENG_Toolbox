@@ -17,9 +17,9 @@ import com.pengtoolbox.cfw.response.AbstractHTMLResponse;
  * @author Reto Scheiwiller, � 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class WidgetRegistry {
+public class CFWRegistryWidgets {
 	
-	public static Logger logger = CFWLog.getLogger(WidgetRegistry.class.getName());
+	public static Logger logger = CFWLog.getLogger(CFWRegistryWidgets.class.getName());
 	
 	private static LinkedHashMap<String, WidgetDefinition> definitionArray = new LinkedHashMap<String, WidgetDefinition>();
 	
@@ -48,7 +48,7 @@ public class WidgetRegistry {
 	public static void addAll(ArrayList<WidgetDefinition> definitions)  {
 		if(definitions != null) {
 			for(WidgetDefinition definition : definitions) {
-				WidgetRegistry.add(definition);
+				CFWRegistryWidgets.add(definition);
 			}
 		}
 	}
@@ -78,8 +78,8 @@ public class WidgetRegistry {
 	}
 	
 	/***********************************************************************
-	 * Adds the neccessary files for the user.
-	 * @param definition
+	 * Add widget CSS and JS files based on user permissions
+	 * @param response
 	 ***********************************************************************/
 	public static void addFilesToResponse(AbstractHTMLResponse response)  {
 		
@@ -93,9 +93,8 @@ public class WidgetRegistry {
 			}
 		}
 		
-		//TODO: add to Response
+		response.addCSSAssembly(css);
+		response.addJSBottomAssembly(javascript);
 	}
-	
 
-	 
 }

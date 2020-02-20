@@ -52,7 +52,7 @@ public class ServletUserManagement extends HttpServlet
 			createForms();
 			
 			//html.addJSFileBottomSingle(new FileDefinition(HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".js", "cfw_usermgmt.js"));
-			html.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FeatureUserManagement.RESOURCE_PACKAGE, "cfw_usermgmt.js");
+			html.addJSFileBottom(HandlingType.JAR_RESOURCE, FeatureUserManagement.RESOURCE_PACKAGE, "cfw_usermgmt.js");
 			
 			content.append(CFW.Files.readPackageResource(FeatureUserManagement.RESOURCE_PACKAGE, "cfw_usermgmt.html"));
 			

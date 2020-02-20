@@ -47,11 +47,16 @@ public class ServletDashboardView extends HttpServlet
 				html.addCSSFile(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_dashboard.css");
 				
 				//html.addJSFileBottomSingle(new FileDefinition(HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".js", "cfw_usermgmt.js"));
-				html.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "gridstack.all.js");
-				html.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_dashboard.js");
-				html.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_dashboard_components.js");
+				html.addJSFileBottom(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "gridstack.all.js");
+				html.addJSFileBottom(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_dashboard.js");
+				html.addJSFileBottom(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_dashboard_components.js");
 				
 				content.append(CFW.Files.readPackageResource(FeatureDashboard.RESOURCE_PACKAGE, "cfw_dashboard.html"));
+				
+				//--------------------------------------
+				// Add widget CSS and JS files based on
+				// user permissions
+				CFW.Registry.Widgets.addFilesToResponse(html);
 				
 				html.addJavascriptData("canEdit", canEdit(request.getParameter("id")) );
 				html.addJavascriptCode("cfw_dashboard_draw();");

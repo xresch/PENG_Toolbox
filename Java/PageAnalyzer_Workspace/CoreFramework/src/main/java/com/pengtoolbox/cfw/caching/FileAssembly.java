@@ -64,7 +64,9 @@ public class FileAssembly {
 	 * @param filetype the file type e.g. "js", "css"
 	 ***********************************************************************/
 	public FileAssembly addAll(ArrayList<FileDefinition> definitionArray) {
-		fileArray.addAll(definitionArray);
+		if(definitionArray != null) {
+			fileArray.addAll(definitionArray);
+		}
 		return this;
 	}
 	public FileAssembly addFileContent(String content) {

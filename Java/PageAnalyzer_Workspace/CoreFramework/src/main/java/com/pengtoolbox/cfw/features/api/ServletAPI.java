@@ -91,7 +91,7 @@ public class ServletAPI extends HttpServlet
 		if(CFW.Context.Request.hasPermission(FeatureAPI.PERMISSION_CFW_API)) {
 
 			//html.addJSFileBottomSingle(new FileDefinition(HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".js", "cfw_apioverview.js"));
-			html.addJSFileBottomAssembly(HandlingType.JAR_RESOURCE, FeatureAPI.RESOURCE_PACKAGE, "cfw_apioverview.js");
+			html.addJSFileBottom(HandlingType.JAR_RESOURCE, FeatureAPI.RESOURCE_PACKAGE, "cfw_apioverview.js");
 			
 			html.addJavascriptCode("cfw_apioverview_draw();");
 			

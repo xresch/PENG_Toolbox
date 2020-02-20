@@ -111,7 +111,7 @@ public class CFWDBDashboardWidget {
 			.where(DashboardFields.PK_ID.toString(), widget.foreignKeyDashboard())
 			.and(DashboardFields.FK_ID_USER.toString(), CFW.Context.Request.getUser().id())
 			.getCount();
-		System.out.println("count: "+count);
+
 		return count > 0;
 	}
 	

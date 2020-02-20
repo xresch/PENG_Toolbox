@@ -21,6 +21,9 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 	protected FileAssembly assemblyCSSCFW = new FileAssembly("css_assembly_cfw", "css");
 	protected FileAssembly assemblyCSSCustom = new FileAssembly("css_assembly_custom", "css");
 	
+	protected ArrayList<FileAssembly> bottomjsAssemblies = new ArrayList<FileAssembly>();
+	protected ArrayList<FileAssembly> cssAssemblies = new ArrayList<FileAssembly>();
+	
 	protected ArrayList<FileDefinition> singleJSBottom = new ArrayList<FileDefinition>();
 	
 	protected StringBuffer head = new StringBuffer();
@@ -32,6 +35,12 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 	
 	public AbstractHTMLResponse(){
 		super();
+		
+		bottomjsAssemblies.add(bottomjsCFW);
+		bottomjsAssemblies.add(bottomjsCustom);
+		
+		cssAssemblies.add(assemblyCSSCFW);
+		cssAssemblies.add(assemblyCSSCustom);
 		
 		String requestID = (String)request.getAttribute(CFW.REQUEST_ATTR_ID);
 		long startNanos = (long)request.getAttribute(CFW.REQUEST_ATTR_STARTNANOS);
@@ -54,11 +63,15 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 		headjs.addFile(type, path, filename);
 	}
 	
-	protected void addJSFileBottomAssemblyCFW(FileDefinition.HandlingType type, String path, String filename){
+	protected void addJSFileBottomCFW(FileDefinition.HandlingType type, String path, String filename){
 		bottomjsCFW.addFile(type, path, filename);
 	}
-	public void addJSFileBottomAssembly(FileDefinition.HandlingType type, String path, String filename){
+	public void addJSFileBottom(FileDefinition.HandlingType type, String path, String filename){
 		bottomjsCustom.addFile(type, path, filename);
+	}
+	
+	public void addJSBottomAssembly(FileAssembly assembly){
+		bottomjsAssemblies.add(assembly);
 	}
 	
 	/***************************************************************************
@@ -98,6 +111,10 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 	}
 	public void addCSSFile(FileDefinition.HandlingType type, String path, String filename){
 		assemblyCSSCustom.addFile(type, path, filename);
+	}
+	
+	public void addCSSAssembly(FileAssembly assembly){
+		cssAssemblies.add(assembly);
 	}
 	
 	public void addSupportInfo(String key, String value){

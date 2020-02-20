@@ -21,6 +21,7 @@ import com.pengtoolbox.cfw.features.cpusampling.FeatureCPUSampling;
 import com.pengtoolbox.cfw.features.dashboard.CFWDBDashboard;
 import com.pengtoolbox.cfw.features.dashboard.CFWDBDashboardWidget;
 import com.pengtoolbox.cfw.features.dashboard.FeatureDashboard;
+import com.pengtoolbox.cfw.features.dashboard.CFWRegistryWidgets;
 import com.pengtoolbox.cfw.features.manual.CFWRegistryManual;
 import com.pengtoolbox.cfw.features.manual.FeatureManual;
 import com.pengtoolbox.cfw.features.usermgmt.CFWDBPermission;
@@ -83,6 +84,7 @@ public class CFW {
 		public class Features extends CFWRegistryFeatures {} 
 		public class Manual extends CFWRegistryManual {} 
 		public class Objects extends CFWRegistryObjects {} 
+		public class Widgets extends CFWRegistryWidgets {} 
 		
 	
 	}

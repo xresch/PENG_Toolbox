@@ -39,6 +39,10 @@ public class FeatureDashboard extends CFWAppFeature {
 		CFW.Registry.Objects.addCFWObject(DashboardWidget.class);
 		
     	//----------------------------------
+    	// Register Widgets
+		CFW.Registry.Widgets.add(new WidgetHelloWorld());
+		
+    	//----------------------------------
     	// Register Regular Menu
 		CFW.Registry.Components.addRegularMenuItem(
 				(MenuItem)new MenuItem("Dashboards")
