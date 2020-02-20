@@ -9,7 +9,7 @@ import com.pengtoolbox.cfw.features.config.Configuration;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class FileAssembly {
@@ -49,6 +49,24 @@ public class FileAssembly {
 		return this;
 	}
 	
+	/***********************************************************************
+	 * Add a file definition to the Assembly.
+	 * @param type the handling type of the file.
+	 * @param filetype the file type e.g. "js", "css"
+	 ***********************************************************************/
+	public FileAssembly addFile(FileDefinition definition) {
+		fileArray.add(definition);
+		return this;
+	}
+	/***********************************************************************
+	 * Add a file definition to the Assembly.
+	 * @param type the handling type of the file.
+	 * @param filetype the file type e.g. "js", "css"
+	 ***********************************************************************/
+	public FileAssembly addAll(ArrayList<FileDefinition> definitionArray) {
+		fileArray.addAll(definitionArray);
+		return this;
+	}
 	public FileAssembly addFileContent(String content) {
 		FileDefinition fileDef = new FileDefinition(content);
 		fileArray.add(fileDef);

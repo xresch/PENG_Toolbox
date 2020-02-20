@@ -8,9 +8,7 @@ ALWAYS ON
 
 TODO
 ====
-
 - Dashboard Tile Fullscreen
-- Change order of Settings for dashboards
 - implement dashboard management page
 - Muuuf widget definition to server side.
 
@@ -60,3 +58,4 @@ DONE
 - Splitted assembly js/css into CFW defaults and customs for performance improvements.
 - add description to widget
 - Implement widget remove
+- Change order of Settings for dashboards

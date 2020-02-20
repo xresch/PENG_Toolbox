@@ -20,8 +20,7 @@ CFW.dashboard.registerWidget("cfw_text",
 			TITLE: CFWL('cfw_dashboard_widget_cfwtext', 'Text'), 
 			JSON_SETTINGS: {
 				content: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", 	
-			}
-				
+			}	
 		},
 		createWidgetInstance: function (widgetData, callback) {
 							

@@ -87,14 +87,17 @@ public class CFWObject {
 	}
 	
 	
-	public void addField(CFWField<?> field) {
+	public CFWObject addField(CFWField<?> field) {
 		
 		if(!fields.containsKey(field.getName())) {
 			fields.put(field.getName(), field);
 		}else {
 			new CFWLog(logger)
-			.method("addField")
-			.severe("The field with name '"+field.getName()+"' was already added to this object. Check the naming of the field.");}
+				.method("addField")
+				.severe("The field with name '"+field.getName()+"' was already added to this object. Check the naming of the field.");
+		}
+		
+		return this;
 	}
 	
 	public void addAllFields(CFWField<?>[] fields) {
