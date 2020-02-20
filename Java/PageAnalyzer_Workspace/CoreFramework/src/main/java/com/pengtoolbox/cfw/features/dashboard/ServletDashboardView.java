@@ -123,7 +123,17 @@ public class ServletDashboardView extends HttpServlet
 												break;
 				}
 				break;
-						
+				
+			case "delete": 			
+				switch(item.toLowerCase()) {
+					case "widget": 				deleteWidget(request, response, jsonResponse);
+	  											break;
+	  																
+					default: 					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
+												break;
+				}
+				break;	
+				
 			default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The action '"+action+"' is not supported.");
 								break;
 								
@@ -132,8 +142,7 @@ public class ServletDashboardView extends HttpServlet
 	private void fetchWidgets(JSONResponse response, String dashboardID) {
 		
 		Dashboard dashboard = CFW.DB.Dashboards.selectByID(dashboardID);
-		System.out.println(dashboardID);
-		System.out.println(dashboard);
+		
 		if(dashboard.isShared() 
 		|| dashboard.foreignKeyUser() == CFW.Context.Request.getUser().id()
 		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
@@ -176,12 +185,27 @@ public class ServletDashboardView extends HttpServlet
 			widgetToUpdate.mapRequestParameters(request);
 			CFW.DB.DashboardWidgets.update(widgetToUpdate);
 			
-			System.out.println(widgetToUpdate.dumpFieldsAsKeyValueString());
 		}else{
 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient rights to execute action.");
 		}
 
 	}
 		
+	private void deleteWidget(HttpServletRequest request, HttpServletResponse response, JSONResponse json) {
+		
+		String dashboardID = request.getParameter("dashboardid");
+		
+		if(CFW.DB.Dashboards.isDashboardOfCurrentUser(dashboardID)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+			
+			String widgetID = request.getParameter("widgetid");
+			
+			boolean success = CFW.DB.DashboardWidgets.deleteByID(widgetID);
+			
+			json.setSuccess(success);
+		}else{
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient rights to execute action.");
+		}
 
+	}
 }

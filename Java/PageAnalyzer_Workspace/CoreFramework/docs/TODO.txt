@@ -8,11 +8,8 @@ ALWAYS ON
 TODO
 ====
 
-
 - Dashboard Tile Fullscreen
 - Change order of Settings for dashboards
-- Implement widget remove
-- Implement dashboard load widgets
 - implement dashboard allow edit only on permissions
 - implement dashboard management page
 - Muuuf widget definition to server side.
@@ -55,8 +52,10 @@ TODO
 
 DONE
 ====
+- Implement dashboard load widgets
 - Render Specific Settings
 - change cookie name to CFWSESSIONID
 - Create own file cfw_components.js
 - Splitted assembly js/css into CFW defaults and customs for performance improvements.
 - add description to widget
+- Implement widget remove

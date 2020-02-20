@@ -216,10 +216,17 @@ function cfw_dashboard_removeWidgetConfirmed(widgetGUID){
  ************************************************************************************************/
 function cfw_dashboard_removeWidget(widgetGUID) {
 	var widget = $('#'+widgetGUID);
-	console.log("#### Add remove from Database.");
+	var widgetData = widget.data('widgetData');
+	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, {action: 'delete', item: 'widget', widgetid: widgetData.PK_ID, dashboardid: CFW_DASHBOARDVIEW_PARAMS.id }, function(data){
+
+			if(data.success){
+				var grid = $('.grid-stack').data('gridstack');
+				grid.removeWidget(widget);
+			}
+		}
+	);
 	
-	var grid = $('.grid-stack').data('gridstack');
-	grid.removeWidget(widget);
+
 };
 
 
@@ -320,6 +327,8 @@ function cfw_dashboard_addWidget(type) {
 		}
 	);
 }
+
+
 
 /************************************************************************************************
  * 
