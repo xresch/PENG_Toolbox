@@ -13,13 +13,9 @@
 			menuicon: "fas fa-font",
 			menulabel: 'Hello World',
 			description: 'Prints a Name',
-			createWidgetInstance: function (widgetData, callback) {
-								
-				var merged = Object.assign({}, this.defaultValues, widgetData);
+			createWidgetInstance: function (widgetData, callback) {		
 				var textRenderer = CFW.render.getRenderer('html');
-	
-				//var content = textRenderer.render({data: merged.JSON_SETTINGS.content});
-				var content = textRenderer.render({data: 'Hello '+merged.JSON_SETTINGS.name+'!'});
+				var content = textRenderer.render({data: 'Hello '+widgetData.JSON_SETTINGS.name+'!'});
 				callback(widgetData, content);
 				
 			},
@@ -27,10 +23,7 @@
 				return CFW.dashboard.getSettingsForm(widgetData);
 			},
 			onSave: function (form, widgetData) {
-				console.log(" ==== onSave =====");
-				console.log(form);
 				var settingsForm = $(form);
-				
 				widgetData.JSON_SETTINGS.name = settingsForm.find('input[name="name"]').val();
 			}
 			
