@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.gson.JsonObject;
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.features.api.APIDefinition;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
@@ -51,6 +53,11 @@ public class CFWObject {
 		return CFWField.mapAndValidateParamsToFields(request, fields);
 	}
 	
+	public boolean mapJsonFields(JsonObject object) {
+		
+		return CFWField.mapAndValidateJsonToFields(object, fields);
+	}
+	
 	public boolean mapResultSet(ResultSet result) {
 
 		return CFWField.mapResultSetColumnsToFields(result, fields);
@@ -86,6 +93,10 @@ public class CFWObject {
 		return form;
 	}
 	
+	
+	public String toJSON() {		
+		return CFW.JSON.toJSON(this);
+	}
 	
 	public CFWObject addField(CFWField<?> field) {
 		

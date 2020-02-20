@@ -94,7 +94,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 	// Create Widget Specific Form
 	//##################################################
 	var customForm = $(widgetDef.getEditForm(widgetData));
-	var buttons = customForm.find('button');
+	var buttons = customForm.find('input[type="button"]');
 	if(buttons.length > 0){
 		buttons.remove();
 	}
@@ -355,7 +355,30 @@ function cfw_dashboard_addWidget(type) {
 	);
 }
 
-
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_dashboard_getSettingsForm(widgetData) {
+	
+	var formHTML = "";
+	
+	var params = Object.assign({action: 'fetch', item: 'settingsform'}, widgetData); 
+	
+	delete params.content;
+	delete params.guid;
+	delete params.JSON_SETTINGS;
+	
+	params.JSON_SETTINGS = JSON.stringify(widgetData.JSON_SETTINGS);
+	
+	$.ajaxSetup({async: false});
+		CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, params, function(data){
+				formHTML = data.payload.html;
+			}
+		);
+	$.ajaxSetup({async: true});
+	
+	return formHTML;
+}
 
 /************************************************************************************************
  * 
@@ -435,6 +458,7 @@ CFW.dashboard = {
 		getWidgetDefinition: 	cfw_dashboard_getWidgetDefinition,
 		registerCategory: 		cfw_dashboard_registerCategory,
 		createWidget:   		cfw_dashboard_createWidgetElement,
+		getSettingsForm:		cfw_dashboard_getSettingsForm,
 };
 
 /******************************************************************

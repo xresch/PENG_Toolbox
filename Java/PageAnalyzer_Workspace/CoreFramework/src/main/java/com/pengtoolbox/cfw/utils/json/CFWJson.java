@@ -6,6 +6,8 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 
+import org.h2.util.json.JSONObject;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -65,6 +67,17 @@ public class CFWJson {
 	public static String toJSON(Object object) {
 		return gsonInstance.toJson(object);
 	}
+	
+	/*************************************************************************************
+	 * 
+	 *************************************************************************************/
+	public static JsonObject fromJson(String jsonString) {
+		JsonParser parser = new JsonParser();
+		JsonObject jsonObject = (JsonObject) parser.parse(jsonString);
+		
+		return jsonObject;
+	}
+	
 	
 	/*************************************************************************************
 	 * 

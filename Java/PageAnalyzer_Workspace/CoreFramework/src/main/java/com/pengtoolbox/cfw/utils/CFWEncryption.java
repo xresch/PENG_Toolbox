@@ -75,4 +75,23 @@ public class CFWEncryption {
 	    
 	}
 	
+	/******************************************************************************
+	 * Creates a random Salt for a Password.
+	 * 
+	 * @param byteCount number of bytes to create
+	 * @return
+	 ******************************************************************************/
+	public static String createRandomStringAtoZ(int byteCount) {
+
+		StringBuilder builder = new StringBuilder();
+		
+		Random random = new Random();
+		for(int i = 0; i < byteCount; i++) {
+			builder.append(CHARS.charAt(random.nextInt(51)));
+		}
+		
+		return builder.toString();
+	    
+	}
+	
 }

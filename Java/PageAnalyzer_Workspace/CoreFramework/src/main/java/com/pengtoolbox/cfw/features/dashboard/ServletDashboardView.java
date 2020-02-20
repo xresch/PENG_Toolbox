@@ -7,8 +7,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
+import com.pengtoolbox.cfw.datahandling.CFWForm;
+import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
@@ -105,6 +108,8 @@ public class ServletDashboardView extends HttpServlet
 				switch(item.toLowerCase()) {
 					case "widgets": 			fetchWidgets(jsonResponse, dashboardID);
 	  											break;												
+					case "settingsform": 		getSettingsForm(request, response, jsonResponse);
+												break;	
 												
 					default: 					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 												break;
@@ -165,9 +170,16 @@ public class ServletDashboardView extends HttpServlet
 
 		if(canEdit(dashboardID)) {
 			
+			//----------------------------
+			// Create Widget
 			DashboardWidget newWidget = new DashboardWidget();
 			newWidget.type(type);
 			newWidget.foreignKeyDashboard(Integer.parseInt(dashboardID));
+			
+			WidgetDefinition definition = CFW.Registry.Widgets.getDefinition(type);
+			if(definition != null) {
+				newWidget.settings(definition.getSettings().toJSON());
+			}
 			
 			int id = CFW.DB.DashboardWidgets.createGetPrimaryKey(newWidget);
 			newWidget.id(id);
@@ -207,6 +219,35 @@ public class ServletDashboardView extends HttpServlet
 			boolean success = CFW.DB.DashboardWidgets.deleteByID(widgetID);
 			
 			json.setSuccess(success);
+		}else{
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient rights to execute action.");
+		}
+
+	}
+	
+	
+	private void getSettingsForm(HttpServletRequest request, HttpServletResponse response, JSONResponse json) {
+		
+		String dashboardID = request.getParameter("FK_ID_DASHBOARD");
+
+		if(canEdit(dashboardID)) {
+			
+			//----------------------------
+			// Get Values
+			String widgetType = request.getParameter("TYPE");
+			String JSON_SETTINGS = request.getParameter("JSON_SETTINGS");
+			JsonObject jsonObject = CFW.JSON.fromJson(JSON_SETTINGS);
+			WidgetDefinition definition = CFW.Registry.Widgets.getDefinition(widgetType);
+			
+			//----------------------------
+			// Create Form
+			CFWObject settings = definition.getSettings();
+			settings.mapJsonFields(jsonObject);
+			
+			CFWForm form = settings.toForm("cfwWidgetFormSettings"+CFW.Encryption.createRandomStringAtoZ(6), "n/a-willBeRemoved");
+			
+			form.appendToPayload(json);
+			
 		}else{
 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient rights to execute action.");
 		}

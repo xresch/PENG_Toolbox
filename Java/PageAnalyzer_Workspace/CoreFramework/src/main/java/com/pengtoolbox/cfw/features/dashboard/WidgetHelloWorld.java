@@ -21,7 +21,7 @@ public class WidgetHelloWorld extends WidgetDefinition {
 	@Override
 	public CFWObject getSettings() {
 		return new CFWObject()
-				.addField(CFWField.newString(FormFieldType.TEXT, "name"));
+				.addField(CFWField.newString(FormFieldType.TEXT, "name").setValue("Jane Doe"));
 	}
 
 	@Override

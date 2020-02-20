@@ -10,10 +10,15 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.h2.util.json.JSONValue;
+
+import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
@@ -968,7 +973,6 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @param url used for the request.
 	 * @return true if successful, false otherwise
 	 ******************************************************************************************************/
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static boolean mapAndValidateParamsToFields(HttpServletRequest request, HashMap<String,CFWField<?>> fields) {
 		
@@ -988,6 +992,38 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				}else {
 					new CFWLog(logger)
 						.method("mapAndValidateParamsToFields")
+						.silent()
+						.finest("The field with name '"+key+"' is unknown for this type.");
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	/******************************************************************************************************
+	 * Map the values of the JsonObject to CFWFields.
+	 * @param url used for the request.
+	 * @return true if successful, false otherwise
+	 ******************************************************************************************************/
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static boolean mapAndValidateJsonToFields(JsonObject json, HashMap<String,CFWField<?>> fields) {
+		
+		Set<String> members = json.keySet();
+		boolean result = true;
+		
+		for(String key : members) {
+
+			if(!key.equals(CFWForm.FORM_ID)) {
+				if (fields.containsKey(key)) {
+					CFWField field = fields.get(key);
+					
+					if(!field.setValueValidated(json.get(key).toString()) ){
+						result = false;
+					}
+				}else {
+					new CFWLog(logger)
+						.method("mapAndValidateJsonToFields")
 						.silent()
 						.finest("The field with name '"+key+"' is unknown for this type.");
 				}
