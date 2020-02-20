@@ -8,9 +8,15 @@ ALWAYS ON
 
 TODO
 ====
+
 - Dashboard Tile Fullscreen
 - implement dashboard management page
 - Muuuf widget definition to server side.
+
+- Widget: List (Ordered, Unordered)
+- Widget: Checklist
+- Widget: Cards
+- Widget: Panels
 
 - Move core stuff to core feature
 - Create Pagination Renderer
