@@ -97,12 +97,13 @@ public class ServletDashboardView extends HttpServlet
 		
 			case "fetch": 			
 				switch(item.toLowerCase()) {
-//					case "menuitems": 			jsonResponse.getContent().append(CFW.Registry.Manual.getManualPagesForUserAsJSON().toString());
-//	  											break;												
+					case "widgets": 			fetchWidgets(jsonResponse, dashboardID);
+	  											break;												
 												
 					default: 					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 												break;
 				}
+				break;
 			case "create": 			
 				switch(item.toLowerCase()) {
 					case "widget": 				createWidget(jsonResponse, type, dashboardID);
@@ -126,6 +127,21 @@ public class ServletDashboardView extends HttpServlet
 			default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The action '"+action+"' is not supported.");
 								break;
 								
+		}
+	}
+	private void fetchWidgets(JSONResponse response, String dashboardID) {
+		
+		Dashboard dashboard = CFW.DB.Dashboards.selectByID(dashboardID);
+		System.out.println(dashboardID);
+		System.out.println(dashboard);
+		if(dashboard.isShared() 
+		|| dashboard.foreignKeyUser() == CFW.Context.Request.getUser().id()
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+			
+			response.getContent().append(CFW.DB.DashboardWidgets.getWidgetsForDashboardAsJSON(dashboardID));
+			
+		}else{
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient rights to view this dashboard.");
 		}
 	}
 	

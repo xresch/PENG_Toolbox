@@ -22,16 +22,6 @@ public class DashboardWidget extends CFWObject {
 	
 	public static final String TABLE_NAME = "CFW_DASHBOARD_WIDGET";
 	
-//	var defaultOptions = {
-//			guid: 'widget-'+CFW_DASHBOARD_WIDGET_GUID,
-//			widgetid: null,
-//			title: "",
-//			content: "",
-//			footer: "",
-//			bgcolor: "",
-//			textcolor: "",
-//			settings: {}
-//	}
 	public enum DashboardWidgetFields{
 		PK_ID,
 		FK_ID_DASHBOARD,

@@ -315,7 +315,7 @@ function cfw_dashboard_addWidget(type) {
 				merged.JSON_SETTINGS = widgetDefinition.defaultValues.JSON_SETTINGS;
 
 				console.log(merged);
-				cfw_dashboard_createWidgetInstance(merged);
+				cfw_dashboard_createWidgetInstance(merged, true);
 			}
 		}
 	);
@@ -349,13 +349,13 @@ function cfw_dashboard_rerenderWidget(widgetGUID) {
 	var widgetData = widget.data("widgetData");
 	
 	cfw_dashboard_removeWidget(widgetGUID);
-	cfw_dashboard_createWidgetInstance(widgetData)
+	cfw_dashboard_createWidgetInstance(widgetData, false);
 	
 }
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_createWidgetInstance(widgetData) {
+function cfw_dashboard_createWidgetInstance(widgetData, doAutoposition) {
 	var widgetDefinition = CFW.dashboard.getWidgetDefinition(widgetData.TYPE);	
 	
 	var widgetInstance = widgetDefinition.createWidgetInstance(widgetData, 
@@ -371,7 +371,7 @@ function cfw_dashboard_createWidgetInstance(widgetData) {
 			    		widgetData.Y, 
 			    		widgetData.WIDTH, 
 			    		widgetData.HEIGHT, 
-			    		true);
+			    		doAutoposition);
 			   
 			    //----------------------------
 			    // Update Data
@@ -591,7 +591,14 @@ function cfw_dashboard_draw(){
 	window.setTimeout( 
 	function(){
 
-		//CFW.http.fetchAndCacheData("./manual", {action: "fetch", item: "menuitems"}, "menuitems", cfw_manual_printMenu);
+		CFW.http.fetchAndCacheData(CFW_DASHBOARDVIEW_URL, {action: "fetch", item: "widgets", dashboardid: CFW_DASHBOARDVIEW_PARAMS.id}, "menuitems", function(data){
+			
+			var widgetArray = data.payload;
+			
+			for(var i = 0;i < widgetArray.length ;i++){
+				cfw_dashboard_createWidgetInstance(widgetArray[i], false);
+			}
+		});
 		
 		CFW.ui.toogleLoader(false);
 	}, 100);

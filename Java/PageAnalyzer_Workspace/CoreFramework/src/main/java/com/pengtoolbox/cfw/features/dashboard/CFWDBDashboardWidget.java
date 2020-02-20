@@ -92,12 +92,12 @@ public class CFWDBDashboardWidget {
 	 * 
 	 * @return Returns a resultSet with all widgets or null.
 	 ****************************************************************/
-	public static String getWidgetsForDashboardAsJSON(String widgetID) {
+	public static String getWidgetsForDashboardAsJSON(String dashboardID) {
 		
 		return new DashboardWidget()
 				.queryCache(CFWDBDashboardWidget.class, "getWidgetsForDashboardAsJSON")
 				.select()
-				.where(DashboardWidgetFields.PK_ID.toString(), widgetID)
+				.where(DashboardWidgetFields.FK_ID_DASHBOARD.toString(), dashboardID)
 				.getAsJSON();
 		
 	}

@@ -81,6 +81,10 @@ public class CFWDBDashboard {
 	//####################################################################################################
 	// SELECT
 	//####################################################################################################
+	public static Dashboard selectByID(String id ) {
+		return CFWDBDefaultOperations.selectFirstBy(cfwObjectClass, DashboardFields.PK_ID.toString(), id);
+	}
+	
 	public static Dashboard selectByID(int id ) {
 		return CFWDBDefaultOperations.selectFirstBy(cfwObjectClass, DashboardFields.PK_ID.toString(), id);
 	}
