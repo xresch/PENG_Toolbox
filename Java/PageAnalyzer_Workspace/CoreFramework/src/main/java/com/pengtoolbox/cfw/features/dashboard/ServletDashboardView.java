@@ -199,10 +199,25 @@ public class ServletDashboardView extends HttpServlet
 		String dashboardID = request.getParameter("FK_ID_DASHBOARD");
 
 		if(canEdit(dashboardID)) {
-			DashboardWidget widgetToUpdate = new DashboardWidget();
+			//----------------------------
+			// Get Values
+			String widgetType = request.getParameter("TYPE");
+			String JSON_SETTINGS = request.getParameter("JSON_SETTINGS");
+			JsonObject jsonObject = CFW.JSON.fromJson(JSON_SETTINGS);
+			WidgetDefinition definition = CFW.Registry.Widgets.getDefinition(widgetType);
 			
-			widgetToUpdate.mapRequestParameters(request);
-			CFW.DB.DashboardWidgets.update(widgetToUpdate);
+			//----------------------------
+			// Validate
+			CFWObject settings = definition.getSettings();
+			
+			
+			boolean isValid = settings.mapJsonFields(jsonObject);
+			
+			if(isValid) {
+				DashboardWidget widgetToUpdate = new DashboardWidget();
+				widgetToUpdate.mapRequestParameters(request);
+				CFW.DB.DashboardWidgets.update(widgetToUpdate);
+			}
 			
 		}else{
 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient rights to execute action.");

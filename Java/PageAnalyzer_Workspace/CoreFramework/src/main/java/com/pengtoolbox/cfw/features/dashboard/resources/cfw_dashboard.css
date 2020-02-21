@@ -43,6 +43,14 @@
     bottom: 25px;
 }
 
+.grid-stack>.grid-stack-item>.ui-resizable-w {
+    cursor: w-resize;
+    width: 7px;
+    left: 2px;
+    top: 15px;
+    bottom: 15px;
+}
+
 /**************************************************************
  * Scrollbar
  **************************************************************/
