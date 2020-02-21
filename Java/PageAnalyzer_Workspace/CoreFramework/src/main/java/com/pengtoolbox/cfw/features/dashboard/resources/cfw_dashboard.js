@@ -85,15 +85,15 @@ function cfw_dashboard_createFormField(label, infotext, fieldHTML){
  ************************************************************************************************/
 function cfw_dashboard_editWidget(widgetGUID){
 	var widgetInstance = $('#'+widgetGUID);
-	var widgetData = widgetInstance.data("widgetData");
-	var widgetDef = CFW.dashboard.getWidgetDefinition(widgetData.TYPE);
+	var widgetObject = widgetInstance.data("widgetObject");
+	var widgetDef = CFW.dashboard.getWidgetDefinition(widgetObject.TYPE);
 	console.log(widgetInstance);
-	console.log(widgetData);
+	console.log(widgetObject);
 	
 	//##################################################
 	// Create Widget Specific Form
 	//##################################################
-	var customForm = $(widgetDef.getEditForm(widgetData));
+	var customForm = $(widgetDef.getEditForm(widgetObject));
 	var buttons = customForm.find('input[type="button"]');
 	if(buttons.length > 0){
 		buttons.remove();
@@ -115,7 +115,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 			type: "text", 
 			name: "title", 
 			label: CFWL('cfw_core_title', 'Title'), 
-			value: widgetData.TITLE, 
+			value: widgetObject.TITLE, 
 			description: 'The title of the widget.' 
 		}
 	).createHTML();
@@ -126,12 +126,12 @@ function cfw_dashboard_editWidget(widgetGUID){
 			type: "textarea", 
 			name: "footer", 
 			label: CFWL('cfw_core_footer', 'Footer'), 
-			value: widgetData.FOOTER, 
+			value: widgetObject.FOOTER, 
 			description: 'The contents of the footer of the widget.' 
 		}
 	).createHTML();;
 	
-	//defaultForm += cfw_dashboard_createFormField("Footer", 'The footer of the widget.', '<textarea class="form-control" rows="10" name="footer" placeholder="Footer Contents">'+widgetData.footer+'</textarea>');
+	//defaultForm += cfw_dashboard_createFormField("Footer", 'The footer of the widget.', '<textarea class="form-control" rows="10" name="footer" placeholder="Footer Contents">'+widgetObject.footer+'</textarea>');
 	
 	//------------------------------
 	// Color Selectors
@@ -151,7 +151,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 		type: "select", 
 		name: "BGCOLOR", 
 		label: CFWL('cfw_core_bgcolor', 'Background Color'), 
-		value: widgetData.BGCOLOR, 
+		value: widgetObject.BGCOLOR, 
 		options: selectOptions,
 		description: 'Define the color used for the background.' 
 	}).createHTML();
@@ -160,7 +160,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 		type: "select", 
 		name: "FGCOLOR", 
 		label: CFWL('cfw_core_fgcolor', 'Foreground Color'), 
-		value: widgetData.FGCOLOR, 
+		value: widgetObject.FGCOLOR, 
 		options: selectOptions,
 		description: 'Define the color used for the text and borders.' 
 	}).createHTML();
@@ -192,13 +192,13 @@ function cfw_dashboard_editWidget(widgetGUID){
  ************************************************************************************************/
 function cfw_dashboard_saveDefaultSettings(widgetGUID){
 	var widget = $('#'+widgetGUID);
-	var widgetData = widget.data("widgetData");
+	var widgetObject = widget.data("widgetObject");
 	var settingsForm = $('#form-edit-'+widgetGUID);
 			
-	widgetData.TITLE = settingsForm.find('input[name="title"]').val();
-	widgetData.FOOTER = settingsForm.find('textarea[name="footer"]').val();
-	widgetData.BGCOLOR = settingsForm.find('select[name="BGCOLOR"]').val();
-	widgetData.FGCOLOR = settingsForm.find('select[name="FGCOLOR"]').val();
+	widgetObject.TITLE = settingsForm.find('input[name="title"]').val();
+	widgetObject.FOOTER = settingsForm.find('textarea[name="footer"]').val();
+	widgetObject.BGCOLOR = settingsForm.find('select[name="BGCOLOR"]').val();
+	widgetObject.FGCOLOR = settingsForm.find('select[name="FGCOLOR"]').val();
 	
 	cfw_dashboard_rerenderWidget(widgetGUID);
 	
@@ -209,15 +209,15 @@ function cfw_dashboard_saveDefaultSettings(widgetGUID){
  ************************************************************************************************/
 function cfw_dashboard_saveCustomSettings(formButton, widgetGUID){
 	var widget = $('#'+widgetGUID);
-	var widgetData = widget.data("widgetData");
-	var settingsForm = $('#form-edit-'+widgetGUID);
-	console.log("====== Before =======");
-	console.log(widgetData);
-	var widgetDef = CFW.dashboard.getWidgetDefinition(widgetData.TYPE);
-	widgetDef.onSave($(formButton).parent(), widgetData);
-	console.log("====== After =======");
-	console.log(widgetData);
-	cfw_dashboard_rerenderWidget(widgetGUID);
+	var widgetObject = widget.data("widgetObject");
+
+	var widgetDef = CFW.dashboard.getWidgetDefinition(widgetObject.TYPE);
+	
+	var success = widgetDef.onSave($(formButton).closest('form'), widgetObject);
+
+	if(success){
+		cfw_dashboard_rerenderWidget(widgetGUID);
+	}
 	
 }
 /************************************************************************************************
@@ -232,8 +232,8 @@ function cfw_dashboard_removeWidgetConfirmed(widgetGUID){
  ************************************************************************************************/
 function cfw_dashboard_removeWidget(widgetGUID) {
 	var widget = $('#'+widgetGUID);
-	var widgetData = widget.data('widgetData');
-	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, {action: 'delete', item: 'widget', widgetid: widgetData.PK_ID, dashboardid: CFW_DASHBOARDVIEW_PARAMS.id }, function(data){
+	var widgetObject = widget.data('widgetObject');
+	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, {action: 'delete', item: 'widget', widgetid: widgetObject.PK_ID, dashboardid: CFW_DASHBOARDVIEW_PARAMS.id }, function(data){
 
 			if(data.success){
 				cfw_dashboard_removeWidgetFromGrid(widget);
@@ -255,7 +255,7 @@ function cfw_dashboard_removeWidgetFromGrid(widgetElement) {
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_createWidgetElement(widgetData){
+function cfw_dashboard_createWidgetElement(widgetObject){
 	
 	//---------------------------------------
 	// Merge Data
@@ -269,7 +269,7 @@ function cfw_dashboard_createWidgetElement(widgetData){
 			JSON_SETTINGS: {}
 	}
 	
-	var merged = Object.assign({}, defaultOptions, widgetData);
+	var merged = Object.assign({}, defaultOptions, widgetObject);
 	
 	//---------------------------------------
 	// Resolve Classes
@@ -323,7 +323,7 @@ function cfw_dashboard_createWidgetElement(widgetData){
 	
 	var widgetItem = $('<div id="'+merged.guid+'" data-id="'+merged.widgetID+'"  class="grid-stack-item">');
 	widgetItem.append(htmlString);
-	widgetItem.data("widgetData", merged)
+	widgetItem.data("widgetObject", merged)
 	
 	if(merged.content != null && merged.content != ''){
 		widgetItem.find('.cfw-dashboard-widget-body').append(merged.content);
@@ -338,16 +338,13 @@ function cfw_dashboard_createWidgetElement(widgetData){
 function cfw_dashboard_addWidget(type) {
 
 	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, {action: 'create', item: 'widget', type: type, dashboardid: CFW_DASHBOARDVIEW_PARAMS.id }, function(data){
-			var widgetData = data.payload;
-			if(widgetData != null){
+			var widgetObject = data.payload;
+			if(widgetObject != null){
 				var widgetDefinition = CFW.dashboard.getWidgetDefinition(type);
-				widgetData.TYPE = type;
+				widgetObject.TYPE = type;
 								
-				var merged = Object.assign({}, widgetDefinition.defaultValues, widgetData);
+				var merged = Object.assign({}, widgetDefinition.defaultValues, widgetObject);
 				
-				//temporary workaround
-				merged.JSON_SETTINGS = widgetDefinition.defaultValues.JSON_SETTINGS;
-
 				console.log(merged);
 				cfw_dashboard_createWidgetInstance(merged, true);
 			}
@@ -358,17 +355,17 @@ function cfw_dashboard_addWidget(type) {
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_getSettingsForm(widgetData) {
+function cfw_dashboard_getSettingsForm(widgetObject) {
 	
 	var formHTML = "";
 	
-	var params = Object.assign({action: 'fetch', item: 'settingsform'}, widgetData); 
+	var params = Object.assign({action: 'fetch', item: 'settingsform'}, widgetObject); 
 	
 	delete params.content;
 	delete params.guid;
 	delete params.JSON_SETTINGS;
 	
-	params.JSON_SETTINGS = JSON.stringify(widgetData.JSON_SETTINGS);
+	params.JSON_SETTINGS = JSON.stringify(widgetObject.JSON_SETTINGS);
 	
 	$.ajaxSetup({async: false});
 		CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, params, function(data){
@@ -383,22 +380,40 @@ function cfw_dashboard_getSettingsForm(widgetData) {
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_saveWidgetState(widgetData) {
-	if(JSDATA.canEdit == true){
-		var params = Object.assign({action: 'update', item: 'widget'}, widgetData); 
+function cfw_dashboard_fetchWidgetData(widgetObject, callback) {
+	
+	var formHTML = "";
+	
+	var params = Object.assign({action: 'fetch', item: 'widgetdata'}, widgetObject); 
+	
+	delete params.content;
+	delete params.guid;
+	delete params.JSON_SETTINGS;
+	
+	params.JSON_SETTINGS = JSON.stringify(widgetObject.JSON_SETTINGS);
+	
+		CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, params, function(data){
+			callback(data);
+		});
+
+	
+	return formHTML;
+}
+
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
+function cfw_dashboard_saveWidgetState(widgetObject) {
+	if(JSDATA.canEdit == true && CFW_DASHBOARD_EDIT_MODE){
+		var params = Object.assign({action: 'update', item: 'widget'}, widgetObject); 
 		
 		delete params.content;
 		delete params.guid;
 		delete params.JSON_SETTINGS;
 		
-		params.JSON_SETTINGS = JSON.stringify(widgetData.JSON_SETTINGS);
+		params.JSON_SETTINGS = JSON.stringify(widgetObject.JSON_SETTINGS);
 		
-		CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, params, function(data){
-				console.log('======= Saved =======');
-				console.log(data.payload);
-				
-			}
-		);
+		CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, params, function(data){});
 	}
 }
 /************************************************************************************************
@@ -406,44 +421,44 @@ function cfw_dashboard_saveWidgetState(widgetData) {
  ************************************************************************************************/
 function cfw_dashboard_rerenderWidget(widgetGUID) {
 	var widget = $('#'+widgetGUID);
-	var widgetData = widget.data("widgetData");
+	var widgetObject = widget.data("widgetObject");
 	
 	cfw_dashboard_removeWidgetFromGrid(widget);
-	cfw_dashboard_createWidgetInstance(widgetData, false);
+	cfw_dashboard_createWidgetInstance(widgetObject, false);
 	
 }
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_createWidgetInstance(widgetData, doAutoposition) {
-	var widgetDefinition = CFW.dashboard.getWidgetDefinition(widgetData.TYPE);	
+function cfw_dashboard_createWidgetInstance(widgetObject, doAutoposition) {
+	var widgetDefinition = CFW.dashboard.getWidgetDefinition(widgetObject.TYPE);	
 	
-	var widgetInstance = widgetDefinition.createWidgetInstance(widgetData, 
-			function(widgetData, widgetContent){
+	var widgetInstance = widgetDefinition.createWidgetInstance(widgetObject, 
+			function(widgetObject, widgetContent){
 				
-				widgetData.content = widgetContent;
-				var widgetInstance = CFW.dashboard.createWidget(widgetData);
+				widgetObject.content = widgetContent;
+				var widgetInstance = CFW.dashboard.createWidget(widgetObject);
 
 				var grid = $('.grid-stack').data('gridstack');
 
 			    grid.addWidget($(widgetInstance),
-			    		widgetData.X, 
-			    		widgetData.Y, 
-			    		widgetData.WIDTH, 
-			    		widgetData.HEIGHT, 
+			    		widgetObject.X, 
+			    		widgetObject.Y, 
+			    		widgetObject.WIDTH, 
+			    		widgetObject.HEIGHT, 
 			    		doAutoposition);
 			   
 			    //----------------------------
 			    // Update Data
 			    
-			    var widgetData = $(widgetInstance).data('widgetData');
+			    var widgetObject = $(widgetInstance).data('widgetObject');
 
-			    widgetData.WIDTH	= widgetInstance.attr("data-gs-width");
-			    widgetData.HEIGHT	= widgetInstance.attr("data-gs-height");
-			    widgetData.X		= widgetInstance.attr("data-gs-x");
-			    widgetData.Y		= widgetInstance.attr("data-gs-y");
+			    widgetObject.WIDTH	= widgetInstance.attr("data-gs-width");
+			    widgetObject.HEIGHT	= widgetInstance.attr("data-gs-height");
+			    widgetObject.X		= widgetInstance.attr("data-gs-x");
+			    widgetObject.Y		= widgetInstance.attr("data-gs-y");
 
-			    cfw_dashboard_saveWidgetState(widgetData);
+			    cfw_dashboard_saveWidgetState(widgetObject);
 			    
 			}
 	);
@@ -459,6 +474,7 @@ CFW.dashboard = {
 		registerCategory: 		cfw_dashboard_registerCategory,
 		createWidget:   		cfw_dashboard_createWidgetElement,
 		getSettingsForm:		cfw_dashboard_getSettingsForm,
+		fetchWidgetData: 		cfw_dashboard_fetchWidgetData,
 };
 
 /******************************************************************
@@ -551,14 +567,14 @@ function cfw_dashboard_initialize(gridStackElementSelector){
 			  var currentItem = items[key].el;
 
 			  var widgetInstance = $(currentItem);
-			  var widgetData 	 = widgetInstance.data("widgetData");
+			  var widgetObject 	 = widgetInstance.data("widgetObject");
 			  
-			  widgetData.X			= widgetInstance.attr("data-gs-x");
-			  widgetData.Y		 	= widgetInstance.attr("data-gs-y");
-			  widgetData.WIDTH	= widgetInstance.attr("data-gs-width");
-			  widgetData.HEIGHT	= widgetInstance.attr("data-gs-height");
+			  widgetObject.X			= widgetInstance.attr("data-gs-x");
+			  widgetObject.Y		 	= widgetInstance.attr("data-gs-y");
+			  widgetObject.WIDTH	= widgetInstance.attr("data-gs-width");
+			  widgetObject.HEIGHT	= widgetInstance.attr("data-gs-height");
 			  
-			  cfw_dashboard_saveWidgetState(widgetData);
+			  cfw_dashboard_saveWidgetState(widgetObject);
 		  }
 	});
 	
@@ -685,3 +701,5 @@ function cfw_dashboard_draw(){
  * has to be done before widgets are registered
  ******************************************************************/
 CFW.lang.loadLocalization();
+
+CFW.dashboard.registerCategory("fas fa-th-large", "Static Widgets", CFWL('cfw_dashboard_category_static'));

@@ -107,7 +107,10 @@ public class ServletDashboardView extends HttpServlet
 			case "fetch": 			
 				switch(item.toLowerCase()) {
 					case "widgets": 			fetchWidgets(jsonResponse, dashboardID);
-	  											break;												
+	  											break;	
+					case "widgetdata": 			getWidgetData(request, response, jsonResponse);
+												break;	
+												
 					case "settingsform": 		getSettingsForm(request, response, jsonResponse);
 												break;	
 												
@@ -254,6 +257,20 @@ public class ServletDashboardView extends HttpServlet
 
 	}
 	
+	private void getWidgetData(HttpServletRequest request, HttpServletResponse response, JSONResponse jsonResponse) {
+		
+		//----------------------------
+		// Get Values
+		String widgetType = request.getParameter("TYPE");
+		String JSON_SETTINGS = request.getParameter("JSON_SETTINGS");
+		JsonObject jsonSettingsObject = CFW.JSON.fromJson(JSON_SETTINGS);
+		WidgetDefinition definition = CFW.Registry.Widgets.getDefinition(widgetType);
+		
+		//----------------------------
+		// Create Response
+		definition.fetchData(jsonResponse, jsonSettingsObject);
+					
+	}
 	private boolean canEdit(String dashboardID) {
 		if(CFW.DB.Dashboards.isDashboardOfCurrentUser(dashboardID)
 		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {

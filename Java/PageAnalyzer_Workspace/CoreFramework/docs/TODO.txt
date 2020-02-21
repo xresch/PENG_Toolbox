@@ -5,6 +5,7 @@ ALWAYS ON
 - Create Manual Pages
 - Cleanup console.log() and System.out.println()
 - Localize
+- Add Copyrights
 
 TODO
 ====
@@ -31,6 +32,10 @@ TODO
 - Dashboard: Create a dashboard using gridstack.js or similar >> https://dzone.com/articles/7-javascript-libraries-for-dashboards 
 - Configuration: Add feature to listen for config changes.
 
+- Caching
+  - Create Caching class, max entries and access count
+  - Create Cache overview
+  
 - FormField.SINGLECOMPLETE
   - how to load key and label? 
   

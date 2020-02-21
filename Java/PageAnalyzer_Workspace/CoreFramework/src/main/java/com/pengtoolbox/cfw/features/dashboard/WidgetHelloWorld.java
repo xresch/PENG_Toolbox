@@ -21,13 +21,25 @@ public class WidgetHelloWorld extends WidgetDefinition {
 	@Override
 	public CFWObject getSettings() {
 		return new CFWObject()
-				.addField(CFWField.newString(FormFieldType.TEXT, "name").setValue("Jane Doe"));
+				.addField(CFWField.newString(FormFieldType.TEXT, "name")
+								.setLabel("{!cfw_widget_helloworld_name!}")
+								.setDescription("{!cfw_widget_helloworld_name_desc!}")
+								.setValue("Jane Doe")
+				)
+				.addField(CFWField.newBoolean(FormFieldType.BOOLEAN, "dosave")
+						.setLabel("Do Save")
+						.setValue(true)
+				)
+				.addField(CFWField.newInteger(FormFieldType.NUMBER, "number")
+						.setValue(1)
+				)		
+		;
 	}
 
 	@Override
 	public void fetchData(JSONResponse response, JsonObject settings) { 
-		String name = settings.get("name").getAsString();
-		response.getContent().append("' Hello"+name+"'!");
+		int number = settings.get("number").getAsInt();
+		response.getContent().append("\"{!cfw_widget_helloworld_serverside!} "+number+"\"");
 	}
 
 	@Override
@@ -47,8 +59,8 @@ public class WidgetHelloWorld extends WidgetDefinition {
 	@Override
 	public HashMap<Locale, FileDefinition> getLocalizationFiles() {
 		HashMap<Locale, FileDefinition> map = new HashMap<Locale, FileDefinition>();
-		map.put(Locale.GERMAN, new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "lang_de_dashboard.properties"));
-		map.put(Locale.ENGLISH, new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "lang_en_dashboard.properties"));
+		map.put(Locale.ENGLISH, new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "lang_en_widget_helloworld.properties"));
+		map.put(Locale.GERMAN, new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "lang_de_widget_helloworld.properties"));
 		return map;
 	}
 

@@ -12,19 +12,42 @@
 			category: "Server Side Category",
 			menuicon: "fas fa-font",
 			menulabel: 'Hello World',
-			description: 'Prints a Name',
-			createWidgetInstance: function (widgetData, callback) {		
-				var textRenderer = CFW.render.getRenderer('html');
-				var content = textRenderer.render({data: 'Hello '+widgetData.JSON_SETTINGS.name+'!'});
-				callback(widgetData, content);
+			description: CFWL('cfw_widget_helloworld_desc', 'Takes a name and greats a person.'),
+			createWidgetInstance: function (widgetObject, callback) {		
+				
+				CFW.dashboard.fetchWidgetData(widgetObject, function(data){
+					
+					var helloString = 
+						CFWL('cfw_widget_helloworld_hello', 'Hello')+' '
+						+widgetObject.JSON_SETTINGS.name+'! '
+						+ data.payload;
+					
+					var textRenderer = CFW.render.getRenderer('html');
+					var content = textRenderer.render({data: helloString});
+					
+					callback(widgetObject, content);
+				});
 				
 			},
-			getEditForm: function (widgetData) {
-				return CFW.dashboard.getSettingsForm(widgetData);
+			getEditForm: function (widgetObject) {
+				return CFW.dashboard.getSettingsForm(widgetObject);
 			},
-			onSave: function (form, widgetData) {
+			onSave: function (form, widgetObject) {
 				var settingsForm = $(form);
-				widgetData.JSON_SETTINGS.name = settingsForm.find('input[name="name"]').val();
+				
+				var doSave = ( settingsForm.find('input[name="dosave"]:checked').val() == "true" )
+								
+				if(doSave){
+					widgetObject.JSON_SETTINGS.name = settingsForm.find('input[name="name"]').val();
+					widgetObject.JSON_SETTINGS.boolean = doSave;
+					widgetObject.JSON_SETTINGS.number = settingsForm.find('input[name="number"]').val();
+					
+					return true;		
+				}else{
+					CFW.ui.addToastDanger('Wrong settings, cannot save the data.');
+					return false;
+				}
+				
 			}
 			
 		}

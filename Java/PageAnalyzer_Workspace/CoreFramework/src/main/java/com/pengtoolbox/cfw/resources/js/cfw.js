@@ -544,7 +544,7 @@ function cfw_csvToObjectArray(csvString, delimiter){
  		
  	 	for(var j = 0; j < headers.length && j < values.length; j++){
  	 		var header = headers[j];
- 	 		object[header] = values[j];
+ 	 		object[header] = values[j].trim();
  	 	}
  	 	resultArray.push(object);
  	 	

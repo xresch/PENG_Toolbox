@@ -10,15 +10,14 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.h2.util.json.JSONValue;
-
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
@@ -1018,7 +1017,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				if (fields.containsKey(key)) {
 					CFWField field = fields.get(key);
 					
-					if(!field.setValueValidated(json.get(key).toString()) ){
+					JsonElement element = json.get(key);
+					
+					if(!field.setValueValidated(element.getAsString()) ){
 						result = false;
 					}
 				}else {
