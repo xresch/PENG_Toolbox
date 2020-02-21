@@ -15,20 +15,23 @@
 				
 				var checkboxGroup = $('<div class="form-group">');
 				checkboxGroup.data('widgetObject', widgetObject);
-				if(widgetObject.JSON_SETTINGS.isordered){ listHTML = '<ol>';}
 				
 			 	for(var i = 0; i < lines.length; i++){
 			 		var checkboxGUID = "checkbox-"+CFW.utils.randomString(16);
 			 		var value = lines[i].trim();
 			 		var checked = "";
-			 		
+			 		var strikethrough = ''; 
+
 			 		if(value.toLowerCase().startsWith("x")){
 			 			value = value.slice(1);
 			 			checked = 'checked="checked"';
+			 			if(widgetObject.JSON_SETTINGS.strikethrough){
+			 				strikethrough = 'strikethrough-checkbox';
+			 			}
 			 		}
 			 		var checkboxHTML = 
 			 			'<div class="form-check">'
-			 				+'<input class="form-check-input" type="checkbox" onchange="cfw_widget_checklist_checkboxChange(this)" value="'+value+'" id="'+checkboxGUID+'" '+checked+' >'
+			 				+'<input class="form-check-input '+strikethrough+'" type="checkbox" onchange="cfw_widget_checklist_checkboxChange(this)" value="'+value+'" id="'+checkboxGUID+'" '+checked+' >'
 			 				+'<label class="form-check-label" for="'+checkboxGUID+'">'+value+'</label>'
 			 			+'</div>';
 			 		
@@ -46,7 +49,7 @@
 			onSave: function (form, widgetObject) {
 				var settingsForm = $(form);
 				widgetObject.JSON_SETTINGS.content = settingsForm.find('textarea[name="content"]').val();
-				widgetObject.JSON_SETTINGS.isordered = ( settingsForm.find('input[name="strikethrough"]:checked').val() == "true" );
+				widgetObject.JSON_SETTINGS.strikethrough = ( settingsForm.find('input[name="strikethrough"]:checked').val() == "true" );
 				return true;
 			}
 			
@@ -57,12 +60,21 @@
 
 function cfw_widget_checklist_checkboxChange(checkboxElement){
 	var checkbox = $(checkboxElement);
+	var isChecked = checkbox.prop("checked");
 	var group = checkbox.closest('.form-group');
 	
 	if(JSDATA.canEdit){
-		
+
 		var widgetObject = group.data('widgetObject');
-	
+		
+		//---------------------
+		// Handle Strikethrough
+		if(isChecked && widgetObject.JSON_SETTINGS.strikethrough){
+			checkbox.addClass('strikethrough-checkbox');
+		}else{
+			checkbox.removeClass('strikethrough-checkbox');
+		}
+		
 		var newContent = '';
 		group.find('input[type="checkbox"]').each(function(){
 			var currentBox = $(this);
@@ -81,7 +93,7 @@ function cfw_widget_checklist_checkboxChange(checkboxElement){
 		 
 		cfw_dashboard_saveWidgetState(widgetObject, true); 
 	}else{
-		checkbox.prop("checked", !checkbox.prop("checked"));
+		checkbox.prop("checked", !isChecked);
 		CFW.ui.addToastWarning('You don\'t have the required permissions to change this dashboard.');
 	}
 
