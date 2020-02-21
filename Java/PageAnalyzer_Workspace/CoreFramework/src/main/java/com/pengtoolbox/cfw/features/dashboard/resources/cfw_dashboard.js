@@ -403,8 +403,8 @@ function cfw_dashboard_fetchWidgetData(widgetObject, callback) {
 /************************************************************************************************
  * 
  ************************************************************************************************/
-function cfw_dashboard_saveWidgetState(widgetObject) {
-	if(JSDATA.canEdit == true && CFW_DASHBOARD_EDIT_MODE){
+function cfw_dashboard_saveWidgetState(widgetObject, forceSave) {
+	if(forceSave || ( JSDATA.canEdit == true && CFW_DASHBOARD_EDIT_MODE) ){
 		var params = Object.assign({action: 'update', item: 'widget'}, widgetObject); 
 		
 		delete params.content;

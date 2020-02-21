@@ -20,9 +20,15 @@
 			 	for(var i = 0; i < lines.length; i++){
 			 		var checkboxGUID = "checkbox-"+CFW.utils.randomString(16);
 			 		var value = lines[i].trim();
+			 		var checked = "";
+			 		
+			 		if(value.toLowerCase().startsWith("x")){
+			 			value = value.slice(1);
+			 			checked = 'checked="checked"';
+			 		}
 			 		var checkboxHTML = 
 			 			'<div class="form-check">'
-			 				+'<input class="form-check-input" type="checkbox" value="'+value+'" id="'+checkboxGUID+'" onchange="cfw_widget_checklist_checkboxChange(this)">'
+			 				+'<input class="form-check-input" type="checkbox" onchange="cfw_widget_checklist_checkboxChange(this)" value="'+value+'" id="'+checkboxGUID+'" '+checked+' >'
 			 				+'<label class="form-check-label" for="'+checkboxGUID+'">'+value+'</label>'
 			 			+'</div>';
 			 		
@@ -50,28 +56,33 @@
 
 
 function cfw_widget_checklist_checkboxChange(checkboxElement){
-	
 	var checkbox = $(checkboxElement);
 	var group = checkbox.closest('.form-group');
-	var widgetObject = group.data('widgetObject');
-
-	var newContent = '';
-	group.find('input[type="checkbox"]').each(function(){
-		var currentBox = $(this);
-		var value = currentBox.attr('value');
-		var checked = currentBox.is(':checked');
+	
+	if(JSDATA.canEdit){
 		
-		if (checked){
-			newContent += 'X '+value;
-		}else{
-			newContent += value;
-		}
-		newContent += "\r\n";
-	});
+		var widgetObject = group.data('widgetObject');
 	
-	widgetObject.JSON_SETTINGS.content = newContent;
-	
-	//TODO: Force save if can edit
-	
+		var newContent = '';
+		group.find('input[type="checkbox"]').each(function(){
+			var currentBox = $(this);
+			var value = currentBox.attr('value');
+			var checked = currentBox.is(':checked');
+			
+			if (checked){
+				newContent += 'X '+value;
+			}else{
+				newContent += value;
+			}
+			newContent += "\r\n";
+		});
+		
+		widgetObject.JSON_SETTINGS.content = newContent;
+		 
+		cfw_dashboard_saveWidgetState(widgetObject, true); 
+	}else{
+		checkbox.prop("checked", !checkbox.prop("checked"));
+		CFW.ui.addToastWarning('You don\'t have the required permissions to change this dashboard.');
+	}
 
 };
