@@ -13,6 +13,7 @@ import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.validation.LengthValidator;
+import com.pengtoolbox.cfw.validation.NotNullOrEmptyValidator;
 
 public class WidgetHelloWorld extends WidgetDefinition {
 
@@ -33,6 +34,7 @@ public class WidgetHelloWorld extends WidgetDefinition {
 						.setValue(true)
 				)
 				.addField(CFWField.newInteger(FormFieldType.NUMBER, "number")
+						.addValidator(new NotNullOrEmptyValidator())
 						.setValue(1)
 				)		
 		;
@@ -40,8 +42,9 @@ public class WidgetHelloWorld extends WidgetDefinition {
 
 	@Override
 	public void fetchData(JSONResponse response, JsonObject settings) { 
-		String numberString = settings.get("number").getAsString();
-		response.getContent().append("\"{!cfw_widget_helloworld_serverside!} "+numberString+"\"");
+		//int number = settings.get("number").getAsInt();
+		String number = settings.get("number").getAsString();
+		response.getContent().append("\"{!cfw_widget_helloworld_serverside!} "+number+"\"");
 	}
 
 	@Override
