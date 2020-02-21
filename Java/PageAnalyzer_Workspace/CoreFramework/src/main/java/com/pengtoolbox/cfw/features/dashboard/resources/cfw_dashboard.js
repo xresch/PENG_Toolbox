@@ -342,7 +342,7 @@ function cfw_dashboard_addWidget(type) {
 			if(widgetObject != null){
 				var widgetDefinition = CFW.dashboard.getWidgetDefinition(type);
 				widgetObject.TYPE = type;
-								
+				widgetObject.TITLE = widgetDefinition.menulabel;
 				var merged = Object.assign({}, widgetDefinition.defaultValues, widgetObject);
 				
 				console.log(merged);

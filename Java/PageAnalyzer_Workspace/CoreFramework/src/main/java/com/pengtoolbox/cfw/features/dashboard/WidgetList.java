@@ -13,37 +13,19 @@ import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.response.JSONResponse;
 
-public class WidgetTable extends WidgetDefinition {
+public class WidgetList extends WidgetDefinition {
 
 	@Override
-	public String getWidgetType() {return "cfw_table";}
-	
+	public String getWidgetType() {return "cfw_list";}
+
 	@Override
 	public CFWObject getSettings() {
 		return new CFWObject()
-				.addField(CFWField.newString(FormFieldType.TEXTAREA, "tableData")
-						.setLabel("Table Data")
-						.setDescription("Values delimited by the separator, first row will be used as header.")
-						.setValue("ID     ;Firstname    ;Lastname\r\n0      ;Jane             ;Doe\r\n1      ;Testika          ;Testonia")
+				.addField(CFWField.newString(FormFieldType.TEXTAREA, "content")
+						.setValue("Item A\r\nItem B\r\nItem C")
 						)
-				.addField(CFWField.newString(FormFieldType.TEXT, "separator")
-						.setLabel("Separator")
-						.setDescription("The separator used for the data.")
-						.setValue(";")
-						)
-				.addField(CFWField.newBoolean(FormFieldType.BOOLEAN, "narrow")
-						.setLabel("Narrow")
-						.setDescription("Define if the table row height should be narrow or wide.")
-						.setValue(false)
-						)
-				.addField(CFWField.newBoolean(FormFieldType.BOOLEAN, "filterable")
-						.setLabel("Filterable")
-						.setDescription("Shall a filter be added to the table or not.")
-						.setValue(false)
-						)
-				.addField(CFWField.newBoolean(FormFieldType.BOOLEAN, "striped")
-						.setLabel("striped")
-						.setDescription("Define if the table should be striped.")
+				.addField(CFWField.newBoolean(FormFieldType.BOOLEAN, "isordered")
+						.setLabel("Ordered List")
 						.setValue(true)
 						)
 		;
@@ -54,7 +36,7 @@ public class WidgetTable extends WidgetDefinition {
 
 	@Override
 	public ArrayList<FileDefinition> getJavascriptFiles() {
-		FileDefinition js = new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_widget_table.js");
+		FileDefinition js = new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_widget_list.js");
 		ArrayList<FileDefinition> array = new ArrayList<FileDefinition>();
 		array.add(js);
 		return array;

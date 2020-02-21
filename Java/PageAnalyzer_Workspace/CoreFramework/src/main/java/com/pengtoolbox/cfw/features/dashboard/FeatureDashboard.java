@@ -42,6 +42,8 @@ public class FeatureDashboard extends CFWAppFeature {
     	// Register Widgets
 		CFW.Registry.Widgets.add(new WidgetHelloWorld());
 		CFW.Registry.Widgets.add(new WidgetText());
+		CFW.Registry.Widgets.add(new WidgetList());
+		CFW.Registry.Widgets.add(new WidgetChecklist());
 		CFW.Registry.Widgets.add(new WidgetTable());
 		CFW.Registry.Widgets.add(new WidgetImage());
 		CFW.Registry.Widgets.add(new WidgetIframe());
@@ -53,14 +55,7 @@ public class FeatureDashboard extends CFWAppFeature {
 					.faicon("fas fa-tachometer-alt")
 					.addPermission(PERMISSION_DASHBOARDING)
 				, null);
-		
-		CFW.Registry.Components.addRegularMenuItem(
-				(MenuItem)new MenuItem("Dashboard Test View")
-					.faicon("fas fa-flask")
-					.addPermission(PERMISSION_DASHBOARDING)
-					.href("/app/dashboard/view")
-				, "Dashboards");
-		
+				
 		CFW.Registry.Components.addRegularMenuItem(
 				(MenuItem)new MenuItem("Dashboard List")
 					.faicon("fas fa-images")
