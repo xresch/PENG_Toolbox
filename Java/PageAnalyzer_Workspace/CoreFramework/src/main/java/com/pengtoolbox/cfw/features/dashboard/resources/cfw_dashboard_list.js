@@ -144,7 +144,7 @@ function cfw_dashboardlist_printDashboards(data, type){
 			 	textstylefield: null,
 			 	titlefields: ['NAME'],
 			 	titledelimiter: ' ',
-			 	visiblefields: ['NAME', 'DESCIPTION', 'IS_SHARED'],
+			 	visiblefields: ['NAME', 'DESCRIPTION', 'IS_SHARED'],
 			 	labels: {
 			 		IS_SHARED: 'Shared'
 			 	},

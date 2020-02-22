@@ -33,7 +33,7 @@ import com.pengtoolbox.cfw.features.usermgmt.FeatureUserManagement;
 import com.pengtoolbox.cfw.mail.CFWMail;
 import com.pengtoolbox.cfw.schedule.CFWSchedule;
 import com.pengtoolbox.cfw.utils.CFWDump;
-import com.pengtoolbox.cfw.utils.CFWEncryption;
+import com.pengtoolbox.cfw.utils.CFWSecurity;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 import com.pengtoolbox.cfw.utils.CFWTime;
 import com.pengtoolbox.cfw.utils.json.CFWJson;
@@ -71,7 +71,7 @@ public class CFW {
 	
 	public class CLI extends CFWCommandLineInterface {}
 	public class Dump extends CFWDump {}
-	public class Encryption extends CFWEncryption {}
+	public class Security extends CFWSecurity {}
 	public class Files extends CFWFiles {}
 	public class HTTP extends CFWHttp {}
 	public class JSON extends CFWJson {}

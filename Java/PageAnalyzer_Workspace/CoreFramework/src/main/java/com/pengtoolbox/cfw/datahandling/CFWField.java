@@ -19,6 +19,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.features.core.FeatureCore;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.response.bootstrap.HierarchicalHTMLItem;
@@ -46,6 +47,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private String description = null;
 	private Class<T> valueClass;
 	private ArrayList<String> invalidMessages;
+	private boolean allowHTML = false;
+	private boolean sanitizeStrings = true;
 	
 	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
 
@@ -663,6 +666,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return this;
 	}
 	
+	/******************************************************************************************************
+	 * 
+	 ******************************************************************************************************/
 	public String getDescription() {
 		return description;
 	}
@@ -679,7 +685,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return this;
 	}
 	
-	
+	/******************************************************************************************************
+	 *
+	 ******************************************************************************************************/
 	public String getColumnDefinition() {
 		return columnDefinition;
 	}
@@ -692,6 +700,30 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 ******************************************************************************************************/
 	public CFWField<T> setColumnDefinition(String columnDefinition) {
 		this.columnDefinition = columnDefinition;
+		return this;
+	}
+	
+	/******************************************************************************************************
+	 * 
+	 ******************************************************************************************************/
+	public CFWField<T> disableSecurity() {
+		this.allowHTML = true;
+		this.sanitizeStrings = false;
+		return this;
+	}
+	/******************************************************************************************************
+	 * 
+	 ******************************************************************************************************/
+	public CFWField<T> allowHTML(boolean allowHTML) {
+		this.allowHTML = allowHTML;
+		return this;
+	}
+	
+	/******************************************************************************************************
+	 * 
+	 ******************************************************************************************************/
+	public CFWField<T> sanitizeStrings(boolean sanitizeStrings) {
+		this.sanitizeStrings = sanitizeStrings;
 		return this;
 	}
 	
@@ -773,7 +805,11 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		this.valueLabelOptions = valueLabelPairs;
 		return this;
 	}
-
+	
+	/******************************************************************************************************
+	 * Check if this field is disabled.
+	 * 
+	 ******************************************************************************************************/
 	public boolean isDisabled() {
 		return isDisabled;
 	}
@@ -786,6 +822,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		this.isDisabled = isDisabled;
 		return this;
 	}
+	
+	
 
 	/******************************************************************************************************
 	 * Change the value and trigger the change handler if specified.
@@ -838,13 +876,34 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		// If value is a subclass of the valueClass change 
 		// the value without conversion
 		if(this.valueClass.isAssignableFrom(value.getClass())) {
-			this.changeValue(value);
+			
+			//---------------------------------
+			// Sanitize strings if needed 
+			if(valueClass == String.class ) {
+				
+				String saneValue = (String)value;
+				
+				if(!this.allowHTML && !CFW.Context.Request.hasPermission(FeatureCore.PERMISSION_ALLOW_HTML)) {
+					saneValue = CFW.Security.escapeHTMLEntities(saneValue);
+				}else if(sanitizeStrings && !CFW.Context.Request.hasPermission(FeatureCore.PERMISSION_ALLOW_JAVASCRIPT) ) {
+					saneValue = CFW.Security.sanitizeHTML((String)saneValue);
+					System.out.println("==============");
+					System.out.println("value: "+value);
+					System.out.println("saneValue: "+saneValue);
+				}
+				
+				this.changeValue(saneValue);
+			}else {
+				this.changeValue(value);
+			}
+			
 			return true;
 		}
 		
 		//-------------------------------------------------
 		// Convert string values to the appropriate type
 		if(value.getClass() == String.class) {
+			
 			if( ((String)value).trim().equals("")) { 
 				if(valueClass == Integer.class) 	    { return this.changeValue(null); }
 				else if(valueClass == Boolean.class) 	{ return this.changeValue(false); }

@@ -9,14 +9,11 @@ ALWAYS ON
 
 TODO
 ====
-PRIO 1: HTML Sanitizer OWASP with WYSIWIG, Allow HTML and or JAVASCRIPT
-
 - Dashboard: Merge forms, only one button.
-- Dashboard: Disable new widgets
 - Dashboard: Widget Fullscreen
 - Dashboard: Management Page
 - Dashboard: Refresh interval
-- Manual: Document Widget Creation
+- Manual: Documentation Widget Creation
 
 - Widget: CSV Chart
 - Widget: Cards
@@ -67,9 +64,11 @@ PRIO 1: HTML Sanitizer OWASP with WYSIWIG, Allow HTML and or JAVASCRIPT
 
 DONE
 ====
+PRIO 1: HTML Sanitizer OWASP with WYSIWIG, Allow HTML and or JAVASCRIPT
 - Widget: WYSIWYG HTML
 - Widget: List (Ordered, Unordered)
 - Widget: Checklist
+- Dashboard: Disable new widgets
 - Muuuf widget definition to server side.
 - implement dashboard allow edit only on permissions
 - Implement dashboard load widgets

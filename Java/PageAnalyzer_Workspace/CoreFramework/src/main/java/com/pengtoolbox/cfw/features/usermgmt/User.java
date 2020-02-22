@@ -91,10 +91,12 @@ public class User extends CFWObject {
 	
 	private CFWField<String> passwordHash = CFWField.newString(FormFieldType.NONE, UserFields.PASSWORD_HASH)
 			.setColumnDefinition("VARCHAR(127)")
+			.disableSecurity()
 			.addValidator(new LengthValidator(-1, 255));
 	
 	private CFWField<String> passwordSalt = CFWField.newString(FormFieldType.NONE, UserFields.PASSWORD_SALT)
 			.setColumnDefinition("VARCHAR(31)")
+			.disableSecurity()
 			.addValidator(new LengthValidator(-1, 255));
 	
 	private CFWField<String> status = CFWField.newString(FormFieldType.SELECT, UserFields.STATUS)
@@ -191,7 +193,7 @@ public class User extends CFWObject {
 		// Create anonymous user 
 		//-----------------------------------------
 		if(!CFW.Properties.AUTHENTICATION_ENABLED) {
-			String initialPassword = CFW.Encryption.createPasswordSalt(32);
+			String initialPassword = CFW.Security.createPasswordSalt(32);
 			if(!CFW.DB.Users.checkUsernameExists("anonymous")) {
 			    CFW.DB.Users.create(
 					new User("anonymous")
@@ -414,8 +416,8 @@ public class User extends CFWObject {
 			return null;
 		}
 		
-		this.passwordSalt(CFW.Encryption.createPasswordSalt(31));
-		this.passwordHash(CFW.Encryption.createPasswordHash(password, this.passwordSalt()) );
+		this.passwordSalt(CFW.Security.createPasswordSalt(31));
+		this.passwordHash(CFW.Security.createPasswordHash(password, this.passwordSalt()) );
 		
 		return this;
 	}
@@ -435,8 +437,8 @@ public class User extends CFWObject {
 			.severe("The two provided passwords are not equal.");
 			return false;
 		}else {
-			this.passwordSalt(CFW.Encryption.createPasswordSalt(31));
-			this.passwordHash(CFW.Encryption.createPasswordHash(password, this.passwordSalt()) );
+			this.passwordSalt(CFW.Security.createPasswordSalt(31));
+			this.passwordHash(CFW.Security.createPasswordHash(password, this.passwordSalt()) );
 			
 			return true;
 		}
@@ -448,7 +450,7 @@ public class User extends CFWObject {
 	 * @return true if correct password, false otherwise
 	 **************************************************************************/
 	public boolean passwordValidation(String providedPassword) {
-		String providedPasswordHash = CFW.Encryption.createPasswordHash(providedPassword, this.passwordSalt());
+		String providedPasswordHash = CFW.Security.createPasswordHash(providedPassword, this.passwordSalt());
 		return (providedPasswordHash.equals(this.passwordHash()));
 	}
 		

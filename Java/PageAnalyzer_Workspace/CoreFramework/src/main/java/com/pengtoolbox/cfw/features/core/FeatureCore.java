@@ -19,6 +19,8 @@ public class FeatureCore extends CFWAppFeature {
 
 	public static final String RESOURCE_PACKAGE = "com.pengtoolbox.cfw.features.core.resources";
 	public static final String PERMISSION_APP_ANALYTICS = "Application Analytics";
+	public static final String PERMISSION_ALLOW_HTML = "Allow HTML";
+	public static final String PERMISSION_ALLOW_JAVASCRIPT = "Allow Javascript";
 	
 	@Override
 	public void register() {
@@ -59,6 +61,22 @@ public class FeatureCore extends CFWAppFeature {
 			false
 		);	
 
+		//-----------------------------------
+		// 
+		CFW.DB.Permissions.oneTimeCreate(
+		new Permission(PERMISSION_ALLOW_HTML, "user")
+			.description("Allow the user to enter HTML code in any of the text fields. As this is a potential security issue, handle this permission with care."),
+			false,
+			false
+		);	
+		//-----------------------------------
+		// 
+		CFW.DB.Permissions.oneTimeCreate(
+		new Permission(PERMISSION_ALLOW_JAVASCRIPT, "user")
+			.description("Allow the user to enter javascript code in any of the text fields. As this is a potential security issue, handle this permission with care. This permission requires 'Allow HTML' to work."),
+			false,
+			false
+		);	
 	}
 
 	@Override

@@ -216,6 +216,8 @@ public class ServletDashboardView extends HttpServlet
 			if(isValid) {
 				DashboardWidget widgetToUpdate = new DashboardWidget();
 				widgetToUpdate.mapRequestParameters(request);
+				//Use sanitized values
+				widgetToUpdate.settings(settings.toJSON());
 				CFW.DB.DashboardWidgets.update(widgetToUpdate);
 			}
 			
@@ -261,7 +263,7 @@ public class ServletDashboardView extends HttpServlet
 			CFWObject settings = definition.getSettings();
 			settings.mapJsonFields(jsonObject);
 			
-			CFWForm form = settings.toForm("cfwWidgetFormSettings"+CFW.Encryption.createRandomStringAtoZ(6), "n/a-willBeRemoved");
+			CFWForm form = settings.toForm("cfwWidgetFormSettings"+CFW.Security.createRandomStringAtoZ(6), "n/a-willBeRemoved");
 			
 			form.appendToPayload(json);
 			

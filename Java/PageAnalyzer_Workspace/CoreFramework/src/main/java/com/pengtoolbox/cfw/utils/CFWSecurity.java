@@ -6,6 +6,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import org.owasp.html.HtmlPolicyBuilder;
+import org.owasp.html.PolicyFactory;
+
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
@@ -13,7 +16,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
  * @author Reto Scheiwiller, © 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class CFWEncryption {
+public class CFWSecurity {
 
 	// internal salt to make it even more complicated to recreate a password
 	// Don't change this if you don't want to mess up existing passwords!
@@ -21,8 +24,25 @@ public class CFWEncryption {
 	
 	public static final String CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12345678901234567890+*%&/()=?!{}[]><:;.,-_+*%&/()=?!{}[]><:;.,-_";
 		
-	private static Logger logger = CFWLog.getLogger(CFWEncryption.class.getName());
+	private static Logger logger = CFWLog.getLogger(CFWSecurity.class.getName());
 	
+	private static PolicyFactory htmlPolicy = new HtmlPolicyBuilder()
+			.allowCommonBlockElements()
+			.allowCommonInlineFormattingElements()
+			.allowStandardUrlProtocols()
+			.allowStyling()
+		    .allowElements("a", "table", "thead", "tbody", "th",  "tr", "td", "div", "i", "b", "strong", "ol", "ul", "li")
+		    .allowAttributes("href").onElements("a")
+		    .toFactory();
+
+	private static final String htmlEscapes[][] = new String[][]{
+        {"&", "&amp;"},
+        {"<", "&lt;"},
+        {">", "&gt;"},
+        {"\"", "&quot;"},
+        {"\'", "&#x27;"},
+        {"/", "&#x2F;"}
+	};
 	/******************************************************************************
 	 * Creates a salted SHA512 password hash and returns a string of 127 or less bytes.
 	 * Removes the first character of the resulting hash string. This adds as 
@@ -76,7 +96,7 @@ public class CFWEncryption {
 	}
 	
 	/******************************************************************************
-	 * Creates a random Salt for a Password.
+	 * Creates a random String.
 	 * 
 	 * @param byteCount number of bytes to create
 	 * @return
@@ -91,6 +111,31 @@ public class CFWEncryption {
 		}
 		
 		return builder.toString();
+	    
+	}
+	
+	
+	/*************************************************************************************
+	 * Escape HTML entities to avoid potential html code in a string.
+	 *************************************************************************************/
+	public static String escapeHTMLEntities(String string) {
+
+		if(string != null) {
+	        for (String[] esc : htmlEscapes) {
+	            string = string.replace(esc[0], esc[1]);
+	        }
+		}
+        return string;
+    }
+	/******************************************************************************
+	 * Sanitizes HTML with OWASP HTML sanitizer:
+	 * 
+	 * @param byteCount number of bytes to create
+	 * @return
+	 ******************************************************************************/
+	public static String sanitizeHTML(String htmlString) {
+		
+		return htmlPolicy.sanitize(htmlString);
 	    
 	}
 	

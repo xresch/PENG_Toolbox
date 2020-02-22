@@ -27,7 +27,7 @@ public class Configuration extends CFWObject {
 	public static final String MENU_TITLE = "Menu Title";
 	public static final String CPU_SAMPLING_SECONDS = "CPU Sampling Seconds";
 	public static final String CPU_SAMPLING_AGGREGATION = "CPU Sampling Aggregation";
-	
+
 	public static final String LOGO_PATH = "Logo Path";
 	
 	public enum ConfigFields{

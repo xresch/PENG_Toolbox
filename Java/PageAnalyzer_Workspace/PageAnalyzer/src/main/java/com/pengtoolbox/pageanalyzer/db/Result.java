@@ -64,15 +64,18 @@ public class Result extends CFWObject {
 			.addValidator(new LengthValidator(-1, 255));
 	
 	private CFWField<String> pageURL = CFWField.newString(FormFieldType.NONE, ResultFields.PAGE_URL.toString())
-			.setDescription("The url that was analyzed.");
+			.setDescription("The url that was analyzed.")
+			.disableSecurity();
 	
 	private CFWField<String> result = CFWField.newString(FormFieldType.NONE, ResultFields.JSON_RESULT.toString())
 			.setColumnDefinition("CLOB")
-			.setDescription("The the page analyzer results.");
+			.setDescription("The the page analyzer results.")
+			.disableSecurity();
 	
 	private CFWField<String> harfile = CFWField.newString(FormFieldType.NONE, ResultFields.JSON_HAR_FILE.toString())
 			.setColumnDefinition("CLOB")
-			.setDescription("The raw har file.");
+			.setDescription("The raw har file.")
+			.disableSecurity();
 	
 	private CFWField<Timestamp> timeCreated = CFWField.newTimestamp(FormFieldType.NONE, ResultFields.TIME_CREATED.toString())
 			.setDescription("The results of the yslow analysis.")

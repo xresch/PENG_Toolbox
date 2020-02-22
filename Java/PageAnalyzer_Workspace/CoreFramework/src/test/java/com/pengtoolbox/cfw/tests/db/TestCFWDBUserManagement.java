@@ -11,7 +11,7 @@ import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.features.usermgmt.Role;
 import com.pengtoolbox.cfw.features.usermgmt.User;
 import com.pengtoolbox.cfw.tests._master.DBTestMaster;
-import com.pengtoolbox.cfw.utils.CFWEncryption;
+import com.pengtoolbox.cfw.utils.CFWSecurity;
 
 public class TestCFWDBUserManagement extends DBTestMaster {
 
@@ -98,8 +98,8 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		
 		//--------------------------------------
 		// Test Password encryption methods
-		String salt = CFW.Encryption.createPasswordSalt(31);
-		String hashtext = CFWEncryption.createPasswordHash("admin", salt);
+		String salt = CFW.Security.createPasswordSalt(31);
+		String hashtext = CFWSecurity.createPasswordHash("admin", salt);
 		
         Assertions.assertTrue(salt.length() == 31);
         Assertions.assertTrue(hashtext.length() <= 127);
