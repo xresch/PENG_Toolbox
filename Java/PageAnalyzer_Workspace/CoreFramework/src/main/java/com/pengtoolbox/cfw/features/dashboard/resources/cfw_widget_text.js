@@ -10,11 +10,15 @@
 			createWidgetInstance: function (widgetObject, callback) {			
 				
 				var textRenderer = CFW.render.getRenderer('html');
-				
-				var textWithBreaks = widgetObject.JSON_SETTINGS.content.replace(/\r\n|\r|\n/,'<br>');
-				var content = textRenderer.render({data: textWithBreaks});
-				
-				callback(widgetObject, content);
+				var adjustedText = widgetObject.JSON_SETTINGS.content;
+				if(widgetObject.JSON_SETTINGS.content != null){
+					adjustedText = adjustedText.replace(/\r\n|\r|\n/,'<br>');
+					var content = textRenderer.render({data: adjustedText});
+					callback(widgetObject, content);
+				}else{
+					callback(widgetObject, '');
+				}
+
 				
 			},
 			

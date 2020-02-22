@@ -26,6 +26,7 @@ public class TestCFWSecurity {
 		System.out.println(CFW.Security.sanitizeHTML("ldap://www.google.ch"));
 		System.out.println(CFW.Security.sanitizeHTML("ldaps://www.google.ch"));
 		System.out.println(CFW.Security.sanitizeHTML("http://www.google.ch:8888"));
+		System.out.println(CFW.Security.sanitizeHTML("/resources/images/login_background.jpg"));
 		
 		System.out.println("=========== Sanitize HTML <a> ===========");
 		System.out.println(CFW.Security.sanitizeHTML("<a href=\"http://www.google.com/\">Test Link</a>"));

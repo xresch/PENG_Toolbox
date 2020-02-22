@@ -23,6 +23,7 @@ public class WidgetIframe extends WidgetDefinition {
 		return new CFWObject()
 				.addField(CFWField.newString(FormFieldType.TEXT, "url")
 						.setLabel("URL")
+						.allowHTML(true)
 						.setValue("")
 				)
 		;

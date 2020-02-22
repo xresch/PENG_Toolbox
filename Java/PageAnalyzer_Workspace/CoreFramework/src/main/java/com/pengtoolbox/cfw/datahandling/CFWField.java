@@ -1077,8 +1077,11 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					CFWField field = fields.get(key);
 					
 					JsonElement element = json.get(key);
-					
-					if(!field.setValueValidated(element.getAsString()) ){
+					if(element.isJsonNull()) {
+						if(!field.setValueValidated(null) ){
+							result = false;
+						}
+					}else if(!field.setValueValidated(element.getAsString()) ){
 						result = false;
 					}
 				}else {
