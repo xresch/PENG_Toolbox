@@ -456,10 +456,15 @@ function cfw_dashboard_createWidgetInstance(widgetObject, doAutoposition) {
 			    		doAutoposition);
 			   
 			    //----------------------------
-			    // Update Data
-			    
+			    // Disable widget
 			    var widgetObject = $(widgetInstance).data('widgetObject');
-
+			    
+			    if(!CFW_DASHBOARD_EDIT_MODE){
+			    	grid.movable('#'+widgetObject.guid, false);
+			    	grid.resizable('#'+widgetObject.guid, false);
+			    }
+			    //----------------------------
+			    // Update Data
 			    widgetObject.WIDTH	= widgetInstance.attr("data-gs-width");
 			    widgetObject.HEIGHT	= widgetInstance.attr("data-gs-height");
 			    widgetObject.X		= widgetInstance.attr("data-gs-x");

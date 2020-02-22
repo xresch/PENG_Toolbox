@@ -18,7 +18,6 @@ PRIO 1: HTML Sanitizer OWASP with WYSIWIG, Allow HTML and or JAVASCRIPT
 - Dashboard: Refresh interval
 - Manual: Document Widget Creation
 
-- Widget: WYSIWYG HTML
 - Widget: CSV Chart
 - Widget: Cards
 - Widget: Panels
@@ -68,6 +67,7 @@ PRIO 1: HTML Sanitizer OWASP with WYSIWIG, Allow HTML and or JAVASCRIPT
 
 DONE
 ====
+- Widget: WYSIWYG HTML
 - Widget: List (Ordered, Unordered)
 - Widget: Checklist
 - Muuuf widget definition to server side.
