@@ -119,9 +119,7 @@ function cfw_initializeSummernote(formID, editorID){
 		  $(editor).summernote("code", response.payload.html);
 	  })
 	  .fail(function(response) {
-		  console.error("Issue loading editor content: "+url);
-		  CFW.ui.addToast("Issue Loading Editor Content", "URL: "+url, "danger", CFW.config.toastErrorDelay)
-
+		  CFW.ui.addToastDanger("Issue Loading Editor Content", "danger", CFW.config.toastErrorDelay);
 	  })
 	  .always(function(response) {
 		  cfw_handleMessages(response);			  
@@ -1253,6 +1251,8 @@ function cfw_getForm(formid, targetElement){
 		  .done(function(response) {
 			  $(targetElement).html(response.payload.html);
 		      formID = $(targetElement).find('form').attr("id");
+		      // workaround, force evaluation
+		      eval($(customForm).find("script").text());
               eval("intializeForm_"+formID+"();");
 		  })
 		  .fail(function(xhr, status, errorThrown) {

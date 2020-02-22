@@ -6,10 +6,16 @@
 CFW.render.registerRenderer("html",
 	new CFWRenderer(
 		function (renderDefinition) {
-			if(typeof renderDefinition.data == "object"){
-				return CFW.format.objectToHTMLList(renderDefinition.data)
-			}else{
+			console.log('==== HTML Renderer ====');
+			console.log(renderDefinition.data.toString());
+			console.log(typeof renderDefinition.data);
+			console.log(renderDefinition.data instanceof Element);
+			console.log(renderDefinition.data);
+			if( renderDefinition.data instanceof Element
+			|| typeof renderDefinition.data == "string"){
 				return renderDefinition.data;
+			}else{
+				return CFW.format.objectToHTMLList(renderDefinition.data);
 			}
 		})
 );

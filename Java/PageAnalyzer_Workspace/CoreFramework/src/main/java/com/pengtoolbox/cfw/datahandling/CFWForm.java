@@ -90,7 +90,7 @@ public class CFWForm extends HierarchicalHTMLItem {
 		//---------------------------
 		// Add javascript
 		html.append(
-				"<script>\r\n" + 
+				"<script id=\"script-"+formID+"\">\r\n" + 
 				"	function intializeForm_"+formID+"(){\r\n"+
 				"		$('[data-toggle=\"tooltip\"]').tooltip();\r\n"+		
 						javascript.toString()+

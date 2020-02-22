@@ -10,6 +10,7 @@ ALWAYS ON
 TODO
 ====
 PRIO 1: HTML Sanitizer OWASP with WYSIWIG, Allow HTML and or JAVASCRIPT
+
 - Dashboard: Merge forms, only one button.
 - Dashboard: Disable new widgets
 - Dashboard: Widget Fullscreen
@@ -24,7 +25,6 @@ PRIO 1: HTML Sanitizer OWASP with WYSIWIG, Allow HTML and or JAVASCRIPT
 - Widget: CSV Chart
 - Widget: Website Checker HTMLUnit
 - Widget: 
-
 
 - Move core stuff to core feature
 - Create Pagination Renderer

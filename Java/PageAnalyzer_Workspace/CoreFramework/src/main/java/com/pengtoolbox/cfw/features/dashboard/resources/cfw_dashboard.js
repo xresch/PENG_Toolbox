@@ -101,7 +101,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 	var customFormButton = '<input type="button" onclick="cfw_dashboard_saveCustomSettings(this, \''+widgetGUID+'\')" class="form-control btn-primary" value="Save">';
 	
 	customForm.append(customFormButton);
-	
+		
 	//##################################################
 	// Show Form for Default values
 	//##################################################
@@ -129,7 +129,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 			value: widgetObject.FOOTER, 
 			description: 'The contents of the footer of the widget.' 
 		}
-	).createHTML();;
+	).createHTML();
 	
 	//defaultForm += cfw_dashboard_createFormField("Footer", 'The footer of the widget.', '<textarea class="form-control" rows="10" name="footer" placeholder="Footer Contents">'+widgetObject.footer+'</textarea>');
 	
@@ -182,9 +182,16 @@ function cfw_dashboard_editWidget(widgetGUID){
 	
 	CFW.ui.showModal(CFWL('cfw_core_settings', 'Settings'), compositeDiv, "CFW.cache.clearCache();");
 	
-	  //-----------------------------------
-	  // Initialize tooltipy
-	  $('#editWidgetComposite [data-toggle="tooltip"]').tooltip();
+	//-----------------------------------
+	// Initialize Forms
+
+	$('#editWidgetComposite [data-toggle="tooltip"]').tooltip();
+	
+	formID = $(customForm).attr("id");
+	// workaround, force evaluation
+	eval($(customForm).find("script").text());
+	eval("intializeForm_"+formID+"();");
+				
 }
 
 /************************************************************************************************

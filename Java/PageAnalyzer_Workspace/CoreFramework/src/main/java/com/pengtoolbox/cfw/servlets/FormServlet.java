@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
@@ -58,7 +59,12 @@ public class FormServlet extends HttpServlet
     		// Return summernote editor 
     		// content
     		JsonObject payload = new JsonObject();
-        	payload.addProperty("html", form.getField(summernoteID).getValue().toString());
+    		CFWField summernoteField = form.getField(summernoteID);
+    		if(summernoteField != null) {
+    			payload.addProperty("html", form.getField(summernoteID).getValue().toString());
+    		}else {
+    			payload.addProperty("html", "");
+    		}
         	
         	json.getContent().append(payload.toString());
     	}
