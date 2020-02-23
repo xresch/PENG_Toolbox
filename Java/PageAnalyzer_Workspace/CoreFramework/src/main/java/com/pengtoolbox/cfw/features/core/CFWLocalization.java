@@ -118,7 +118,18 @@ public class CFWLocalization {
 	public static String getLocaleIdentifier(Locale[] locales) {
 		StringBuilder builder = new StringBuilder();
 		
+		Locale lastlocale = null;
 		for(Locale locale : locales) {
+			
+			//----------------------------
+			// Skip reoccuring language
+			if(lastlocale != null && locale.getLanguage().equals(lastlocale.getLanguage()) ) {
+				lastlocale = locale;
+				continue;
+			}else {
+				lastlocale = locale;
+			}
+			
 			builder.append(locale.getLanguage()).append("_"); 
 		}
 		
