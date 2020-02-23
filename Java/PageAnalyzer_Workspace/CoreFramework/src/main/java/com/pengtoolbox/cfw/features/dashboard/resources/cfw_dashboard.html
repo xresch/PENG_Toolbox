@@ -20,6 +20,17 @@
 	  </ul>
 	</div>
 	
+	<div class="btn-group hideOnFullScreen">
+	  <select id="refreshSelector" class="form-control form-control-sm" onchange="setReloadInterval(this)" title="Set Refresh Time">
+			<option value="stop">{!cfw_core_reload!} {!cfw_core_off!}</option>
+			<option value="300000">5 {!cfw_core_minutes!}</option>
+			<option value="600000">10 {!cfw_core_minutes!}</option>
+			<option value="900000">15 {!cfw_core_minutes!}</option>
+			<option value="1800000">30 {!cfw_core_minutes!}</option>
+			<option value="3600000">60 {!cfw_core_minutes!}</option>
+		</select>
+	</div>
+	
 	<button id="fullscreenButton" class="btn btn-sm btn-primary ml-2 fullscreenButton" onclick="cfw_dashboard_toggleFullscreenMode();" title="Toggle Fullscreen"  >
 			<i id="fullscreenButtonIcon" class="fas fa-expand"></i>
 	</button>
@@ -27,31 +38,5 @@
 
 <div class="grid-stack">
 
-
-	<!-- div class="grid-stack-item" data-gs-width="2" data-gs-height="3">
-    <div class="grid-stack-item-content card bg-primary">
-     	<div class="card-body h-100">
-     	  
-     	  <div class="card-title">
-		  	<h5>Special title treatment</h5>
-			  <a type="button" role ="button" class="cfw-dashboard-widget-settings" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			    <i class="fas fa-cog"></i>
-			  </a>
-			  <div class="dropdown-menu">
-			    <a class="dropdown-item" href="#">Settings</a>
-				<div class="dropdown-divider"></div>
-				<a class="dropdown-item text-danger" href="#">Remove</a>
-			  </div>
-		  </div>
-
-		  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-		  <a href="#" class="btn btn-danger">Go somewhere</a>
-		 <div class="cfw-dashboard-widget-footer">
-		    2 days ago
-		  </div>
-		</div>
-    </div>
-  </div-->
-  
   
 </div>

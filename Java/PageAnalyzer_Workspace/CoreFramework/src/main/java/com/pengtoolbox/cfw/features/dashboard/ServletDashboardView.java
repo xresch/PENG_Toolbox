@@ -63,7 +63,7 @@ public class ServletDashboardView extends HttpServlet
 				Dashboard dashboard = CFW.DB.Dashboards.selectByID(request.getParameter("id"));
 				html.addJavascriptData("dashboardName",  dashboard.name());
 				html.addJavascriptData("canEdit", canEdit(request.getParameter("id")) );
-				html.addJavascriptCode("cfw_dashboard_draw();");
+				html.addJavascriptCode("cfw_dashboard_initialDraw();");
 				
 		        response.setContentType("text/html");
 		        response.setStatus(HttpServletResponse.SC_OK);

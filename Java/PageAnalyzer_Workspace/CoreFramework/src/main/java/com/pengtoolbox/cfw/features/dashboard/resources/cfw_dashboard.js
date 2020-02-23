@@ -1,6 +1,7 @@
 
 var CFW_DASHBOARD_EDIT_MODE = false;
 var CFW_DASHBOARD_FULLSCREEN_MODE = false;
+var CFW_DASHBOARD_REFRESH_INTERVAL_ID = null;
 
 var CFW_DASHBOARD_WIDGET_REGISTRY = {};
 
@@ -548,6 +549,46 @@ function cfw_dashboard_toggleEditMode(){
 		grid.enable();
 	}
 }
+
+/**************************************************************************************
+ * Change duration between refreshes
+ * @param selector selected value of #refreshSelector
+ * @see storeLocalValue()
+ * @see refreshTimer()
+ *************************************************************************************/
+function setReloadInterval(selector) {
+	
+	
+	var refreshInterval = $(selector).val();
+	//------------------------
+	// Disable Old Interval
+	if(refreshInterval == 'stop' && CFW_DASHBOARD_REFRESH_INTERVAL_ID != null){
+		clearInterval(CFW_DASHBOARD_REFRESH_INTERVAL_ID);
+		return;
+	}
+	
+	//------------------------
+	// Prevent user set lower interval
+//	if(refreshInterval < 300000){
+//		refreshInterval = 300000;
+//	}
+
+	//------------------------
+	// Disable Old Interval
+	if(CFW_DASHBOARD_REFRESH_INTERVAL_ID != null){
+		clearInterval(CFW_DASHBOARD_REFRESH_INTERVAL_ID);
+	}
+	
+	CFW_DASHBOARD_REFRESH_INTERVAL_ID = setInterval(function(){
+    	console.log('auto refresh');
+    	if(!CFW_DASHBOARD_EDIT_MODE){
+    		$('.grid-stack').html('');
+	    	cfw_dashboard_draw();
+	    };
+    }, refreshInterval);
+    	
+}
+
 /******************************************************************
  * Main method for building the view.
  * 
@@ -680,32 +721,35 @@ function addTestdata(){
 	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text'});
 	
 }
+
+/******************************************************************
+ * Main method for building the view.
+ * 
+ ******************************************************************/
+function cfw_dashboard_initialDraw(){
+		
+	cfw_dashboard_initialize('.grid-stack');
+	cfw_dashboard_draw();
+}
 /******************************************************************
  * Main method for building the view.
  * 
  ******************************************************************/
 function cfw_dashboard_draw(){
-	
-	console.log('draw');
-	
-	cfw_dashboard_initialize('.grid-stack');
-	
-	// Test Data
-	//addTestdata();
-	
+		
 	CFW.ui.toogleLoader(true);
 	
 	window.setTimeout( 
 	function(){
 
-		CFW.http.fetchAndCacheData(CFW_DASHBOARDVIEW_URL, {action: "fetch", item: "widgets", dashboardid: CFW_DASHBOARDVIEW_PARAMS.id}, "menuitems", function(data){
+		CFW.http.getJSON(CFW_DASHBOARDVIEW_URL, {action: "fetch", item: "widgets", dashboardid: CFW_DASHBOARDVIEW_PARAMS.id}, function(data){
 			
 			var widgetArray = data.payload;
 			
 			for(var i = 0;i < widgetArray.length ;i++){
 				cfw_dashboard_createWidgetInstance(widgetArray[i], false);
 			}
-			
+
 			//-----------------------------
 			// Disable resize & move
 			$('.grid-stack').data('gridstack').disable();
