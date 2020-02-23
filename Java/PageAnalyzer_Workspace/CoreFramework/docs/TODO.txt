@@ -6,43 +6,66 @@ ALWAYS ON
 - Cleanup console.log() and System.out.println()
 - Localize
 - Add Copyrights
+- Test Cases
+
+-Test with cache enabled
 
 TODO
 ====
+- Manual: Documentation Widget Creation
+
 - Dashboard: Merge forms, only one button.
 - Dashboard: Widget Fullscreen
 - Dashboard: Management Page
 - Dashboard: Refresh interval
-- Manual: Documentation Widget Creation
+- Dashboard: Fit Squeeze
+- Dashboard: Filter Widgets
+- Dashboard: Edit to Done Button
+- Dashboard: Add Title to Dashboard
+- Dashboard: Mobile View: Fix edit view and check if resizing/dragging is possible.
 
 - Widget: CSV Chart
 - Widget: Cards
 - Widget: Panels
 - Widget: CSV Chart
+- Widget Embed Video
 - Widget: Website Checker HTMLUnit
-- Widget: 
+- Widget: Partial HTML Extractor
+- Widget: Nest other Dashboard
+- Widget: Nest Widget from other Dashboard
 
-- Move core stuff to core feature
-- Create Pagination Renderer
-- XSS: Prevent and create Permissions Allow HTML and Allow Javascript
-- Finish javascript CFWFormField
-- Configuration: do not send Passwords to Browser
-- Create Encryption/Decryption for DB
-- Create loading mechanism for features as plugins
+
+- cfw.js: Create Pagination Renderer
+- cfw.js: Finish javascript CFWFormField
+
+- Security: Configuration - do not send Passwords to Browser
+- Security: Create Encryption/Decryption for DB
+- Security: Change login to two steps, first username, then password field 
+
 - Manual: Highlight and expand menu entry on page-parameter links
 - Manual: Change chevron icon when page gets expanded/collapsed
-- Implement custom shutdown stopping database, application, features, etc...
-- Dashboard: Create a dashboard using gridstack.js or similar >> https://dzone.com/articles/7-javascript-libraries-for-dashboards 
-- Configuration: Add feature to listen for config changes.
+- Manual: Multilingual manual
+- Manual: Print View Button
+
+- Localization: create CFW.L()
+- Localization: Improve localize cache names
+
+- CFW: Implement custom shutdown stopping database, application, features, etc...
+- CFW: Configuration - Add feature to listen for config changes.
+- CFW: Move core stuff to core feature
+- CFW: Create loading mechanism for features as plugins
+- CFW: Create javascript sanity check page
 
 - Caching
-  - Create Caching class, max entries and access count
+  - Create Caching class or us Guava, max entries and access count
   - Create Cache overview
-  
-- FormField.SINGLECOMPLETE
-  - how to load key and label? 
-  
+    
 - CFWField: Add initFormField(method)
+- CFWField: Change Autocomplete to take only value/label input.
+- CFWField: TAGS: Change to take value/label input.
+- CFWField: Form errors add to field.
+- CFWField: FormField.SINGLECOMPLETE
+  - how to load key and label? 
 
 - Spaces!!!
   - Fetch As JSON Hierarchy
@@ -56,15 +79,15 @@ TODO
 - Truncate too long toasts.
 - Show previous toasts all toasts button
 
-- Form errors add to field.
-
 - Support Info: Use default Modal, make exceptions unique.
 - Custom Error page CFW.App.createErrorHandler();
 - SPNEGO/Kerberos Authentication
 
 DONE
 ====
-PRIO 1: HTML Sanitizer OWASP with WYSIWIG, Allow HTML and or JAVASCRIPT
+- Dashboard: Create a dashboard using gridstack.js or similar >> https://dzone.com/articles/7-javascript-libraries-for-dashboards 
+- XSS: Prevent and create Permissions Allow HTML and Allow Javascript
+- PRIO 1: HTML Sanitizer OWASP with WYSIWIG, Allow HTML and or JAVASCRIPT
 - Widget: WYSIWYG HTML
 - Widget: List (Ordered, Unordered)
 - Widget: Checklist

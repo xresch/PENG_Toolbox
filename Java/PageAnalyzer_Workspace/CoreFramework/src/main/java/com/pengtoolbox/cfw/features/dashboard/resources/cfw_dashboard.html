@@ -1,14 +1,16 @@
 
 <div id="cfw-dashboard-control-panel">
-	
-
-		
+	<h3 id="dashboardName" class="float-left mr-3"></h3>
 	<div class="btn-group hideOnFullScreen">
 		<button id="editButton" class="btn btn-sm btn-primary ml-2 d-none" onclick="cfw_dashboard_toggleEditMode();" title="Edit Dashboard"  >
-			<i class="fas fa-pen"></i>&nbsp;{!cfw_dashboard_edit!}
+			<i class="fas fa-pen"></i>&nbsp;{!cfw_core_edit!}
 		</button>
 	</div>
-	
+		<div class="btn-group hideOnFullScreen">
+		<button id="doneButton" class="btn btn-sm btn-primary ml-2 d-none" onclick="cfw_dashboard_toggleEditMode();" title="Done"  >
+			<i class="fas fa-check"></i>&nbsp;{!cfw_core_done!}
+		</button>
+	</div>
 	<div class="btn-group hideOnFullScreen">
 	  <button id="addWidget" class="btn btn-sm btn-success d-none"  title="Add Widget" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 		<i class="fas fa-plus-circle"></i>&nbsp;{!cfw_dashboard_addwidget!}

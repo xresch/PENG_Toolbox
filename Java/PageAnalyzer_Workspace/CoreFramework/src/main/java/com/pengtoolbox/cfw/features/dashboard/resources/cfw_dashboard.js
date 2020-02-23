@@ -535,12 +535,16 @@ function cfw_dashboard_toggleEditMode(){
 		CFW_DASHBOARD_EDIT_MODE = false;
 		$('.cfw-dashboard-widget-settings').addClass('d-none');
 		$('#addWidget').addClass('d-none');
+		$('#doneButton').addClass('d-none');
+		$('#editButton').removeClass('d-none');
 		grid.disable();
 		
 	}else{
 		CFW_DASHBOARD_EDIT_MODE = true;
 		$('.cfw-dashboard-widget-settings').removeClass('d-none');
 		$('#addWidget').removeClass('d-none');
+		$('#doneButton').removeClass('d-none');
+		$('#editButton').addClass('d-none');
 		grid.enable();
 	}
 }
@@ -551,14 +555,17 @@ function cfw_dashboard_toggleEditMode(){
 function cfw_dashboard_initialize(gridStackElementSelector){
 	
 	
+	$('#dashboardName').text(JSDATA.dashboardName);
+	
 	//-----------------------------
 	// Set options 
 	if(JSDATA.canEdit){
 		$('#editButton').removeClass('d-none');
 	}
+	
+	
 	//-----------------------------
 	// Set options 
-
 	$(gridStackElementSelector).gridstack({
 		alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
 		resizable: {
