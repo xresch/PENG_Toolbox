@@ -21,11 +21,8 @@
 						CFWL('cfw_widget_helloworld_hello', 'Hello')+' '
 						+widgetObject.JSON_SETTINGS.name+'! '
 						+ data.payload;
-					
-					var textRenderer = CFW.render.getRenderer('html');
-					var content = textRenderer.render({data: helloString});
-					
-					callback(widgetObject, content);
+										
+					callback(widgetObject, helloString);
 				});
 				
 			},

@@ -10,12 +10,7 @@
 			description: CFWL('cfw_dashboard_widget_cfwwebsite_desc', "Displays a website(doesn't work with all websites)."),
 			
 			createWidgetInstance: function (widgetObject, callback) {
-								
-				var merged = Object.assign({}, this.defaultValues, widgetObject);
-				var textRenderer = CFW.render.getRenderer('html');
-
-				content = textRenderer.render({data: '<iframe class="w-100 flex-grow-1" src="'+widgetObject.JSON_SETTINGS.url+'">'});
-				callback(widgetObject, content);
+				callback(widgetObject, '<iframe class="w-100 flex-grow-1" src="'+widgetObject.JSON_SETTINGS.url+'">');
 			},
 			
 			getEditForm: function (widgetObject) {
