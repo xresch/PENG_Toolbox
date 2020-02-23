@@ -7,22 +7,19 @@ ALWAYS ON
 - Localize
 - Add Copyrights
 - Test Cases
-
 -Test with cache enabled
 
 TODO
 ====
 - Manual: Documentation Widget Creation
 
+- Dashboard: Add Owner name to shared list
 - Dashboard: Merge forms, only one button.
 - Dashboard: Widget Fullscreen
 - Dashboard: Management Page
-- Dashboard: Refresh interval
 - Dashboard: Favorites
 - Dashboard: Fit Squeeze
 - Dashboard: Filter Widgets
-- Dashboard: Edit to Done Button
-- Dashboard: Add Title to Dashboard
 - Dashboard: Mobile View: Fix edit view and check if resizing/dragging is possible.
 - Dashbboard: Default Error / No Access Title
 - Dashbboard: Default No Data Title
@@ -31,7 +28,6 @@ TODO
 - Widget: Cards
 - Widget: Panels
 - Widget: CSV Chart
-- Widget Embed Video
 - Widget: Website Checker HTMLUnit
 - Widget: Partial HTML Extractor
 - Widget: Nest other Dashboard
@@ -49,9 +45,6 @@ TODO
 - Manual: Change chevron icon when page gets expanded/collapsed
 - Manual: Multilingual manual
 - Manual: Print View Button
-
-- Localization: create CFW.L()
-- Localization: Improve localize cache names
 
 - CFW: Implement custom shutdown stopping database, application, features, etc...
 - CFW: Configuration - Add feature to listen for config changes.
@@ -88,6 +81,12 @@ TODO
 
 DONE
 ====
+- Localization: create CFW.L()
+- Localization: Improve localize cache names
+- Widget Embed Video
+- Dashboard: Edit to Done Button
+- Dashboard: Add Title to Dashboard
+- Dashboard: Refresh interval
 - Dashboard: Create a dashboard using gridstack.js or similar >> https://dzone.com/articles/7-javascript-libraries-for-dashboards 
 - XSS: Prevent and create Permissions Allow HTML and Allow Javascript
 - PRIO 1: HTML Sanitizer OWASP with WYSIWIG, Allow HTML and or JAVASCRIPT
