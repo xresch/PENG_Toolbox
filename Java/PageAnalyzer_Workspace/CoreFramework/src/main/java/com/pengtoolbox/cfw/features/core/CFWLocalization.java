@@ -42,6 +42,20 @@ public class CFWLocalization {
 	private static final LinkedHashMap<String,Properties> languageCache = new LinkedHashMap<String, Properties>();
 		
 	/******************************************************************************************
+	 * Return a localized value or the default value
+	 ******************************************************************************************/
+	public static String getLocalized(String key, String defaultValue) {
+		
+		String value = getLanguagePack(getLocalesForRequest(), null).getProperty(key);
+		
+		if(value != null) {
+			return value;
+		}else {
+			return defaultValue;
+		}
+	}
+	
+	/******************************************************************************************
 	 * 
 	 ******************************************************************************************/
 	public static Properties getAllProperties() {
@@ -72,11 +86,15 @@ public class CFWLocalization {
 		// fall back to english
 		localeArray.add(Locale.ENGLISH);
 		
-		Locale defaultLanguage = Locale.forLanguageTag(CFW.DB.Config.getConfigAsString(Configuration.LANGUAGE).toLowerCase());
-		if(defaultLanguage != null) {
-			localeArray.add(defaultLanguage);
-		}
+		String configLanguage = CFW.DB.Config.getConfigAsString(Configuration.LANGUAGE);
 		
+		if(configLanguage != null) {
+			Locale defaultLanguage = Locale.forLanguageTag(configLanguage.toLowerCase());
+			if(defaultLanguage != null) {
+				localeArray.add(defaultLanguage);
+			}
+		}
+
 		HttpServletRequest request = CFW.Context.Request.getRequest();
 		if(request != null) {
 			Locale browserLanguage = request.getLocale();

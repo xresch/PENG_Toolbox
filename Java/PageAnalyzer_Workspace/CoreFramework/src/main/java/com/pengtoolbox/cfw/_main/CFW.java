@@ -49,7 +49,8 @@ public class CFW {
 	//##############################################################################
 	// Hierarchical Binding
 	//##############################################################################
-
+	public static String L(String key, String defaultValue) { return CFW.Localization.getLocalized(key, defaultValue); }
+	
 	public static class DB extends CFWDB {
 		public static class Config extends CFWDBConfig{};
 		public static class Dashboards extends CFWDBDashboard{};
@@ -91,6 +92,7 @@ public class CFW {
 	public class Schedule extends CFWSchedule {}
 	public class Time extends CFWTime {}
 	public class Validation extends CFWValidation {}
+	
 	
 	
 	//##############################################################################
