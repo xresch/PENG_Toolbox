@@ -1250,9 +1250,10 @@ function cfw_getForm(formid, targetElement){
 	$.get('/cfw/formhandler', {id: formid})
 		  .done(function(response) {
 			  $(targetElement).html(response.payload.html);
-		      formID = $(targetElement).find('form').attr("id");
+			  var form = $(targetElement).find('form')
+		      var formID = $(targetElement).find('form').attr("id");
 		      // workaround, force evaluation
-		      eval($(customForm).find("script").text());
+		      eval($(form).find("script").text());
               eval("intializeForm_"+formID+"();");
 		  })
 		  .fail(function(xhr, status, errorThrown) {
