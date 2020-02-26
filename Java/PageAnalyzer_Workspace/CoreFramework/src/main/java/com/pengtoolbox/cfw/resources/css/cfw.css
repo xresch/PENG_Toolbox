@@ -4,7 +4,13 @@
  * @author Reto Scheiwiller, � 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
- 
+ :root {
+ --cfw-status-excellent: #0fe11f;
+ --cfw-status-good: #95c927;
+ --cfw-status-warning: #e4da0c;
+ --cfw-status-emergency: #e7940a;
+ --cfw-status-danger: #e6360b;
+ }
  /*************************************************************************
  * Bootstrap overwrite
  *************************************************************************/

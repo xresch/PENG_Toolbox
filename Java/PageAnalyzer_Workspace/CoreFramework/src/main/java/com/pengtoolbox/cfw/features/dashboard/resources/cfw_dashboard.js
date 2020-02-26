@@ -111,16 +111,44 @@ function cfw_dashboard_editWidget(widgetGUID){
 	
 	//------------------------------
 	// Title
-	
 	defaultForm += new CFWFormField({ 
 			type: "text", 
 			name: "title", 
 			label: CFWL('cfw_core_title', 'Title'), 
 			value: widgetObject.TITLE, 
-			description: 'The title of the widget.' 
+			description: CFWL('cfw_widget_title_desc', 'The title of the widget.')
 		}
 	).createHTML();
 	
+	//------------------------------
+	// Title Fontsize
+	defaultForm += new CFWFormField({ 
+			type: "number", 
+			name: "titlefontsize", 
+			label: CFWL('cfw_core_fontsize', 'Font Size') + ' ' + CFWL('cfw_core_title', 'Title'), 
+			value: widgetObject.TITLE_FONTSIZE, 
+			attributes: {
+				min: 6,
+				max: 128
+			},
+			description: CFWL('cfw_widget_titlefontsize_desc', 'The font size of the title in pixel.') 
+		}
+	).createHTML();
+	
+	//------------------------------
+	// Content Fontsize
+	defaultForm += new CFWFormField({ 
+			type: "number", 
+			name: "contentfontsize", 
+			label: CFWL('cfw_core_fontsize', 'Font Size') + ' ' + CFWL('cfw_core_content', 'Content'), 
+			value: widgetObject.CONTENT_FONTSIZE, 
+			attributes: {
+				min: 6,
+				max: 128
+			},
+			description: CFWL('cfw_widget_contentfontsize_desc', 'The font size used for the widget content. Some widgets might ignore or override this value.') 
+		}
+	).createHTML();
 	//------------------------------
 	// Footer
 	defaultForm += new CFWFormField({ 
@@ -128,7 +156,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 			name: "footer", 
 			label: CFWL('cfw_core_footer', 'Footer'), 
 			value: widgetObject.FOOTER, 
-			description: 'The contents of the footer of the widget.' 
+			description: CFWL('cfw_widget_footer_desc', 'The contents of the footer of the widget.') 
 		}
 	).createHTML();
 	
@@ -154,7 +182,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 		label: CFWL('cfw_core_bgcolor', 'Background Color'), 
 		value: widgetObject.BGCOLOR, 
 		options: selectOptions,
-		description: 'Define the color used for the background.' 
+		description: CFWL('cfw_core_bgcolor_desc', 'Define the color used for the background.') 
 	}).createHTML();
 	
 	defaultForm += new CFWFormField({ 
@@ -163,12 +191,12 @@ function cfw_dashboard_editWidget(widgetGUID){
 		label: CFWL('cfw_core_fgcolor', 'Foreground Color'), 
 		value: widgetObject.FGCOLOR, 
 		options: selectOptions,
-		description: 'Define the color used for the text and borders.' 
+		description: CFWL('cfw_core_fgcolor_desc', 'Define the color used for the foreground, like text and borders.')
 	}).createHTML();
 	
 	//------------------------------
 	// Save Button
-	defaultForm += '<input type="button" onclick="cfw_dashboard_saveDefaultSettings(\''+widgetGUID+'\')" class="form-control btn-primary" value="Save">';
+	defaultForm += '<input type="button" onclick="cfw_dashboard_saveDefaultSettings(\''+widgetGUID+'\')" class="form-control btn-primary" value="'+CFWL('cfw_core_save', 'Save')+'">';
 	
 
 
@@ -204,6 +232,8 @@ function cfw_dashboard_saveDefaultSettings(widgetGUID){
 	var settingsForm = $('#form-edit-'+widgetGUID);
 			
 	widgetObject.TITLE = settingsForm.find('input[name="title"]').val();
+	widgetObject.TITLE_FONTSIZE = settingsForm.find('input[name="titlefontsize"]').val();
+	widgetObject.CONTENT_FONTSIZE = settingsForm.find('input[name="contentfontsize"]').val();
 	widgetObject.FOOTER = settingsForm.find('textarea[name="footer"]').val();
 	widgetObject.BGCOLOR = settingsForm.find('select[name="BGCOLOR"]').val();
 	widgetObject.FGCOLOR = settingsForm.find('select[name="FGCOLOR"]').val();
@@ -271,6 +301,8 @@ function cfw_dashboard_createWidgetElement(widgetObject){
 	var defaultOptions = {
 			guid: 'widget-'+CFW_DASHBOARD_WIDGET_GUID,
 			TITLE: "",
+			TITLE_FONTSIZE: 16,
+			CONTENT_FONTSIZE: 16,
 			FOOTER: "",
 			BGCOLOR: "",
 			FGCOLOR: "",
@@ -312,14 +344,14 @@ function cfw_dashboard_createWidgetElement(widgetObject){
 		
 	if(merged.TITLE != null && merged.TITLE != ''){
 		htmlString += 
-		 '     	  <div class="cfw-dashboard-widget-title border-bottom '+borderClass+'">'
+		 '     	  <div class="cfw-dashboard-widget-title border-bottom '+borderClass+'" style="font-size: '+merged.TITLE_FONTSIZE+'px;">'
 		+'		  	<span>'+merged.TITLE+'</span>'
 		+'		  </div>'
 	}
 	
 
 	htmlString += 
-		'<div class="cfw-dashboard-widget-body d-flex flex-grow-1">';
+		'<div class="cfw-dashboard-widget-body d-flex flex-grow-1" style="font-size: '+merged.CONTENT_FONTSIZE+'px;">';
 			if(merged.FOOTER != null && merged.FOOTER != ''){
 				htmlString +=
 				'		 <div class="cfw-dashboard-widget-footer border-top '+borderClass+'">'
@@ -441,7 +473,8 @@ function cfw_dashboard_rerenderWidget(widgetGUID) {
 function cfw_dashboard_createWidgetInstance(widgetObject, doAutoposition) {
 	var widgetDefinition = CFW.dashboard.getWidgetDefinition(widgetObject.TYPE);	
 	
-	var widgetInstance = widgetDefinition.createWidgetInstance(widgetObject, 
+	if(widgetDefinition != null){
+		var widgetInstance = widgetDefinition.createWidgetInstance(widgetObject, 
 			function(widgetObject, widgetContent){
 				
 				widgetObject.content = widgetContent;
@@ -474,7 +507,8 @@ function cfw_dashboard_createWidgetInstance(widgetObject, doAutoposition) {
 			    cfw_dashboard_saveWidgetState(widgetObject);
 			    
 			}
-	);
+		);
+	};
 	
 }
 

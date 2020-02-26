@@ -12,6 +12,8 @@ import com.pengtoolbox.cfw.features.api.APIDefinition;
 import com.pengtoolbox.cfw.features.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.features.dashboard.Dashboard.DashboardFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.validation.IntegerValidator;
+import com.pengtoolbox.cfw.validation.NumberRangeValidator;
 
 /**************************************************************************************************************
  * 
@@ -31,6 +33,8 @@ public class DashboardWidget extends CFWObject {
 		WIDTH,
 		HEIGHT,
 		TITLE,
+		TITLE_FONTSIZE,
+		CONTENT_FONTSIZE,
 		FOOTER,
 		BGCOLOR,
 		FGCOLOR,
@@ -75,6 +79,14 @@ public class DashboardWidget extends CFWObject {
 			.setColumnDefinition("VARCHAR(32767)")
 			.setDescription("The title of the widget.");
 	
+	private CFWField<Integer> titleFontsize = CFWField.newInteger(FormFieldType.NUMBER, DashboardWidgetFields.TITLE_FONTSIZE.toString())
+			.setDescription("The font size of the title.")
+			.addValidator(new NumberRangeValidator(6, 128).setNullAllowed(true));
+	
+	private CFWField<Integer> contentFontsize = CFWField.newInteger(FormFieldType.NUMBER, DashboardWidgetFields.CONTENT_FONTSIZE.toString())
+			.setDescription("The font size of the content.")
+			.addValidator(new NumberRangeValidator(6, 128).setNullAllowed(true));
+	
 	private CFWField<String> footer = CFWField.newString(FormFieldType.TEXT, DashboardWidgetFields.FOOTER.toString())
 			.setColumnDefinition("VARCHAR(32767)")
 			.setDescription("The footer of the widget.");
@@ -107,7 +119,7 @@ public class DashboardWidget extends CFWObject {
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.addFields(id, foreignKeyDashboard, type, x, y, width, height, title, footer, bgcolor, fgcolor, settings);
+		this.addFields(id, foreignKeyDashboard, type, x, y, width, height, title, titleFontsize, contentFontsize, footer, bgcolor, fgcolor, settings);
 	}
 		
 	/**************************************************************************************
@@ -147,6 +159,8 @@ public class DashboardWidget extends CFWObject {
 						DashboardWidgetFields.WIDTH.toString(),
 						DashboardWidgetFields.HEIGHT.toString(),
 						DashboardWidgetFields.TITLE.toString(),
+						DashboardWidgetFields.TITLE_FONTSIZE.toString(),
+						DashboardWidgetFields.CONTENT_FONTSIZE.toString(),
 						DashboardWidgetFields.FOOTER.toString(),
 						DashboardWidgetFields.BGCOLOR.toString(),
 						DashboardWidgetFields.FGCOLOR.toString(),
@@ -238,6 +252,24 @@ public class DashboardWidget extends CFWObject {
 	
 	public DashboardWidget title(String title) {
 		this.title.setValue(title);
+		return this;
+	}
+	
+	public Integer titleFontsize() {
+		return titleFontsize.getValue();
+	}
+	
+	public DashboardWidget titleFontsize(Integer titleFontsize) {
+		this.titleFontsize.setValue(titleFontsize);
+		return this;
+	}
+	
+	public Integer contentFontsize() {
+		return contentFontsize.getValue();
+	}
+	
+	public DashboardWidget contentFontsize(Integer contentFontsize) {
+		this.contentFontsize.setValue(contentFontsize);
 		return this;
 	}
 	

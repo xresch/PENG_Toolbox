@@ -212,15 +212,17 @@ public class ServletDashboardView extends HttpServlet
 			// Validate
 			CFWObject settings = definition.getSettings();
 			
-			
 			boolean isValid = settings.mapJsonFields(jsonObject);
 			
 			if(isValid) {
 				DashboardWidget widgetToUpdate = new DashboardWidget();
-				widgetToUpdate.mapRequestParameters(request);
-				//Use sanitized values
-				widgetToUpdate.settings(settings.toJSON());
-				CFW.DB.DashboardWidgets.update(widgetToUpdate);
+				
+				// check if default settings are valid
+				if(widgetToUpdate.mapRequestParameters(request)) {
+					//Use sanitized values
+					widgetToUpdate.settings(settings.toJSON());
+					CFW.DB.DashboardWidgets.update(widgetToUpdate);
+				}
 			}
 			
 		}else{

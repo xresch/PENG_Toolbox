@@ -6,11 +6,7 @@
 CFW.render.registerRenderer("html",
 	new CFWRenderer(
 		function (renderDefinition) {
-			console.log('==== HTML Renderer ====');
-			console.log(renderDefinition.data.toString());
-			console.log(typeof renderDefinition.data);
-			console.log(renderDefinition.data instanceof Element);
-			console.log(renderDefinition.data);
+
 			if( renderDefinition.data instanceof Element
 			|| typeof renderDefinition.data == "string"){
 				return renderDefinition.data;
@@ -42,6 +38,29 @@ CFW.render.registerRenderer("csv",
 		}
 	)
 );
+
+/******************************************************************
+ * 
+ ******************************************************************/
+CFW.render.registerRenderer("alerttiles",
+	new CFWRenderer(
+		function (renderDef) {
+			
+			var vCount = 1;
+			var hCount = 1;
+			
+			if(renderDef.data.length > 1){
+				vCount = Math.ceil(Math.sqrt(renderDef.data.length));
+				hCount = vCount;
+			}
+			var wrapperDiv = $('<div class="flex-grow-1">');
+			
+			var randomID = CFW.utils.randomString(16);
+			return wrapperDiv.append('<pre id="json-'+randomID+'"><code>'+JSON.stringify(renderDef.data, null, 2)+'</code></pre><script>hljs.highlightBlock($("#json-'+randomID+'").get(0));</script>');
+		}
+	)
+);
+
 /******************************************************************
  * 
  ******************************************************************/
