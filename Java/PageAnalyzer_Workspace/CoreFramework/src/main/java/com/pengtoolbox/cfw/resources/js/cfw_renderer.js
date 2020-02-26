@@ -85,8 +85,17 @@ CFW.render.registerRenderer("alerttiles",
 				// Create Tile
 				if(settings.showlabels){
 					currentTile.addClass('flex-column flex-grow-1 justify-content-center align-items-center');
-					
-					currentTile.append('<p class="text-center" style="font-size: '+18*settings.sizefactor+'px;"><b>'+currentRecord.label+'</b></p>');
+
+					var tileTitle = '';
+					for(var j = 0; j < renderDef.titlefields.length; j++){
+						var fieldname = renderDef.titlefields[j];
+						tileTitle += currentRecord[fieldname];
+						if(j < renderDef.titlefields.length-1){
+							tileTitle += renderDef.titledelimiter;
+						}
+						
+					}
+					currentTile.append('<p class="text-center" style="font-size: '+18*settings.sizefactor+'px;"><b>'+tileTitle+'</b></p>');
 					//-------------------------
 					// Add field Values as Cells
 					for(var key in renderDef.visiblefields){
