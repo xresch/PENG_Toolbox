@@ -5,12 +5,28 @@
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
  :root {
- --cfw-status-excellent: #0fe11f;
- --cfw-status-good: #95c927;
- --cfw-status-warning: #e4da0c;
- --cfw-status-emergency: #e7940a;
- --cfw-status-danger: #e6360b;
+ --cfw-excellent: #28a438;
+ --cfw-good: #89bb35;
+ --cfw-warning: #bcae00;
+ --cfw-emergency: #e7940a;
+ --cfw-danger: #cd181d;
  }
+ 
+/*************************************************************************
+ * Bootstrap overwrite
+ *************************************************************************/
+.bg-cfw-excellent{ 		background-color: var(--cfw-excellent); }
+.bg-cfw-good{ 			background-color: var(--cfw-good); }
+.bg-cfw-warning{ 		background-color: var(--cfw-warning); }
+.bg-cfw-emergency{ 		background-color: var(--cfw-emergency); }
+.bg-cfw-danger{ 		background-color: var(--cfw-danger); }
+ 
+.text-cfw-excellent{ 		color: var(--cfw-excellent); }
+.text-cfw-good{ 			color: var(--cfw-good); }
+.text-cfw-warning{ 			color: var(--cfw-warning); }
+.text-cfw-emergency{ 		color: var(--cfw-emergency); }
+.text-cfw-danger{ 			color: var(--cfw-danger); }
+
  /*************************************************************************
  * Bootstrap overwrite
  *************************************************************************/

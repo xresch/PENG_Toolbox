@@ -54,47 +54,59 @@ CFW.render.registerRenderer("alerttiles",
 			}
 			
 			//-----------------------------------
-			// Grad render Specific settings
-			var sizefactor = 1;
-			if(renderDef.rendererSettings.alerttiles.sizefactor != null){
-				sizefactor = renderDef.rendererSettings.alerttiles.sizefactor;
-			}
+			// Render Specific settings
+			var defaultSettings = {
+				sizefactor: 1,
+				showlabels: false, 
+			};
+			
+			var settings = Object.assign({}, defaultSettings, renderDef.rendererSettings.alerttiles);
+
 			
 			//===================================================
 			// Create Alert Tiles
 			//===================================================
 			var allTiles = $('<div class="d-flex flex-row flex-grow-1 flex-wrap">');
 
+			if(!settings.showlabels){
+				allTiles.addClass('align-items-start');
+			}
 			for(var i = 0; i < renderDef.data.length; i++ ){
 				var currentRecord = renderDef.data[i];
-//			if(renderDef.data.length > 0){
-				var currentTile = $('<div class="d-flex flex-column justify-content-center align-items-center flex-grow-1 p-3 m-1">');
-				if(renderDef.data.length == 1){
-					currentTile.addClass('flex-grow-1');
-				}
+				var currentTile = $('<div class="d-flex p-3 m-1">');
+				
 				//-------------------------
 				// Add Styles
 				if(renderDef.bgstylefield != null){
 					currentTile.addClass('bg-'+currentRecord[renderDef.bgstylefield]);
 				}
+				
 				//-------------------------
-				// Add Label
-				currentTile.append('<p class="text-center" style="font-size: '+18*sizefactor+'px;"><b>'+currentRecord.label+'</b></p>');
-				//-------------------------
-				// Add field Values as Cells
-				for(var key in renderDef.visiblefields){
-					var fieldname = renderDef.visiblefields[key];
-					var value = currentRecord[fieldname];
+				// Create Tile
+				if(settings.showlabels){
+					currentTile.addClass('flex-column flex-grow-1 justify-content-center align-items-center');
 					
-					if(renderDef.customizers[fieldname] == null){
-						if(value != null){
-							currentTile.append('<span style="font-size: '+10*sizefactor+'px;"><strong>'+renderDef.labels[fieldname]+':&nbsp;</strong>'+value+'</span>');
+					currentTile.append('<p class="text-center" style="font-size: '+18*settings.sizefactor+'px;"><b>'+currentRecord.label+'</b></p>');
+					//-------------------------
+					// Add field Values as Cells
+					for(var key in renderDef.visiblefields){
+						var fieldname = renderDef.visiblefields[key];
+						var value = currentRecord[fieldname];
+						
+						if(renderDef.customizers[fieldname] == null){
+							if(value != null){
+								currentTile.append('<span style="font-size: '+10*settings.sizefactor+'px;"><strong>'+renderDef.labels[fieldname]+':&nbsp;</strong>'+value+'</span>');
+							}
+						}else{
+							var customizer = renderDef.customizers[fieldname];
+							currentTile.append('<span><strong style="font-size: '+12*settings.sizefactor+'px;">'+renderDef.labels[fieldname]+':&nbsp;</strong>'+customizer(currentRecord, value)+'</span>');
 						}
-					}else{
-						var customizer = renderDef.customizers[fieldname];
-						currentTile.append('<span><strong style="font-size: '+12*sizefactor+'px;">'+renderDef.labels[fieldname]+':&nbsp;</strong>'+customizer(currentRecord, value)+'</span>');
 					}
+				} else {
+					currentTile.css('width', 50*settings.sizefactor+"px");
+					currentTile.css('height', 50*settings.sizefactor+"px");
 				}
+
 				allTiles.append(currentTile);
 			}
 			

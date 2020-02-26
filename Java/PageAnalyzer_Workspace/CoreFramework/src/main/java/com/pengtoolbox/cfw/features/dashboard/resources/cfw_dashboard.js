@@ -343,7 +343,6 @@ function cfw_dashboard_createWidgetElement(widgetObject){
 		+'				<a class="dropdown-item" onclick="cfw_dashboard_removeWidgetConfirmed(\''+merged.guid+'\')"><i class="fas fa-trash"></i>&nbsp;'+CFWL('cfw_core_remove', 'Remove')+'</a>'
 		+'			</div>'
 
-		
 	if(merged.TITLE != null && merged.TITLE != ''){
 		htmlString += 
 		 '     	  <div class="cfw-dashboard-widget-title border-bottom '+borderClass+'" style="font-size: '+merged.TITLE_FONTSIZE+'px;">'
@@ -351,9 +350,8 @@ function cfw_dashboard_createWidgetElement(widgetObject){
 		+'		  </div>'
 	}
 	
-
 	htmlString += 
-		'<div class="cfw-dashboard-widget-body d-flex flex-grow-1" style="font-size: '+merged.CONTENT_FONTSIZE+'px;">';
+		'<div class="cfw-dashboard-widget-body d-flex flex-grow-1 align-items-start" style="font-size: '+merged.CONTENT_FONTSIZE+'px;">';
 			if(merged.FOOTER != null && merged.FOOTER != ''){
 				htmlString +=
 				'		 <div class="cfw-dashboard-widget-footer border-top '+borderClass+'">'
@@ -723,12 +721,6 @@ function addTestdata(){
 				],
 			};
 	
-
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_alert', X:0, Y:0, HEIGHT: 5, WIDTH: 5, TITLE: "Table Test Maximal",
-		JSON_SETTINGS: {
-			tableData: rendererTestdata
-		}
-	});
 		
 //	cfw_dashboard_createWidgetInstance({TYPE:'cfw_table', X:0, Y:0, HEIGHT: 5, WIDTH: 5, TITLE: "Table Test Maximal",
 //		JSON_SETTINGS: {
