@@ -17,13 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.features.core.FeatureCore;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.cfw.response.bootstrap.HierarchicalHTMLItem;
-import com.pengtoolbox.cfw.utils.CFWArrayUtils;
 import com.pengtoolbox.cfw.utils.TextUtils;
 import com.pengtoolbox.cfw.validation.BooleanValidator;
 import com.pengtoolbox.cfw.validation.EpochOrTimeValidator;
@@ -60,8 +58,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	// Form
 	private FormFieldType type;
 	private String formLabel = "&nbsp;";
-	private Object[] options = null;
-	private LinkedHashMap<?, ?> valueLabelOptions = null;
+	@SuppressWarnings("rawtypes")
+	private LinkedHashMap valueLabelOptions = null;
 	private boolean isDisabled = false;
 	
 	public enum FormFieldType{
@@ -174,6 +172,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @param StringBuilder to append the resulting html
 	 * @return String html for this item. 
 	 ***********************************************************************************/
+	@SuppressWarnings("unchecked")
 	protected void createHTML(StringBuilder html) {
 
 		//---------------------------------------------
@@ -191,8 +190,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				// Set Value to num
 				value = null;
 				
-				if(this.options != null) {
-					options = CFWArrayUtils.add(options, null);
+				if(this.valueLabelOptions != null) {
+					valueLabelOptions.put("", "");
 				}
 			}
 		}
@@ -352,28 +351,6 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		String stringVal = (value == null) ? "" : value.toString();
 
 		html.append("<select class=\"form-control\" "+this.getAttributesString()+" >");
-		
-		//-----------------------------------
-		// handle options
-		if(options != null) {
-			for(int i = 0; i < options.length; i++) {
-				Object currentOption = options[i];
-				String currentVal = "";
-				if(currentOption != null) {
-					currentVal = options[i].toString();
-				}
-					
-				if(currentVal.equals(stringVal)) {
-					html.append("<option selected>")
-					.append(currentVal)
-					.append("</option>");
-				}else {
-					html.append("<option>")
-					.append(currentVal)
-					.append("</option>");
-				}
-			}
-		}
 		
 		//-----------------------------------
 		// handle options
@@ -750,11 +727,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		parent.addForeignKey(this.getName(), foreignObject, foreignField, "CASCADE");
 		return this;
 	}
-	
-	public Object[] getOptions() {
-		return options;
-	}
-	
+		
 	public LinkedHashMap<?, ?> getValueLabelOptions() {
 		return valueLabelOptions;
 	}
@@ -787,8 +760,13 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @return instance for chaining
 	 ******************************************************************************************************/
 	public CFWField<T> setOptions(Object[] options) {
-		this.valueLabelOptions = null;
-		this.options = options;
+		LinkedHashMap<Object,Object> optionsMap = new LinkedHashMap<Object,Object>();
+		if(options != null) {
+			for(Object option : options) {
+				optionsMap.put(option, option);
+			}
+			this.valueLabelOptions = optionsMap;
+		}
 		return this;
 	}
 	
@@ -800,8 +778,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @param map with value/label pairs
 	 * @return instance for chaining
 	 ******************************************************************************************************/
-	public CFWField<T> setValueLabelOptions(LinkedHashMap<?, ?> valueLabelPairs) {
-		this.options = null;
+	@SuppressWarnings("rawtypes")
+	public CFWField<T> setValueLabelOptions(LinkedHashMap valueLabelPairs) {
 		this.valueLabelOptions = valueLabelPairs;
 		return this;
 	}

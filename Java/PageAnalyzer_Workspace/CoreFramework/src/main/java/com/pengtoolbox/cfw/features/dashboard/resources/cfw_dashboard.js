@@ -127,10 +127,6 @@ function cfw_dashboard_editWidget(widgetGUID){
 			name: "titlefontsize", 
 			label: CFWL('cfw_core_fontsize', 'Font Size') + ' ' + CFWL('cfw_core_title', 'Title'), 
 			value: widgetObject.TITLE_FONTSIZE, 
-			attributes: {
-				min: 6,
-				max: 128
-			},
 			description: CFWL('cfw_widget_titlefontsize_desc', 'The font size of the title in pixel.') 
 		}
 	).createHTML();
@@ -142,10 +138,6 @@ function cfw_dashboard_editWidget(widgetGUID){
 			name: "contentfontsize", 
 			label: CFWL('cfw_core_fontsize', 'Font Size') + ' ' + CFWL('cfw_core_content', 'Content'), 
 			value: widgetObject.CONTENT_FONTSIZE, 
-			attributes: {
-				min: 6,
-				max: 128
-			},
 			description: CFWL('cfw_widget_contentfontsize_desc', 'The font size used for the widget content. Some widgets might ignore or override this value.') 
 		}
 	).createHTML();
@@ -474,6 +466,7 @@ function cfw_dashboard_createWidgetInstance(widgetObject, doAutoposition) {
 	var widgetDefinition = CFW.dashboard.getWidgetDefinition(widgetObject.TYPE);	
 	
 	if(widgetDefinition != null){
+		try{
 		var widgetInstance = widgetDefinition.createWidgetInstance(widgetObject, 
 			function(widgetObject, widgetContent){
 				
@@ -508,7 +501,10 @@ function cfw_dashboard_createWidgetInstance(widgetObject, doAutoposition) {
 			    
 			}
 		);
-	};
+		}catch(err){
+			CFW.ui.addToastDanger('An error occured while creating a widget instance: '+err.message);
+		}
+	}
 	
 }
 
@@ -717,42 +713,48 @@ function addTestdata(){
 				],
 			};
 	
-		
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_table', X:0, Y:0, HEIGHT: 5, WIDTH: 5, TITLE: "Table Test Maximal",
+
+	cfw_dashboard_createWidgetInstance({TYPE:'cfw_alert', X:0, Y:0, HEIGHT: 5, WIDTH: 5, TITLE: "Table Test Maximal",
 		JSON_SETTINGS: {
 			tableData: rendererTestdata
 		}
 	});
+		
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_table', X:0, Y:0, HEIGHT: 5, WIDTH: 5, TITLE: "Table Test Maximal",
+//		JSON_SETTINGS: {
+//			tableData: rendererTestdata
+//		}
+//	});
 	
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_table', X:6, Y:0, HEIGHT: 5, WIDTH: 7, TITLE: "Table Test Lot of Data", 
-		JSON_SETTINGS: {
-			delimiter: ';',
-			narrow: true,
-			striped: true,
-			filter: true,
-			tableData: "PK_ID;TIME;FK_ID_SIGNATURE;FK_ID_PARENT;COUNT;MIN;AVG;MAX;GRANULARITY\n2943;2020-02-01 15:51:21.606;1;null;540;180;180;180;15\n2944;2020-02-01 15:51:21.606;2;null;540;180;180;180;15\n2945;2020-02-01 15:51:21.606;3;2;540;180;180;180;15\n2946;2020-02-01 15:51:21.606;4;3;540;180;180;180;15\n2947;2020-02-01 15:51:21.606;4;53;540;180;180;180;15\n2948;2020-02-01 15:51:21.606;4;74;2430;690;810;1020;15\n2949;2020-02-01 15:51:21.606;5;4;3510;1050;1170;1380;15\n2950;2020-02-01 15:51:21.606;5;67;1080;340;360;380;15\n2951;2020-02-01 15:51:21.606;6;null;540;180;180;180;15\n2952;2020-02-01 15:51:21.606;7;6;540;180;180;180;15\n2953;2020-02-01 15:51:21.606;7;12;540;180;180;180;15\n2954;2020-02-01 15:51:21.606;8;7;1080;360;360;360;15\n2955;2020-02-01 15:51:21.606;9;8;1080;360;360;360;15\n2956;2020-02-01 15:51:21.606;10;9;1080;360;360;360;15\n2957;2020-02-01 15:51:21.606;11;10;540;180;180;180;15\n2958;2020-02-01 15:51:21.606;12;11;540;180;180;180;15\n2959;2020-02-01 15:51:21.606;13;10;540;180;180;180;15"
-		}
-	});
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_table', X:6, Y:0, HEIGHT: 5, WIDTH: 7, TITLE: "Table Test Lot of Data", 
+//		JSON_SETTINGS: {
+//			delimiter: ';',
+//			narrow: true,
+//			striped: true,
+//			filter: true,
+//			tableData: "PK_ID;TIME;FK_ID_SIGNATURE;FK_ID_PARENT;COUNT;MIN;AVG;MAX;GRANULARITY\n2943;2020-02-01 15:51:21.606;1;null;540;180;180;180;15\n2944;2020-02-01 15:51:21.606;2;null;540;180;180;180;15\n2945;2020-02-01 15:51:21.606;3;2;540;180;180;180;15\n2946;2020-02-01 15:51:21.606;4;3;540;180;180;180;15\n2947;2020-02-01 15:51:21.606;4;53;540;180;180;180;15\n2948;2020-02-01 15:51:21.606;4;74;2430;690;810;1020;15\n2949;2020-02-01 15:51:21.606;5;4;3510;1050;1170;1380;15\n2950;2020-02-01 15:51:21.606;5;67;1080;340;360;380;15\n2951;2020-02-01 15:51:21.606;6;null;540;180;180;180;15\n2952;2020-02-01 15:51:21.606;7;6;540;180;180;180;15\n2953;2020-02-01 15:51:21.606;7;12;540;180;180;180;15\n2954;2020-02-01 15:51:21.606;8;7;1080;360;360;360;15\n2955;2020-02-01 15:51:21.606;9;8;1080;360;360;360;15\n2956;2020-02-01 15:51:21.606;10;9;1080;360;360;360;15\n2957;2020-02-01 15:51:21.606;11;10;540;180;180;180;15\n2958;2020-02-01 15:51:21.606;12;11;540;180;180;180;15\n2959;2020-02-01 15:51:21.606;13;10;540;180;180;180;15"
+//		}
+//	});
 	
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_iframe', X:6, Y:0, HEIGHT: 4, WIDTH: 7, TITLE: "", JSON_SETTINGS: { url: "/app/cpusampling" } } );
-	
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_table', X:0, Y:0, HEIGHT: 4, WIDTH: 5, TITLE: "Table Test Minimal", 
-		JSON_SETTINGS: {
-			tableData: rendererTestdataMinimal 
-		}
-	});
-	
-	cfw_dashboard_createWidgetInstance({TYPE: 'cfw_image', X:6, Y:0, HEIGHT: 4, WIDTH: 7, TITLE: "", JSON_SETTINGS: { url: "/resources/images/login_background.jpg" } } );
-	
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:0, Y:0, HEIGHT: 2, WIDTH: 2, TITLE: "Test Success", BGCOLOR: "success", FGCOLOR: "light"});
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:11, Y:0, HEIGHT: 5, WIDTH: 2, TITLE: "Test Danger", BGCOLOR: "danger", FGCOLOR: "light"});
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:8, Y:0, HEIGHT: 3, WIDTH: 2, TITLE: "Test Primary and Object", BGCOLOR: "primary", FGCOLOR: "light", data: {firstname: "Jane", lastname: "Doe", street: "Fantasyroad 22", city: "Nirwana", postal_code: "8008" }});
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:7, Y:0, HEIGHT: 5, WIDTH: 3, TITLE: "Test Light and Array", BGCOLOR: "light", FGCOLOR: "secondary", data: ["Test", "Foo", "Bar", 3, 2, 1]});
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:2, Y:0, HEIGHT: 2, WIDTH: 4, TITLE: "Test Matrix", BGCOLOR: "dark", FGCOLOR: "success", data: "Mister ÄÄÄÄÄÄÄÄÄÄÄnderson."});
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:9, Y:0, HEIGHT: 2, WIDTH: 4, TITLE: "Test Warning", BGCOLOR: "warning", FGCOLOR: "dark"});
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:3, Y:0, HEIGHT: 4, WIDTH: 5});
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:0, Y:0, HEIGHT: 3, WIDTH: 3});
-	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text'});
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_iframe', X:6, Y:0, HEIGHT: 4, WIDTH: 7, TITLE: "", JSON_SETTINGS: { url: "/app/cpusampling" } } );
+//	
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_table', X:0, Y:0, HEIGHT: 4, WIDTH: 5, TITLE: "Table Test Minimal", 
+//		JSON_SETTINGS: {
+//			tableData: rendererTestdataMinimal 
+//		}
+//	});
+//	
+//	cfw_dashboard_createWidgetInstance({TYPE: 'cfw_image', X:6, Y:0, HEIGHT: 4, WIDTH: 7, TITLE: "", JSON_SETTINGS: { url: "/resources/images/login_background.jpg" } } );
+//	
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:0, Y:0, HEIGHT: 2, WIDTH: 2, TITLE: "Test Success", BGCOLOR: "success", FGCOLOR: "light" , JSON_SETTINGS: { } });
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:11, Y:0, HEIGHT: 5, WIDTH: 2, TITLE: "Test Danger", BGCOLOR: "danger", FGCOLOR: "light"});
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:8, Y:0, HEIGHT: 3, WIDTH: 2, TITLE: "Test Primary and Object", BGCOLOR: "primary", FGCOLOR: "light", data: {firstname: "Jane", lastname: "Doe", street: "Fantasyroad 22", city: "Nirwana", postal_code: "8008" }, JSON_SETTINGS: { }});
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:7, Y:0, HEIGHT: 5, WIDTH: 3, TITLE: "Test Light and Array", BGCOLOR: "light", FGCOLOR: "secondary", data: ["Test", "Foo", "Bar", 3, 2, 1], JSON_SETTINGS: { }});
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:2, Y:0, HEIGHT: 2, WIDTH: 4, TITLE: "Test Matrix", BGCOLOR: "dark", FGCOLOR: "success", data: "Mister ÄÄÄÄÄÄÄÄÄÄÄnderson.", JSON_SETTINGS: { }});
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:9, Y:0, HEIGHT: 2, WIDTH: 4, TITLE: "Test Warning", BGCOLOR: "warning", FGCOLOR: "dark", JSON_SETTINGS: { }});
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:3, Y:0, HEIGHT: 4, WIDTH: 5, JSON_SETTINGS: { }});
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', X:0, Y:0, HEIGHT: 3, WIDTH: 3, JSON_SETTINGS: { }});
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_text', JSON_SETTINGS: { }});
 	
 }
 
@@ -763,6 +765,9 @@ function addTestdata(){
 function cfw_dashboard_initialDraw(){
 		
 	cfw_dashboard_initialize('.grid-stack');
+	
+	addTestdata();
+	
 	cfw_dashboard_draw();
 }
 /******************************************************************

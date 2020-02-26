@@ -81,11 +81,11 @@ public class DashboardWidget extends CFWObject {
 	
 	private CFWField<Integer> titleFontsize = CFWField.newInteger(FormFieldType.NUMBER, DashboardWidgetFields.TITLE_FONTSIZE.toString())
 			.setDescription("The font size of the title.")
-			.addValidator(new NumberRangeValidator(6, 128).setNullAllowed(true));
+			.addValidator(new NumberRangeValidator(6, 32).setNullAllowed(true));
 	
 	private CFWField<Integer> contentFontsize = CFWField.newInteger(FormFieldType.NUMBER, DashboardWidgetFields.CONTENT_FONTSIZE.toString())
 			.setDescription("The font size of the content.")
-			.addValidator(new NumberRangeValidator(6, 128).setNullAllowed(true));
+			.addValidator(new NumberRangeValidator(6, 32).setNullAllowed(true));
 	
 	private CFWField<String> footer = CFWField.newString(FormFieldType.TEXT, DashboardWidgetFields.FOOTER.toString())
 			.setColumnDefinition("VARCHAR(32767)")
