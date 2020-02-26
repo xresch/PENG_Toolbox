@@ -39,27 +39,64 @@ CFW.render.registerRenderer("csv",
 	)
 );
 
+
 /******************************************************************
  * 
  ******************************************************************/
 CFW.render.registerRenderer("alerttiles",
 	new CFWRenderer(
 		function (renderDef) {
-			
-			var vCount = 1;
-			var hCount = 1;
-			
-			if(renderDef.data.length > 1){
-				vCount = Math.ceil(Math.sqrt(renderDef.data.length));
-				hCount = vCount;
+						
+			//-----------------------------------
+			// Check Data
+			if(renderDef.datatype != "array"){
+				return "<span>Unable to convert data into alert tiles.</span>";
 			}
-			var wrapperDiv = $('<div class="flex-grow-1">');
 			
-			var randomID = CFW.utils.randomString(16);
-			return wrapperDiv.append('<pre id="json-'+randomID+'"><code>'+JSON.stringify(renderDef.data, null, 2)+'</code></pre><script>hljs.highlightBlock($("#json-'+randomID+'").get(0));</script>');
+			//===================================================
+			// Create Alert Tiles
+			//===================================================
+			var allTiles = $('<div class="d-flex flex-row flex-grow-1 flex-wrap">');
+
+			for(var i = 0; i < renderDef.data.length; i++ ){
+				var currentRecord = renderDef.data[i];
+//			if(renderDef.data.length > 0){
+				var currentTile = $('<div class="d-flex flex-column justify-content-center align-items-center flex-grow-1 p-3 m-1">');
+				if(renderDef.data.length == 1){
+					currentTile.addClass('flex-grow-1');
+				}
+				//-------------------------
+				// Add Styles
+				if(renderDef.bgstylefield != null){
+					currentTile.addClass('bg-'+currentRecord[renderDef.bgstylefield]);
+				}
+				//-------------------------
+				// Add Label
+				currentTile.append('<h2>'+currentRecord.label+'</h2>');
+				//-------------------------
+				// Add field Values as Cells
+				for(var key in renderDef.visiblefields){
+					var fieldname = renderDef.visiblefields[key];
+					var value = currentRecord[fieldname];
+					
+					if(renderDef.customizers[fieldname] == null){
+						if(value != null){
+							currentTile.append('<span><strong>'+renderDef.labels[fieldname]+':&nbsp;</strong>'+value+'</span>');
+						}
+					}else{
+						var customizer = renderDef.customizers[fieldname];
+						currentTile.append('<span><strong>'+renderDef.labels[fieldname]+':&nbsp;</strong>'+customizer(currentRecord, value)+'</span>');
+					}
+				}
+				allTiles.append(currentTile);
+			}
+			
+			return allTiles;
+		
 		}
 	)
 );
+
 
 /******************************************************************
  * 

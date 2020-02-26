@@ -56,6 +56,16 @@ function cfw_dashboard_registerCategory(faiconClasses, categoryName, categoryLab
 	if(categoryLabel == null){
 		categoryLabel = categoryName;
 	}
+	
+	//----------------------------
+	// Check if exists
+	var categorySubmenu = $('ul[data-submenuof="'+categoryName+'"]');
+	if(categorySubmenu.length > 0){
+		return;
+	}
+	
+	//----------------------------
+	// Add Category
 	var categoryHTML = 
 		'<li class="dropdown dropdown-submenu show">'
 			+'<a href="#" class="dropdown-item dropdown-toggle" id="cfwMenuDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><div class="cfw-fa-box"><i class="'+faiconClasses+'"></i></div><span class="cfw-menuitem-label">'+categoryLabel+'</span><span class="caret"></span></a>'
