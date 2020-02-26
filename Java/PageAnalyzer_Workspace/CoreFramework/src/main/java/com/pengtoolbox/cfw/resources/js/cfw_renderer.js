@@ -46,11 +46,18 @@ CFW.render.registerRenderer("csv",
 CFW.render.registerRenderer("alerttiles",
 	new CFWRenderer(
 		function (renderDef) {
-						
+					
 			//-----------------------------------
 			// Check Data
 			if(renderDef.datatype != "array"){
 				return "<span>Unable to convert data into alert tiles.</span>";
+			}
+			
+			//-----------------------------------
+			// Grad render Specific settings
+			var sizefactor = 1;
+			if(renderDef.rendererSettings.alerttiles.sizefactor != null){
+				sizefactor = renderDef.rendererSettings.alerttiles.sizefactor;
 			}
 			
 			//===================================================
@@ -72,7 +79,7 @@ CFW.render.registerRenderer("alerttiles",
 				}
 				//-------------------------
 				// Add Label
-				currentTile.append('<h2>'+currentRecord.label+'</h2>');
+				currentTile.append('<p class="text-center" style="font-size: '+18*sizefactor+'px;"><b>'+currentRecord.label+'</b></p>');
 				//-------------------------
 				// Add field Values as Cells
 				for(var key in renderDef.visiblefields){
@@ -81,11 +88,11 @@ CFW.render.registerRenderer("alerttiles",
 					
 					if(renderDef.customizers[fieldname] == null){
 						if(value != null){
-							currentTile.append('<span><strong>'+renderDef.labels[fieldname]+':&nbsp;</strong>'+value+'</span>');
+							currentTile.append('<span style="font-size: '+10*sizefactor+'px;"><strong>'+renderDef.labels[fieldname]+':&nbsp;</strong>'+value+'</span>');
 						}
 					}else{
 						var customizer = renderDef.customizers[fieldname];
-						currentTile.append('<span><strong>'+renderDef.labels[fieldname]+':&nbsp;</strong>'+customizer(currentRecord, value)+'</span>');
+						currentTile.append('<span><strong style="font-size: '+12*sizefactor+'px;">'+renderDef.labels[fieldname]+':&nbsp;</strong>'+customizer(currentRecord, value)+'</span>');
 					}
 				}
 				allTiles.append(currentTile);
