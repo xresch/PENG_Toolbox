@@ -81,11 +81,17 @@ CFW.render.registerRenderer("alerttiles",
 					currentTile.addClass('bg-'+currentRecord[renderDef.bgstylefield]);
 				}
 				
+				if(renderDef.textstylefield != null){
+					currentTile.addClass('text-'+currentRecord[renderDef.textstylefield]);
+				}
+				
 				//-------------------------
 				// Create Tile
 				if(settings.showlabels){
 					currentTile.addClass('flex-column flex-grow-1 justify-content-center align-items-center');
 
+					//-------------------------
+					// Create Title
 					var tileTitle = '';
 					for(var j = 0; j < renderDef.titlefields.length; j++){
 						var fieldname = renderDef.titlefields[j];
