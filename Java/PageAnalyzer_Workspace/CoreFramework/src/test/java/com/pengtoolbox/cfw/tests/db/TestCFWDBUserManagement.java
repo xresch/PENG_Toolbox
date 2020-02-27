@@ -522,7 +522,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		// Test checkIsPermissionInRole()
 		System.out.println("================= checkIsPermissionInRole() =================");
 		Assertions.assertTrue(CFW.DB.RolePermissionMap.checkIsPermissionInRole(permissionA, testroleA), "checkIsPermissionInRole() finds the permissionA.");
-		Assertions.assertFalse(CFW.DB.RolePermissionMap.checkIsPermissionInRole(99, testroleA.id()), "checkIsPermissionInRole() cannot find not existing permission.");
+		Assertions.assertFalse(CFW.DB.RolePermissionMap.checkIsPermissionInRole(999, testroleA.id()), "checkIsPermissionInRole() cannot find not existing permission.");
 	
 		//--------------------------------------
 		// Test  addPermissionToRole()
@@ -544,15 +544,12 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		CFW.DB.RolePermissionMap.addPermissionToRole(newPermissionFromDB, testroleA, true);
 		Assertions.assertTrue(CFW.DB.RolePermissionMap.checkIsPermissionInRole(newPermissionFromDB, testroleA), "Permission was added to the role.");
 		
-		CFW.DB.Permissions.deleteByID(newPermissionFromDB.id());
-		Assertions.assertFalse(CFW.DB.RolePermissionMap.checkIsPermissionInRole(newPermissionFromDB, testroleA), "Permission was removed from the role when it was deleted.");
-		
 		//--------------------------------------
 		// Test selectPermissionsForRole()
 		System.out.println("================= Test selectPermissionsForRole() =================");
 		HashMap<String, Permission> rolePermissions = CFW.DB.Roles.selectPermissionsForRole(testroleA);
 		
-		Assertions.assertEquals(3, rolePermissions.size(), "TestroleA has 3 permissions.");
+		Assertions.assertEquals(4, rolePermissions.size(), "TestroleA has 4 permissions.");
 		Assertions.assertTrue(rolePermissions.containsKey(permissionA.name()), "PermissionA is part of testroleA.");
 		Assertions.assertTrue(rolePermissions.containsKey(permissionAA.name()), "PermissionAA is part of testroleA.");
 		Assertions.assertTrue(rolePermissions.containsKey(permissionAAA.name()), "PermissionAAA is part of testroleA.");
@@ -563,7 +560,7 @@ public class TestCFWDBUserManagement extends DBTestMaster {
 		System.out.println("================= Test selectPermissionsForUser() =================");
 		HashMap<String, Permission> userPermissions = CFW.DB.Users.selectPermissionsForUser(testuserB);
 		
-		Assertions.assertEquals(5, userPermissions.size(), "TestuserB has 5 permissions.");
+		Assertions.assertEquals(6, userPermissions.size(), "TestuserB has 6 permissions.");
 		Assertions.assertTrue(userPermissions.containsKey(permissionA.name()), "TestuserB has PermissionA.");
 		Assertions.assertTrue(userPermissions.containsKey(permissionAA.name()), "TestuserB has PermissionAA.");
 		Assertions.assertTrue(userPermissions.containsKey(permissionAAA.name()), "TestuserB has PermissionAAA.");
