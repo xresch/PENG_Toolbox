@@ -4,19 +4,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.features.config.Configuration.ConfigFields;
-import com.pengtoolbox.cfw.features.usermgmt.Permission;
-import com.pengtoolbox.cfw.features.usermgmt.Role;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWDBConfig {
@@ -25,6 +24,8 @@ public class CFWDBConfig {
 	
 	//name/value pairs of configuration elements
 	public static LinkedHashMap<String, String> configCache = new LinkedHashMap<String, String>();
+	
+	public static ArrayList<ConfigChangeListener> changeListeners = new ArrayList<ConfigChangeListener>();
 	
 	/********************************************************************************************
 	 * Creates the table and default admin user if not already exists.
@@ -35,7 +36,9 @@ public class CFWDBConfig {
 		new Configuration().createTable();
 	}
 	
-	
+	public static void addChangeListener(ConfigChangeListener listener) {
+		changeListeners.add(listener);
+	}
 	/********************************************************************************************
 	 * Creates the table and default admin user if not already exists.
 	 * This method is executed by CFW.DB.initialize().
@@ -58,7 +61,8 @@ public class CFWDBConfig {
 					result.getString(ConfigFields.VALUE.toString())
 				);
 			}
-			configCache = newCache;
+			cacheAndTriggerChange(newCache);
+			
 		} catch (SQLException e) {
 			new CFWLog(logger)
 			.method("updateCache")
@@ -71,6 +75,45 @@ public class CFWDBConfig {
 		return true;
 	}
 	
+	/********************************************************************************************
+	 * Creates the table and default admin user if not already exists.
+	 * This method is executed by CFW.DB.initialize().
+	 * 
+	 ********************************************************************************************/
+	private static void cacheAndTriggerChange(LinkedHashMap<String, String> newCache) {
+		
+		LinkedHashMap<String, String> tempOldCache = configCache;
+		configCache = newCache;
+		
+		ArrayList<ConfigChangeListener> triggered = new ArrayList<ConfigChangeListener>();
+		
+		for(Entry<String, String> entry: newCache.entrySet()) {
+			String configName = entry.getKey();
+			String newValue = entry.getValue();
+			
+			String oldValue = tempOldCache.get(configName);
+			
+
+			if((oldValue == null && newValue != null) 
+			|| (oldValue != null && newValue == null) 
+			|| (oldValue != null && newValue != null && !oldValue.equals(newValue) ) ) {
+				for(ConfigChangeListener listener : changeListeners) {
+					if ( (!triggered.contains(listener)) && listener.listensOnConfig(configName)) {
+						System.out.println("====================");
+						System.out.println("configName:"+configName);
+						System.out.println("newValue:"+newValue);
+						System.out.println("oldValue:"+oldValue);
+						listener.onChange();
+						triggered.add(listener);
+					}
+				}
+			}
+			
+			
+		}
+		
+		
+	}
 	/********************************************************************************************
 	 * Returns a config value from cache as String
 	 * 
@@ -296,6 +339,8 @@ public class CFWDBConfig {
 	 * @return true or false
 	 ****************************************************************/
 	public static boolean updateValue(int id, String value) {
+		
+		// does not update cache automatically 
 		
 		return new Configuration()
 				.id(id)

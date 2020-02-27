@@ -68,9 +68,16 @@ CFW.render.registerRenderer("alerttiles",
 			//===================================================
 			var allTiles = $('<div class="d-flex flex-row flex-grow-1 flex-wrap">');
 
+			if(renderDef.data.length == 1){
+				allTiles.addClass('flex-column h-100');
+			}else{
+				allTiles.addClass('flex-row ');
+			}
+			
 			if(!settings.showlabels){
 				allTiles.addClass('align-items-start');
 			}
+			
 			for(var i = 0; i < renderDef.data.length; i++ ){
 				var currentRecord = renderDef.data[i];
 				var currentTile = $('<div class="d-flex p-3 m-1">');

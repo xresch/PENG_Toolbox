@@ -5,27 +5,31 @@
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
  :root {
- --cfw-excellent: #28a438;
- --cfw-good: #89bb35;
- --cfw-warning: #bcae00;
- --cfw-emergency: #e7940a;
- --cfw-danger: #a50404;
+	 --cfw-excellent: #28a438;
+	 --cfw-good: #89bb35;
+	 --cfw-warning: #bcae00;
+	 --cfw-emergency: #e7940a;
+	 --cfw-danger: #a50404;
+	 --cfw-gray: #939393;
  }
  
 /*************************************************************************
- * Bootstrap overwrite
+ * Bootstrap Theme extentions
  *************************************************************************/
 .bg-cfw-excellent{ 		background-color: var(--cfw-excellent); }
 .bg-cfw-good{ 			background-color: var(--cfw-good); }
 .bg-cfw-warning{ 		background-color: var(--cfw-warning); }
 .bg-cfw-emergency{ 		background-color: var(--cfw-emergency); }
 .bg-cfw-danger{ 		background-color: var(--cfw-danger); }
- 
+.bg-cfw-gray{ 			background-color: var(--cfw-gray); }
+
 .text-cfw-excellent{ 		color: var(--cfw-excellent); }
 .text-cfw-good{ 			color: var(--cfw-good); }
 .text-cfw-warning{ 			color: var(--cfw-warning); }
 .text-cfw-emergency{ 		color: var(--cfw-emergency); }
 .text-cfw-danger{ 			color: var(--cfw-danger); }
+.text-cfw-gray{ 			color: var(--cfw-gray); }
+
 
  /*************************************************************************
  * Bootstrap overwrite
@@ -49,6 +53,12 @@
   max-height: 300px;
   overflow-y: auto;
 } */
+
+.form-control::placeholder {
+    color: #969696;
+    opacity: 0.5; 
+    font-weight: 200;
+}
 
 /*************************************************************************
  * Bootstrap Submenus and Menu Enhancements
