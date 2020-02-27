@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.h2.jdbcx.JdbcConnectionPool;
@@ -21,11 +20,6 @@ import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.Server;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFW.Properties;
-import com.pengtoolbox.cfw.features.usermgmt.CFWDBRole;
-import com.pengtoolbox.cfw.features.usermgmt.Permission;
-import com.pengtoolbox.cfw.features.usermgmt.Role;
-import com.pengtoolbox.cfw.features.usermgmt.User;
 import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
@@ -34,79 +28,21 @@ import com.pengtoolbox.cfw.logging.CFWLog;
  * @author Reto Scheiwiller, � 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
-public class DBInstance {
+public abstract class DBInterface {
 
-	private JdbcDataSource dataSource;
-	private JdbcConnectionPool connectionPool;
-	private Server server;
-	private boolean isInitialized = false;
-
-	private static Logger logger = CFWLog.getLogger(DBInstance.class.getName());
+	protected static Logger logger = CFWLog.getLogger(DBInterface.class.getName());
 	
-	private ThreadLocal<ArrayList<Connection>> myOpenConnections = new ThreadLocal<ArrayList<Connection>>();
-	private ThreadLocal<Connection> transactionConnection = new ThreadLocal<Connection>();
+	protected ThreadLocal<ArrayList<Connection>> myOpenConnections = new ThreadLocal<ArrayList<Connection>>();
+	protected ThreadLocal<Connection> transactionConnection = new ThreadLocal<Connection>();
 
+	
 	/********************************************************************************************
-	 *
+	 * Get a connection from the connection pool or returns the current connection used for the 
+	 * transaction.
+	 * 
+	 * @throws SQLException 
 	 ********************************************************************************************/
-	public void startDBServer() {
-		
-    	//---------------------------------------
-    	// Get variables
-		String server 		= CFWProperties.DB_SERVER;
-		String storePath 	= CFWProperties.DB_STORE_PATH;
-		String databaseName	= CFWProperties.DB_NAME;
-		int port 			= CFWProperties.DB_PORT;
-		String username		= CFWProperties.DB_USERNAME;
-		String password		= CFWProperties.DB_PASSWORD;
-		
-		//---------------------------------------
-    	// Create Folder  
-		File datastoreFolder = new File(storePath);
-    	if(!datastoreFolder.isDirectory()) {
-    		datastoreFolder.mkdir();
-    	}
-    	
-    	//---------------------------------------
-    	// Create Folder 
-		File datastoreFile = new File(storePath+"/"+databaseName+".mv.db");
-    	if(!datastoreFile.isFile()) {
-    		try {
-				datastoreFile.createNewFile();
-			} catch (IOException e) {
-				new CFWLog(logger)
-				.method("startDatabase")
-				.severe("Error creating database file.", e);
-				
-			}
-    	}
-    	
-		String h2_url 		= "jdbc:h2:tcp://"+server+":"+port+"/"+storePath+"/"+databaseName;
-		new CFWLog(logger).info("H2 DB URL: "+ h2_url);
-		
-		try {
-			
-			this.server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "" +port).start();
-			
-			connectionPool = JdbcConnectionPool.create(h2_url, username, password);
-			connectionPool.setMaxConnections(90);
-
-			dataSource = new JdbcDataSource();
-			dataSource.setURL(h2_url);
-			dataSource.setUser(username);
-			dataSource.setPassword(password);
-			
-			isInitialized = true;
-			
-		} catch (SQLException e) {
-			isInitialized = false;
-			new CFWLog(logger)
-				.method("initialize")
-				.severe("Issue initializing H2 Database.", e);
-			e.printStackTrace();
-		}
-	}
-	
+	public abstract Connection getConnection() throws SQLException;
 	
 	/********************************************************************************************
 	 * Add a connection that was openend to the list of open connections.
@@ -158,7 +94,7 @@ public class DBInstance {
 	 * 
 	 * @throws SQLException 
 	 ********************************************************************************************/
-	private void addOpenConnection(Connection connection) {	
+	protected void addOpenConnection(Connection connection) {	
 		if(myOpenConnections.get() == null) {
 			myOpenConnections.set(new ArrayList<Connection>());
 		}
@@ -179,33 +115,6 @@ public class DBInstance {
 			return;
 		}
 		myOpenConnections.get().remove(connection);
-	}
-	
-	/********************************************************************************************
-	 * Get a connection from the connection pool or returns the current connection used for the 
-	 * transaction.
-	 * 
-	 * @throws SQLException 
-	 ********************************************************************************************/
-	public Connection getConnection() throws SQLException {	
-		
-		if(isInitialized) {
-			new CFWLog(logger)
-				.method("getConnection")
-				.finer("DB Connections Active: "+connectionPool.getActiveConnections());
-			
-			if(transactionConnection.get() != null) {
-				return transactionConnection.get();
-			}else {
-				synchronized (connectionPool) {
-					Connection connection = connectionPool.getConnection();
-					addOpenConnection(connection);
-					return connection;
-				}
-			}
-		}else {
-			throw new SQLException("DB not initialized, call CFWDB.initialize() first.");
-		}
 	}
 	
 	/********************************************************************************************
@@ -396,7 +305,7 @@ public class DBInstance {
 			
 			//-----------------------------------------
 			// Prepare Statement
-			DBInstance.prepareStatement(prepared, values);
+			DBInterface.prepareStatement(prepared, values);
 			prepared.addBatch();
 			
 			//-----------------------------------------
@@ -508,7 +417,7 @@ public class DBInstance {
 			
 			//-----------------------------------------
 			// Prepare Statement
-			DBInstance.prepareStatement(prepared, values);
+			DBInterface.prepareStatement(prepared, values);
 			
 			//-----------------------------------------
 			// Execute
