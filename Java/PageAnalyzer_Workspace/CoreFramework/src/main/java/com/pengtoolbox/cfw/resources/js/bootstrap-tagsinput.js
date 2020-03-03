@@ -107,8 +107,8 @@
         }
       }
 
-      var itemValue = self.options.itemValue(item).toLowerCase(),
-          itemText = self.options.itemText(item).toLowerCase(),
+      var itemValue = self.options.itemValue(item),
+          itemText = self.options.itemText(item),
           tagClass = self.options.tagClass(item),
           itemTitle = self.options.itemTitle(item);
 
