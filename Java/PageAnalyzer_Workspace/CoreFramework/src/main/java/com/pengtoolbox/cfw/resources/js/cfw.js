@@ -141,6 +141,8 @@ function cfw_initializeTagsField(fieldID){
 	
 	tagsfield.tagsinput({
 		tagClass: 'btn btn-sm btn-primary mb-1',
+		itemValue: 'value',
+		itemText: 'label',
 		maxTags: 255,
 		//maxChars: 30,
 		trimValue: true,
@@ -150,6 +152,22 @@ function cfw_initializeTagsField(fieldID){
 //
 //		}
 	});
+	
+	$(id+'-tagsinput').on('keydown', function (e) {
+		console.log("keydown");
+		  // Enter and Comma
+		  if (e.keyCode == 13 || e.keyCode == 188) {
+			  console.log("(e.keyCode == 9)");
+		    e.preventDefault();
+
+		    $(id).tagsinput('add', { 
+		      value: this.value, 
+		      label: this.value,
+		    }); 
+
+		    this.value = '';
+		  }
+		});
 }
 
 /**************************************************************************************
@@ -280,6 +298,9 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 		var itemList;
 		var searchString = inputField.value;
 		var autocompleteID = inputField.id + "-autocomplete-list";
+		var isTagsinput = inputField.id.endsWith('-tagsinput');
+		
+		console.log('isTagsinput: '+isTagsinput);
 		
 	    closeAllAutocomplete();
 	    if (!searchString) { return false;}
@@ -315,11 +336,25 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 				item.innerHTML = part1 + "<strong>" +part2+ "</strong>" +part3;
 			}
 			
-			item.innerHTML += "<input type='hidden' value='" + currentValue + "'>";
+			//-----------------------
+			// Create Field
+			item.innerHTML += '<input type="hidden" value="'+currentValue+'" data-label="'+label+'" data-tagsinput="'+isTagsinput+'">';
 			
 			item.addEventListener("click", function(e) { 
-				inputField.value = this.getElementsByTagName("input")[0].value;
-				closeAllAutocomplete();
+				var element = $(this).find('input');
+				var value = element.val();
+				var label = element.data('label');
+				var isTagsinput = element.data('tagsinput');
+				
+				console.log('element.val()'+value)
+				if(!isTagsinput){
+					inputField.value = value;
+					closeAllAutocomplete();
+				}else{
+					$(inputField).parent().siblings('input').tagsinput('add', { "value": value , "label": label });
+					inputField.value = '';
+					closeAllAutocomplete();
+				}
 			});
 			itemList.appendChild(item);
 	        
