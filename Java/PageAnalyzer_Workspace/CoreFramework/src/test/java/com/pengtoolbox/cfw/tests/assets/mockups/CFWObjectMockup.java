@@ -42,24 +42,26 @@ public class CFWObjectMockup extends CFWObject{
 			.setValue("foo,test,bar,bla")
 			.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
 				
-				public String getAutocompleteData(String inputValue) {
-					String[] array = new String[25];
+				public LinkedHashMap<Object, Object> getAutocompleteData(String inputValue) {
+					LinkedHashMap<Object, Object>  array = new LinkedHashMap<Object, Object>() ;
 					for(int i = 0; i < 25; i++ ) {
-						array[i] = "Tag_"+inputValue+"_"+i;
+						String tag = "Tag_"+inputValue+"_"+i;
+						array.put(tag, tag);
 					}
-					return CFW.JSON.toJSON(array);
+					return array;
 				}
 			});
 	
 	private CFWField<String> autocomplete = CFWField.newString(FormFieldType.TEXT, "AUTOCOMPLETE")
 			.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
 				
-				public String getAutocompleteData(String inputValue) {
-					String[] array = new String[25];
+				public LinkedHashMap<Object, Object> getAutocompleteData(String inputValue) {
+					LinkedHashMap<Object, Object>  array = new LinkedHashMap<Object, Object>() ;
 					for(int i = 0; i < 25; i++ ) {
-						array[i] = "TEST_"+inputValue+"_"+i;
+						String tag = "Test_"+inputValue+"_"+i;
+						array.put(tag, tag);
 					}
-					return CFW.JSON.toJSON(array);
+					return array;
 				}
 			});
 	

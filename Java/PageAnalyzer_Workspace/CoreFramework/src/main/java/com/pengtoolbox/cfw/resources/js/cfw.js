@@ -293,24 +293,25 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 	    inputField.parentNode.appendChild(itemList);
 	    
 	    //----------------------------
-	    // Iterate Array
-	    for (var i = 0; i < values.length && i < maxResults; i++) {
-	      
-		   	var currentValue = values[i];
+	    // Iterate values object
+	    for (key in values) {
+	    	
+		   	var currentValue = key;
+		   	var label = values[key];
 		   			
 			//----------------------------
 			// Create Item
 			var item = document.createElement("DIV");
 			
 			// make the matching letters bold:
-			var index = currentValue.toUpperCase().indexOf(searchString.toUpperCase());
+			var index = label.toUpperCase().indexOf(searchString.toUpperCase());
 			if(index == 0){
-				item.innerHTML = "<strong>" + currentValue.substr(0, searchString.length) + "</strong>";
-				item.innerHTML += currentValue.substr(searchString.length);
+				item.innerHTML = "<strong>" + label.substr(0, searchString.length) + "</strong>";
+				item.innerHTML += label.substr(searchString.length);
 			}else if(index > 0){
-				var part1 = currentValue.substr(0, index);
-				var part2 = currentValue.substr(index, searchString.length);
-				var part3 = currentValue.substr(index+searchString.length);
+				var part1 = label.substr(0, index);
+				var part2 = label.substr(index, searchString.length);
+				var part3 = label.substr(index+searchString.length);
 				item.innerHTML = part1 + "<strong>" +part2+ "</strong>" +part3;
 			}
 			

@@ -1,5 +1,6 @@
 package com.pengtoolbox.cfw.datahandling;
 
+import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
@@ -21,11 +22,11 @@ public class CFWAutocompleteHandlerDefault extends CFWAutocompleteHandler {
 		this.clazz = clazz;
 	}
 	@Override
-	public String getAutocompleteData(String inputValue)  {
+	public LinkedHashMap<Object, Object> getAutocompleteData(String inputValue)  {
 		
 		CFWField parent = this.getParent();
 		String fieldname = parent.getName();
-		String[] result = null;
+		LinkedHashMap<Object, Object> result = null;
 		if( !(parent.getValue() instanceof Object[])) {
 			try {
 				result = clazz.newInstance()
@@ -33,7 +34,7 @@ public class CFWAutocompleteHandlerDefault extends CFWAutocompleteHandler {
 					.like(fieldname, "%"+inputValue+"%")
 					.orderby(fieldname)
 					.limit(this.getMaxResults())
-					.getAsStringArray(fieldname);
+					.getAsLinkedHashMap(fieldname, fieldname);
 			} catch (Exception e) {
 				new CFWLog(logger)
 				.method("getAutocompleteData")
@@ -43,7 +44,7 @@ public class CFWAutocompleteHandlerDefault extends CFWAutocompleteHandler {
 			
 		}
 
-		return CFW.JSON.toJSON(result);
+		return result;
 	}
 
 }

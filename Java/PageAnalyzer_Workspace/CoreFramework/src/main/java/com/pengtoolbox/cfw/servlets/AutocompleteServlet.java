@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw.servlets;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -44,7 +45,7 @@ public class AutocompleteServlet extends HttpServlet
     		json.setSuccess(false);
     		new CFWLog(logger)
 	    		.method("doGet")
-	    		.severe("The form with ID '"+formid+"' could not be found. TRy to refresh the page");
+	    		.severe("The form with ID '"+formid+"' could not be found. Try to refresh the page");
     		return;
     	}
     	
@@ -65,9 +66,8 @@ public class AutocompleteServlet extends HttpServlet
 		// Execute Autocomplete Handler
 		//--------------------------------------------
     	if(field.getAutocompleteHandler() != null) {
-    		json.getContent().append(
-    			field.getAutocompleteHandler().getAutocompleteData(searchstring)
-    		);
+    		LinkedHashMap<Object, Object> suggestions = field.getAutocompleteHandler().getAutocompleteData(searchstring);
+    		json.getContent().append(CFW.JSON.toJSON(suggestions));
     	}else {
     		json.setSuccess(false);
     		new CFWLog(logger)
@@ -79,20 +79,20 @@ public class AutocompleteServlet extends HttpServlet
     }
 	
 	
-    protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
-	{
-    	String formID = request.getParameter(CFWForm.FORM_ID);
-    	CFWForm form = CFW.Context.Session.getForm(formID);
-    	
-    	JSONResponse json = new JSONResponse();
-    	if(form == null) {
-    		json.setSuccess(false);
-    		new CFWLog(logger)
-	    		.method("doGet")
-	    		.severe("The form with ID '"+formID+"' could not be found.");
-    		return;
-    	}
-    	    	
-    	form.getFormHandler().handleForm(request, response, form, form.getOrigin());
-	}
+//    protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
+//	{
+//    	String formID = request.getParameter(CFWForm.FORM_ID);
+//    	CFWForm form = CFW.Context.Session.getForm(formID);
+//    	
+//    	JSONResponse json = new JSONResponse();
+//    	if(form == null) {
+//    		json.setSuccess(false);
+//    		new CFWLog(logger)
+//	    		.method("doGet")
+//	    		.severe("The form with ID '"+formID+"' could not be found.");
+//    		return;
+//    	}
+//    	    	
+//    	form.getFormHandler().handleForm(request, response, form, form.getOrigin());
+//	}
 }

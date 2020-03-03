@@ -1067,6 +1067,40 @@ public class CFWSQL {
 		return stringArray;
 		
 	}
+	
+	/***************************************************************
+	 * Execute the Query and gets the result as a string array list.
+	 ***************************************************************/
+	public LinkedHashMap<Object, Object> getAsLinkedHashMap(String keyColumnName, String valueColumnName) {
+		
+		LinkedHashMap<Object, Object>  resultMap = new LinkedHashMap<Object, Object>();
+		
+		if(this.execute()) {
+			
+			if(result == null) {
+				return resultMap;
+			}
+			
+			try {
+				while(result.next()) {
+					Object key = result.getObject(keyColumnName);
+					Object value = result.getObject(valueColumnName);
+					resultMap.put(key, value);
+				}
+			} catch (SQLException e) {
+				new CFWLog(logger)
+				.method("getAsLinkedHashMap")
+				.severe("Error reading object from database.", e);
+				
+			}finally {
+				CFWDB.close(result);
+			}
+			
+		}
+		
+		return resultMap;
+		
+	}
 		
 	/***************************************************************
 	 * Execute the Query and gets the result as JSON string.

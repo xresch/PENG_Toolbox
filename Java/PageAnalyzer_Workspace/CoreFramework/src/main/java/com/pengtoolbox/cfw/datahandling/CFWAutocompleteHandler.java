@@ -1,5 +1,7 @@
 package com.pengtoolbox.cfw.datahandling;
 
+import java.util.LinkedHashMap;
+
 /**************************************************************************************************************
  * 
  * @author Reto Scheiwiller, © 2019 
@@ -19,10 +21,10 @@ public abstract class CFWAutocompleteHandler {
 	}
 	
 	/*******************************************************************************
-	 * 
+	 * Return a hashmap with value / label combinations
 	 * @return JSON string
 	 *******************************************************************************/
-	public abstract String getAutocompleteData(String inputValue);
+	public abstract LinkedHashMap<Object, Object> getAutocompleteData(String inputValue);
 
 	public int getMaxResults() {
 		return maxResults;
