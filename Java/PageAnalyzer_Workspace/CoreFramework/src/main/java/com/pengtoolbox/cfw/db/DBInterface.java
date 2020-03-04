@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import org.h2.jdbcx.JdbcConnectionPool;
@@ -466,6 +467,7 @@ public abstract class DBInterface {
 				else if (currentValue instanceof Clob) 		{ prepared.setClob(i+1, (Clob)currentValue); }
 				else if (currentValue instanceof Byte) 		{ prepared.setByte(i+1, (Byte)currentValue); }
 				else if (currentValue instanceof Object[]) 	{ prepared.setArray(i+1, prepared.getConnection().createArrayOf("VARCHAR", (Object[])currentValue)); }
+				else if (currentValue instanceof LinkedHashMap)	{ prepared.setString(i+1, CFW.JSON.toJSON(currentValue)); }
 				else if (currentValue == null) 				{ prepared.setNull(i+1, Types.NULL); }
 				else { throw new RuntimeException("Unsupported database field type: "+ currentValue.getClass().getName());}
 			}

@@ -3,9 +3,7 @@ package com.pengtoolbox.cfw.datahandling;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
-import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 public class CFWAutocompleteHandlerDefault extends CFWAutocompleteHandler {
 

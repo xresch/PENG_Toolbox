@@ -529,7 +529,7 @@ function cfw_sortArrayByValueOfObject(array, key, reverse){
  * @param epoch unix epoch milliseconds since 01.01.1970
  * @return timestamp as string
  *************************************************************************************/
-function cfw_epochToTimestamp(epoch){
+function cfw_format_epochToTimestamp(epoch){
 	
   var a = new Date(epoch);
   //a.toLocaleString('en-GB');
@@ -548,7 +548,7 @@ function cfw_epochToTimestamp(epoch){
  * @param epoch unix epoch milliseconds since 01.01.1970
  * @return date as string
  *************************************************************************************/
-function cfw_epochToDate(epoch){
+function cfw_format_epochToDate(epoch){
   var a = new Date(epoch);
   var year 		= a.getFullYear();
   var month 	= a.getMonth()+1 < 10 	? "0"+(a.getMonth()+1) : a.getMonth()+1;
@@ -561,7 +561,7 @@ function cfw_epochToDate(epoch){
 /**************************************************************************************
  * 
  *************************************************************************************/
-function cfw_fieldNameToLabel(fieldName){
+function cfw_format_fieldNameToLabel(fieldName){
 	
  	var regex = /[-_]/;
 	var splitted = fieldName.split(regex);
@@ -581,7 +581,7 @@ function cfw_fieldNameToLabel(fieldName){
 /**************************************************************************************
  * 
  *************************************************************************************/
-function cfw_csvToObjectArray(csvString, delimiter){
+function cfw_format_csvToObjectArray(csvString, delimiter){
 	
  	var lines = csvString.trim().split(/\r\n|\r|\n/);
  	
@@ -619,9 +619,67 @@ function cfw_csvToObjectArray(csvString, delimiter){
 /**************************************************************************************
  * 
  *************************************************************************************/
-function cfw_capitalize(string) {
+function cfw_format_capitalize(string) {
 	 if(string == null) return '';
 	 return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+
+/**************************************************************************************
+ * 
+ *************************************************************************************/
+function cfw_format_formToObject(formOrID){
+	
+	var paramsArray = cfw_format_formToParams(formOrID);
+	
+	var object = {};
+	for(var i in paramsArray){
+		var name = paramsArray[i].name;
+		var value = paramsArray[i].value;
+		object[name] = value;
+	}
+	
+	return object;
+}
+/**************************************************************************************
+ * 
+ *************************************************************************************/
+function cfw_format_formToParams(formOrID){
+	
+	var paramsArray = $(formOrID).serializeArray();
+	
+	//---------------------------
+	// Handle Tags Selector
+	var tagsselector = $(formOrID).find('.cfw-tags-selector');
+	if(tagsselector.length > 0){
+		tagsselector.each(function(){
+			var current = $(this);
+			var name = current.attr('name');
+			
+			//---------------------------
+			// Find in parameters
+			for(var i in paramsArray){
+				if(paramsArray[i].name == name){
+					
+					//---------------------------
+					// Create object
+					var items = current.tagsinput('items');
+					var object = {};
+					for (var j in items){
+						var value = items[j].value;
+						var label = items[j].label;
+						object[value] = label;
+					}
+					//---------------------------
+					// Change params
+					paramsArray[i].value = JSON.stringify(object);
+					console.log(paramsArray[i].value);
+					break;
+				}
+			}
+		});
+	}
+	
+	return paramsArray;
 }
 
 /**************************************************************************************
@@ -1395,44 +1453,7 @@ function cfw_createForm(url, params, targetElement, callback){
  * @param targetElement the element in which the form should be placed
  *************************************************************************************/
 function cfw_postForm(url, formID, callback){
-	
-	var paramsArray = $(formID).serializeArray();
-	
-	//---------------------------
-	// Handle Tags Selector
-	var tagsselector = $(formID).find('.cfw-tags-selector');
-	if(tagsselector.length > 0){
-		tagsselector.each(function(){
-			var current = $(this);
-			var name = current.attr('name');
-			
-			//---------------------------
-			// Find in parameters
-			for(var i in paramsArray){
-				if(paramsArray[i].name == name){
-					
-					//---------------------------
-					// Create object
-					var items = current.tagsinput('items');
-					var object = {};
-					for (var j in items){
-						var value = items[j].value;
-						var label = items[j].label;
-						object[value] = label;
-					}
-					//---------------------------
-					// Change params
-					paramsArray[i].value = JSON.stringify(object);
-					console.log(paramsArray[i].value);
-					break;
-				}
-			}
-			console.log(items);
-		});
-	}
-	
-	cfw_postJSON(url, paramsArray, callback);
-	
+	cfw_postJSON(url, CFW.format.formToParams(formID), callback);
 }
 
 
@@ -1632,12 +1653,14 @@ var CFW = {
 		sortArrayByValueOfObject: cfw_sortArrayByValueOfObject
 	},
 	format: {
-		epochToTimestamp: cfw_epochToTimestamp,
-		epochToDate: cfw_epochToDate,
-		objectToHTMLList: cfw_objectToHTMLList,
-		csvToObjectArray: cfw_csvToObjectArray,
-		fieldNameToLabel: cfw_fieldNameToLabel,
-		capitalize: cfw_capitalize,
+		epochToTimestamp: 	cfw_format_epochToTimestamp,
+		epochToDate: 		cfw_format_epochToDate,
+		objectToHTMLList: 	cfw_objectToHTMLList,
+		csvToObjectArray: 	cfw_format_csvToObjectArray,
+		fieldNameToLabel: 	cfw_format_fieldNameToLabel,
+		capitalize: 		cfw_format_capitalize,
+		formToParams: 		cfw_format_formToParams,
+		formToObject: 		cfw_format_formToObject
 	},
 	
 	http: {

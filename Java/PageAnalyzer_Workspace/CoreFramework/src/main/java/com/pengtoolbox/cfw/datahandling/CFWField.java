@@ -170,6 +170,12 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return newTagsSelector(fieldName.toString());
 	}
 	public static CFWField<LinkedHashMap> newTagsSelector(String fieldName){
+		if(!fieldName.startsWith("JSON_")) {
+			new CFWLog(logger)
+				.method("newTagsSelector")
+				.severe("Fieldname of TAG_SELECTOR fields have to start with 'JSON_'.", new InstantiationException());
+			return null;
+		}
 		return new CFWField<LinkedHashMap> (LinkedHashMap.class, FormFieldType.TAGS_SELECTOR, fieldName)
 				.setColumnDefinition("VARCHAR");
 	}
@@ -925,7 +931,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			else if(valueClass == Timestamp.class)  { return this.changeValue(new Timestamp(Long.parseLong( ((String)value).trim()) )); }
 			else if(valueClass == Date.class)  		{ return this.changeValue(new Date(Long.parseLong( ((String)value).trim()) )); }
 			else if(valueClass == Object[].class)	{ return this.changeValue( sanitizeString((String)value).split(",") ); }
-			else if(this.valueClass.isAssignableFrom(LinkedHashMap.class)){ 
+			else if(valueClass == LinkedHashMap.class){ 
 				LinkedHashMap<Object,Object> map = CFW.JSON.fromJsonLinkedHashMap((String)value);
 				for(Entry<Object, Object> entry : map.entrySet()) {
 					entry.setValue(sanitizeString((String)entry.getValue()));
@@ -1088,11 +1094,17 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					CFWField field = fields.get(key);
 					
 					JsonElement element = json.get(key);
+					
 					if(element.isJsonNull()) {
 						if(!field.setValueValidated(null) ){
 							result = false;
 						}
-					}else if(!field.setValueValidated(element.getAsString()) ){
+					}else if( element.isJsonObject() || element.isJsonArray() ){
+						if(!field.setValueValidated(CFW.JSON.gsonInstance.toJson(element)) ){
+							result = false;
+						}
+					}
+					else if(!field.setValueValidated(element.getAsString()) ){
 						result = false;
 					}
 				}else {
@@ -1145,6 +1157,14 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 						Array array = result.getArray(colName);
 						if(array != null) {
 							current.setValueValidated(result.getArray(colName).getArray()); 
+						}else {
+							current.setValueValidated(null);
+						}
+						
+					}else if( LinkedHashMap.class.isAssignableFrom(current.getValueClass()))  { 
+						String json = result.getString(colName);
+						if(json != null) {
+							current.setValueValidated(CFW.JSON.fromJsonLinkedHashMap(json)); 
 						}else {
 							current.setValueValidated(null);
 						}

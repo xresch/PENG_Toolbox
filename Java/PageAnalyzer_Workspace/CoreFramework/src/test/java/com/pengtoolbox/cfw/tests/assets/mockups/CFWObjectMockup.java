@@ -52,7 +52,7 @@ public class CFWObjectMockup extends CFWObject{
 				}
 			});
 	
-	private CFWField<LinkedHashMap> tagsselector = CFWField.newTagsSelector("TAGS_SELECTOR")
+	private CFWField<LinkedHashMap> tagsselector = CFWField.newTagsSelector("JSON_TAGS_SELECTOR")
 			.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
 				
 				public LinkedHashMap<Object, Object> getAutocompleteData(String inputValue) {

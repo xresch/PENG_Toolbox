@@ -35,10 +35,11 @@
 				var doSave = ( settingsForm.find('input[name="dosave"]:checked').val() == "true" )
 								
 				if(doSave){
-					widgetObject.JSON_SETTINGS.name = settingsForm.find('input[name="name"]').val();
-					widgetObject.JSON_SETTINGS.boolean = doSave;
-					widgetObject.JSON_SETTINGS.number = settingsForm.find('input[name="number"]').val();
-					
+//					widgetObject.JSON_SETTINGS.name = settingsForm.find('input[name="name"]').val();
+//					widgetObject.JSON_SETTINGS.boolean = doSave;
+//					widgetObject.JSON_SETTINGS.number = settingsForm.find('input[name="number"]').val();
+//					widgetObject.JSON_SETTINGS.number = settingsForm.find('JSON_HOBBIES_SELECTOR').val();
+					widgetObject.JSON_SETTINGS = CFW.format.formToObject(form);
 					return true;		
 				}else{
 					CFW.ui.addToastDanger('Wrong settings, cannot save the data.');
