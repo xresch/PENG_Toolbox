@@ -12,6 +12,9 @@ ALWAYS ON
 
 TODO
 ====
+- Tags: Load existing Tags
+- Tags: Display Tags
+- Tags: Save as Key Value Pairs
 - Manual: Documentation Widget Creation
 
 - Dashboard: Duplicate Dashboard

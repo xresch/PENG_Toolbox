@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -63,7 +64,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private boolean isDisabled = false;
 	
 	public enum FormFieldType{
-		TEXT, TEXTAREA, PASSWORD, NUMBER, EMAIL, HIDDEN, BOOLEAN, SELECT, WYSIWYG, DATEPICKER, DATETIMEPICKER, TAGS, NONE
+		TEXT, TEXTAREA, PASSWORD, NUMBER, EMAIL, HIDDEN, BOOLEAN, SELECT, WYSIWYG, DATEPICKER, DATETIMEPICKER, TAGS, TAGS_SELECTOR, NONE
 	}
 	
 	//--------------------------------
@@ -835,6 +836,22 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	}
 	
 	/******************************************************************************************************
+	 * Sanitize String values based on the fields settings.
+	 * 
+	 ******************************************************************************************************/
+	private String sanitizeString(String value) {
+		String saneValue = value;
+		
+		if(!this.allowHTML && !CFW.Context.Request.hasPermission(FeatureCore.PERMISSION_ALLOW_HTML)) {
+			saneValue = CFW.Security.escapeHTMLEntities(saneValue);
+		}else if(sanitizeStrings && !CFW.Context.Request.hasPermission(FeatureCore.PERMISSION_ALLOW_JAVASCRIPT) ) {
+			saneValue = CFW.Security.sanitizeHTML((String)saneValue);
+		}
+		
+		return saneValue;
+	}
+	
+	/******************************************************************************************************
 	 * Change the value by first converting it to the correct type.
 	 * 
 	 ******************************************************************************************************/
@@ -858,24 +875,10 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			//---------------------------------
 			// Sanitize strings if needed 
 			if(valueClass == String.class ) {
-				
-				String saneValue = (String)value;
-				
-				if(!this.allowHTML && !CFW.Context.Request.hasPermission(FeatureCore.PERMISSION_ALLOW_HTML)) {
-					saneValue = CFW.Security.escapeHTMLEntities(saneValue);
-				}else if(sanitizeStrings && !CFW.Context.Request.hasPermission(FeatureCore.PERMISSION_ALLOW_JAVASCRIPT) ) {
-					saneValue = CFW.Security.sanitizeHTML((String)saneValue);
-					System.out.println("==============");
-					System.out.println("value: "+value);
-					System.out.println("saneValue: "+saneValue);
-				}
-				
-				this.changeValue(saneValue);
+				return this.changeValue(sanitizeString((String)value));
 			}else {
-				this.changeValue(value);
+				return this.changeValue(value);
 			}
-			
-			return true;
 		}
 		
 		//-------------------------------------------------
@@ -899,7 +902,15 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			else if(valueClass == Boolean.class) 	{ return this.changeValue(Boolean.parseBoolean( ((String)value).trim()) ); }
 			else if(valueClass == Timestamp.class)  { return this.changeValue(new Timestamp(Long.parseLong( ((String)value).trim()) )); }
 			else if(valueClass == Date.class)  		{ return this.changeValue(new Date(Long.parseLong( ((String)value).trim()) )); }
-			else if(valueClass == Object[].class)	{ return this.changeValue( ((String)value).split(",") ); }
+			else if(valueClass == Object[].class)	{ return this.changeValue( sanitizeString((String)value).split(",") ); }
+			else if(this.valueClass.isAssignableFrom(HashMap.class)){ 
+				LinkedHashMap<Object,Object> map = CFW.JSON.fromJsonLinkedHashMap((String)value);
+				for(Entry<Object, Object> entry : map.entrySet()) {
+					entry.setValue(sanitizeString((String)entry.getValue()));
+				}
+				return this.changeValue( ((String)value).split(",") ); 
+				}
+			
 			else {
 				new CFWLog(logger)
 					.method("setValueConvert")

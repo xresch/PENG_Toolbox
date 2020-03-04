@@ -1,12 +1,12 @@
 package com.pengtoolbox.cfw.utils.json;
 
+import java.lang.reflect.Type;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-
-import org.h2.util.json.JSONObject;
+import java.util.LinkedHashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,6 +14,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -76,6 +77,16 @@ public class CFWJson {
 		JsonObject jsonObject = (JsonObject) parser.parse(jsonString);
 		
 		return jsonObject;
+	}
+	
+	/*************************************************************************************
+	 * Converts a json string to a LinkedHashMap 
+	 *************************************************************************************/
+	public static LinkedHashMap<Object, Object> fromJsonLinkedHashMap(String jsonString) {
+
+		Type type = new TypeToken<LinkedHashMap<Object, Object>>(){}.getType();
+		LinkedHashMap<Object, Object> clonedMap = gsonInstance.fromJson(jsonString, type); 
+		return clonedMap;
 	}
 	
 	

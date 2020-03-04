@@ -141,6 +141,33 @@ function cfw_initializeTagsField(fieldID){
 	
 	tagsfield.tagsinput({
 		tagClass: 'btn btn-sm btn-primary mb-1',
+		maxTags: 255,
+		//maxChars: 30,
+		trimValue: true,
+		allowDuplicates: false,
+//		onTagExists: function(item, $tag) {
+//			$tag.fadeIn().fadeIn();
+//
+//		}
+	});
+	
+}
+/**************************************************************************************
+ * Initialize a TagField created with the Java object CFWField.
+ * @param fieldID the name of the field
+ * @return nothing
+ *************************************************************************************/
+function cfw_initializeTagsSelectorField(fieldID){
+	
+	var id = '#'+fieldID;
+
+	var tagsfield = $(id);
+	
+	// mark with CSS class for selecting the class afterwards
+	tagsfield.addClass("cfw-tagselector");
+	
+	tagsfield.tagsinput({
+		tagClass: 'btn btn-sm btn-primary mb-1',
 		itemValue: 'value',
 		itemText: 'label',
 		maxTags: 255,
@@ -154,10 +181,8 @@ function cfw_initializeTagsField(fieldID){
 	});
 	
 	$(id+'-tagsinput').on('keydown', function (e) {
-		console.log("keydown");
 		  // Enter and Comma
 		  if (e.keyCode == 13 || e.keyCode == 188) {
-			  console.log("(e.keyCode == 9)");
 		    e.preventDefault();
 
 		    $(id).tagsinput('add', { 
@@ -167,7 +192,7 @@ function cfw_initializeTagsField(fieldID){
 
 		    this.value = '';
 		  }
-		});
+	});
 }
 
 /**************************************************************************************
@@ -298,9 +323,9 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 		var itemList;
 		var searchString = inputField.value;
 		var autocompleteID = inputField.id + "-autocomplete-list";
-		var isTagsinput = inputField.id.endsWith('-tagsinput');
+		var isTagsselector = $(inputField).hasClass('cfw-tagselector');
 		
-		console.log('isTagsinput: '+isTagsinput);
+		console.log('isTagsselector: '+isTagsselector);
 		
 	    closeAllAutocomplete();
 	    if (!searchString) { return false;}
@@ -338,16 +363,15 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 			
 			//-----------------------
 			// Create Field
-			item.innerHTML += '<input type="hidden" value="'+currentValue+'" data-label="'+label+'" data-tagsinput="'+isTagsinput+'">';
+			item.innerHTML += '<input type="hidden" value="'+currentValue+'" data-label="'+label+'" data-tagsinput="'+isTagsselector+'">';
 			
 			item.addEventListener("click", function(e) { 
 				var element = $(this).find('input');
 				var value = element.val();
 				var label = element.data('label');
-				var isTagsinput = element.data('tagsinput');
+				var isTagsselector = element.data('tagsinput');
 				
-				console.log('element.val()'+value)
-				if(!isTagsinput){
+				if(!isTagsselector){
 					inputField.value = value;
 					closeAllAutocomplete();
 				}else{
