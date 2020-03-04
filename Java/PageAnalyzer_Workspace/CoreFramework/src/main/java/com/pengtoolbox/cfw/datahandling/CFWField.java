@@ -101,6 +101,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				.setColumnDefinition("VARCHAR");
 	}
 	
+	
 	//===========================================
 	// Integer
 	//===========================================
@@ -162,6 +163,16 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				.setColumnDefinition("ARRAY");
 	}
 	
+	//===========================================
+	// TAGS SELECTOR
+	//===========================================
+	public static CFWField<LinkedHashMap> newTagsSelector(Enum<?> fieldName){
+		return newTagsSelector(fieldName.toString());
+	}
+	public static CFWField<LinkedHashMap> newTagsSelector(String fieldName){
+		return new CFWField<LinkedHashMap> (LinkedHashMap.class, FormFieldType.TAGS_SELECTOR, fieldName)
+				.setColumnDefinition("VARCHAR");
+	}
 	//###########################################################################################################
 	//###########################################################################################################
 	// HTML and Form Methods
@@ -284,8 +295,11 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			case DATETIMEPICKER:  	createDateTimePicker(html);
 									break;
 			
-			case TAGS:			  	createTagsField(html);
+			case TAGS:			  	createTagsField(html, FormFieldType.TAGS);
 									break;
+									
+			case TAGS_SELECTOR:		createTagsField(html, FormFieldType.TAGS_SELECTOR);
+									break;						
 									
 			case PASSWORD:  		html.append("<input type=\"password\" class=\"form-control\" "+this.getAttributesString()+"/>");
 									break;
@@ -471,15 +485,23 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	/***********************************************************************************
 	 * Create DatePicker
 	 ***********************************************************************************/
-	private void createTagsField(StringBuilder html) {
+	private void createTagsField(StringBuilder html, FormFieldType type) {
 		
+		int maxTags = 128;
 		
+		if(attributes.containsKey("maxTags")) {
+			maxTags = Integer.parseInt(attributes.get("maxTags"));
+		}
 		//---------------------------------
 		// Create Field
 		html.append("<input id=\""+name+"\" type=\"text\" data-role=\"tagsinput\" class=\"form-control\" "+this.getAttributesString()+"/>");
 		
 		if(this.parent instanceof CFWForm) {
-			((CFWForm)this.parent).javascript.append("cfw_initializeTagsField('"+name+"');\r\n");
+			if(type.equals(FormFieldType.TAGS_SELECTOR)) {
+				((CFWForm)this.parent).javascript.append("cfw_initializeTagsSelectorField('"+name+"', "+maxTags+");\r\n");
+			}else {
+				((CFWForm)this.parent).javascript.append("cfw_initializeTagsField('"+name+"', "+maxTags+");\r\n");
+			}
 		}
 				
 	}
@@ -903,7 +925,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			else if(valueClass == Timestamp.class)  { return this.changeValue(new Timestamp(Long.parseLong( ((String)value).trim()) )); }
 			else if(valueClass == Date.class)  		{ return this.changeValue(new Date(Long.parseLong( ((String)value).trim()) )); }
 			else if(valueClass == Object[].class)	{ return this.changeValue( sanitizeString((String)value).split(",") ); }
-			else if(this.valueClass.isAssignableFrom(HashMap.class)){ 
+			else if(this.valueClass.isAssignableFrom(LinkedHashMap.class)){ 
 				LinkedHashMap<Object,Object> map = CFW.JSON.fromJsonLinkedHashMap((String)value);
 				for(Entry<Object, Object> entry : map.entrySet()) {
 					entry.setValue(sanitizeString((String)entry.getValue()));

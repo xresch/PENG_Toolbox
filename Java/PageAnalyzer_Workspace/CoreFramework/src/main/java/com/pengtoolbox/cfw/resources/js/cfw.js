@@ -131,7 +131,7 @@ function cfw_initializeSummernote(formID, editorID){
  * @param fieldID the name of the field
  * @return nothing
  *************************************************************************************/
-function cfw_initializeTagsField(fieldID){
+function cfw_initializeTagsField(fieldID, maxTags){
 	
 	var id = '#'+fieldID;
 
@@ -142,7 +142,7 @@ function cfw_initializeTagsField(fieldID){
 	tagsfield.tagsinput({
 		tagClass: 'btn btn-sm btn-primary mb-1',
 		maxTags: 255,
-		//maxChars: 30,
+		maxChars: 1024,
 		trimValue: true,
 		allowDuplicates: false,
 //		onTagExists: function(item, $tag) {
@@ -157,20 +157,20 @@ function cfw_initializeTagsField(fieldID){
  * @param fieldID the name of the field
  * @return nothing
  *************************************************************************************/
-function cfw_initializeTagsSelectorField(fieldID){
+function cfw_initializeTagsSelectorField(fieldID, maxTags){
 	
 	var id = '#'+fieldID;
 
 	var tagsfield = $(id);
 	
 	// mark with CSS class for selecting the class afterwards
-	tagsfield.addClass("cfw-tagselector");
+	tagsfield.addClass("cfw-tags-selector");
 	
 	tagsfield.tagsinput({
 		tagClass: 'btn btn-sm btn-primary mb-1',
 		itemValue: 'value',
 		itemText: 'label',
-		maxTags: 255,
+		maxTags: maxTags,
 		//maxChars: 30,
 		trimValue: true,
 		allowDuplicates: false,
@@ -180,19 +180,19 @@ function cfw_initializeTagsSelectorField(fieldID){
 //		}
 	});
 	
-	$(id+'-tagsinput').on('keydown', function (e) {
-		  // Enter and Comma
-		  if (e.keyCode == 13 || e.keyCode == 188) {
-		    e.preventDefault();
-
-		    $(id).tagsinput('add', { 
-		      value: this.value, 
-		      label: this.value,
-		    }); 
-
-		    this.value = '';
-		  }
-	});
+//	$(id+'-tagsinput').on('keydown', function (e) {
+//		  // Enter and Comma
+//		  if (e.keyCode == 13 || e.keyCode == 188) {
+//		    e.preventDefault();
+//
+//		    $(id).tagsinput('add', { 
+//		      value: this.value, 
+//		      label: this.value,
+//		    }); 
+//
+//		    this.value = '';
+//		  }
+//	});
 }
 
 /**************************************************************************************
@@ -323,7 +323,11 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 		var itemList;
 		var searchString = inputField.value;
 		var autocompleteID = inputField.id + "-autocomplete-list";
-		var isTagsselector = $(inputField).hasClass('cfw-tagselector');
+		var isTagsselector = false;
+		
+		if(inputField.id != null && inputField.id.endsWith('-tagsinput')){
+			isTagsselector = $(inputField).parent().siblings('input').hasClass('cfw-tags-selector');
+		}
 		
 		console.log('isTagsselector: '+isTagsselector);
 		
@@ -1381,6 +1385,56 @@ function cfw_createForm(url, params, targetElement, callback){
 			  cfw_handleMessages(response);			  
 		  });
 }
+
+/**************************************************************************************
+ * Calls a rest service that creates a form and returns a standard json format,
+ * containing the html of the form in the payload.
+ * 
+ * @param url to call
+ * @param params to pass
+ * @param targetElement the element in which the form should be placed
+ *************************************************************************************/
+function cfw_postForm(url, formID, callback){
+	
+	var paramsArray = $(formID).serializeArray();
+	
+	//---------------------------
+	// Handle Tags Selector
+	var tagsselector = $(formID).find('.cfw-tags-selector');
+	if(tagsselector.length > 0){
+		tagsselector.each(function(){
+			var current = $(this);
+			var name = current.attr('name');
+			
+			//---------------------------
+			// Find in parameters
+			for(var i in paramsArray){
+				if(paramsArray[i].name == name){
+					
+					//---------------------------
+					// Create object
+					var items = current.tagsinput('items');
+					var object = {};
+					for (var j in items){
+						var value = items[j].value;
+						var label = items[j].label;
+						object[value] = label;
+					}
+					//---------------------------
+					// Change params
+					paramsArray[i].value = JSON.stringify(object);
+					console.log(paramsArray[i].value);
+					break;
+				}
+			}
+			console.log(items);
+		});
+	}
+	
+	cfw_postJSON(url, paramsArray, callback);
+	
+}
+
 
 /******************************************************************
  * Method to fetch data from the server with CFW.http.getJSON(). 

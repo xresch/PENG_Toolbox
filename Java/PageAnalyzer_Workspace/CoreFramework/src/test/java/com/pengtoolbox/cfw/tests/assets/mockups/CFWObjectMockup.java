@@ -52,6 +52,19 @@ public class CFWObjectMockup extends CFWObject{
 				}
 			});
 	
+	private CFWField<LinkedHashMap> tagsselector = CFWField.newTagsSelector("TAGS_SELECTOR")
+			.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
+				
+				public LinkedHashMap<Object, Object> getAutocompleteData(String inputValue) {
+					LinkedHashMap<Object, Object>  array = new LinkedHashMap<Object, Object>() ;
+					for(int i = 0; i < 25; i++ ) {
+						String tag = inputValue+"_"+i;
+						array.put("key_"+tag, "Label_"+tag);
+					}
+					return array;
+				}
+			});
+	
 	private CFWField<String> autocomplete = CFWField.newString(FormFieldType.TEXT, "AUTOCOMPLETE")
 			.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
 				
@@ -79,7 +92,7 @@ public class CFWObjectMockup extends CFWObject{
 		options.put(4, "Strawwberry");
 		keyValSelect.setValueLabelOptions(options);
 		
-		this.addFields(firstname, lastname, withValue, description, textarea, number, date, timestamp, select, keyValSelect, editor, tags, autocomplete);
+		this.addFields(firstname, lastname, withValue, description, textarea, number, date, timestamp, select, keyValSelect, editor, tags, tagsselector, autocomplete);
 	}
 
 }

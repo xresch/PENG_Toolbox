@@ -84,7 +84,7 @@ public class CFWForm extends HierarchicalHTMLItem {
 
 		//---------------------------
 		// Create send button
-		String onclick = "cfw_postJSON('"+postURL+"', $('#"+formID+"').serialize(), "+resultCallback+")";
+		String onclick = "cfw_postForm('"+postURL+"', '#"+formID+"', "+resultCallback+")";
 		html.append("<input type=\"button\" onclick=\""+onclick+"\" class=\"form-control btn-primary\" value=\""+submitLabel+"\">");
 		
 		//---------------------------
