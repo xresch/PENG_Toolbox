@@ -936,8 +936,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				for(Entry<Object, Object> entry : map.entrySet()) {
 					entry.setValue(sanitizeString((String)entry.getValue()));
 				}
-				return this.changeValue( ((String)value).split(",") ); 
-				}
+				return this.changeValue(map); 
+			}
 			
 			else {
 				new CFWLog(logger)

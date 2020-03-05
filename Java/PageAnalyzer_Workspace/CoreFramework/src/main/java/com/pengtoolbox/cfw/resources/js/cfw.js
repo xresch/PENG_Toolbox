@@ -671,7 +671,7 @@ function cfw_format_formToParams(formOrID){
 					}
 					//---------------------------
 					// Change params
-					paramsArray[i].value = JSON.stringify(object);
+					paramsArray[i].value = object;
 					console.log(paramsArray[i].value);
 					break;
 				}

@@ -31,20 +31,20 @@ public class WidgetHelloWorld extends WidgetDefinition {
 								.addValidator(new LengthValidator(2, 25))
 								.setValue("Jane Doe")
 				)
-//				.addField(CFWField.newTagsSelector("JSON_HOBBIES_SELECTOR")
-//							.setLabel("Hobbies")
-//							.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
-//								
-//								public LinkedHashMap<Object, Object> getAutocompleteData(String inputValue) {
-//									LinkedHashMap<Object, Object>  array = new LinkedHashMap<Object, Object>() ;
-//									for(int i = 0; i < 25; i++ ) {
-//										String tag = inputValue+"_"+i;
-//										array.put("key_"+tag, "hobby_"+tag);
-//									}
-//									return array;
-//								}
-//							})
-//				)
+				.addField(CFWField.newTagsSelector("JSON_HOBBIES_SELECTOR")
+							.setLabel("Hobbies")
+							.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
+								
+								public LinkedHashMap<Object, Object> getAutocompleteData(String inputValue) {
+									LinkedHashMap<Object, Object>  array = new LinkedHashMap<Object, Object>() ;
+									for(int i = 0; i < 25; i++ ) {
+										String tag = inputValue+"_"+i;
+										array.put("key_"+tag, "hobby_"+tag);
+									}
+									return array;
+								}
+							})
+				)
 				.addField(CFWField.newInteger(FormFieldType.NUMBER, "number")
 						.addValidator(new NotNullOrEmptyValidator())
 						.setValue(1)

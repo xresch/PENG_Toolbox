@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.LinkedHashMap;
+import java.util.logging.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,6 +19,7 @@ import com.google.gson.reflect.TypeToken;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
  * 
@@ -25,6 +27,8 @@ import com.pengtoolbox.cfw.datahandling.CFWObject;
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWJson {
+	
+	private static Logger logger = CFWLog.getLogger(CFWJson.class.getName());
 	
 	public static Gson gsonInstance;
 	
@@ -143,7 +147,15 @@ public class CFWJson {
 		if(jsonString == null || jsonString.isEmpty()) {
 			jsonString = "{}";
 		}
-		return new JsonParser().parse(jsonString);
+		JsonElement result  = new JsonObject();
+		try {
+			result = new JsonParser().parse(jsonString);
+		}catch(Exception e) {
+			new CFWLog(logger) 
+			.method("jsonStringToJsonElement")
+			.severe("Error parsing jsonString: "+jsonString, e);
+		}
+		return result;
 	}
 	
 	/*************************************************************************************
@@ -177,8 +189,13 @@ public class CFWJson {
 			if(value == null) {
 				value = "";
 			}
-			JsonElement asElement = CFW.JSON.jsonStringToJsonElement(value.toString());
-			target.add(name, asElement);
+			if(value instanceof String) {
+				JsonElement asElement = CFW.JSON.jsonStringToJsonElement(value.toString());
+				target.add(name, asElement);
+			}else {
+				target.add(name, gsonInstance.toJsonTree(value));
+			}
+			
 		}else {
 			CFW.JSON.addObject(target, name, value);
 		}
