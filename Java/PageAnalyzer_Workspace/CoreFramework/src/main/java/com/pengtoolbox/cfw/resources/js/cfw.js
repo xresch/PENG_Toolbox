@@ -151,13 +151,27 @@ function cfw_initializeTagsField(fieldID, maxTags){
 //		}
 	});
 	
+//	$(id+'-tagsinput').on('keydown', function (e) {
+//	  // Enter and Comma
+//	  if (e.keyCode == 13 || e.keyCode == 188) {
+//	    e.preventDefault();
+//
+//	    $(id).tagsinput('add', { 
+//	      value: this.value, 
+//	      label: this.value,
+//	    }); 
+//
+//	    this.value = '';
+//	  }
+//});
+	
 }
 /**************************************************************************************
  * Initialize a TagField created with the Java object CFWField.
  * @param fieldID the name of the field
  * @return nothing
  *************************************************************************************/
-function cfw_initializeTagsSelectorField(fieldID, maxTags){
+function cfw_initializeTagsSelectorField(fieldID, maxTags, values){
 	
 	var id = '#'+fieldID;
 
@@ -180,19 +194,11 @@ function cfw_initializeTagsSelectorField(fieldID, maxTags){
 //		}
 	});
 	
-//	$(id+'-tagsinput').on('keydown', function (e) {
-//		  // Enter and Comma
-//		  if (e.keyCode == 13 || e.keyCode == 188) {
-//		    e.preventDefault();
-//
-//		    $(id).tagsinput('add', { 
-//		      value: this.value, 
-//		      label: this.value,
-//		    }); 
-//
-//		    this.value = '';
-//		  }
-//	});
+	for(key in values){
+		tagsfield.tagsinput('add', { "value": key , "label": values[key] });
+	}
+
+	
 }
 
 /**************************************************************************************

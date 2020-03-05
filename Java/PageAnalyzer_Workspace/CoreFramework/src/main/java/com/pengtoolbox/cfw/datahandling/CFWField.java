@@ -504,7 +504,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		
 		if(this.parent instanceof CFWForm) {
 			if(type.equals(FormFieldType.TAGS_SELECTOR)) {
-				((CFWForm)this.parent).javascript.append("cfw_initializeTagsSelectorField('"+name+"', "+maxTags+");\r\n");
+				((CFWForm)this.parent).javascript.append("cfw_initializeTagsSelectorField('"+name+"', "+maxTags+", "+CFW.JSON.toJSON(value)+");\r\n");
 			}else {
 				((CFWForm)this.parent).javascript.append("cfw_initializeTagsField('"+name+"', "+maxTags+");\r\n");
 			}
