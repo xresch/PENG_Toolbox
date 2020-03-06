@@ -112,6 +112,7 @@
 }
 
 .cfw-dashboard-widget-settings{
+	cursor: pointer;
 	position: absolute;
 	top: -12.5px;
     right: -8px;

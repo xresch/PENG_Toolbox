@@ -60,6 +60,7 @@ TODO
 - CFW: Move core stuff to core feature
 - CFW: Create loading mechanism for features as plugins
 - CFW: Create javascript sanity check page
+- CFW: Redirect StdOut and StdErr to logfile
 
 - Caching
   - Create Caching class or us Guava, max entries and access count

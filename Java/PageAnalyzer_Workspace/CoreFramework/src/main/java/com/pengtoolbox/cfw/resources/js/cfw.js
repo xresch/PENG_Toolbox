@@ -267,8 +267,11 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 						return;
 					}
 					
-					cfw_getJSON('/cfw/autocomplete', 
-						{formid: formID, fieldname: fieldName, searchstring: inputField.value }, 
+					var params = CFW.format.formToParams($input.closest('form'));
+					params.cfwAutocompleteFieldname = fieldName;
+					params.cfwAutocompleteSearchstring = inputField.value;
+					
+					cfw_getJSON('/cfw/autocomplete', params, 
 						function(data) {
 							showAutocomplete(inputField, data.payload);
 						})
@@ -335,8 +338,6 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 			isTagsselector = $(inputField).parent().siblings('input').hasClass('cfw-tags-selector');
 		}
 		
-		console.log('isTagsselector: '+isTagsselector);
-		
 	    closeAllAutocomplete();
 	    if (!searchString) { return false;}
 	    
@@ -369,6 +370,8 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 				var part2 = label.substr(index, searchString.length);
 				var part3 = label.substr(index+searchString.length);
 				item.innerHTML = part1 + "<strong>" +part2+ "</strong>" +part3;
+			}else {
+				item.innerHTML = label;
 			}
 			
 			//-----------------------
@@ -631,11 +634,46 @@ function cfw_format_capitalize(string) {
 }
 
 /**************************************************************************************
+ * Converts the input fields of a form to an array of parameter objects.
+ * Additionally to $().serializeArray(), it changes string representations of 
+ * numbers and booleans to the proper types
  * 
+ * { 
+ * 		fieldname: "fieldvalue",
+ * 		fieldname: "fieldvalue",
+ * 		fieldname: "fieldvalue",
+ * 		...
+ * }
+ *************************************************************************************/
+function cfw_format_formToParams(formOrID){
+	
+	var paramsObject = cfw_format_formToObject(formOrID);
+
+	for(var name in paramsObject){
+		var value = paramsObject[name];
+		
+		if(value != null && typeof value === 'object'){
+			paramsObject[name] = JSON.stringify(value);
+		}
+	}
+	
+	return paramsObject;
+}
+/**************************************************************************************
+ * Converts the input fields of a form to an array of parameter objects.
+ * Additionally to $().serializeArray(), it changes string representations of 
+ * numbers and booleans to the proper types
+ * 
+ * { 
+ * 		fieldname: "fieldvalue",
+ * 		fieldname: "fieldvalue",
+ * 		fieldname: "fieldvalue",
+ * 		...
+ * }
  *************************************************************************************/
 function cfw_format_formToObject(formOrID){
 	
-	var paramsArray = cfw_format_formToParams(formOrID);
+	var paramsArray = cfw_format_formToArray(formOrID);
 	
 	var object = {};
 	for(var i in paramsArray){
@@ -647,12 +685,34 @@ function cfw_format_formToObject(formOrID){
 	return object;
 }
 /**************************************************************************************
- * 
+ * Converts the input fields of a form to an array of parameter objects.
+ * Additionally to $().serializeArray(), it changes string representations of 
+ * numbers and booleans to the proper types
+ * [
+ * {name: "fieldname", value: "fieldvalue"},
+ * {name: "fieldname", value: "fieldvalue"},
+ * ...
+ * ]
  *************************************************************************************/
-function cfw_format_formToParams(formOrID){
+function cfw_format_formToArray(formOrID){
 	
 	var paramsArray = $(formOrID).serializeArray();
 	
+	//---------------------------
+	// Convert String true/false to boolean
+	for(var i in paramsArray){
+		var current = paramsArray[i].value;
+		if(typeof current == 'string'){
+			if(!isNaN(current)){
+				paramsArray[i].value = Number(current);
+			}else if(current.toLowerCase() === 'true'){
+				paramsArray[i].value = true;
+			}else if(current.toLowerCase() === 'false'){
+				paramsArray[i].value = false;
+			}
+		}
+	}
+
 	//---------------------------
 	// Handle Tags Selector
 	var tagsselector = $(formOrID).find('.cfw-tags-selector');
@@ -678,7 +738,6 @@ function cfw_format_formToParams(formOrID){
 					//---------------------------
 					// Change params
 					paramsArray[i].value = object;
-					console.log(paramsArray[i].value);
 					break;
 				}
 			}
@@ -1666,6 +1725,7 @@ var CFW = {
 		fieldNameToLabel: 	cfw_format_fieldNameToLabel,
 		capitalize: 		cfw_format_capitalize,
 		formToParams: 		cfw_format_formToParams,
+		formToArray: 		cfw_format_formToArray,
 		formToObject: 		cfw_format_formToObject
 	},
 	

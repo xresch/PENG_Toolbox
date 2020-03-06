@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition;
@@ -35,7 +37,7 @@ public class WidgetHelloWorld extends WidgetDefinition {
 							.setLabel("Hobbies")
 							.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
 								
-								public LinkedHashMap<Object, Object> getAutocompleteData(String inputValue) {
+								public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String inputValue) {
 									LinkedHashMap<Object, Object>  array = new LinkedHashMap<Object, Object>() ;
 									for(int i = 0; i < 25; i++ ) {
 										String tag = inputValue+"_"+i;

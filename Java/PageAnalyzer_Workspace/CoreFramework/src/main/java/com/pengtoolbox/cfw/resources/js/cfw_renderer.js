@@ -62,7 +62,6 @@ CFW.render.registerRenderer("alerttiles",
 			
 			var settings = Object.assign({}, defaultSettings, renderDef.rendererSettings.alerttiles);
 
-			
 			//===================================================
 			// Create Alert Tiles
 			//===================================================
@@ -74,15 +73,15 @@ CFW.render.registerRenderer("alerttiles",
 				allTiles.addClass('flex-row ');
 			}
 			
-			if(!settings.showlabels){
+			if(settings.showlabels != true && settings.showlabels != "true"){
 				allTiles.addClass('align-items-start');
 			}
 			
 			for(var i = 0; i < renderDef.data.length; i++ ){
 				var currentRecord = renderDef.data[i];
-				var currentTile = $('<div class="d-flex p-3 m-1">');
+				var currentTile = $('<div class="d-flex p-3 m-1 cursor-pointer">');
 				
-				//-------------------------
+				//=====================================
 				// Add Styles
 				if(renderDef.bgstylefield != null){
 					currentTile.addClass('bg-'+currentRecord[renderDef.bgstylefield]);
@@ -92,10 +91,39 @@ CFW.render.registerRenderer("alerttiles",
 					currentTile.addClass('text-'+currentRecord[renderDef.textstylefield]);
 				}
 				
-				//-------------------------
+				//=====================================
+				// Add Details Click
+				currentTile.data('record', currentRecord)
+				currentTile.click(function() {
+					//-------------------------
+					// Create render definition
+					var definition = Object.assign({}, renderDef);
+					definition.data = $(this).data('record');
+					if(definition.rendererSettings.table == null){
+						definition.rendererSettings.table = {};
+					}
+					definition.rendererSettings.table.verticalize = true;
+					
+					//remove alertstyle and textstyle
+					var visiblefields = Object.keys(definition.data);
+					visiblefields.pop();
+					visiblefields.pop();
+					
+					definition.visiblefields = visiblefields;
+					
+					//-------------------------
+					// Show Details Modal
+					var renderer = CFW.render.getRenderer('table');
+					cfw_showModal(
+							CFWL('cfw_core_details', 'Details'), 
+							renderer.render(definition))
+					;
+				})
+				
+				//=====================================
 				// Create Tile
-				if(settings.showlabels){
-					currentTile.addClass('flex-column flex-grow-1 justify-content-center align-items-center');
+				if(settings.showlabels == true || settings.showlabels == "true" ){
+					currentTile.addClass('flex-column flex-grow-1 justify-content-center align-items-center text-center');
 
 					//-------------------------
 					// Create Title
@@ -121,7 +149,7 @@ CFW.render.registerRenderer("alerttiles",
 							}
 						}else{
 							var customizer = renderDef.customizers[fieldname];
-							currentTile.append('<span><strong style="font-size: '+12*settings.sizefactor+'px;">'+renderDef.labels[fieldname]+':&nbsp;</strong>'+customizer(currentRecord, value)+'</span>');
+							currentTile.append('<span style="font-size: '+12*settings.sizefactor+'px;"><strong>'+renderDef.labels[fieldname]+':&nbsp;</strong>'+customizer(currentRecord, value)+'</span>');
 						}
 					}
 				} else {
@@ -147,6 +175,7 @@ CFW.render.registerRenderer("table",
 		function (renderDef) {
 			
 			// renderDef.rendererSettings.table same as CFWTable Settings
+			// plus verticalize: false
 //			{
 //				filterable: true,
 //				responsive: true,
@@ -160,6 +189,53 @@ CFW.render.registerRenderer("table",
 			// Check Data
 			if(renderDef.datatype != "array"){
 				return "<span>Unable to convert data into table.</span>";
+			}
+			
+			//-----------------------------------
+			// Verticalize Single Records
+			if(renderDef.data.length == 1 && renderDef.rendererSettings.table.verticalize){
+				var singleRecordData = [];
+				var singleRecord = renderDef.data[0]
+				
+				//----------------------
+				// Fields
+				for(var i in renderDef.visiblefields){
+					var fieldname = renderDef.visiblefields[i];
+					var label = CFW.format.fieldNameToLabel(fieldname);
+					var finalValue = singleRecord[fieldname];
+					
+					if(renderDef.customizers[fieldname] != null){
+						var customizer = renderDef.customizers[fieldname];
+						finalValue = customizer(currentRecord, finalValue);
+					}
+					singleRecordData.push({name: label, value: finalValue});
+				}
+				
+				//-------------------------
+				// Add Action buttons
+				if(renderDef.actions.length > 0){
+					var id = null;
+					var actionButtonHTML = "";
+					if(renderDef.idfield != null){
+						id = singleRecord[renderDef.idfield];
+					}
+					for(var fieldKey in renderDef.actions){
+						actionButtonHTML += renderDef.actions[fieldKey](singleRecord, id );
+					}
+					singleRecordData.push({name: "Actions", value: actionButtonHTML});
+				}
+				//-------------------------
+				// Override Settings
+				renderDef.data = singleRecordData;
+				renderDef.customizers = {};
+				renderDef.actions = [];
+				renderDef.bulkActions = null;
+				renderDef.visiblefields = ['name', 'value'];
+				renderDef.labels = {
+						name: CFWL('cfw_core_name', 'Name'), 
+						value: CFWL('cfw_core_value', 'Value')
+				};
+								
 			}
 			
 			//===================================================
@@ -185,12 +261,10 @@ CFW.render.registerRenderer("table",
 			for(var key in renderDef.actions){
 				cfwTable.addHeader("&nbsp;");
 			}
-			
+						
 			//-----------------------------------
 			// Print Records
-			var count = renderDef.data.length;
-			
-			for(var i = 0; i < count; i++ ){
+			for(var i = 0; i < renderDef.data.length; i++ ){
 				var currentRecord = renderDef.data[i];
 				var row = $('<tr class="cfwRecordContainer">');
 				

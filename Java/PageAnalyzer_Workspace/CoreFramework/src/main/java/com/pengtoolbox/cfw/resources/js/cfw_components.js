@@ -33,9 +33,9 @@ class CFWRenderer{
 		 	bgstylefield: null,
 		    // field containing the bootstrap style (primary, info, danger ...) that should be used as for texts
 		 	textstylefield: null,
-		 	// functions that return a customized htmlString to display a customized format, add as "{fieldname}: function"
+		 	// functions that return a customized htmlString to display a customized format, add as "<fieldname>: function(record, value)".  Cannot return a JQuery object.
 		 	customizers: {},
-		 	// array of functions that return html for buttons
+		 	// array of functions that return html for buttons, add as "<fieldname>: function(record, id)". Cannot return a JQuery object.
 		 	actions: [ ],
 			// list of functions that should be working with multiple items. fieldname will be used as the button label
 		 	bulkActions: null,

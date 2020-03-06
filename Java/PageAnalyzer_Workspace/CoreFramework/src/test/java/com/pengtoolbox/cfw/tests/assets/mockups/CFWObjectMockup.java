@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWAutocompleteHandler;
 import com.pengtoolbox.cfw.datahandling.CFWField;
@@ -42,7 +44,7 @@ public class CFWObjectMockup extends CFWObject{
 			.setValue("foo,test,bar,bla")
 			.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
 				
-				public LinkedHashMap<Object, Object> getAutocompleteData(String inputValue) {
+				public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String inputValue) {
 					LinkedHashMap<Object, Object>  array = new LinkedHashMap<Object, Object>() ;
 					for(int i = 0; i < 25; i++ ) {
 						String tag = "Tag_"+inputValue+"_"+i;
@@ -55,7 +57,7 @@ public class CFWObjectMockup extends CFWObject{
 	private CFWField<LinkedHashMap> tagsselector = CFWField.newTagsSelector("JSON_TAGS_SELECTOR")
 			.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
 				
-				public LinkedHashMap<Object, Object> getAutocompleteData(String inputValue) {
+				public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String inputValue) {
 					LinkedHashMap<Object, Object>  array = new LinkedHashMap<Object, Object>() ;
 					for(int i = 0; i < 25; i++ ) {
 						String tag = inputValue+"_"+i;
@@ -68,7 +70,7 @@ public class CFWObjectMockup extends CFWObject{
 	private CFWField<String> autocomplete = CFWField.newString(FormFieldType.TEXT, "AUTOCOMPLETE")
 			.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
 				
-				public LinkedHashMap<Object, Object> getAutocompleteData(String inputValue) {
+				public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String inputValue) {
 					LinkedHashMap<Object, Object>  array = new LinkedHashMap<Object, Object>() ;
 					for(int i = 0; i < 25; i++ ) {
 						String tag = "Test_"+inputValue+"_"+i;

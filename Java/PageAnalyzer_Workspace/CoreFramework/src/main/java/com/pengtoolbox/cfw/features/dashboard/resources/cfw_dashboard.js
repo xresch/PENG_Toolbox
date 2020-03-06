@@ -25,7 +25,6 @@ function cfw_dashboard_registerWidget(widgetUniqueType, widgetObject){
 	var menuicon = widgetObject.menuicon;
 	
 	var categorySubmenu = $('ul[data-submenuof="'+category+'"]');
-	console.log(categorySubmenu);
 	
 	var menuitemHTML = 
 		'<li><a class="dropdown-item" onclick="cfw_dashboard_addWidget(\''+widgetUniqueType+'\')" >'
@@ -98,8 +97,6 @@ function cfw_dashboard_editWidget(widgetGUID){
 	var widgetInstance = $('#'+widgetGUID);
 	var widgetObject = widgetInstance.data("widgetObject");
 	var widgetDef = CFW.dashboard.getWidgetDefinition(widgetObject.TYPE);
-	console.log(widgetInstance);
-	console.log(widgetObject);
 	
 	//##################################################
 	// Create Widget Specific Form
@@ -334,7 +331,7 @@ function cfw_dashboard_createWidgetElement(widgetObject){
 	
 	var htmlString =
 		'    <div class="grid-stack-item-content card d-flex '+BGCOLORClass+' '+FGCOLORClass+'">'
-		+'		<a type="button" role ="button" class="cfw-dashboard-widget-settings '+settingsDisplayClass+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+		+'		<a role="button" class="cfw-dashboard-widget-settings '+settingsDisplayClass+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
 		+'			<i class="fas fa-cog"></i>'
 		+'		</a>'
 		+'		<div class="dropdown-menu">'
@@ -368,7 +365,7 @@ function cfw_dashboard_createWidgetElement(widgetObject){
 	if(merged.content != null && merged.content != ''){
 		widgetItem.find('.cfw-dashboard-widget-body').append(merged.content);
 	}
-	console.log(merged);
+
 	return widgetItem;
 }
 
@@ -385,7 +382,6 @@ function cfw_dashboard_addWidget(type) {
 				widgetObject.TITLE = widgetDefinition.menulabel;
 				var merged = Object.assign({}, widgetDefinition.defaultValues, widgetObject);
 				
-				console.log(merged);
 				cfw_dashboard_createWidgetInstance(merged, true);
 			}
 		}
@@ -618,7 +614,6 @@ function setReloadInterval(selector) {
 	}
 	
 	CFW_DASHBOARD_REFRESH_INTERVAL_ID = setInterval(function(){
-    	console.log('auto refresh');
     	if(!CFW_DASHBOARD_EDIT_MODE){
     		$('.grid-stack').html('');
 	    	cfw_dashboard_draw();

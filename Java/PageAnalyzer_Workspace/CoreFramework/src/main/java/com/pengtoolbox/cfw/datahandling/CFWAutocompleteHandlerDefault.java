@@ -3,6 +3,8 @@ package com.pengtoolbox.cfw.datahandling;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 public class CFWAutocompleteHandlerDefault extends CFWAutocompleteHandler {
@@ -20,7 +22,7 @@ public class CFWAutocompleteHandlerDefault extends CFWAutocompleteHandler {
 		this.clazz = clazz;
 	}
 	@Override
-	public LinkedHashMap<Object, Object> getAutocompleteData(String inputValue)  {
+	public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String inputValue)  {
 		
 		CFWField parent = this.getParent();
 		String fieldname = parent.getName();

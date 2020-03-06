@@ -31,9 +31,9 @@ public class AutocompleteServlet extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-		String formid = request.getParameter("formid");
-		String fieldname = request.getParameter("fieldname");
-		String searchstring = request.getParameter("searchstring");
+		String formid = request.getParameter("cfw-formID");
+		String fieldname = request.getParameter("cfwAutocompleteFieldname");
+		String searchstring = request.getParameter("cfwAutocompleteSearchstring");
 		JSONResponse json = new JSONResponse();
 		
 		//--------------------------------------------
@@ -66,7 +66,7 @@ public class AutocompleteServlet extends HttpServlet
 		// Execute Autocomplete Handler
 		//--------------------------------------------
     	if(field.getAutocompleteHandler() != null) {
-    		LinkedHashMap<Object, Object> suggestions = field.getAutocompleteHandler().getAutocompleteData(searchstring);
+    		LinkedHashMap<Object, Object> suggestions = field.getAutocompleteHandler().getAutocompleteData(request, searchstring);
     		json.getContent().append(CFW.JSON.toJSON(suggestions));
     	}else {
     		json.setSuccess(false);
