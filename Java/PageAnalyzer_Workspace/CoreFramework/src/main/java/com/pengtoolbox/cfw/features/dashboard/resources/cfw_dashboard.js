@@ -106,7 +106,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 	if(buttons.length > 0){
 		buttons.remove();
 	}
-	var customFormButton = '<input type="button" onclick="cfw_dashboard_saveCustomSettings(this, \''+widgetGUID+'\')" class="form-control btn-primary" value="Save">';
+	var customFormButton = '<input type="button" onclick="cfw_dashboard_saveCustomSettings(this, \''+widgetGUID+'\')" class="form-control btn-primary" value="'+CFWL('cfw_core_save', 'Save')+'">';
 	
 	customForm.append(customFormButton);
 		

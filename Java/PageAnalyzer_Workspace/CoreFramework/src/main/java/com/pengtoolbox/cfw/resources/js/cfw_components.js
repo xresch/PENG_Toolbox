@@ -19,15 +19,15 @@ class CFWRenderer{
 		 this.renderFunction = renderFunction;
 		 
 		 this.defaultRenderDefinition = {
-			// name of the field that is used as the identifier of the data (optional)
+			// (Optional) name of the field that is used as the identifier of the data
 		 	idfield: null,
-		 	// names of the fields that are used for a titles. Takes the first field if null
+		 	// (Optional) names of the fields that are used for a titles. Takes the first field from the first object if null
 		 	titlefields: null,
-		 	// the delimiter used for multiple titles
+		 	// (Optional) the delimiter used for multiple titles
 		 	titledelimiter: ' ',
-		 	// Names of the fields that should be rendered and in the currect order. Uses all fields if null or undefined
+		 	// (Optional) Names of the fields that should be rendered and in the current order. If null or undefined, will display all fields
 		 	visiblefields: null,
-		 	// custom labels for fields, add them as "{fieldname}: {label}"
+		 	// (Optional) Custom labels for fields, add them as "{fieldname}: {label}". If a label is not defined for a field, uses the capitalized field name
 		 	labels: {},
 		 	// field containing the bootstrap style (primary, info, danger ...) that should be used as the background
 		 	bgstylefield: null,
@@ -43,7 +43,7 @@ class CFWRenderer{
 		 	bulkActionsPos: "top",
 			// the data that should be rendered as an array
 		 	data: null,
-		 	// settings specific for the renderer, add as "rendererSettings.{rendererName}.{render setting}"
+		 	// settings specific for the renderer, add as "rendererSettings.{rendererName}.{setting}"
 		 	rendererSettings: {}
 		 };
 		  
