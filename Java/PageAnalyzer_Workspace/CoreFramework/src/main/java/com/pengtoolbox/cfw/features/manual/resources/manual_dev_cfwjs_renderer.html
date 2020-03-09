@@ -81,22 +81,22 @@ The following are the settings and their defaults, see comments for details:
 The minimal data you have to provide to a renderer is the data attribute, all other values have defaults, or the renderer have to handle null values.
 </p>
 <pre>
-<code>var rendererDataMinimal = {
+<code>var rendererParamsMinimal = {
 	data: [
 		{id: 0, firstname: "Rick", lastname: "Astley", city: "Nirwana", postal_code: 8008, status: 'active'},
 		{id: 1, firstname: "Testika", lastname: "Testonia", city: "Manhattan", postal_code: 9000, status: 'active', bgstyle: 'success', textstyle: 'dark'},
 		{id: 2, firstname: "Theus", lastname: "De Nator", city: "Termi-Nation", postal_code: 666, status: 'blocked', bgstyle: 'danger', textstyle: 'dark'},
 	],
 };
-	CFW.render.getRenderer('table').render(rendererDataMinimal);</code>
+	var result = CFW.render.getRenderer('table').render(rendererParamsMinimal);</code>
 </pre>
 
 
 <p>
-
+Here is an example of settings that provide all the available settings:
 </p>
 <pre>
-<code>var rendererDataFull = {
+<code>var rendererParamsFull = {
 	idfield: 'id',
 	bgstylefield: 'bgstyle',
 	textstylefield: 'textstyle',
@@ -125,17 +125,63 @@ The minimal data you have to provide to a renderer is the data attribute, all ot
 		{id: 3, firstname: "Jane", lastname: "De Natore", city: "Termi-Nation", postal_code: 666, status: 'blocked', bgstyle: 'info', textstyle: 'white'},
 	],
 	rendererSettings: {
-		table: {narrow: true, filterable: true}
-		alerttiles: {sizefactor: 2, showlabels: true, }
+		table: {narrow: true, filterable: true},
+		tiles: {sizefactor: 2, showlabels: true }
 	},
 };
-CFW.render.getRenderer('table').render(rendererDataFull);</code>
+
+var table = CFW.render.getRenderer('table').render(rendererParamsFull);
+var tiles = CFW.render.getRenderer('tiles').render(rendererParamsFull);</code>
 </pre>
 
-<p>
 
+<h2>Default Renderer</h2>
+
+<h3>Table</h3>
+<p>
+Table renderer will return a JQuery div-Element wrapping the table.<br />
+The following are the available settings with defaults.
 </p>
 <pre>
-<code></code>
+<code>rendererParams.rendererSettings.table = {
+	// add a filter field above the table
+	filterable: true,
+	// make the table responsive
+	responsive: true,
+	// highlight hovered rows
+	hover: true,
+	//make the table striped
+	striped: true,
+	// narrow down the row high
+	narrow: false,
+	// stick the header on top when scrolling. Doesn't work when responsive is true
+	stickyheader: false, 
+	// if only a single object is in the data array, make a name/value table instead of creating a column for each 
+	verticalize: false
+}
+var tableDiv = CFW.render.getRenderer('table').render(rendererParams);</code>
 </pre>
 
+<h3>Tiles</h3>
+<p>
+The tiles renderer will return a JQuery div-Element containing all the tiles. It's main purpose is to display data as colored tiles. <br />
+The following are the available settings with defaults.
+</p>
+<pre>
+<code>rendererParams.rendererSettings.tiles = {
+	// size factor for the text in the tile, or tile size of labels are not shown
+	sizefactor: 1,
+	// show or hide labels
+	showlabels: false, 
+};
+var tilesDiv = CFW.render.getRenderer('tiles').render(rendererParams);</code>
+</pre>
+
+<h3>JSON</h3>
+<p>
+JSON Renderer will return a JQuery div-Element wrapping a code block with the json representation of the data.<br />
+The renderer doesn't have any specific settings, also it will ignore all the renderer parameters except for the data field.
+</p>
+<pre>
+<code>var jsonDiv = CFW.render.getRenderer('json').render(rendererParams);</code>
+</pre>

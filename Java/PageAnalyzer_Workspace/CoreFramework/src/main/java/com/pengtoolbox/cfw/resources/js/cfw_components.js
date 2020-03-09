@@ -383,11 +383,17 @@ class CFWDate{
 	 constructor(customSettings){
 		 
 		 this.settings = {
+			// add a filter field above the table
 			filterable: true,
+			// make the table responsive
 			responsive: true,
+			// highlight hovered rows
 			hover: true,
+			//make the table striped
 			striped: true,
+			// narrow down the row high
 			narrow: false,
+			// stick the header on top when scrolling. Doesn't work when responsive is true
 			stickyheader: false, 
 		 }
 		 

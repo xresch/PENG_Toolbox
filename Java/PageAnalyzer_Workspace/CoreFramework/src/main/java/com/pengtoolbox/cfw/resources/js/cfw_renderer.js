@@ -43,7 +43,7 @@ CFW.render.registerRenderer("csv",
 /******************************************************************
  * 
  ******************************************************************/
-CFW.render.registerRenderer("alerttiles",
+CFW.render.registerRenderer("tiles",
 	new CFWRenderer(
 		function (renderDef) {
 					
@@ -56,11 +56,13 @@ CFW.render.registerRenderer("alerttiles",
 			//-----------------------------------
 			// Render Specific settings
 			var defaultSettings = {
+				// size factor for the text in the tile, or tile size of labels are not shown
 				sizefactor: 1,
+				// show or hide labels
 				showlabels: false, 
 			};
 			
-			var settings = Object.assign({}, defaultSettings, renderDef.rendererSettings.alerttiles);
+			var settings = Object.assign({}, defaultSettings, renderDef.rendererSettings.tiles);
 
 			//===================================================
 			// Create Alert Tiles
