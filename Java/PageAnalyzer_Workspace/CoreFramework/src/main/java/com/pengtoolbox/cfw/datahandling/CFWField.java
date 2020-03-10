@@ -837,7 +837,6 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return this;
 	}
 	
-	
 	/******************************************************************************************************
 	 * Check if this field prevents submit on enter.
 	 * 
@@ -852,7 +851,6 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		this.preventFormSubmitOnEnter = preventFormSubmitOnEnter;
 		return this;
 	}
-	
 	
 
 	/******************************************************************************************************

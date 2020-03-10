@@ -32,7 +32,7 @@
 				}
 					
 				
-				callback(widgetObject, '<iframe class="w-100 flex-grow-1" src="'+finalURL
+				callback(widgetObject, '<iframe class="w-100 h-100" src="'+finalURL
 						+'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
 			},
 			
@@ -41,8 +41,7 @@
 			},
 			
 			onSave: function (form, widgetObject) {
-				var settingsForm = $(form);
-				widgetObject.JSON_SETTINGS.url = settingsForm.find('input[name="url"]').val();
+				widgetObject.JSON_SETTINGS = CFW.format.formToObject(form);
 				return true;
 			}
 		}

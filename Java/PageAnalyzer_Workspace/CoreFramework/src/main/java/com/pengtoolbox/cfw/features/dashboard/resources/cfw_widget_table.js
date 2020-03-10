@@ -40,12 +40,7 @@
 			
 			onSave: function (form, widgetObject) {
 				var settingsForm = $(form);
-				widgetObject.JSON_SETTINGS.delimiter 	= settingsForm.find('input[name="delimiter"]').val();
-				widgetObject.JSON_SETTINGS.tableData 	= settingsForm.find('textarea[name="tableData"]').val();
-				widgetObject.JSON_SETTINGS.narrow 		= ( settingsForm.find('input[name="narrow"]:checked').val() == "true" );
-				widgetObject.JSON_SETTINGS.filterable 	= ( settingsForm.find('input[name="filterable"]:checked').val() == "true" );
-				widgetObject.JSON_SETTINGS.striped 	= ( settingsForm.find('input[name="striped"]:checked').val() == "true" );
-				
+				widgetObject.JSON_SETTINGS = CFW.format.formToObject(form);
 				return true;
 			}
 		}

@@ -36,9 +36,7 @@
 			},
 			
 			onSave: function (form, widgetObject) {
-				var settingsForm = $(form);
-				widgetObject.JSON_SETTINGS.content = settingsForm.find('textarea[name="content"]').val();
-				widgetObject.JSON_SETTINGS.isordered = ( settingsForm.find('input[name="isordered"]:checked').val() == "true" );
+				widgetObject.JSON_SETTINGS = CFW.format.formToObject(form);
 				return true;
 			}
 			

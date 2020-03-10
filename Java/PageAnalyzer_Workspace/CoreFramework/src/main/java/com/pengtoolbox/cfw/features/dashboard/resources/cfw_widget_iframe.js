@@ -18,8 +18,7 @@
 			},
 			
 			onSave: function (form, widgetObject) {
-				var settingsForm = $(form);
-				widgetObject.JSON_SETTINGS.url = settingsForm.find('input[name="url"]').val();
+				widgetObject.JSON_SETTINGS = CFW.format.formToObject(form);
 				return true;
 			}
 		}
