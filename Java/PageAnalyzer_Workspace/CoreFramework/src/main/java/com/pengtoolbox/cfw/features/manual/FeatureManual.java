@@ -147,6 +147,14 @@ public class FeatureManual extends CFWAppFeature {
 					.addPermission(PERMISSION_ADMIN_MANUAL)
 					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_cfwobject.html")
 				);
+		
+		quickstart.addChild(
+				new ManualPage("Localization")
+					.faicon("fas fa-globe-americas")
+					.addPermission(PERMISSION_ADMIN_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_localization.html")
+				);
+		
 	}
 	
 	private void registerDeveloperCFWJS(ManualPage parent) {
