@@ -83,6 +83,7 @@ public class FeatureManual extends CFWAppFeature {
 		
 		registerDeveloperQuickstart(dev);
 		registerDeveloperCFWJS(dev);
+		registerDeveloperDashboard(dev);
 	}
 	
 	private void registerDeveloperQuickstart(ManualPage parent) {
@@ -93,58 +94,58 @@ public class FeatureManual extends CFWAppFeature {
 		quickstart.addChild(new ManualPage("Setup, Run and Export")
 				.faicon("fas fa-star")
 				.addPermission(PERMISSION_ADMIN_MANUAL)
-				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_setup_run_export.html")
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_setup_run_export.html")
 			);
 		
 		quickstart.addChild(new ManualPage("Overview")
 				.faicon("fas fa-eye")
 				.addPermission(PERMISSION_ADMIN_MANUAL)
-				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_overview.html")
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_overview.html")
 			);
 		
 		quickstart.addChild(new ManualPage("Create an Application")
 				.faicon("fas fa-server")
 				.addPermission(PERMISSION_ADMIN_MANUAL)
-				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_create_application.html")
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_create_application.html")
 			);
 		
 		quickstart.addChild(new ManualPage("Create a Feature")
 				.faicon("fas fa-plug")
 				.addPermission(PERMISSION_ADMIN_MANUAL)
-				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_create_feature.html")
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_create_feature.html")
 			);
 		
 		quickstart.addChild(new ManualPage("Create a Servlet")
 				.faicon("fas fa-server")
 				.addPermission(PERMISSION_ADMIN_MANUAL)
-				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_create_servlet.html")
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_create_servlet.html")
 			);
 		
 		quickstart.addChild(new ManualPage("Add Configuration Items")
 					.faicon("fa fa-cog")
 					.addPermission(PERMISSION_ADMIN_MANUAL)
-					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_configuration.html")
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_configuration.html")
 				);
 		
 		quickstart.addChild(
 				new ManualPage("Create Permissions")
 					.faicon("fa fa-lock")
 					.addPermission(PERMISSION_ADMIN_MANUAL)
-					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_permissions.html")
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_permissions.html")
 				);
 		
 		quickstart.addChild(
 				new ManualPage("Create Manual Pages")
 					.faicon("fa fa-book")
 					.addPermission(PERMISSION_ADMIN_MANUAL)
-					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_registry_manualpages.html")
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_manualpages.html")
 				);
 		
 		quickstart.addChild(
 				new ManualPage("Working with CFWObjects")
 					.faicon("fas fa-th-large")
 					.addPermission(PERMISSION_ADMIN_MANUAL)
-					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_cfwobject.html")
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_cfwobject.html")
 				);
 	}
 	
@@ -163,6 +164,19 @@ public class FeatureManual extends CFWAppFeature {
 				.faicon("fas fa-vector-square")
 				.addPermission(PERMISSION_ADMIN_MANUAL)
 				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_cfwjs_renderer.html")
+			);
+		
+	}
+	
+	private void registerDeveloperDashboard(ManualPage parent) {
+		
+		ManualPage dashboard = new ManualPage("Dashboard").faicon("fas fa-tachometer-alt").addPermission(PERMISSION_ADMIN_MANUAL);
+		parent.addChild(dashboard);
+		
+		dashboard.addChild(new ManualPage("Creating Dashboard Widgets")
+				.faicon("fas fa-th")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_dashboard_wigdets.html")
 			);
 		
 	}

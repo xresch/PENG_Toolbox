@@ -58,6 +58,4 @@ public abstract class WidgetDefinition {
 	 ************************************************************/
 	public abstract boolean hasPermission();
 	
-	
-	
 }
