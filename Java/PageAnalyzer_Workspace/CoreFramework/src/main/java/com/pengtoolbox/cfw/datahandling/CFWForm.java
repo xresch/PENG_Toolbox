@@ -15,7 +15,7 @@ import com.pengtoolbox.cfw.response.bootstrap.HierarchicalHTMLItem;
 
 /**************************************************************************************************************
  * Class for creating a form using CFWFields or a CFWObject as a template.
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWForm extends HierarchicalHTMLItem {

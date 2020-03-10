@@ -48,6 +48,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private ArrayList<String> invalidMessages;
 	private boolean allowHTML = false;
 	private boolean sanitizeStrings = true;
+	private boolean preventFormSubmitOnEnter = true;
 	
 	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
 
@@ -248,6 +249,14 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		this.addAttribute("name", name);
 		
 		if(isDisabled) {	this.addAttribute("disabled", "disabled");};
+		
+		if(preventFormSubmitOnEnter 
+		&& this.type != FormFieldType.TEXTAREA
+		&& this.type != FormFieldType.TAGS
+		&& this.type != FormFieldType.TAGS_SELECTOR) {	
+			this.addAttribute("onkeydown", "return event.key != 'Enter';");
+		};
+		
 		if(value != null) {	
 			
 			if( !(value instanceof Object[]) ) {
@@ -264,8 +273,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				this.addAttribute("value", builder.toString().replace("\"", "&quot;")); 
 			}
 			
-			
 		};
+		
 		
 		//---------------------------------------------
 		// Create Field
@@ -817,9 +826,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * Check if this field is disabled.
 	 * 
 	 ******************************************************************************************************/
-	public boolean isDisabled() {
-		return isDisabled;
-	}
+	public boolean isDisabled() {return isDisabled;}
 
 	/******************************************************************************************************
 	 * Change if this field should be enabled or disabled when represented as a form field.
@@ -827,6 +834,22 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 ******************************************************************************************************/
 	public CFWField<T> isDisabled(boolean isDisabled) {
 		this.isDisabled = isDisabled;
+		return this;
+	}
+	
+	
+	/******************************************************************************************************
+	 * Check if this field prevents submit on enter.
+	 * 
+	 ******************************************************************************************************/
+	public boolean preventFormSubmitOnEnter() {return preventFormSubmitOnEnter;}
+
+	/******************************************************************************************************
+	 * Change if this field should prevent submit on enter.
+	 * 
+	 ******************************************************************************************************/
+	public CFWField<T> preventFormSubmitOnEnter(boolean preventFormSubmitOnEnter) {
+		this.preventFormSubmitOnEnter = preventFormSubmitOnEnter;
 		return this;
 	}
 	
