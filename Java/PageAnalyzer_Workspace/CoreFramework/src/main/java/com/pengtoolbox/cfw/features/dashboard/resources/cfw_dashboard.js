@@ -225,6 +225,26 @@ function cfw_dashboard_editWidget(widgetGUID){
 /************************************************************************************************
  * 
  ************************************************************************************************/
+function cfw_dashboard_duplicateWidget(widgetGUID) {
+	var widgetInstance = $('#'+widgetGUID);
+	var widgetObject = widgetInstance.data("widgetObject");
+	var widgetDef = CFW.dashboard.getWidgetDefinition(widgetObject.TYPE);
+	
+	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, {action: 'create', item: 'widget', type: widgetObject.TYPE, dashboardid: CFW_DASHBOARDVIEW_PARAMS.id }, function(data){
+			var newWidgetObject = data.payload;
+			if(newWidgetObject != null){
+				var deepCopyWidgetObject = JSON.parse(JSON.stringify(widgetObject));
+				deepCopyWidgetObject.PK_ID = newWidgetObject.PK_ID;
+				delete deepCopyWidgetObject.guid;
+				cfw_dashboard_createWidgetInstance(deepCopyWidgetObject, true);
+			}
+		}
+	);
+}
+
+/************************************************************************************************
+ * 
+ ************************************************************************************************/
 function cfw_dashboard_saveDefaultSettings(widgetGUID){
 	var widget = $('#'+widgetGUID);
 	var widgetObject = widget.data("widgetObject");
@@ -336,6 +356,7 @@ function cfw_dashboard_createWidgetElement(widgetObject){
 		+'		</a>'
 		+'		<div class="dropdown-menu">'
 		+'			<a class="dropdown-item" onclick="cfw_dashboard_editWidget(\''+merged.guid+'\')"><i class="fas fa-pen"></i>&nbsp;'+CFWL('cfw_core_edit', 'Edit')+'</a>'
+		+'			<a class="dropdown-item" onclick="cfw_dashboard_duplicateWidget(\''+merged.guid+'\')"><i class="fas fa-clone"></i>&nbsp;'+CFWL('cfw_core_duplicate', 'Duplicate')+'</a>'
 		+'			<div class="dropdown-divider"></div>'
 		+'				<a class="dropdown-item" onclick="cfw_dashboard_removeWidgetConfirmed(\''+merged.guid+'\')"><i class="fas fa-trash"></i>&nbsp;'+CFWL('cfw_core_remove', 'Remove')+'</a>'
 		+'			</div>'
