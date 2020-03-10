@@ -269,7 +269,8 @@ function cfw_dashboard_saveCustomSettings(formButton, widgetGUID){
 	var widgetObject = widget.data("widgetObject");
 
 	var widgetDef = CFW.dashboard.getWidgetDefinition(widgetObject.TYPE);
-	
+	// switch summernote to wysiwyg view
+	$('.btn-codeview.active').click();
 	var success = widgetDef.onSave($(formButton).closest('form'), widgetObject);
 
 	if(success){
@@ -357,9 +358,9 @@ function cfw_dashboard_createWidgetElement(widgetObject){
 		+'		<div class="dropdown-menu">'
 		+'			<a class="dropdown-item" onclick="cfw_dashboard_editWidget(\''+merged.guid+'\')"><i class="fas fa-pen"></i>&nbsp;'+CFWL('cfw_core_edit', 'Edit')+'</a>'
 		+'			<a class="dropdown-item" onclick="cfw_dashboard_duplicateWidget(\''+merged.guid+'\')"><i class="fas fa-clone"></i>&nbsp;'+CFWL('cfw_core_duplicate', 'Duplicate')+'</a>'
-		+'			<div class="dropdown-divider"></div>'
-		+'				<a class="dropdown-item" onclick="cfw_dashboard_removeWidgetConfirmed(\''+merged.guid+'\')"><i class="fas fa-trash"></i>&nbsp;'+CFWL('cfw_core_remove', 'Remove')+'</a>'
-		+'			</div>'
+		//+'		<div class="dropdown-divider"></div>'
+		+'			<a class="dropdown-item" onclick="cfw_dashboard_removeWidgetConfirmed(\''+merged.guid+'\')"><i class="fas fa-trash"></i>&nbsp;'+CFWL('cfw_core_remove', 'Remove')+'</a>'
+		+'		</div>'
 
 	if(merged.TITLE != null && merged.TITLE != ''){
 		htmlString += 

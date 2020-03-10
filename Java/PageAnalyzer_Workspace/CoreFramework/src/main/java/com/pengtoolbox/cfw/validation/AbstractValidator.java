@@ -8,7 +8,7 @@ import com.pengtoolbox.cfw.utils.Ternary;
  * The AbstractArgumentValidator provides some default implementation of the 
  * methods defined by the IArgumentValidator interface.
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public abstract class AbstractValidator implements IValidator {
@@ -79,9 +79,9 @@ public abstract class AbstractValidator implements IValidator {
 
 	public Ternary validateNullEmptyAllowed(Object value) {
 		
-		if(this.isNullAllowed() && !CFW.Validation.isNotNullNotEmptyString(value)) {
+		if(this.isNullAllowed() && CFW.Validation.isNullOrEmptyString(value)) {
 			return Ternary.TRUE;
-		}else if(!CFW.Validation.isNotNullNotEmptyString(value)) {
+		}else if(CFW.Validation.isNullOrEmptyString(value)) {
 			this.setInvalidMessage("The value of "+validateable.getName()+" should not be null or empty string.");
 			return Ternary.FALSE;
 		}

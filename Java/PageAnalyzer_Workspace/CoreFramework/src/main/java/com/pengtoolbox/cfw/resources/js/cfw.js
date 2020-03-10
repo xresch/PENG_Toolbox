@@ -112,6 +112,15 @@ function cfw_initializeSummernote(formID, editorID){
       });
 	
 	//--------------------------------------
+	// Blur for saving
+	//--------------------------------------
+	$('.note-editing-area').on('blur', function() {
+		if ($('#summernote').summernote('codeview.isActivated')) {
+			$('#summernote').summernote('codeview.deactivate');
+		}
+	});
+	
+	//--------------------------------------
 	// Get Editor Contents
 	//--------------------------------------
 	$.get('/cfw/formhandler', {id: formID, summernoteid: editorID})
@@ -703,7 +712,7 @@ function cfw_format_formToArray(formOrID){
 	for(var i in paramsArray){
 		var current = paramsArray[i].value;
 		if(typeof current == 'string'){
-			if(!isNaN(current)){
+			if(!(current === '') && !isNaN(current)){
 				paramsArray[i].value = Number(current);
 			}else if(current.toLowerCase() === 'true'){
 				paramsArray[i].value = true;
@@ -1518,6 +1527,9 @@ function cfw_createForm(url, params, targetElement, callback){
  * @param targetElement the element in which the form should be placed
  *************************************************************************************/
 function cfw_postForm(url, formID, callback){
+	// switch summernote to wysiwyg view, will not save in code view
+	$('.btn-codeview.active').click();
+	
 	cfw_postJSON(url, CFW.format.formToParams(formID), callback);
 }
 
