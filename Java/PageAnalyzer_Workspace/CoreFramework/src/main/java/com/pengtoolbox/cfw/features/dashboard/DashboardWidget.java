@@ -69,11 +69,11 @@ public class DashboardWidget extends CFWObject {
 	
 	private CFWField<Integer> width = CFWField.newInteger(FormFieldType.NUMBER, DashboardWidgetFields.WIDTH.toString())
 			.setDescription("The width of the widget.")
-			.setValue(3);
+			.setValue(5);
 	
 	private CFWField<Integer> height = CFWField.newInteger(FormFieldType.NUMBER, DashboardWidgetFields.HEIGHT.toString())
 			.setDescription("The height of the widget.")
-			.setValue(3);
+			.setValue(4);
 	
 	private CFWField<String> title = CFWField.newString(FormFieldType.TEXT, DashboardWidgetFields.TITLE.toString())
 			.setColumnDefinition("VARCHAR(32767)")

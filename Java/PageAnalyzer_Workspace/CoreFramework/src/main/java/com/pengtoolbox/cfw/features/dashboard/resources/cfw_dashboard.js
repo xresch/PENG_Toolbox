@@ -347,15 +347,18 @@ function cfw_dashboard_createWidgetElement(widgetObject){
 		+'		  </div>'
 	}
 	
-	htmlString += 
-		'<div class="cfw-dashboard-widget-body d-flex flex-grow-1 align-items-start" style="font-size: '+merged.CONTENT_FONTSIZE+'px;">';
-			if(merged.FOOTER != null && merged.FOOTER != ''){
-				htmlString +=
-				'		 <div class="cfw-dashboard-widget-footer border-top '+borderClass+'">'
-				+			merged.FOOTER
-				+'		  </div>'
-			}
-	htmlString += '</div>';
+	if(merged.content != null && merged.content != ''
+	|| merged.FOOTER != null && merged.FOOTER != ''){
+		htmlString += 
+			'<div class="cfw-dashboard-widget-body d-flex flex-grow-1 align-items-start" style="font-size: '+merged.CONTENT_FONTSIZE+'px;">';
+				if(merged.FOOTER != null && merged.FOOTER != ''){
+					htmlString +=
+					'		 <div class="cfw-dashboard-widget-footer border-top '+borderClass+'">'
+					+			merged.FOOTER
+					+'		  </div>'
+				}
+		htmlString += '</div>';
+	}
 	htmlString += '</div>';
 	
 	var widgetItem = $('<div id="'+merged.guid+'" data-id="'+merged.widgetID+'"  class="grid-stack-item">');
@@ -645,7 +648,8 @@ function cfw_dashboard_initialize(gridStackElementSelector){
 		resizable: {
 		    handles: 'e, se, s, sw, w'
 		  },
-		cellHeight: 60,
+		column: 24, 
+		cellHeight: 40,
 		animate: true,
 		float: true,
 		verticalMargin: 10
