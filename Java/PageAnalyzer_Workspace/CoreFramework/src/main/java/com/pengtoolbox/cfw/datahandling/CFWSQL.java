@@ -564,7 +564,7 @@ public class CFWSQL {
 	 * Adds a WHERE clause to the query.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL like(String fieldname, Object value) {
+	public CFWSQL whereLike(String fieldname, Object value) {
 		if(!isQueryCached()) {
 			if(value == null) {
 				return whereIsNull(fieldname);
@@ -574,6 +574,30 @@ public class CFWSQL {
 		values.add(value);
 		return this;
 	}
+	
+	/****************************************************************
+	 * Adds a ARRAY_LENGTH and checks if it the array is null.
+	 * @return CFWSQL for method chaining
+	 ****************************************************************/
+	public CFWSQL arrayIsNull(String fieldname) {
+		if(!isQueryCached()) {
+			query.append(" ARRAY_LENGTH(").append(fieldname).append(") IS NULL");	
+		}
+		return this;
+	}
+	
+	/****************************************************************
+	 * Adds a ARRAY_CONTAINS check.
+	 * @return CFWSQL for method chaining
+	 ****************************************************************/
+	public CFWSQL arrayContains(String fieldname, Object value) {
+		if(!isQueryCached()) {
+			query.append(" ARRAY_CONTAINS(").append(fieldname).append(", ?)");	
+		}
+		values.add(value);
+		return this;
+	}
+	
 	
 	/****************************************************************
 	 * Adds a WHERE <fieldname> IN(?) clause to the query.
@@ -642,6 +666,16 @@ public class CFWSQL {
 	}
 		
 	/****************************************************************
+	 * Adds an AND to the query.
+	 * @return CFWSQL for method chaining
+	 ****************************************************************/
+	public CFWSQL and() {
+		if(!isQueryCached()) {
+			query.append(" AND ");
+		}
+		return this;
+	}
+	/****************************************************************
 	 * Adds a AND clause to the query.
 	 * This method is case sensitive.
 	 * @return CFWSQL for method chaining
@@ -666,6 +700,16 @@ public class CFWSQL {
 		return this;
 	}
 	
+	/****************************************************************
+	 * Adds an OR to the query.
+	 * @return CFWSQL for method chaining
+	 ****************************************************************/
+	public CFWSQL or() {
+		if(!isQueryCached()) {
+			query.append(" OR ");
+		}
+		return this;
+	}
 	/****************************************************************
 	 * Adds a OR clause to the query.
 	 * This method is case sensitive.

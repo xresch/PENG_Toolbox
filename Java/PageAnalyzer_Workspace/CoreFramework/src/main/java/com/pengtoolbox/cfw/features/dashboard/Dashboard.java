@@ -3,13 +3,16 @@ package com.pengtoolbox.cfw.features.dashboard;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.pengtoolbox.cfw.datahandling.CFWAutocompleteHandler;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWFieldChangeHandler;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.features.api.APIDefinition;
 import com.pengtoolbox.cfw.features.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.features.usermgmt.User;
@@ -29,10 +32,10 @@ public class Dashboard extends CFWObject {
 	public enum DashboardFields{
 		PK_ID,
 		FK_ID_USER,
-		//CATEGORY,
 		NAME,
 		DESCRIPTION,
 		IS_SHARED,
+		SHARED_WITH_USERS,
 		IS_DELETABLE,
 		IS_RENAMABLE,
 	}
@@ -51,13 +54,6 @@ public class Dashboard extends CFWObject {
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(null);
 	
-//	private CFWField<String> category = CFWField.newString(FormFieldType.NONE, DashboardFields.CATEGORY.toString())
-//			.setColumnDefinition("VARCHAR(32)")
-//			.setDescription("The catogery of the dashboard, either 'user' or 'space'.")
-//			.apiFieldType(FormFieldType.SELECT)
-//			.setOptions(new String[] {"user", "space"})
-//			.addValidator(new LengthValidator(-1, 32));
-	
 	private CFWField<String> name = CFWField.newString(FormFieldType.TEXT, DashboardFields.NAME.toString())
 			.setColumnDefinition("VARCHAR(255)")
 			.setDescription("The name of the dashboard.")
@@ -74,15 +70,30 @@ public class Dashboard extends CFWObject {
 				}
 			});
 	
-	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, DashboardFields.DESCRIPTION.toString())
+	private CFWField<String> description = CFWField.newString(FormFieldType.TEXTAREA, DashboardFields.DESCRIPTION)
 			.setColumnDefinition("CLOB")
 			.setDescription("The description of the dashboard.")
 			.addValidator(new LengthValidator(-1, 2000000));
 	
-	private CFWField<Boolean> isShared = CFWField.newBoolean(FormFieldType.BOOLEAN, DashboardFields.IS_SHARED.toString())
+	private CFWField<Boolean> isShared = CFWField.newBoolean(FormFieldType.BOOLEAN, DashboardFields.IS_SHARED)
 			.apiFieldType(FormFieldType.TEXT)
 			.setDescription("Make the dashboard shared with other people or keep it private.")
 			.setValue(false);
+	
+	private CFWField<Object[]> sharedWithUsers = CFWField.newArray(FormFieldType.TAGS, DashboardFields.SHARED_WITH_USERS)
+			.setDescription("Share this dashboard only with specific users. If none is specified, all users will see the dashboard.")
+			.setValue(null)
+			.setAutocompleteHandler(new CFWAutocompleteHandler(10) {
+				
+				public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String inputValue) {
+					
+					return new User().select(UserFields.USERNAME.toString())
+					.whereLike(UserFields.USERNAME.toString(), "%"+inputValue+"%")
+					.getAsLinkedHashMap(UserFields.USERNAME.toString(), 
+							UserFields.USERNAME.toString());
+					
+				}
+			});
 	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, DashboardFields.IS_DELETABLE.toString())
 			.setDescription("Flag to define if the dashboard can be deleted or not.")
@@ -110,13 +121,7 @@ public class Dashboard extends CFWObject {
 	public Dashboard() {
 		initializeFields();
 	}
-	
-//	public Dashboard(String name, String category) {
-//		initializeFields();
-//		this.name.setValue(name);
-//		this.category.setValue(category);
-//	}
-	
+		
 	public Dashboard(ResultSet result) throws SQLException {
 		initializeFields();
 		this.mapResultSet(result);	
@@ -124,7 +129,7 @@ public class Dashboard extends CFWObject {
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.addFields(id, foreignKeyUser, /*category,*/ name, description, isShared, isDeletable, isRenamable);
+		this.addFields(id, foreignKeyUser, name, description, isShared, sharedWithUsers, isDeletable, isRenamable);
 	}
 	
 	/**************************************************************************************
@@ -162,6 +167,7 @@ public class Dashboard extends CFWObject {
 						DashboardFields.NAME.toString(),
 						DashboardFields.DESCRIPTION.toString(),
 						DashboardFields.IS_SHARED.toString(),
+						DashboardFields.SHARED_WITH_USERS.toString(),
 						DashboardFields.IS_DELETABLE.toString(),
 						DashboardFields.IS_RENAMABLE.toString(),		
 				};
@@ -199,16 +205,7 @@ public class Dashboard extends CFWObject {
 		this.foreignKeyUser.setValue(foreignKeyUser);
 		return this;
 	}
-	
-//	public String category() {
-//		return category.getValue();
-//	}
-//	
-//	public Dashboard category(String category) {
-//		this.category.setValue(category);
-//		return this;
-//	}
-	
+		
 	public String name() {
 		return name.getValue();
 	}
@@ -235,6 +232,16 @@ public class Dashboard extends CFWObject {
 		this.isShared.setValue(isShared);
 		return this;
 	}
+	
+	public String[] sharedWithUsers() {
+		return (String[])sharedWithUsers.getValue();
+	}
+	
+	public Dashboard sharedWithUsers(String[] sharedWithUsers) {
+		this.sharedWithUsers.setValue(sharedWithUsers);
+		return this;
+	}
+	
 	public boolean isDeletable() {
 		return isDeletable.getValue();
 	}

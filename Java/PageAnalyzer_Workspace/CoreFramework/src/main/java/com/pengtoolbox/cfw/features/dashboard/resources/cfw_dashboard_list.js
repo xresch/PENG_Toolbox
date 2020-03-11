@@ -42,7 +42,7 @@ function cfw_dashboardlist_createDashboard(){
 /******************************************************************
  * Edit Role
  ******************************************************************/
-function cfw_dashboardlist_editDashboard(roleID){
+function cfw_dashboardlist_editDashboard(id){
 	
 	var allDiv = $('<div id="cfw-usermgmt">');	
 
@@ -63,7 +63,7 @@ function cfw_dashboardlist_editDashboard(roleID){
 	//-----------------------------------
 	// Load Form
 	//-----------------------------------
-	CFW.http.createForm(CFW_DASHBOARDLIST_URL, {action: "getform", item: "editdashboard", id: roleID}, detailsDiv);
+	CFW.http.createForm(CFW_DASHBOARDLIST_URL, {action: "getform", item: "editdashboard", id: id}, detailsDiv);
 	
 }
 

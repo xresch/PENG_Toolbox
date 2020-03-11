@@ -31,7 +31,7 @@ public class CFWAutocompleteHandlerDefault extends CFWAutocompleteHandler {
 			try {
 				result = clazz.newInstance()
 					.select("DISTINCT "+fieldname)
-					.like(fieldname, "%"+inputValue+"%")
+					.whereLike(fieldname, "%"+inputValue+"%")
 					.orderby(fieldname)
 					.limit(this.getMaxResults())
 					.getAsLinkedHashMap(fieldname, fieldname);
