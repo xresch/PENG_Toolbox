@@ -164,23 +164,22 @@ function cfw_dashboard_editWidget(widgetGUID){
 	//------------------------------
 	// Color Selectors
 	var selectOptions = {
-			"Default": "", 
-			"cfw-blue": 	"Blue", 
-			"cfw-indigo": 	"Indigo",
-			"cfw-purple": 	"Purple", 
-			"cfw-pink": 	"Pink", 
-			"cfw-red": 		"Red", 
-			"cfw-orange": 	"Orange", 
-			"cfw-yellow": 	"Yellow", 
-			"cfw-green": 	"Green",
-			"cfw-teal": 	"Teal",
-			"cfw-cyan": 	"Cyan",
-			"cfw-white": 	"White",
-			"cfw-gray": 	"Gray",
-			"cfw-darkgray": "Dark Gray",
-			"cfw-black": 	"Black",
+			'Default': '', 
+			'cfw-blue': 	'Blue', 
+			'cfw-indigo': 	'Indigo',
+			'cfw-purple': 	'Purple', 
+			'cfw-pink': 	'Pink', 
+			'cfw-red': 		'Red', 
+			'cfw-orange': 	'Orange', 
+			'cfw-yellow': 	'Yellow', 
+			'cfw-green': 	'Green',
+			'cfw-teal': 	'Teal',
+			'cfw-cyan': 	'Cyan',
+			'cfw-white': 	'White',
+			'cfw-gray': 	'Gray',
+			'cfw-darkgray': 'Dark Gray',
+			'cfw-black': 	'Black',
 	};
-	
 	
 	defaultForm += new CFWFormField({ 
 		type: "select", 
@@ -832,6 +831,4 @@ function cfw_dashboard_draw(){
  * Initialize Localization
  * has to be done before widgets are registered
  ******************************************************************/
-CFW.lang.loadLocalization();
-
 CFW.dashboard.registerCategory("fas fa-th-large", "Static Widgets", CFWL('cfw_dashboard_category_static'));

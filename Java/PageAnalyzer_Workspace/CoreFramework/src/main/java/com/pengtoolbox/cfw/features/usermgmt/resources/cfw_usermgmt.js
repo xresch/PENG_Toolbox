@@ -399,7 +399,6 @@ function cfw_usermgmt_printPermissionList(data){
  ******************************************************************/
 
 function cfw_usermgmt_initialDraw(options){
-	CFW.lang.loadLocalization();
 	cfw_usermgmt_draw(options);
 }
 

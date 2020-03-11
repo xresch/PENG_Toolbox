@@ -385,10 +385,18 @@
 }
 
 .cfw-fa-box {
-	height: 16px;
-	width: 16px;
-	float: left;
-	margin-right: 10px;
+    height: 18px;
+    width: 18px;
+    float: left;
+    margin-right: 5px;
+}
+
+.cfw-color-box {
+    height: 18px;
+    width: 18px;
+    float: left;
+    margin-right: 5px;
+    border: 1px solid var(--cfw-darkgray);
 }
 
 /*************************************************************************

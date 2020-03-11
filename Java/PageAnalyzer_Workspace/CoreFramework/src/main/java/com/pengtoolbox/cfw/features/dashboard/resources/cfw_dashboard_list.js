@@ -236,7 +236,6 @@ function cfw_dashboardlist_printDashboards(data, type){
  ******************************************************************/
 
 function cfw_dashboardlist_initialDraw(options){
-	CFW.lang.loadLocalization();
 	cfw_dashboardlist_draw(options);
 }
 

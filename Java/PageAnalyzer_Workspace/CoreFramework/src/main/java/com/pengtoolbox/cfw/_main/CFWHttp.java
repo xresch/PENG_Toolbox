@@ -5,13 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.Cookie;
@@ -22,7 +20,7 @@ import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWHttp {
@@ -91,16 +89,18 @@ public class CFWHttp {
 	        	buffer.append("\n");
 	        }
 	    
-		} catch (MalformedURLException e) {
-			CFWHttp.logger.log(Level.SEVERE, "Exception occured:", e);
-		} catch (IOException e) {
-			CFWHttp.logger.log(Level.SEVERE, "Exception occured:", e);
+		} catch (Exception e) {
+			new CFWLog(logger)
+				.method("sendGETRequest")
+				.severe("Exception occured.", e);
 		} finally {
 			if(in != null) {
 				try {
 					in.close();
 				} catch (IOException e) {
-					CFWHttp.logger.log(Level.SEVERE, "Exception occured:", e);
+					new CFWLog(logger)
+					.method("sendGETRequest")
+					.severe("Exception occured while closing stream.", e);
 				}
 			}
 		}
