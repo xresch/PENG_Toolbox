@@ -12,9 +12,11 @@ import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.datahandling.CFWForm;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.features.usermgmt.User;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
+import com.pengtoolbox.cfw.utils.CFWArrayUtils;
 
 /**************************************************************************************************************
  * 
@@ -291,8 +293,14 @@ public class ServletDashboardView extends HttpServlet
 		definition.fetchData(jsonResponse, jsonSettingsObject);
 					
 	}
+	
 	private boolean canEdit(String dashboardID) {
-		if(CFW.DB.Dashboards.isDashboardOfCurrentUser(dashboardID)
+		
+		Dashboard dashboard = CFW.DB.Dashboards.selectByID(dashboardID);
+		User user = CFW.Context.Request.getUser();
+		
+		if( dashboard.foreignKeyUser().equals(user.id())
+		|| CFWArrayUtils.contains(dashboard.editors(), user.username())
 		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
 			return true;
 		}else {
