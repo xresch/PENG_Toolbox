@@ -1,8 +1,9 @@
 
+var CFW_DASHBOARDVIEW_PARAMS = CFW.http.getURLParamsDecoded();
+
 var CFW_DASHBOARD_EDIT_MODE = false;
 var CFW_DASHBOARD_FULLSCREEN_MODE = false;
 var CFW_DASHBOARD_REFRESH_INTERVAL_ID = null;
-
 var CFW_DASHBOARD_WIDGET_REGISTRY = {};
 
 //saved with guid
@@ -11,7 +12,7 @@ var CFW_DASHBOARD_WIDGET_GUID = 0;
 
 var CFW_DASHBOARDVIEW_URL = "/app/dashboard/view";
 
-var CFW_DASHBOARDVIEW_PARAMS = CFW.http.getURLParamsDecoded();
+
 
 /************************************************************************************************
  * 
@@ -621,14 +622,17 @@ function cfw_dashboard_toggleEditMode(){
  * @see storeLocalValue()
  * @see refreshTimer()
  *************************************************************************************/
-function setReloadInterval(selector) {
+function cfw_dashboard_setReloadInterval(selector) {
 	
 	
 	var refreshInterval = $(selector).val();
+	
 	//------------------------
 	// Disable Old Interval
-	if(refreshInterval == 'stop' && CFW_DASHBOARD_REFRESH_INTERVAL_ID != null){
+	if(refreshInterval == null 
+	|| (refreshInterval == 'stop' && CFW_DASHBOARD_REFRESH_INTERVAL_ID != null) ){
 		clearInterval(CFW_DASHBOARD_REFRESH_INTERVAL_ID);
+		window.localStorage.setItem("dashboard-reload-interval-id"+CFW_DASHBOARDVIEW_PARAMS.id, 'stop');
 		return;
 	}
 	
@@ -650,6 +654,8 @@ function setReloadInterval(selector) {
 	    	cfw_dashboard_draw();
 	    };
     }, refreshInterval);
+	
+	window.localStorage.setItem("dashboard-reload-interval-id"+CFW_DASHBOARDVIEW_PARAMS.id, refreshInterval);
     	
 }
 
@@ -795,9 +801,15 @@ function cfw_dashboard_initialDraw(){
 		
 	cfw_dashboard_initialize('.grid-stack');
 	
-	addTestdata();
+	//addTestdata();
 	
 	cfw_dashboard_draw();
+	
+	var refreshInterval = window.localStorage.getItem("dashboard-reload-interval-id"+CFW_DASHBOARDVIEW_PARAMS.id);
+	if(refreshInterval != null && refreshInterval != 'null' &&refreshInterval != 'stop' ){
+		$("#refreshSelector").val(refreshInterval);
+		cfw_dashboard_setReloadInterval("#refreshSelector");
+	}
 }
 /******************************************************************
  * Main method for building the view.
