@@ -135,6 +135,7 @@ class CFWFormField{
 			description: null,
 			disabled: false,
 			attributes: {},
+			// value/label options like { "value": "Label", ... }
 			options: {}
 		 };
 		 
@@ -287,8 +288,8 @@ class CFWFormField{
 		var options = this.options.options;
 		
 		if(options != null) {
-			for(var label in options) {
-				var currentVal = options[label];
+			for(var currentVal in options) {
+				var label = options[currentVal];
 				
 				if(currentVal == value) {
 					html += '<option value="'+currentVal+'" selected>' + label + '</option>';

@@ -165,15 +165,22 @@ function cfw_dashboard_editWidget(widgetGUID){
 	// Color Selectors
 	var selectOptions = {
 			"Default": "", 
-			"Primary": "primary", 
-			"Secondary": "secondary",
-			"Info": "info", 
-			"Success": "success", 
-			"Warning": "warning", 
-			"Danger": "danger", 
-			"Dark": "dark", 
-			"Light": "light"
+			"cfw-blue": 	"Blue", 
+			"cfw-indigo": 	"Indigo",
+			"cfw-purple": 	"Purple", 
+			"cfw-pink": 	"Pink", 
+			"cfw-red": 		"Red", 
+			"cfw-orange": 	"Orange", 
+			"cfw-yellow": 	"Yellow", 
+			"cfw-green": 	"Green",
+			"cfw-teal": 	"Teal",
+			"cfw-cyan": 	"Cyan",
+			"cfw-white": 	"White",
+			"cfw-gray": 	"Gray",
+			"cfw-darkgray": "Dark Gray",
+			"cfw-black": 	"Black",
 	};
+	
 	
 	defaultForm += new CFWFormField({ 
 		type: "select", 
