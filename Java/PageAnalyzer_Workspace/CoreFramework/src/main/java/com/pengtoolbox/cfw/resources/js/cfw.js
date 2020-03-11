@@ -154,25 +154,27 @@ function cfw_initializeTagsField(fieldID, maxTags){
 		maxChars: 1024,
 		trimValue: true,
 		allowDuplicates: false,
+//		confirmKeys: [188, 13]
 //		onTagExists: function(item, $tag) {
 //			$tag.fadeIn().fadeIn();
 //
 //		}
 	});
 	
-//	$(id+'-tagsinput').on('keydown', function (e) {
-//	  // Enter and Comma
-//	  if (e.keyCode == 13 || e.keyCode == 188) {
-//	    e.preventDefault();
-//
+	$(id+'-tagsinput').on('keyup', function (e) {
+	  // Enter and Comma
+	  if (e.keyCode == 13 || e.keyCode == 188) {
+	   console.log("executed");
+	   $(id).tagsinput('add', this.value);
+	   this.value = '';
+        //e.preventDefault();
 //	    $(id).tagsinput('add', { 
 //	      value: this.value, 
 //	      label: this.value,
 //	    }); 
-//
 //	    this.value = '';
-//	  }
-//});
+	  }
+});
 	
 }
 /**************************************************************************************
