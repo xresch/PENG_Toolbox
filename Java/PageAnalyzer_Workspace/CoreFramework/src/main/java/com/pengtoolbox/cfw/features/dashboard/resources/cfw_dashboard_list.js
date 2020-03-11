@@ -125,17 +125,20 @@ function cfw_dashboardlist_printDashboards(data, type){
 	//--------------------------------
 	// Table
 	
-	var cfwTable = new CFWTable();
-	cfwTable.addHeaders(['ID', "Name", "Description"]);
-	
 	if(data.payload != undefined){
 		
 		var resultCount = data.payload.length;
 		if(resultCount == 0){
 			CFW.ui.addAlert("info", "Hmm... seems there aren't any dashboards in the list.");
-			return
+			return;
 		}
-
+		
+		//-----------------------------------
+		// Check has Username
+		var showFields = ['NAME', 'DESCRIPTION', 'IS_SHARED'];
+		if(data.payload[0].OWNER != undefined){
+			showFields.unshift('OWNER');
+		}
 		//-----------------------------------
 		// Render Data
 		var rendererSettings = {
@@ -144,8 +147,9 @@ function cfw_dashboardlist_printDashboards(data, type){
 			 	textstylefield: null,
 			 	titlefields: ['NAME'],
 			 	titledelimiter: ' ',
-			 	visiblefields: ['NAME', 'DESCRIPTION', 'IS_SHARED'],
+			 	visiblefields: showFields,
 			 	labels: {
+			 		USERNAME: 'Owner',
 			 		IS_SHARED: 'Shared'
 			 	},
 			 	customizers: {

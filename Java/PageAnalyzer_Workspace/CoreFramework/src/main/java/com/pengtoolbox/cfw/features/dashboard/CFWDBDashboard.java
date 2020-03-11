@@ -133,9 +133,10 @@ public class CFWDBDashboard {
 	 * @return Returns a resultSet with all dashboards or null.
 	 ****************************************************************/
 	public static ResultSet getSharedDashboardList() {
-		
+		// SELECT (SELECT USERNAME FROM CFW_USER WHERE PK_ID = FK_ID_USER ) AS USERNAME, * FROM CFW_DASHBOARD WHERE IS_SHARED = TRUE ORDER BY LOWER(NAME)
 		return new Dashboard()
 				.queryCache(CFWDBDashboard.class, "getSharedDashboardList")
+				.columnSubquery("OWNER", "SELECT USERNAME FROM CFW_USER WHERE PK_ID = FK_ID_USER")
 				.select()
 				.where(DashboardFields.IS_SHARED.toString(), true)
 				.orderby(DashboardFields.NAME.toString())
@@ -167,6 +168,7 @@ public class CFWDBDashboard {
 		
 		return new Dashboard()
 				.queryCache(CFWDBDashboard.class, "getSharedDashboardListAsJSON")
+				.columnSubquery("OWNER", "SELECT USERNAME FROM CFW_USER WHERE PK_ID = FK_ID_USER")
 				.select()
 				.where(DashboardFields.IS_SHARED.toString(), true)
 				.orderby(DashboardFields.NAME.toString())

@@ -1,7 +1,6 @@
 
 ALWAYS ON
 =========
-- Use addJSFileBottomSingle() instead of addJSFileBottomAssembly() where applicable
 - Create Manual Pages
 - Cleanup console.log() and System.out.println()
 - Localize
@@ -12,16 +11,11 @@ ALWAYS ON
 
 TODO
 ====
-- Tags: Load existing Tags
-- Tags: Display Tags
-- Tags: Save as Key Value Pairs
-- Manual: Documentation Widget Creation
 
 - Dashboard: Duplicate Dashboard
 - Dashboard: Permission View All
 - Dashboard: Management Page
 
-- Dashboard: Add Owner name to shared list
 - Dashboard: Merge forms, only one button.
 - Dashboard: Widget Fullscreen
 - Dashboard: Favorites
@@ -91,6 +85,7 @@ TODO
 
 DONE
 ====
+- Use addJSFileBottomSingle() instead of addJSFileBottomAssembly() where applicable
 - Localization: create CFW.L()
 - Localization: Improve localize cache names
 - Widget Embed Video
@@ -114,3 +109,8 @@ DONE
 - add description to widget
 - Implement widget remove
 - Change order of Settings for dashboards
+- Tags: Load existing Tags
+- Tags: Display Tags
+- Tags: Save as Key Value Pairs
+- Manual: Documentation Widget Creation
+- Dashboard: Add Owner name to shared list

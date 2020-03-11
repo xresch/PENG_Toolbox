@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
@@ -28,6 +29,7 @@ public class CFWSQL {
 	
 	private CFWObject object;
 	private LinkedHashMap<String, CFWField<?>> fields;
+	private LinkedHashMap<String, String> columnSubqueries;
 	
 	private StringBuilder query = new StringBuilder();
 	private ArrayList<Object> values = new ArrayList<Object>();
@@ -111,7 +113,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * 
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public boolean createTable() {
 		//------------------------------------
@@ -205,14 +207,59 @@ public class CFWSQL {
 
 		return CFWDB.preparedExecute(renameForeignKey);
 	}
-		
+	
+	
+	/****************************************************************
+	 * Add a column subquery which will be added to the select statement.
+	 * This methd has to be called before you call the select*() method.
+	 * @return CFWSQL for method chaining
+	 ****************************************************************/
+	public CFWSQL columnSubquery(String asName, String query) {
+		if(columnSubqueries == null) {
+			columnSubqueries = new LinkedHashMap<String, String>();
+		}
+		columnSubqueries.put(asName, query);
+		return this;
+	}
+	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
+	private String getColumnSubqueriesString() {
+		if(columnSubqueries != null && !columnSubqueries.isEmpty() ) {
+			StringBuilder builder = new StringBuilder();
+			for(Entry<String, String> entry : columnSubqueries.entrySet()) {
+				builder.append(", (")
+				.append(entry.getValue())
+				.append(") AS ")
+				.append(entry.getKey());
+			}
+			
+			return builder.toString();
+		}
+		return "";
+	}
+	/****************************************************************
+	 * 
+	 ****************************************************************/
+	private boolean hasColumnSubqueries() {
+		if(columnSubqueries != null && !columnSubqueries.isEmpty() ) {
+			return true;
+		}
+		return false;
+	}
+	
 	/****************************************************************
 	 * Begins a SELECT * statement.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL select() {
 		if(!isQueryCached()) {
-			query.append("SELECT * FROM "+object.getTableName());
+			if(!this.hasColumnSubqueries()) {
+				query.append("SELECT * FROM "+object.getTableName());
+			}else {
+				query.append("SELECT * "+this.getColumnSubqueriesString()+" FROM "+object.getTableName());
+			}
 		}
 		return this;
 	}
@@ -220,15 +267,24 @@ public class CFWSQL {
 	/****************************************************************
 	 * Begins a SELECT statement including the specified fields.
 	 * @param field names
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL select(String ...fieldnames) {
 		if(!isQueryCached()) {
 			query.append("SELECT");
+			//---------------------------------
+			// Add Fields
 			for(String fieldname : fieldnames) {
 					query.append(" ").append(fieldname).append(",");
 			}
 			query.deleteCharAt(query.length()-1);
+			
+			//---------------------------------
+			// Add Column Subqueries
+			if(this.hasColumnSubqueries()) {
+				query.append(this.getColumnSubqueriesString());
+			}
+			
 			query.append(" FROM "+object.getTableName());
 		}
 		return this;
@@ -238,11 +294,14 @@ public class CFWSQL {
 	 * Begins a SELECT statement including all fields except the 
 	 * ones specified by the parameter.
 	 * @param fieldnames
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL selectWithout(String ...fieldnames) {
 		if(!isQueryCached()) {
 			query.append("SELECT");
+			
+			//---------------------------------
+			// Add Fields
 			Arrays.sort(fieldnames);
 			for(String name : fields.keySet()) {
 				//add if name is not in fieldnames
@@ -251,6 +310,13 @@ public class CFWSQL {
 				}
 			}
 			query.deleteCharAt(query.length()-1);
+			
+			//---------------------------------
+			// Add Column Subqueries
+			if(this.hasColumnSubqueries()) {
+				query.append(this.getColumnSubqueriesString());
+			}
+			
 			query.append(" FROM "+object.getTableName());
 		}
 		return this;
@@ -350,7 +416,7 @@ public class CFWSQL {
 	 * Creates an update statement including all fields and executes
 	 * the statement with the values assigned to the fields of the
 	 * object.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public boolean update() {
 		return update(fields.keySet().toArray(new String[] {}));
@@ -361,7 +427,7 @@ public class CFWSQL {
 	 * and executes it with the values assigned to the fields of the
 	 * object.
 	 * @param fieldnames
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public boolean update(String ...fieldnames) {
 		
@@ -402,7 +468,7 @@ public class CFWSQL {
 	 * and executes it with the values assigned to the fields of the
 	 * object.
 	 * @param fieldnames
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public boolean updateWithout(String ...fieldnames) {
 		
@@ -443,7 +509,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Begins a DELETE statement.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL delete() {
 		if(!isQueryCached()) {		
@@ -454,7 +520,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Begins a DELETE TOP  statement.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL deleteTop(int count) {
 		if(!isQueryCached()) {		
@@ -468,7 +534,7 @@ public class CFWSQL {
 	/****************************************************************
 	 * Adds a WHERE clause to the query.
 	 * This method is case sensitive.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL where(String fieldname, Object value) {
 		return where(fieldname, value, true);
@@ -476,7 +542,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a WHERE clause to the query.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL where(String fieldname, Object value, boolean isCaseSensitive) {
 		if(!isQueryCached()) {
@@ -496,7 +562,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a WHERE clause to the query.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL like(String fieldname, Object value) {
 		if(!isQueryCached()) {
@@ -511,7 +577,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a WHERE <fieldname> IN(?) clause to the query.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL whereIn(String fieldname, Object value) {
 		if(!isQueryCached()) {
@@ -523,7 +589,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a WHERE <fieldname> IN(?) clause to the query.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL whereIsNull(String fieldname) {
 		if(!isQueryCached()) {
@@ -534,7 +600,7 @@ public class CFWSQL {
 
 	/****************************************************************
 	 * Adds a WHERE <fieldname> IN(?,?...) clause to the query.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL whereIn(String fieldname, Object ...values) {
 			
@@ -554,7 +620,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a WHERE <fieldname> IN(?) clause to the query.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL whereArrayContains(String fieldname, Object value) {
 		if(!isQueryCached()) {
@@ -566,7 +632,7 @@ public class CFWSQL {
 	}
 	/****************************************************************
 	 * Begins a SELECT COUNT(*) statement.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL selectCount() {
 		if(!isQueryCached()) {
@@ -578,7 +644,7 @@ public class CFWSQL {
 	/****************************************************************
 	 * Adds a AND clause to the query.
 	 * This method is case sensitive.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL and(String fieldname, Object value) {
 		return and(fieldname, value, true);
@@ -586,7 +652,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a WHERE clause to the query.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL and(String fieldname, Object value, boolean isCaseSensitive) {
 		if(!isQueryCached()) {
@@ -603,7 +669,7 @@ public class CFWSQL {
 	/****************************************************************
 	 * Adds a OR clause to the query.
 	 * This method is case sensitive.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL or(String fieldname, Object value) {
 		return or(fieldname, value, true);
@@ -611,7 +677,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a WHERE clause to the query.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL or(String fieldname, Object value, boolean isCaseSensitive) {
 		if(!isQueryCached()) {
@@ -627,7 +693,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a UNION to the statement.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL union() {
 		if(!isQueryCached()) {
@@ -638,7 +704,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a UNION ALL to the statement.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL unionAll() {
 		if(!isQueryCached()) {
@@ -649,7 +715,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a NULLS FIRST to the statement.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL nullsFirst() {
 		if(!isQueryCached()) {
@@ -661,7 +727,7 @@ public class CFWSQL {
 	/****************************************************************
 	 * Adds an ORDER BY clause to the query. Is case sensitive for
 	 * strings.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL orderby(String fieldname) {
 		if(!isQueryCached()) {
@@ -677,7 +743,7 @@ public class CFWSQL {
 	/****************************************************************
 	 * Adds an ORDER BY clause to the query. Is case sensitive for
 	 * strings.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL orderby(String... fieldnames) {
 		if(!isQueryCached()) {
@@ -698,7 +764,7 @@ public class CFWSQL {
 	/****************************************************************
 	 * Adds an ORDER BY clause to the query. Is case sensitive for
 	 * strings. Sort order is descending.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL orderbyDesc(String fieldname) {
 		if(!isQueryCached()) {				
@@ -713,7 +779,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a LIMIT statement
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL limit(int limit) {
 		if(!isQueryCached()) {
@@ -725,7 +791,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds an OFFSET statement
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL offset(int offset) {
 		if(!isQueryCached()) {
@@ -737,7 +803,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a custom part to the query and values for the binding.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL loadSQLResource(String packageName, String filename, Object... params) {
 		
@@ -755,7 +821,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a custom part to the query and values for the binding.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL custom(String queryPart, Object... params) {
 		if(!isQueryCached()) {
@@ -770,7 +836,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a custom part to the query.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL custom(String queryPart) {
 		if(!isQueryCached()) {
@@ -781,7 +847,7 @@ public class CFWSQL {
 	
 	/****************************************************************
 	 * Adds a custom part to the query.
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public CFWSQL append(CFWSQL partialQuery) {
 		if(partialQuery != null) {
@@ -799,7 +865,7 @@ public class CFWSQL {
 	 * Executes the query and saves the results in the global 
 	 * variable.
 	 * 
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public boolean execute() {
 		
@@ -825,7 +891,7 @@ public class CFWSQL {
 	 * Executes the query and saves the results in the global 
 	 * variable.
 	 * 
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public boolean executeBatch() {
 		
@@ -874,7 +940,7 @@ public class CFWSQL {
 	 * Executes the query and saves the results in the global 
 	 * variable.
 	 * 
-	 * @return CFWStatement for method chaining
+	 * @return CFWSQL for method chaining
 	 ****************************************************************/
 	public boolean executeDelete() {
 		
