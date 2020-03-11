@@ -11,7 +11,7 @@
 				var settings = widgetObject.JSON_SETTINGS;
 				if(settings.label != null){
 					
-					var labelHTML = '<div class="w-100 h-100 d-flex align-items-center justify-content-center"><span style="transform: rotate(-90deg); font-size: '+24*settings.sizefactor+'px;"">'+widgetObject.JSON_SETTINGS.label+'</span></div>'; 
+					var labelHTML = '<div class="w-100 h-100 d-flex align-items-center justify-content-center"><span class="rotate-270 text-center" style="white-space: nowrap; font-size: '+24*settings.sizefactor+'px;"">'+widgetObject.JSON_SETTINGS.label+'</span></div>'; 
 					callback(widgetObject, labelHTML);
 				}else{
 					callback(widgetObject, '');
