@@ -81,7 +81,7 @@ public class Dashboard extends CFWObject {
 			.setDescription("Make the dashboard shared with other people or keep it private.")
 			.setValue(false);
 	
-	private CFWField<LinkedHashMap> sharedWithUsers = CFWField.newTagsSelector(DashboardFields.JSON_SHARE_WITH_USERS)
+	private CFWField<LinkedHashMap<String,String>> sharedWithUsers = CFWField.newTagsSelector(DashboardFields.JSON_SHARE_WITH_USERS)
 			.setLabel("Share with Users")
 			.setDescription("Share this dashboard only with specific users. If none is specified, all users will see the dashboard.")
 			.setValue(null)
@@ -98,7 +98,7 @@ public class Dashboard extends CFWObject {
 					
 				}
 			});
-	private CFWField<LinkedHashMap> editors = CFWField.newTagsSelector(DashboardFields.JSON_EDITORS)
+	private CFWField<LinkedHashMap<String,String>> editors = CFWField.newTagsSelector(DashboardFields.JSON_EDITORS)
 			.setLabel("Editors")
 			.setDescription("Allow other users to view and edit the dashboard, even when the dashboard is not shared.")
 			.setValue(null)
@@ -254,20 +254,20 @@ public class Dashboard extends CFWObject {
 		return this;
 	}
 	
-	public LinkedHashMap sharedWithUsers() {
-		return (LinkedHashMap)sharedWithUsers.getValue();
+	public LinkedHashMap<String,String> sharedWithUsers() {
+		return sharedWithUsers.getValue();
 	}
 	
-	public Dashboard sharedWithUsers(LinkedHashMap sharedWithUsers) {
+	public Dashboard sharedWithUsers(LinkedHashMap<String,String> sharedWithUsers) {
 		this.sharedWithUsers.setValue(sharedWithUsers);
 		return this;
 	}
 	
-	public LinkedHashMap editors() {
-		return (LinkedHashMap)editors.getValue();
+	public LinkedHashMap<String,String> editors() {
+		return editors.getValue();
 	}
 	
-	public Dashboard editors(LinkedHashMap editors) {
+	public Dashboard editors(LinkedHashMap<String,String> editors) {
 		this.editors.setValue(editors);
 		return this;
 	}

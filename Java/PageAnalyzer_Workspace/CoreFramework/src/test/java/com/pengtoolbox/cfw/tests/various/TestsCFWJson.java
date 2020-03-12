@@ -14,7 +14,7 @@ public class TestsCFWJson {
 	@Test
 	public void testHashMapFromJson() {
 		
-		LinkedHashMap<Object, Object> result = CFW.JSON.fromJsonLinkedHashMap("{"
+		LinkedHashMap<String,String> result = CFW.JSON.fromJsonLinkedHashMap("{"
 						+"\"key\": \"label\","
 						+"\"12\": \"object\","
 						+"\"name\": \"value\""

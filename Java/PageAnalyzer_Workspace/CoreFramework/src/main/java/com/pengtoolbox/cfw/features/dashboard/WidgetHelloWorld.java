@@ -89,15 +89,12 @@ public class WidgetHelloWorld extends WidgetDefinition {
 
 	@Override
 	public boolean hasPermission() {
-		
-		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARDING)
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_VIEWER)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_CREATOR)
 		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
 			return true;
 		}
-		
 		return false;
 	}
-
-
 
 }

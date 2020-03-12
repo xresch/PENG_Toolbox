@@ -167,17 +167,17 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	//===========================================
 	// TAGS SELECTOR
 	//===========================================
-	public static CFWField<LinkedHashMap> newTagsSelector(Enum<?> fieldName){
+	public static CFWField<LinkedHashMap<String,String>> newTagsSelector(Enum<?> fieldName){
 		return newTagsSelector(fieldName.toString());
 	}
-	public static CFWField<LinkedHashMap> newTagsSelector(String fieldName){
+	public static CFWField<LinkedHashMap<String,String>> newTagsSelector(String fieldName){
 		if(!fieldName.startsWith("JSON_")) {
 			new CFWLog(logger)
 				.method("newTagsSelector")
 				.severe("Fieldname of TAG_SELECTOR fields have to start with 'JSON_'.", new InstantiationException());
 			return null;
 		}
-		return new CFWField<LinkedHashMap> (LinkedHashMap.class, FormFieldType.TAGS_SELECTOR, fieldName)
+		return new CFWField<LinkedHashMap<String,String>> (LinkedHashMap.class, FormFieldType.TAGS_SELECTOR, fieldName)
 				.setColumnDefinition("VARCHAR");
 	}
 	//###########################################################################################################
@@ -953,8 +953,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			else if(valueClass == Date.class)  		{ return this.changeValue(new Date(Long.parseLong( ((String)value).trim()) )); }
 			else if(valueClass == Object[].class)	{ return this.changeValue( sanitizeString((String)value).split(",") ); }
 			else if(valueClass == LinkedHashMap.class){ 
-				LinkedHashMap<Object,Object> map = CFW.JSON.fromJsonLinkedHashMap((String)value);
-				for(Entry<Object, Object> entry : map.entrySet()) {
+				LinkedHashMap<String,String> map = CFW.JSON.fromJsonLinkedHashMap((String)value);
+				for(Entry<String,String> entry : map.entrySet()) {
 					entry.setValue(sanitizeString((String)entry.getValue()));
 				}
 				return this.changeValue(map); 

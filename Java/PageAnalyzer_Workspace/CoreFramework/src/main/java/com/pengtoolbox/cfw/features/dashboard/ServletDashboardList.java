@@ -36,17 +36,18 @@ public class ServletDashboardList extends HttpServlet
 	@Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-
-		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARDING)) {
+		HTMLResponse html = new HTMLResponse("Dashboard List");
+		
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_VIEWER)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_CREATOR)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
 			
 			createForms();
 			
 			String action = request.getParameter("action");
 			
 			if(action == null) {
-				HTMLResponse html = new HTMLResponse("Dashboard List");
-				StringBuffer content = html.getContent();
-				
+
 				//html.addCSSFile(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_dashboard.css");
 				
 				//html.addJSFileBottomSingle(new FileDefinition(HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH+".js", "cfw_usermgmt.js"));
@@ -74,8 +75,20 @@ public class ServletDashboardList extends HttpServlet
 		String ID = request.getParameter("id");
 		String IDs = request.getParameter("ids");
 		//int	userID = CFW.Context.Request.getUser().id();
-		
+			
 		JSONResponse jsonResponse = new JSONResponse();
+		
+		//--------------------------------------
+		// Check Permissions
+		if(action.toLowerCase().equals("delete")
+		|| action.toLowerCase().equals("getform")) {
+			if(!CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_CREATOR)
+			   && !CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+				CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient permissions to execute action.");
+				return;
+			}
+		}
+		
 
 		switch(action.toLowerCase()) {
 		
@@ -123,55 +136,62 @@ public class ServletDashboardList extends HttpServlet
 				
 		//--------------------------------------
 		// Create Dashboard Form
-		
-		CFWForm createDashboardForm = new Dashboard().toForm("cfwCreateDashboardForm", "{!cfw_dashboard_create!}");
-		
-		createDashboardForm.setFormHandler(new CFWFormHandler() {
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_CREATOR)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+			CFWForm createDashboardForm = new Dashboard().toForm("cfwCreateDashboardForm", "{!cfw_dashboard_create!}");
 			
-			@Override
-			public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
-								
-				if(origin != null) {
-					
-					origin.mapRequestParameters(request);
-					Dashboard dashboard = (Dashboard)origin;
-					dashboard.foreignKeyUser(CFW.Context.Request.getUser().id());
-					if( CFW.DB.Dashboards.create(dashboard) ) {
-						CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Dashboard created successfully!");
-					}
-				}
+			createDashboardForm.setFormHandler(new CFWFormHandler() {
 				
-			}
-		});
+				@Override
+				public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
+									
+					if(origin != null) {
+						
+						origin.mapRequestParameters(request);
+						Dashboard dashboard = (Dashboard)origin;
+						dashboard.foreignKeyUser(CFW.Context.Request.getUser().id());
+						if( CFW.DB.Dashboards.create(dashboard) ) {
+							CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Dashboard created successfully!");
+						}
+					}
+					
+				}
+			});
+		}
 	}
 	
 	
 	private void createEditDashboardForm(JSONResponse json, String ID) {
 		
-		Dashboard dashboard = CFW.DB.Dashboards.selectByID(Integer.parseInt(ID));
-		
-		if(dashboard != null) {
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_CREATOR)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+			Dashboard dashboard = CFW.DB.Dashboards.selectByID(Integer.parseInt(ID));
 			
-			CFWForm editDashboardForm = dashboard.toForm("cfwEditDashboardForm"+ID, "Update Dashboard");
-			
-			editDashboardForm.setFormHandler(new CFWFormHandler() {
+			if(dashboard != null) {
 				
-				@Override
-				public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
+				CFWForm editDashboardForm = dashboard.toForm("cfwEditDashboardForm"+ID, "Update Dashboard");
+				
+				editDashboardForm.setFormHandler(new CFWFormHandler() {
 					
-					if(origin.mapRequestParameters(request)) {
+					@Override
+					public void handleForm(HttpServletRequest request, HttpServletResponse response, CFWForm form, CFWObject origin) {
 						
-						if(CFW.DB.Dashboards.update((Dashboard)origin)) {
-							CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Updated!");
-						}
+						if(origin.mapRequestParameters(request)) {
 							
+							if(CFW.DB.Dashboards.update((Dashboard)origin)) {
+								CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Updated!");
+							}
+								
+						}
+						
 					}
-					
-				}
-			});
-			
-			editDashboardForm.appendToPayload(json);
-			json.setSuccess(true);	
+				});
+				
+				editDashboardForm.appendToPayload(json);
+				json.setSuccess(true);	
+			}
+		}else {
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient permissions to execute action.");
 		}
 	}
 }

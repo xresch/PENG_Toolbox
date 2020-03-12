@@ -16,9 +16,11 @@ import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class FeatureDashboard extends CFWAppFeature {
+	
+	public static final String PERMISSION_DASHBOARD_VIEWER = "Dashboard Viewer";
+	public static final String PERMISSION_DASHBOARD_CREATOR = "Dashboard Creator";
+	public static final String PERMISSION_DASHBOARD_ADMIN = "Dashboard Admin";
 
-	public static final String PERMISSION_DASHBOARDING = "Dashboarding";
-	public static final String PERMISSION_DASHBOARD_ADMIN = "Dashboarding Admin";
 	
 	public static final String RESOURCE_PACKAGE = "com.pengtoolbox.cfw.features.dashboard.resources";
 	
@@ -40,7 +42,7 @@ public class FeatureDashboard extends CFWAppFeature {
 		
     	//----------------------------------
     	// Register Widgets
-		CFW.Registry.Widgets.add(new WidgetHelloWorld());
+		//CFW.Registry.Widgets.add(new WidgetHelloWorld());
 		CFW.Registry.Widgets.add(new WidgetText());
 		CFW.Registry.Widgets.add(new WidgetVerticalLabel());
 		CFW.Registry.Widgets.add(new WidgetList());
@@ -55,13 +57,15 @@ public class FeatureDashboard extends CFWAppFeature {
 		CFW.Registry.Components.addRegularMenuItem(
 				(MenuItem)new MenuItem("Dashboards")
 					.faicon("fas fa-tachometer-alt")
-					.addPermission(PERMISSION_DASHBOARDING)
+					.addPermission(PERMISSION_DASHBOARD_VIEWER)
+					.addPermission(PERMISSION_DASHBOARD_CREATOR)
 				, null);
 				
 		CFW.Registry.Components.addRegularMenuItem(
 				(MenuItem)new MenuItem("Dashboard List")
 					.faicon("fas fa-images")
-					.addPermission(PERMISSION_DASHBOARDING)
+					.addPermission(PERMISSION_DASHBOARD_VIEWER)
+					.addPermission(PERMISSION_DASHBOARD_CREATOR)
 					.href("/app/dashboard/list")
 				, "Dashboards");
 		
@@ -72,15 +76,22 @@ public class FeatureDashboard extends CFWAppFeature {
 		//-----------------------------------
 		// 
 		CFW.DB.Permissions.oneTimeCreate(
-				new Permission(PERMISSION_DASHBOARDING, "user")
-					.description("Create and view dashboards"),
+				new Permission(PERMISSION_DASHBOARD_VIEWER, "user")
+					.description("Can view dashboards that other users have shared. Cannot create dashboards, but might edit when allowed by a dashboard creator."),
+					true,
+					false
+				);	
+		
+		CFW.DB.Permissions.oneTimeCreate(
+				new Permission(PERMISSION_DASHBOARD_CREATOR, "user")
+					.description("Can view and create dashboards and share them with other users."),
 					true,
 					false
 				);	
 		
 		CFW.DB.Permissions.oneTimeCreate(
 				new Permission(PERMISSION_DASHBOARD_ADMIN, "user")
-					.description("View, Edit and Delete all dashboards of all users, regardless of sharing of the dashboards."),
+					.description("View, Edit and Delete all dashboards of all users, regardless of the share settings of the dashboards."),
 					true,
 					false
 				);	

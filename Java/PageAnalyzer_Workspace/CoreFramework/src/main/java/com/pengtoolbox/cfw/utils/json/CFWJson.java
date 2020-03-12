@@ -86,10 +86,10 @@ public class CFWJson {
 	/*************************************************************************************
 	 * Converts a json string to a LinkedHashMap 
 	 *************************************************************************************/
-	public static LinkedHashMap<Object, Object> fromJsonLinkedHashMap(String jsonString) {
+	public static LinkedHashMap<String,String> fromJsonLinkedHashMap(String jsonString) {
 
-		Type type = new TypeToken<LinkedHashMap<Object, Object>>(){}.getType();
-		LinkedHashMap<Object, Object> clonedMap = gsonInstance.fromJson(jsonString, type); 
+		Type type = new TypeToken<LinkedHashMap<String,String>>(){}.getType();
+		LinkedHashMap<String,String> clonedMap = gsonInstance.fromJson(jsonString, type); 
 		return clonedMap;
 	}
 	

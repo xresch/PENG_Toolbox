@@ -16,7 +16,6 @@ import com.pengtoolbox.cfw.features.usermgmt.User;
 import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
-import com.pengtoolbox.cfw.utils.CFWArrayUtils;
 
 /**************************************************************************************************************
  * 
@@ -39,7 +38,8 @@ public class ServletDashboardView extends HttpServlet
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
 
-		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARDING)
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_VIEWER)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_CREATOR)
 		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
 			
 			String action = request.getParameter("action");
@@ -84,7 +84,8 @@ public class ServletDashboardView extends HttpServlet
     protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
 
-		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARDING)
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_VIEWER)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_CREATOR)
 		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
 			handleDataRequest(request, response);
 		}else {
@@ -161,9 +162,7 @@ public class ServletDashboardView extends HttpServlet
 		
 		Dashboard dashboard = CFW.DB.Dashboards.selectByID(dashboardID);
 		
-		if(dashboard.isShared() 
-		|| dashboard.foreignKeyOwner() == CFW.Context.Request.getUser().id()
-		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+		if(dashboard.isShared() || canEdit(dashboardID)) {
 			
 			response.getContent().append(CFW.DB.DashboardWidgets.getWidgetsForDashboardAsJSON(dashboardID));
 			
@@ -171,7 +170,7 @@ public class ServletDashboardView extends HttpServlet
 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient rights to view this dashboard.");
 		}
 	}
-	
+		
 	private void createWidget(JSONResponse response, String type, String dashboardID) {
 
 		if(canEdit(dashboardID)) {

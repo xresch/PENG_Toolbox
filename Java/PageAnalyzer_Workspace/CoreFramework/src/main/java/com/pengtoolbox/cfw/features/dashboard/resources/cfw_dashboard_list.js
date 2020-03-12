@@ -14,13 +14,22 @@ function cfw_dashboardlist_reset(){
 	var pillsTab = $("#pills-tab");
 	
 	if(pillsTab.length == 0){
-		$("#cfw-container").append(
-			'<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">'
-				+'<li class="nav-item"><a class="nav-link active" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'mydashboards\'})"><i class="fas fa-user-circle mr-2"></i>My Dashboards</a></li>'
+		
+		var list = $('<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">');
+		
+		if(CFW.hasPermission('Dashboard Creator') 
+		|| CFW.hasPermission('Dashboard Admin')){
+			list.append(
+				'<li class="nav-item"><a class="nav-link active" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'mydashboards\'})"><i class="fas fa-user-circle mr-2"></i>My Dashboards</a></li>'
 				+'<li class="nav-item"><a class="nav-link" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'shareddashboards\'})"><i class="fas fa-share-alt mr-2"></i>Shared Dashboards</a></li>'
-			+'</ul>'
-			+'<div id="tab-content"></div>'
-		);
+			);
+		}else if(CFW.hasPermission('Dashboard Viewer')){
+			list.append('<li class="nav-item"><a class="nav-link active" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'shareddashboards\'})"><i class="fas fa-share-alt mr-2"></i>Shared Dashboards</a></li>');
+		}
+		
+		var parent = $("#cfw-container");
+		parent.append(list);
+		parent.append('<div id="tab-content"></div>');
 	}
 	$("#tab-content").html("");
 }
@@ -116,11 +125,14 @@ function cfw_dashboardlist_printDashboards(data, type){
 	
 	//--------------------------------
 	// Button
-	var createButton = $('<button class="btn btn-sm btn-success mb-2" onclick="cfw_dashboardlist_createDashboard()">'
+	if(CFW.hasPermission('Dashboard Creator') 
+	|| CFW.hasPermission('Dashboard Admin')){
+		var createButton = $('<button class="btn btn-sm btn-success mb-2" onclick="cfw_dashboardlist_createDashboard()">'
 							+ '<i class="fas fa-plus-circle"></i> '+ CFWL('cfw_dashboardlist_createDashboard')
 					   + '</button>');
 	
-	parent.append(createButton);
+		parent.append(createButton);
+	}
 	
 	//--------------------------------
 	// Table

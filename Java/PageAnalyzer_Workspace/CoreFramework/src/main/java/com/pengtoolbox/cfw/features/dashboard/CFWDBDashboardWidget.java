@@ -99,23 +99,9 @@ public class CFWDBDashboardWidget {
 		return new DashboardWidget()
 				.queryCache(CFWDBDashboardWidget.class, "getWidgetsForDashboardAsJSON")
 				.select()
-				.where(DashboardWidgetFields.FK_ID_DASHBOARD.toString(), dashboardID)
+				.where(DashboardWidgetFields.FK_ID_DASHBOARD, dashboardID)
 				.getAsJSON();
 		
 	}
 
-
-	public static boolean isWidgetOfCurrentUser(DashboardWidget widget) {
-		
-		int count = new Dashboard()
-			.selectCount()
-			.where(DashboardFields.PK_ID.toString(), widget.foreignKeyDashboard())
-			.and(DashboardFields.FK_ID_USER.toString(), CFW.Context.Request.getUser().id())
-			.getCount();
-
-		return count > 0;
-	}
-	
-
-		
 }

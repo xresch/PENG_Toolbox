@@ -47,17 +47,4 @@ public class WidgetText extends WidgetDefinition {
 		return map;
 	}
 
-	@Override
-	public boolean hasPermission() {
-		
-		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARDING)
-		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
-			return true;
-		}
-		
-		return false;
-	}
-
-
-
 }

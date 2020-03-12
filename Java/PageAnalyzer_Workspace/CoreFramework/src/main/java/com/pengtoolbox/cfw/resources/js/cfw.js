@@ -1438,12 +1438,14 @@ function cfw_getForm(formid, targetElement){
 
 	$.get('/cfw/formhandler', {id: formid})
 		  .done(function(response) {
-			  $(targetElement).html(response.payload.html);
-			  var form = $(targetElement).find('form')
-		      var formID = $(targetElement).find('form').attr("id");
-		      // workaround, force evaluation
-		      eval($(form).find("script").text());
-              eval("intializeForm_"+formID+"();");
+			  if(response.payload != null){
+				  $(targetElement).html(response.payload.html);
+				  var form = $(targetElement).find('form')
+			      var formID = $(targetElement).find('form').attr("id");
+			      // workaround, force evaluation
+			      eval($(form).find("script").text());
+	              eval("intializeForm_"+formID+"();");
+			  }
 		  })
 		  .fail(function(xhr, status, errorThrown) {
 			  console.error("Request failed: "+url);
@@ -1482,24 +1484,26 @@ function cfw_createForm(url, params, targetElement, callback){
 
 	$.get(url, params)
 		  .done(function(response) {
-		      $(targetElement).append(response.payload.html);
-		      formID = $(targetElement).find('form').attr("id");
-              eval("intializeForm_"+formID+"();");
-              
-              //--------------------------
-              // prevent Submit on enter
-//              $('#'+formID).on('keyup keypress', function(e) {
-//            	  var keyCode = e.keyCode || e.which;
-//            	  if (keyCode === 13) { 
-//            	    e.preventDefault();
-//            	    return false;
-//            	  }
-//            	});
-              //--------------------------
-              // Call callback
-              if(callback != undefined){
-            	  callback(formID);
-              }
+			  if(response.payload != null){
+			      $(targetElement).append(response.payload.html);
+			      formID = $(targetElement).find('form').attr("id");
+	              eval("intializeForm_"+formID+"();");
+	              
+	              //--------------------------
+	              // prevent Submit on enter
+	//              $('#'+formID).on('keyup keypress', function(e) {
+	//            	  var keyCode = e.keyCode || e.which;
+	//            	  if (keyCode === 13) { 
+	//            	    e.preventDefault();
+	//            	    return false;
+	//            	  }
+	//            	});
+	              //--------------------------
+	              // Call callback
+	              if(callback != undefined){
+	            	  callback(formID);
+	              }
+			  }
 		  })
 		  .fail(function(response) {
 			  console.error("Request failed: "+url);
@@ -1604,7 +1608,7 @@ function cfw_selectElementContent(el) {
  *************************************************************************************/
 function  cfw_hasPermission(permissionName){
 	$.ajaxSetup({async: false});
-	cfw_fetchAndCacheData("./usermanagement/permissions", null, "userPermissions")
+	cfw_fetchAndCacheData("/app/usermanagement/permissions", null, "userPermissions")
 	$.ajaxSetup({async: true});
 	
 	if(CFW.cache.data["userPermissions"] != null

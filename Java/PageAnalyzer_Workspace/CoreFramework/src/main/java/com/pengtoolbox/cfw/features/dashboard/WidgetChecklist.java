@@ -43,25 +43,10 @@ public class WidgetChecklist extends WidgetDefinition {
 	}
 
 	@Override
-	public ArrayList<FileDefinition> getCSSFiles() { return null; }
-
-	@Override
 	public HashMap<Locale, FileDefinition> getLocalizationFiles() {
 		HashMap<Locale, FileDefinition> map = new HashMap<Locale, FileDefinition>();
 		return map;
 	}
-
-	@Override
-	public boolean hasPermission() {
-		
-		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARDING)
-		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
-			return true;
-		}
-		
-		return false;
-	}
-
 
 
 }
