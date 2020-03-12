@@ -17,7 +17,8 @@ public class FileAssembly {
 	/** Static field to store the assembled results by their file names. */
 	private static final LinkedHashMap<String,FileAssembly> assemblyCache = new LinkedHashMap<String, FileAssembly>();
 	
-	private ArrayList<FileDefinition> fileArray = new ArrayList<FileDefinition>();
+	// only add a file once
+	private LinkedHashMap<Integer, FileDefinition> fileArray = new LinkedHashMap<Integer, FileDefinition>();
 	
 	private String inputName = "";
 	private String assemblyName = "";
@@ -45,7 +46,8 @@ public class FileAssembly {
 	 ***********************************************************************/
 	public FileAssembly addFile(FileDefinition.HandlingType type, String path, String filename) {
 		FileDefinition fileDef = new FileDefinition(type, path, filename);
-		fileArray.add(fileDef);
+		
+		fileArray.put(fileDef.getUniqueID(), fileDef);
 		return this;
 	}
 	
@@ -55,7 +57,7 @@ public class FileAssembly {
 	 * @param filetype the file type e.g. "js", "css"
 	 ***********************************************************************/
 	public FileAssembly addFile(FileDefinition definition) {
-		fileArray.add(definition);
+		fileArray.put(definition.getUniqueID(), definition);
 		return this;
 	}
 	/***********************************************************************
@@ -65,13 +67,15 @@ public class FileAssembly {
 	 ***********************************************************************/
 	public FileAssembly addAll(ArrayList<FileDefinition> definitionArray) {
 		if(definitionArray != null) {
-			fileArray.addAll(definitionArray);
+			for (FileDefinition definition : definitionArray) {
+				fileArray.put(definition.getUniqueID(), definition);
+			}
 		}
 		return this;
 	}
 	public FileAssembly addFileContent(String content) {
 		FileDefinition fileDef = new FileDefinition(content);
-		fileArray.add(fileDef);
+		fileArray.put(fileDef.getUniqueID(), fileDef);
 		return this;
 	}
 	/***********************************************************************
@@ -98,7 +102,7 @@ public class FileAssembly {
 		if(!FileAssembly.hasAssembly((assemblyName)) || !CFW.DB.Config.getConfigAsBoolean(Configuration.FILE_CACHING)) {
 			
 			StringBuffer concatenatedFile = new StringBuffer();
-			for(FileDefinition fileDef : fileArray) {
+			for(FileDefinition fileDef : fileArray.values()) {
 				
 				
 				String content = fileDef.readContents();

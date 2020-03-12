@@ -78,6 +78,18 @@ public class FileDefinition {
 		this.content = content;
 	}
 	
+	/**************************************************************************
+	 * Can be used without the content being read.
+	 **************************************************************************/
+	public int getUniqueID(){
+		if(type == HandlingType.STRING ) {
+			return (type + content).hashCode();
+		}else {
+			return (type + path + filename).hashCode();
+		}
+	}
+	
+	
 	public int hashCode(){
 		return (path + filename + content).hashCode();
 	}

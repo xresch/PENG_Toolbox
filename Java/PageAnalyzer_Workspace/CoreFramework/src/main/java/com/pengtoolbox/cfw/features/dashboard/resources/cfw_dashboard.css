@@ -196,6 +196,10 @@
     overflow-x: auto;
     overflow-y: auto; 
     background: inherit;
+    display: flex;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    align-items: flex-start;
 }
 
 .cfw-dashboard-widget-footer {

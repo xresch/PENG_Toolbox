@@ -377,7 +377,7 @@ function cfw_dashboard_createWidgetElement(widgetObject){
 	if(merged.content != null && merged.content != ''
 	|| merged.FOOTER != null && merged.FOOTER != ''){
 		htmlString += 
-			'<div class="cfw-dashboard-widget-body d-flex flex-grow-1 align-items-start" style="font-size: '+merged.CONTENT_FONTSIZE+'px;">';
+			'<div class="cfw-dashboard-widget-body" style="font-size: '+merged.CONTENT_FONTSIZE+'px;">';
 				if(merged.FOOTER != null && merged.FOOTER != ''){
 					htmlString +=
 					'		 <div class="cfw-dashboard-widget-footer border-top '+borderClass+'">'
