@@ -3,6 +3,8 @@ package com.pengtoolbox.cfw.features.dashboard;
 import java.sql.ResultSet;
 import java.util.logging.Logger;
 
+import javax.mail.search.AndTerm;
+
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWSQL;
@@ -10,6 +12,7 @@ import com.pengtoolbox.cfw.db.CFWDBDefaultOperations;
 import com.pengtoolbox.cfw.db.PrecheckHandler;
 import com.pengtoolbox.cfw.features.dashboard.Dashboard.DashboardFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 /**************************************************************************************************************
  * 
@@ -75,10 +78,14 @@ public class CFWDBDashboard {
 	public static boolean 	deleteByID(int id) 					{ return CFWDBDefaultOperations.deleteFirstBy(prechecksDelete, cfwObjectClass, DashboardFields.PK_ID.toString(), id); }
 	public static boolean 	deleteMultipleByID(String itemIDs) 	{ return CFWDBDefaultOperations.deleteMultipleByID(cfwObjectClass, itemIDs); }
 	
+	public static boolean 	deleteMultipleByIDForUser(int userid, String commaSeparatedIDs)	{ 
+		return CFWDBDefaultOperations.deleteMultipleByIDWhere(cfwObjectClass, commaSeparatedIDs, DashboardFields.FK_ID_USER, userid); 
+	} 
+	
 	public static boolean 	deleteByName(String name) 		{ 
 		return CFWDBDefaultOperations.deleteFirstBy(prechecksDelete, cfwObjectClass, DashboardFields.NAME.toString(), name); 
 	}
-	
+		
 	//####################################################################################################
 	// SELECT
 	//####################################################################################################
@@ -157,6 +164,26 @@ public class CFWDBDashboard {
 				.where(DashboardFields.FK_ID_USER.toString(), CFW.Context.Request.getUser().id())
 				.orderby(DashboardFields.NAME.toString())
 				.getAsJSON();
+	}
+	
+	/***************************************************************
+	 * Return a list of all user dashboards as json string.
+	 * 
+	 * @return Returns a result set with all users or null.
+	 ****************************************************************/
+	public static String getAdminDashboardListAsJSON() {
+		
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+			return new Dashboard()
+				.queryCache(CFWDBDashboard.class, "getAdminDashboardListAsJSON")
+				.columnSubquery("OWNER", "SELECT USERNAME FROM CFW_USER WHERE PK_ID = FK_ID_USER")
+				.select()
+				.orderby(DashboardFields.NAME.toString())
+				.getAsJSON();
+		}else {
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access Denied!");
+			return "[]";
+		}
 	}
 	
 	/***************************************************************

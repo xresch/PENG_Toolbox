@@ -2,16 +2,20 @@ package com.pengtoolbox.cfw.features.usermgmt;
 
 import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.google.common.base.Strings;
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.features.usermgmt.Permission.PermissionFields;
+import com.pengtoolbox.cfw.features.dashboard.Dashboard;
 import com.pengtoolbox.cfw.features.usermgmt.User.UserFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class CFWDBUser {
@@ -380,6 +384,31 @@ public class CFWDBUser {
 		
 		return (count > 0);
 
+	}
+	
+	/****************************************************************
+	 * Returns a LinkedHashMap with users for CFWAutocomleteHandler.
+	 * 
+	 * @param searchValue
+	 * @param maxResults
+	 * @return true if exists, false otherwise or in case of exception.
+	 ****************************************************************/
+	public static LinkedHashMap<Object, Object> autocompleteUser(String searchValue, int maxResults) {
+		
+		if(Strings.isNullOrEmpty(searchValue)) {
+			return new LinkedHashMap<Object, Object>();
+		}
+		
+		return new User()
+			.queryCache(CFWDBUser.class, "autocompleteUser")
+			.select(UserFields.PK_ID.toString(),
+					UserFields.USERNAME.toString())
+			.whereLike(UserFields.USERNAME.toString(), "%"+searchValue+"%")
+			.and().not().is(UserFields.PK_ID, CFW.Context.Request.getUser().id())
+			.limit(maxResults)
+			.getAsLinkedHashMap(UserFields.PK_ID.toString(), 
+								UserFields.USERNAME.toString());
+		
 	}
 	
 }

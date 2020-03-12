@@ -2,11 +2,9 @@ package com.pengtoolbox.cfw.features.dashboard;
 
 import java.util.logging.Logger;
 
-import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.CFWDBDefaultOperations;
 import com.pengtoolbox.cfw.db.PrecheckHandler;
-import com.pengtoolbox.cfw.features.dashboard.Dashboard.DashboardFields;
 import com.pengtoolbox.cfw.features.dashboard.DashboardWidget.DashboardWidgetFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 

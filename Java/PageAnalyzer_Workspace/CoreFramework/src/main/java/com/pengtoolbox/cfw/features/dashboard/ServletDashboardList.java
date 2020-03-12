@@ -55,7 +55,7 @@ public class ServletDashboardList extends HttpServlet
 				
 				//content.append(CFW.Files.readPackageResource(FeatureDashboard.RESOURCE_PACKAGE, "cfw_dashboard.html"));
 				
-				html.addJavascriptCode("cfw_dashboardlist_initialDraw({tab: 'mydashboards'});");
+				html.addJavascriptCode("cfw_dashboardlist_initialDraw();");
 				
 		        response.setContentType("text/html");
 		        response.setStatus(HttpServletResponse.SC_OK);
@@ -98,8 +98,10 @@ public class ServletDashboardList extends HttpServlet
 	  											break;
 	  											
 					case "shareddashboards": 	jsonResponse.getContent().append(CFW.DB.Dashboards.getSharedDashboardListAsJSON());
-												break;							
-	  											
+												break;	
+												
+					case "admindashboards": 	jsonResponse.getContent().append(CFW.DB.Dashboards.getAdminDashboardListAsJSON());
+												break;									
 	  																					
 					default: 					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 												break;
@@ -109,8 +111,8 @@ public class ServletDashboardList extends HttpServlet
 			case "delete": 			
 				switch(item.toLowerCase()) {
 
-					case "mydashboards": 	jsonResponse.setSuccess(CFW.DB.Dashboards.deleteMultipleByID(IDs));
-											break;  
+					case "dashboards": 	deleteDashboards(jsonResponse, IDs);
+										break;  
 										
 					default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
 										break;
@@ -132,6 +134,16 @@ public class ServletDashboardList extends HttpServlet
 		}
 	}
 		
+	private void deleteDashboards(JSONResponse jsonResponse, String IDs) {
+		// TODO Auto-generated method stub
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+			jsonResponse.setSuccess(CFW.DB.Dashboards.deleteMultipleByID(IDs));
+		}else {
+			int userid = CFW.Context.Request.getUser().id();
+			jsonResponse.setSuccess(CFW.DB.Dashboards.deleteMultipleByIDForUser(userid, IDs));
+		}
+	}
+
 	private void createForms() {
 				
 		//--------------------------------------

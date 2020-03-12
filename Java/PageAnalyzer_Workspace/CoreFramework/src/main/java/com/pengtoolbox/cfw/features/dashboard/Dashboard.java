@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWAutocompleteHandler;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
@@ -81,21 +82,13 @@ public class Dashboard extends CFWObject {
 			.setDescription("Make the dashboard shared with other people or keep it private.")
 			.setValue(false);
 	
-	private CFWField<LinkedHashMap<String,String>> sharedWithUsers = CFWField.newTagsSelector(DashboardFields.JSON_SHARE_WITH_USERS)
+	private CFWField<LinkedHashMap<String,String>> shareWithUsers = CFWField.newTagsSelector(DashboardFields.JSON_SHARE_WITH_USERS)
 			.setLabel("Share with Users")
 			.setDescription("Share this dashboard only with specific users. If none is specified, all users will see the dashboard.")
 			.setValue(null)
 			.setAutocompleteHandler(new CFWAutocompleteHandler(10) {
-				
-				public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String inputValue) {
-					
-					return new User()
-						.select(UserFields.PK_ID.toString(),
-								UserFields.USERNAME.toString())
-						.whereLike(UserFields.USERNAME.toString(), "%"+inputValue+"%")
-						.getAsLinkedHashMap(UserFields.PK_ID.toString(), 
-											UserFields.USERNAME.toString());
-					
+				public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String searchValue) {
+					return CFW.DB.Users.autocompleteUser(searchValue, this.getMaxResults());					
 				}
 			});
 	private CFWField<LinkedHashMap<String,String>> editors = CFWField.newTagsSelector(DashboardFields.JSON_EDITORS)
@@ -104,15 +97,8 @@ public class Dashboard extends CFWObject {
 			.setValue(null)
 			.setAutocompleteHandler(new CFWAutocompleteHandler(10) {
 				
-				public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String inputValue) {
-					
-					return new User()
-						.select(UserFields.PK_ID.toString(),
-								UserFields.USERNAME.toString())
-						.whereLike(UserFields.USERNAME.toString(), "%"+inputValue+"%")
-						.getAsLinkedHashMap(UserFields.PK_ID.toString(), 
-											UserFields.USERNAME.toString());
-					
+				public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String searchValue) {
+					return CFW.DB.Users.autocompleteUser(searchValue, this.getMaxResults());
 				}
 			});
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, DashboardFields.IS_DELETABLE.toString())
@@ -149,23 +135,9 @@ public class Dashboard extends CFWObject {
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.addFields(id, foreignKeyOwner, name, description, isShared, sharedWithUsers, editors, isDeletable, isRenamable);
+		this.addFields(id, foreignKeyOwner, name, description, isShared, shareWithUsers, editors, isDeletable, isRenamable);
 	}
-	
-	/**************************************************************************************
-	 * Migrate Table
-	 **************************************************************************************/
-	public void migrateTable() {
 		
-	}
-	
-	/**************************************************************************************
-	 * 
-	 **************************************************************************************/
-	public void updateTable() {
-						
-	}
-	
 	/**************************************************************************************
 	 * 
 	 **************************************************************************************/
@@ -255,11 +227,11 @@ public class Dashboard extends CFWObject {
 	}
 	
 	public LinkedHashMap<String,String> sharedWithUsers() {
-		return sharedWithUsers.getValue();
+		return shareWithUsers.getValue();
 	}
 	
 	public Dashboard sharedWithUsers(LinkedHashMap<String,String> sharedWithUsers) {
-		this.sharedWithUsers.setValue(sharedWithUsers);
+		this.shareWithUsers.setValue(sharedWithUsers);
 		return this;
 	}
 	

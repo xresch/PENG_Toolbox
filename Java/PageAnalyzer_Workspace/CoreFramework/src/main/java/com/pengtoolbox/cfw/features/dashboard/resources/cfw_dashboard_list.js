@@ -6,6 +6,7 @@
  **************************************************************************************************************/
 
 var CFW_DASHBOARDLIST_URL = "./list";
+var CFW_DASHBOARDLIST_LAST_OPTIONS = null;
 
 /******************************************************************
  * Reset the view.
@@ -27,6 +28,11 @@ function cfw_dashboardlist_reset(){
 			list.append('<li class="nav-item"><a class="nav-link active" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'shareddashboards\'})"><i class="fas fa-share-alt mr-2"></i>Shared Dashboards</a></li>');
 		}
 		
+		if(CFW.hasPermission('Dashboard Admin')){
+					list.append(
+						'<li class="nav-item"><a class="nav-link" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'admindashboards\'})"><i class="fas fa-tools mr-2"></i>Manage Dashboards</a></li>');
+		}
+		
 		var parent = $("#cfw-container");
 		parent.append(list);
 		parent.append('<div id="tab-content"></div>');
@@ -45,7 +51,7 @@ function cfw_dashboardlist_createDashboard(){
 	
 	CFW.ui.showModal(CFWL('cfw_dashboardlist_createDashboard', 
 			CFWL("cfw_dashboardlist_createDashboard", "Create Dashboard")), 
-			html, "CFW.cache.clearCache(); cfw_dashboardlist_draw({tab: 'mydashboards'})");
+			html, "CFW.cache.clearCache(); cfw_dashboardlist_draw(CFW_DASHBOARDLIST_LAST_OPTIONS)");
 	
 }
 /******************************************************************
@@ -66,7 +72,7 @@ function cfw_dashboardlist_editDashboard(id){
 	CFW.ui.showModal(
 			CFWL("cfw_dashboardlist_editDashboard","Edit Dashboard"), 
 			allDiv, 
-			"CFW.cache.clearCache(); cfw_dashboardlist_draw({tab: 'mydashboards'})"
+			"CFW.cache.clearCache(); cfw_dashboardlist_draw(CFW_DASHBOARDLIST_LAST_OPTIONS)"
 	);
 	
 	//-----------------------------------
@@ -79,16 +85,16 @@ function cfw_dashboardlist_editDashboard(id){
 /******************************************************************
  * Delete
  ******************************************************************/
-function cfw_dashboardlist_delete(item, ids){
+function cfw_dashboardlist_delete(ids){
 	
-	params = {action: "delete", item: item, ids: ids};
+	params = {action: "delete", item: "dashboards", ids: ids};
 	CFW.http.getJSON(CFW_DASHBOARDLIST_URL, params, 
 		function(data) {
 			if(data.success){
 				//CFW.ui.showSmallModal('Success!', '<span>The selected '+item+' were deleted.</span>');
 				//clear cache and reload data
-				CFW.cache.data[item] = null;
-				cfw_dashboardlist_draw({tab: item});
+				CFW.cache.clearCache();
+				cfw_dashboardlist_draw(CFW_DASHBOARDLIST_LAST_OPTIONS);
 			}else{
 				CFW.ui.showSmallModal("Error!", '<span>The selected '+item+' could <b style="color: red">NOT</b> be deleted.</span>');
 			}
@@ -96,23 +102,27 @@ function cfw_dashboardlist_delete(item, ids){
 }
 
 /******************************************************************
- * Print the list of quotes;
  * 
- * @param data as returned by CFW.http.getJSON()
+ ******************************************************************/
+function cfw_dashboardlist_printMyDashboards(data){
+	cfw_dashboardlist_printDashboards(data, 'mydashboards');
+}
+
+/******************************************************************
+ * 
  ******************************************************************/
 function cfw_dashboardlist_printSharedDashboards(data){
 	cfw_dashboardlist_printDashboards(data, 'shareddashboards');
 }
 
-
 /******************************************************************
- * Print the list of quotes;
  * 
- * @param data as returned by CFW.http.getJSON()
  ******************************************************************/
-function cfw_dashboardlist_printMyDashboards(data){
-	cfw_dashboardlist_printDashboards(data, 'mydashboards');
+function cfw_dashboardlist_printAdminDashboards(data){
+	cfw_dashboardlist_printDashboards(data, 'admindashboards');
 }
+
+
 /******************************************************************
  * Print the list of roles;
  * 
@@ -121,12 +131,11 @@ function cfw_dashboardlist_printMyDashboards(data){
  ******************************************************************/
 function cfw_dashboardlist_printDashboards(data, type){
 	
-	parent = $("#tab-content");
+	var parent = $("#tab-content");
 	
 	//--------------------------------
 	// Button
-	if(CFW.hasPermission('Dashboard Creator') 
-	|| CFW.hasPermission('Dashboard Admin')){
+	if(type == 'mydashboards'){
 		var createButton = $('<button class="btn btn-sm btn-success mb-2" onclick="cfw_dashboardlist_createDashboard()">'
 							+ '<i class="fas fa-plus-circle"></i> '+ CFWL('cfw_dashboardlist_createDashboard')
 					   + '</button>');
@@ -146,11 +155,68 @@ function cfw_dashboardlist_printDashboards(data, type){
 		}
 		
 		//-----------------------------------
-		// Check has Username
-		var showFields = ['NAME', 'DESCRIPTION', 'IS_SHARED'];
-		if(data.payload[0].OWNER != undefined){
-			showFields.unshift('OWNER');
+		// Prepare Columns
+		var showFields = [];
+		if(type == 'mydashboards'){
+			showFields = ['NAME', 'DESCRIPTION', 'IS_SHARED'];
+		}else if (type == 'shareddashboards'){
+			showFields = ['OWNER', 'NAME', 'DESCRIPTION'];
+		}else if (type == 'admindashboards'){
+			showFields = ['OWNER', 'NAME', 'DESCRIPTION', 'IS_SHARED'];
 		}
+		
+		
+		//======================================
+		// Prepare actions
+		
+		//-------------------------
+		// View Button
+		var actionButtons = [ 
+			function (record, id){ 
+				return '<td><a class="btn btn-success btn-sm" role="button" href="/app/dashboard/view?id='+id+'&title='+encodeURIComponent(record.NAME)+'" alt="View" title="View" >'
+				+ '<i class="fa fa-eye"></i>'
+				+ '</a></td>';
+			}];
+
+		if(type == 'mydashboards'
+		|| type == 'admindashboards'){
+			
+			//-------------------------
+			// Edit Button
+			actionButtons.push(
+				function (record, id){ 
+					var htmlString = '';
+					if(JSDATA.userid == record.FK_ID_USER || type == 'admindashboards'){
+						htmlString += '<td><button class="btn btn-primary btn-sm" alt="Edit" title="Edit" '
+							+'onclick="cfw_dashboardlist_editDashboard('+id+');">'
+							+ '<i class="fa fa-pen"></i>'
+							+ '</button></td>';
+					}else{
+						htmlString += '<td>&nbsp;</td>';
+					}
+					return htmlString;
+				});
+		
+			
+			//-------------------------
+			// Delete Button
+			actionButtons.push(
+				function (record, id){
+					var htmlString = '';
+					if(JSDATA.userid == record.FK_ID_USER || type == 'admindashboards'){
+						htmlString += '<td><button class="btn btn-danger btn-sm" alt="Delete" title="Delete" '
+							+'onclick="CFW.ui.confirmExecute(\'Do you want to delete the dashboard?\', \'Delete\', \'cfw_dashboardlist_delete('+id+');\')">'
+							+ '<i class="fa fa-trash"></i>'
+							+ '</button></td>';
+					}else{
+						htmlString += '<td>&nbsp;</td>';
+					}
+					return htmlString;
+				});
+			
+		}
+		
+
 		//-----------------------------------
 		// Render Data
 		var rendererSettings = {
@@ -175,52 +241,7 @@ function cfw_dashboardlist_printDashboards(data, type){
 			 			 
 			 		}
 			 	},
-				actions: [ 
-					//-------------------------
-					// View Button
-					function (record, id){ 
-						return '<td><a class="btn btn-success btn-sm" role="button" href="/app/dashboard/view?id='+id+'&title='+encodeURIComponent(record.NAME)+'" alt="View" title="View" >'
-						+ '<i class="fa fa-eye"></i>'
-						+ '</a></td>';
-					},
-					//-------------------------
-					// Edit Button
-					function (record, id){ 
-						var htmlString = '';
-						if(JSDATA.userid == record.FK_ID_USER){
-							htmlString += '<td><button class="btn btn-primary btn-sm" alt="Edit" title="Edit" '
-								+'onclick="cfw_dashboardlist_editDashboard('+id+');">'
-								+ '<i class="fa fa-pen"></i>'
-								+ '</button></td>';
-						}else{
-							htmlString += '<td>&nbsp;</td>';
-						}
-						return htmlString;
-					},
-//					//-------------------------
-//					// Add to list Button
-//					function (record, id){ 
-//						return '<td><button class="btn btn-warning btn-sm" alt="Add to List" title="Add to List" '
-//							+'onclick="om_quotes_toggleQuoteInList('+id+');">'
-//							+ '<i class="fas fa-star"></i>'
-//						+ '</button>&nbsp;</td>';
-//					},
-					
-					//-------------------------
-					// Delete Button
-					function (record, id){
-						var htmlString = '';
-						if(JSDATA.userid == record.FK_ID_USER){
-							htmlString += '<td><button class="btn btn-danger btn-sm" alt="Delete" title="Delete" '
-								+'onclick="CFW.ui.confirmExecute(\'Do you want to delete the dashboard?\', \'Delete\', \'cfw_dashboardlist_delete(\\\'mydashboards\\\','+id+');\')">'
-								+ '<i class="fa fa-trash"></i>'
-								+ '</button></td>';
-						}else{
-							htmlString += '<td>&nbsp;</td>';
-						}
-						return htmlString;
-					},
-				],
+				actions: actionButtons,
 //				bulkActions: {
 //					"Edit": function (elements, records, values){ alert('Edit records '+values.join(',')+'!'); },
 //					"Delete": function (elements, records, values){ $(elements).remove(); },
@@ -246,16 +267,24 @@ function cfw_dashboardlist_printDashboards(data, type){
  * 
  * @param options Array with arguments:
  * 	{
- * 		tab: 'users|roles|permissions', 
+ * 		tab: 'mydashboards|shareddashboards|admindashboards', 
  *  }
  * @return 
  ******************************************************************/
 
-function cfw_dashboardlist_initialDraw(options){
-	cfw_dashboardlist_draw(options);
+function cfw_dashboardlist_initialDraw(){
+	if(CFW.hasPermission('Dashboard Viewer') 
+	&& !CFW.hasPermission('Dashboard Creator') 
+	&& !CFW.hasPermission('Dashboard Admin')){
+		cfw_dashboardlist_draw({tab: "shareddashboards"});
+		return;
+	}
+	
+	cfw_dashboardlist_draw({tab: "mydashboards"});
 }
 
 function cfw_dashboardlist_draw(options){
+	CFW_DASHBOARDLIST_LAST_OPTIONS = options;
 	
 	cfw_dashboardlist_reset();
 	
@@ -269,7 +298,8 @@ function cfw_dashboardlist_draw(options){
 										break;	
 			case "shareddashboards":	CFW.http.fetchAndCacheData(CFW_DASHBOARDLIST_URL, {action: "fetch", item: "shareddashboards"}, "shareddashboards", cfw_dashboardlist_printSharedDashboards);
 										break;
-									
+			case "admindashboards":		CFW.http.fetchAndCacheData(CFW_DASHBOARDLIST_URL, {action: "fetch", item: "admindashboards"}, "admindashboards", cfw_dashboardlist_printAdminDashboards);
+										break;						
 			default:				CFW.ui.addToastDanger('This tab is unknown: '+options.tab);
 		}
 		

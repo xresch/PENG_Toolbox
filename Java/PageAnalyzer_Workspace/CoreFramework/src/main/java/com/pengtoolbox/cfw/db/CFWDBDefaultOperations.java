@@ -189,7 +189,7 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 		try {
 			CFWObject instance = cfwObjectClass.newInstance();
 			return instance
-					.queryCache(CFWDBDefaultOperations.class, "CFWDBDefaultOperations.deleteMultipleByID")
+					.queryCache(cfwObjectClass, "CFWDBDefaultOperations.deleteMultipleByID")
 					.delete()
 					.whereIn(instance.getPrimaryField().getName(), commaSeparatedIDs)
 					.executeDelete();
@@ -197,6 +197,45 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 		} catch (Exception e) {
 			new CFWLog(logger)
 				.method("deleteMultipleByID")
+				.warn("Error while instanciating object.", e);
+			return false;
+		}
+		
+	}
+	
+	/****************************************************************
+	 * Deletes multiple items by id where a certain condition mets.
+	 * This is useful to check if the item is from a specific user
+	 * @param ids separated by comma
+	 * @return true if successful, false otherwise.
+	 ****************************************************************/
+	public static <O extends CFWObject> boolean deleteMultipleByIDWhere(
+											Class<? extends CFWObject> cfwObjectClass, 
+											String commaSeparatedIDs,
+											Object fieldnameToCheck,
+											Object valueToCheck) {
+		
+		//----------------------------------
+		// Check input format
+		if(commaSeparatedIDs == null ^ !commaSeparatedIDs.matches("(\\d,?)+")) {
+			new CFWLog(logger)
+			.method("deleteMultipleByIDWhere")
+			.severe("The input '"+commaSeparatedIDs+"' are not a comma separated list of IDs.");
+			return false;
+		}
+
+		try {
+			CFWObject instance = cfwObjectClass.newInstance();
+			return instance
+					.queryCache(cfwObjectClass, "CFWDBDefaultOperations.deleteMultipleByIDWhere")
+					.delete()
+					.whereIn(instance.getPrimaryField().getName(), commaSeparatedIDs)
+					.and(fieldnameToCheck, valueToCheck)
+					.executeDelete();
+			
+		} catch (Exception e) {
+			new CFWLog(logger)
+				.method("deleteMultipleByIDWhere")
 				.warn("Error while instanciating object.", e);
 			return false;
 		}
@@ -257,7 +296,6 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 	 * @param id of the role
 	 * @return Returns a role or null if not found or in case of exception.
 	 ****************************************************************/
-	@SuppressWarnings("unchecked")
 	public static <O extends CFWObject> boolean checkExistsBy(Class<? extends CFWObject> cfwObjectClass, String column, Object value ) {
 		
 		try {
@@ -279,173 +317,5 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 		return false;
 
 	}
-
-	
-//	/***************************************************************
-//	 * Select a role by it's name.
-//	 * @param id of the role
-//	 * @return Returns a role or null if not found or in case of exception.
-//	 ****************************************************************/
-//	public static Role selectByName(String name) {
-//		
-//		return (Role)new Role()
-//				.queryCache(CFWDBDefaultOperations.class, "selectByName")
-//				.select()
-//				.where(RoleFields.NAME.toString(), name)
-//				.getFirstObject();
-//
-//	}
-//	
-//	/***************************************************************
-//	 * Select a role by it's ID.
-//	 * @param id of the role
-//	 * @return Returns a role or null if not found or in case of exception.
-//	 ****************************************************************/
-//	public static Role selectByID(int id ) {
-//
-//		return (Role)new Role()
-//				.queryCache(CFWDBDefaultOperations.class, "selectByID")
-//				.select()
-//				.where(RoleFields.PK_ID.toString(), id)
-//				.getFirstObject();
-//		
-//	}
-//	
-//	/***************************************************************
-//	 * Select a role by it's ID and return it as JSON string.
-//	 * @param id of the role
-//	 * @return Returns a role or null if not found or in case of exception.
-//	 ****************************************************************/
-//	public static String getUserRolesAsJSON(String id) {
-//		
-//		return new Role()
-//				.queryCache(CFWDBDefaultOperations.class, "getUserRolesAsJSON")
-//				.select()
-//				.where(RoleFields.PK_ID.toString(), Integer.parseInt(id))
-//				.and(RoleFields.CATEGORY.toString(), "user")
-//				.getAsJSON();
-//		
-//	}
-//	
-//	/***************************************************************
-//	 * Return a list of all user roles
-//	 * 
-//	 * @return Returns a resultSet with all roles or null.
-//	 ****************************************************************/
-//	public static ResultSet getUserRoleList() {
-//		
-//		return new Role()
-//				.queryCache(CFWDBDefaultOperations.class, "getUserRoleList")
-//				.select()
-//				.where(RoleFields.CATEGORY.toString(), "user")
-//				.orderby(RoleFields.NAME.toString())
-//				.getResultSet();
-//		
-//	}
-//	
-//	/***************************************************************
-//	 * Return a list of all user roles as json string.
-//	 * 
-//	 * @return Returns a result set with all users or null.
-//	 ****************************************************************/
-//	public static String getUserRoleListAsJSON() {
-//		return new Role()
-//				.queryCache(CFWDBDefaultOperations.class, "getUserRoleListAsJSON")
-//				.select()
-//				.where(RoleFields.CATEGORY.toString(), "user")
-//				.orderby(RoleFields.NAME.toString())
-//				.getAsJSON();
-//	}
-//	
-//	
-//	/***************************************************************
-//	 * Retrieve the permissions for the specified role.
-//	 * @param role
-//	 * @return Hashmap with roles(key=role name, value=role object), or null on exception
-//	 ****************************************************************/
-//	public static HashMap<String, Permission> selectPermissionsForRole(Role role) {
-//		return CFW.DB.RolePermissionMap.selectPermissionsForRole(role);
-//	}
-//	
-//	/****************************************************************
-//	 * Deletes the role by id.
-//	 * @param id of the user
-//	 * @return true if successful, false otherwise.
-//	 ****************************************************************/
-//	public static boolean deleteByID(int id) {
-//		
-//		Role role = selectByID(id);
-//		if(role != null && role.isDeletable() == false) {
-//			new CFWLog(logger)
-//			.method("deleteByID")
-//			.severe("The role '"+role.name()+"' cannot be deleted as it is marked as not deletable.");
-//			return false;
-//		}
-//		
-//		return new Role()
-//				.queryCache(CFWDBDefaultOperations.class, "deleteByID")
-//				.delete()
-//				.where(RoleFields.PK_ID.toString(), id)
-//				.and(RoleFields.IS_DELETABLE.toString(), true)
-//				.executeDelete();
-//					
-//	}
-//	
-//	
-//	/****************************************************************
-//	 * Deletes the role by id.
-//	 * @param id of the user
-//	 * @return true if successful, false otherwise.
-//	 ****************************************************************/
-//	public static boolean deleteByName(String name) {
-//		
-//		Role role = selectByName(name);
-//		if(role != null && role.isDeletable() == false) {
-//			new CFWLog(logger)
-//			.method("deleteByName")
-//			.severe("The role '"+role.name()+"' cannot be deleted as it is marked as not deletable.");
-//			return false;
-//		}
-//		
-//		return new Role()
-//				.queryCache(CFWDBDefaultOperations.class, "deleteByName")
-//				.delete()
-//				.where(RoleFields.NAME.toString(), name)
-//				.and(RoleFields.IS_DELETABLE.toString(), true)
-//				.executeDelete();
-//					
-//	}
-//	
-//	
-//	/****************************************************************
-//	 * Check if the role exists by name.
-//	 * 
-//	 * @param role to check
-//	 * @return true if exists, false otherwise or in case of exception.
-//	 ****************************************************************/
-//	public static boolean checkRoleExists(Role role) {
-//		if(role != null) {
-//			return checkRoleExists(role.name());
-//		}
-//		return false;
-//	}
-//	
-//	/****************************************************************
-//	 * Check if the role exists by name.
-//	 * 
-//	 * @param rolename to check
-//	 * @return true if exists, false otherwise or in case of exception.
-//	 ****************************************************************/
-//	public static boolean checkRoleExists(String roleName) {
-//		
-//		int count = new Role()
-//				.queryCache(CFWDBDefaultOperations.class, "checkRoleExists")
-//				.selectCount()
-//				.where(RoleFields.NAME.toString(), roleName)
-//				.getCount();
-//		
-//		return (count > 0);
-//		
-//	}
 	
 }

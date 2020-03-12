@@ -691,6 +691,17 @@ public class CFWSQL {
 		}
 		return this;
 	}
+	
+	/****************************************************************
+	 * Adds an AND to the query.
+	 * @return CFWSQL for method chaining
+	 ****************************************************************/
+	public CFWSQL not() {
+		if(!isQueryCached()) {
+			query.append(" NOT ");
+		}
+		return this;
+	}
 	/****************************************************************
 	 * Adds a AND clause to the query.
 	 * This method is case sensitive.
@@ -1223,7 +1234,7 @@ public class CFWSQL {
 	/***************************************************************
 	 * Execute the Query and gets the result as a string array list.
 	 ***************************************************************/
-	public LinkedHashMap<Object, Object> getAsLinkedHashMap(String keyColumnName, String valueColumnName) {
+	public LinkedHashMap<Object, Object> getAsLinkedHashMap(Object keyColumnName, Object valueColumnName) {
 		
 		LinkedHashMap<Object, Object>  resultMap = new LinkedHashMap<Object, Object>();
 		
@@ -1235,8 +1246,8 @@ public class CFWSQL {
 			
 			try {
 				while(result.next()) {
-					Object key = result.getObject(keyColumnName);
-					Object value = result.getObject(valueColumnName);
+					Object key = result.getObject(keyColumnName.toString());
+					Object value = result.getObject(valueColumnName.toString());
 					resultMap.put(key, value);
 				}
 			} catch (SQLException e) {
