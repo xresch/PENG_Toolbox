@@ -162,7 +162,7 @@ public class ServletDashboardView extends HttpServlet
 		Dashboard dashboard = CFW.DB.Dashboards.selectByID(dashboardID);
 		
 		if(dashboard.isShared() 
-		|| dashboard.foreignKeyUser() == CFW.Context.Request.getUser().id()
+		|| dashboard.foreignKeyOwner() == CFW.Context.Request.getUser().id()
 		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
 			
 			response.getContent().append(CFW.DB.DashboardWidgets.getWidgetsForDashboardAsJSON(dashboardID));
@@ -299,8 +299,8 @@ public class ServletDashboardView extends HttpServlet
 		Dashboard dashboard = CFW.DB.Dashboards.selectByID(dashboardID);
 		User user = CFW.Context.Request.getUser();
 		
-		if( dashboard.foreignKeyUser().equals(user.id())
-		|| CFWArrayUtils.contains(dashboard.editors(), user.username())
+		if( dashboard.foreignKeyOwner().equals(user.id())
+		|| ( dashboard.editors() != null && dashboard.editors().containsKey(user.id().toString()) )
 		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
 			return true;
 		}else {

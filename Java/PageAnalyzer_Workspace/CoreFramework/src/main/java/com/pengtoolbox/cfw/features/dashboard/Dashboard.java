@@ -35,8 +35,8 @@ public class Dashboard extends CFWObject {
 		NAME,
 		DESCRIPTION,
 		IS_SHARED,
-		SHARED_WITH_USERS,
-		EDITORS,
+		JSON_SHARE_WITH_USERS,
+		JSON_EDITORS,
 		IS_DELETABLE,
 		IS_RENAMABLE,
 	}
@@ -49,7 +49,7 @@ public class Dashboard extends CFWObject {
 			.apiFieldType(FormFieldType.NUMBER)
 			.setValue(-999);
 	
-	private CFWField<Integer> foreignKeyUser = CFWField.newInteger(FormFieldType.HIDDEN, DashboardFields.FK_ID_USER)
+	private CFWField<Integer> foreignKeyOwner = CFWField.newInteger(FormFieldType.HIDDEN, DashboardFields.FK_ID_USER)
 			.setForeignKeyCascade(this, User.class, UserFields.PK_ID)
 			.setDescription("The user id of the owner of the dashboard.")
 			.apiFieldType(FormFieldType.NUMBER)
@@ -81,31 +81,37 @@ public class Dashboard extends CFWObject {
 			.setDescription("Make the dashboard shared with other people or keep it private.")
 			.setValue(false);
 	
-	private CFWField<Object[]> sharedWithUsers = CFWField.newArray(FormFieldType.TAGS, DashboardFields.SHARED_WITH_USERS)
+	private CFWField<LinkedHashMap> sharedWithUsers = CFWField.newTagsSelector(DashboardFields.JSON_SHARE_WITH_USERS)
+			.setLabel("Share with Users")
 			.setDescription("Share this dashboard only with specific users. If none is specified, all users will see the dashboard.")
 			.setValue(null)
 			.setAutocompleteHandler(new CFWAutocompleteHandler(10) {
 				
 				public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String inputValue) {
 					
-					return new User().select(UserFields.USERNAME.toString())
+					return new User()
+						.select(UserFields.PK_ID.toString(),
+								UserFields.USERNAME.toString())
 						.whereLike(UserFields.USERNAME.toString(), "%"+inputValue+"%")
-						.getAsLinkedHashMap(UserFields.USERNAME.toString(), 
-							UserFields.USERNAME.toString());
+						.getAsLinkedHashMap(UserFields.PK_ID.toString(), 
+											UserFields.USERNAME.toString());
 					
 				}
 			});
-	private CFWField<Object[]> editors = CFWField.newArray(FormFieldType.TAGS, DashboardFields.EDITORS)
+	private CFWField<LinkedHashMap> editors = CFWField.newTagsSelector(DashboardFields.JSON_EDITORS)
+			.setLabel("Editors")
 			.setDescription("Allow other users to view and edit the dashboard, even when the dashboard is not shared.")
 			.setValue(null)
 			.setAutocompleteHandler(new CFWAutocompleteHandler(10) {
 				
 				public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String inputValue) {
 					
-					return new User().select(UserFields.USERNAME.toString())
-					.whereLike(UserFields.USERNAME.toString(), "%"+inputValue+"%")
-					.getAsLinkedHashMap(UserFields.USERNAME.toString(), 
-							UserFields.USERNAME.toString());
+					return new User()
+						.select(UserFields.PK_ID.toString(),
+								UserFields.USERNAME.toString())
+						.whereLike(UserFields.USERNAME.toString(), "%"+inputValue+"%")
+						.getAsLinkedHashMap(UserFields.PK_ID.toString(), 
+											UserFields.USERNAME.toString());
 					
 				}
 			});
@@ -143,7 +149,7 @@ public class Dashboard extends CFWObject {
 	
 	private void initializeFields() {
 		this.setTableName(TABLE_NAME);
-		this.addFields(id, foreignKeyUser, name, description, isShared, sharedWithUsers, editors, isDeletable, isRenamable);
+		this.addFields(id, foreignKeyOwner, name, description, isShared, sharedWithUsers, editors, isDeletable, isRenamable);
 	}
 	
 	/**************************************************************************************
@@ -181,8 +187,8 @@ public class Dashboard extends CFWObject {
 						DashboardFields.NAME.toString(),
 						DashboardFields.DESCRIPTION.toString(),
 						DashboardFields.IS_SHARED.toString(),
-						DashboardFields.SHARED_WITH_USERS.toString(),
-						DashboardFields.EDITORS.toString(),
+						DashboardFields.JSON_SHARE_WITH_USERS.toString(),
+						DashboardFields.JSON_EDITORS.toString(),
 						DashboardFields.IS_DELETABLE.toString(),
 						DashboardFields.IS_RENAMABLE.toString(),		
 				};
@@ -212,12 +218,12 @@ public class Dashboard extends CFWObject {
 		return this;
 	}
 	
-	public Integer foreignKeyUser() {
-		return foreignKeyUser.getValue();
+	public Integer foreignKeyOwner() {
+		return foreignKeyOwner.getValue();
 	}
 	
 	public Dashboard foreignKeyUser(Integer foreignKeyUser) {
-		this.foreignKeyUser.setValue(foreignKeyUser);
+		this.foreignKeyOwner.setValue(foreignKeyUser);
 		return this;
 	}
 		
@@ -248,20 +254,20 @@ public class Dashboard extends CFWObject {
 		return this;
 	}
 	
-	public Object[] sharedWithUsers() {
-		return (Object[])sharedWithUsers.getValue();
+	public LinkedHashMap sharedWithUsers() {
+		return (LinkedHashMap)sharedWithUsers.getValue();
 	}
 	
-	public Dashboard sharedWithUsers(Object[] sharedWithUsers) {
+	public Dashboard sharedWithUsers(LinkedHashMap sharedWithUsers) {
 		this.sharedWithUsers.setValue(sharedWithUsers);
 		return this;
 	}
 	
-	public Object[] editors() {
-		return (Object[])editors.getValue();
+	public LinkedHashMap editors() {
+		return (LinkedHashMap)editors.getValue();
 	}
 	
-	public Dashboard editors(Object[] editors) {
+	public Dashboard editors(LinkedHashMap editors) {
 		this.editors.setValue(editors);
 		return this;
 	}

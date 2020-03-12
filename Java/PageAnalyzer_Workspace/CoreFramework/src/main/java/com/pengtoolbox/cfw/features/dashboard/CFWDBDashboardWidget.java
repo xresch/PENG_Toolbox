@@ -49,13 +49,14 @@ public class CFWDBDashboardWidget {
 				return false;
 			}
 			
-			if(isWidgetOfCurrentUser(widget) == false
-			&& !CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
-				new CFWLog(logger)
-				.method("doCheck")
-				.severe("You are not allowed to modify this dashboard", new Throwable());
-				return false;
-			}
+			// permmision check will be done in ServletDashboardView.java 
+//			if(isWidgetOfCurrentUser(widget) == false
+//			&& !CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+//				new CFWLog(logger)
+//				.method("doCheck")
+//				.severe("You are not allowed to modify this dashboard", new Throwable());
+//				return false;
+//			}
 			
 			return true;
 		}

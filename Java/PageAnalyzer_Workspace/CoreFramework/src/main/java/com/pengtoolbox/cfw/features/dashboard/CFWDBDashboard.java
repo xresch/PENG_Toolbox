@@ -168,26 +168,31 @@ public class CFWDBDashboard {
 		
 //		SELECT *, (SELECT USERNAME FROM CFW_USER WHERE PK_ID = FK_ID_USER ) AS USERNAME 
 //		FROM CFW_DASHBOARD 
-//		WHERE ( IS_SHARED = TRUE AND ARRAY_LENGTH(SHARED_WITH_USERS) IS NULL )
-//		OR ( IS_SHARED = TRUE AND ARRAY_CONTAINS(SHARED_WITH_USERS, 'admin') )
-// OR ARRAY_CONTAINS(EDITORS, 'Testika1')
-//		ORDER BY LOWER(NAME)
-		
-		String username = CFW.Context.Request.getUser().username();
+//		WHERE ( IS_SHARED = TRUE AND JSON_SHARE_WITH_USERS IS NULL )
+//		OR ( IS_SHARED = TRUE AND JSON_SHARE_WITH_USERS LIKE '%"65":%') 
+//		OR JSON_EDITORS LIKE '%"65":%'
+//		ORDER BY LOWER(NAME);
+		int userID = CFW.Context.Request.getUser().id();
+		String likeID = "%\""+userID+"\":%";
 		return new Dashboard()
 				.queryCache(CFWDBDashboard.class, "getSharedDashboardListAsJSON")
 				.columnSubquery("OWNER", "SELECT USERNAME FROM CFW_USER WHERE PK_ID = FK_ID_USER")
 				.select()
-				.where("("+DashboardFields.IS_SHARED.toString(), true)
-					.and()
-					.arrayIsNull(DashboardFields.SHARED_WITH_USERS.toString())
+				.where("("+DashboardFields.IS_SHARED, true)
+						.and()
+							.custom("(")
+								.isNull(DashboardFields.JSON_SHARE_WITH_USERS)
+								.or()
+								.is(DashboardFields.JSON_SHARE_WITH_USERS, "{}")
+								.or()
+								.is(DashboardFields.FK_ID_USER, userID)
+							.custom(")")
 					.custom(")")
 				.or("("+DashboardFields.IS_SHARED.toString(), true)
-					.and()
-					.arrayContains(DashboardFields.SHARED_WITH_USERS.toString(), username)
+						.and().like(DashboardFields.JSON_SHARE_WITH_USERS, likeID)
 					.custom(")")
-				.or().arrayContains(DashboardFields.EDITORS.toString(), username)
-				.orderby(DashboardFields.NAME.toString())
+				.or().like(DashboardFields.JSON_EDITORS, likeID)
+				.orderby(DashboardFields.NAME)
 				.getAsJSON();
 	}
 	

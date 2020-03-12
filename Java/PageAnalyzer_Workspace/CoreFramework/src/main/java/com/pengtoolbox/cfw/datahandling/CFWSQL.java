@@ -25,7 +25,9 @@ public class CFWSQL {
 	private static Logger logger = CFWLog.getLogger(CFWSQL.class.getName());
 	private static HashMap<String, String> queryCache = new HashMap<String, String>();
 	private static HashMap<String, Integer> cacheHitCount = new HashMap<String, Integer>();
+	
 	private String queryName = null;
+	private boolean isQueryCached = false;
 	
 	private CFWObject object;
 	private LinkedHashMap<String, CFWField<?>> fields;
@@ -103,7 +105,11 @@ public class CFWSQL {
 	 ****************************************************************/
 	private boolean isQueryCached() {
 		
+		if(isQueryCached) { return true; }
+		
 		if(queryName != null && queryCache.containsKey(queryName)) {
+			//only check cache once
+			isQueryCached = true;
 			return true;
 		}
 		
@@ -269,12 +275,12 @@ public class CFWSQL {
 	 * @param field names
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL select(String ...fieldnames) {
+	public CFWSQL select(Object ...fieldnames) {
 		if(!isQueryCached()) {
 			query.append("SELECT");
 			//---------------------------------
 			// Add Fields
-			for(String fieldname : fieldnames) {
+			for(Object fieldname : fieldnames) {
 					query.append(" ").append(fieldname).append(",");
 			}
 			query.deleteCharAt(query.length()-1);
@@ -340,13 +346,13 @@ public class CFWSQL {
 	 * @param fieldnames
 	 * @return boolean
 	 ****************************************************************/
-	public boolean insert(String ...fieldnames) {
+	public boolean insert(Object ...fieldnames) {
 		
 			StringBuilder columnNames = new StringBuilder("(");
 			StringBuilder placeholders = new StringBuilder("(");
 			
-			for(String fieldname : fieldnames) {
-				CFWField<?> field = fields.get(fieldname);
+			for(Object fieldname : fieldnames) {
+				CFWField<?> field = fields.get(fieldname.toString());
 				if(field != object.getPrimaryField()) {
 					if(!isQueryCached()) {
 						columnNames.append(field.getName()).append(",");
@@ -385,13 +391,13 @@ public class CFWSQL {
 	 * @param fieldnames
 	 * @return  id or null if not successful
 	 ****************************************************************/
-	public Integer insertGetPrimaryKey(String ...fieldnames) {
+	public Integer insertGetPrimaryKey(Object ...fieldnames) {
 		
 			StringBuilder columnNames = new StringBuilder("(");
 			StringBuilder placeholders = new StringBuilder("(");
 			
-			for(String fieldname : fieldnames) {
-				CFWField<?> field = fields.get(fieldname);
+			for(Object fieldname : fieldnames) {
+				CFWField<?> field = fields.get(fieldname.toString());
 				if(field != object.getPrimaryField()) {
 					if(!isQueryCached()) {
 						columnNames.append(field.getName()).append(",");
@@ -429,13 +435,13 @@ public class CFWSQL {
 	 * @param fieldnames
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public boolean update(String ...fieldnames) {
+	public boolean update(Object ...fieldnames) {
 		
 		StringBuilder columnNames = new StringBuilder();
 		StringBuilder placeholders = new StringBuilder();
 		
-		for(String fieldname : fieldnames) {
-			CFWField<?> field = fields.get(fieldname);
+		for(Object fieldname : fieldnames) {
+			CFWField<?> field = fields.get(fieldname.toString());
 			if(!field.equals(object.getPrimaryField())) {
 				
 				if(!isQueryCached()) {
@@ -530,13 +536,22 @@ public class CFWSQL {
 		
 		return this;
 	}
-	
+	/****************************************************************
+	 * Adds an WHERE to the query.
+	 * @return CFWSQL for method chaining
+	 ****************************************************************/
+	public CFWSQL where() {
+		if(!isQueryCached()) {
+			query.append(" WHERE ");
+		}
+		return this;
+	}
 	/****************************************************************
 	 * Adds a WHERE clause to the query.
 	 * This method is case sensitive.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL where(String fieldname, Object value) {
+	public CFWSQL where(Object fieldname, Object value) {
 		return where(fieldname, value, true);
 	}
 	
@@ -544,15 +559,15 @@ public class CFWSQL {
 	 * Adds a WHERE clause to the query.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL where(String fieldname, Object value, boolean isCaseSensitive) {
+	public CFWSQL where(Object fieldname, Object value, boolean isCaseSensitive) {
 		if(!isQueryCached()) {
 			if(value == null) {
-				return whereIsNull(fieldname);
+				return where().isNull(fieldname);
 			}
 			if(isCaseSensitive) {
-				query.append(" WHERE "+fieldname).append(" = ?");	
+				query.append(" WHERE ").append(fieldname).append(" = ?");	
 			}else {
-				query.append(" WHERE LOWER("+fieldname).append(") = LOWER(?)");	
+				query.append(" WHERE LOWER(").append(fieldname).append(") = LOWER(?)");	
 			}
 		}
 		values.add(value);
@@ -564,10 +579,11 @@ public class CFWSQL {
 	 * Adds a WHERE clause to the query.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL whereLike(String fieldname, Object value) {
+	public CFWSQL whereLike(Object fieldname, Object value) {
 		if(!isQueryCached()) {
 			if(value == null) {
-				return whereIsNull(fieldname);
+				
+				return where().isNull(fieldname);
 			}
 			query.append(" WHERE ").append(fieldname).append(" LIKE ?");	
 		}
@@ -579,7 +595,7 @@ public class CFWSQL {
 	 * Adds a ARRAY_LENGTH and checks if it the array is null.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL arrayIsNull(String fieldname) {
+	public CFWSQL arrayIsNull(Object fieldname) {
 		if(!isQueryCached()) {
 			query.append(" ARRAY_LENGTH(").append(fieldname).append(") IS NULL");	
 		}
@@ -590,7 +606,7 @@ public class CFWSQL {
 	 * Adds a ARRAY_CONTAINS check.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL arrayContains(String fieldname, Object value) {
+	public CFWSQL arrayContains(Object fieldname, Object value) {
 		if(!isQueryCached()) {
 			query.append(" ARRAY_CONTAINS(").append(fieldname).append(", ?)");	
 		}
@@ -603,9 +619,9 @@ public class CFWSQL {
 	 * Adds a WHERE <fieldname> IN(?) clause to the query.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL whereIn(String fieldname, Object value) {
+	public CFWSQL whereIn(Object fieldname, Object value) {
 		if(!isQueryCached()) {
-			query.append(" WHERE "+fieldname).append(" IN(?)");
+			query.append(" WHERE ").append(fieldname).append(" IN(?)");
 		}
 		values.add(value);
 		return this;
@@ -615,9 +631,9 @@ public class CFWSQL {
 	 * Adds a WHERE <fieldname> IN(?) clause to the query.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL whereIsNull(String fieldname) {
+	public CFWSQL isNull(Object fieldname) {
 		if(!isQueryCached()) {
-			query.append(" WHERE "+fieldname).append(" IS NULL");
+			query.append(" ").append(fieldname).append(" IS NULL");
 		}
 		return this;
 	}
@@ -626,7 +642,7 @@ public class CFWSQL {
 	 * Adds a WHERE <fieldname> IN(?,?...) clause to the query.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL whereIn(String fieldname, Object ...values) {
+	public CFWSQL whereIn(Object fieldname, Object ...values) {
 			
 		StringBuilder placeholders = new StringBuilder();
 		for(Object value : values) {
@@ -636,7 +652,7 @@ public class CFWSQL {
 		placeholders.deleteCharAt(placeholders.length()-1);
 		
 		if(!isQueryCached()) {
-			query.append(" WHERE "+fieldname).append(" IN(").append(placeholders).append(")");
+			query.append(" WHERE ").append(fieldname).append(" IN(").append(placeholders).append(")");
 		}
 		
 		return this;
@@ -646,9 +662,9 @@ public class CFWSQL {
 	 * Adds a WHERE <fieldname> IN(?) clause to the query.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL whereArrayContains(String fieldname, Object value) {
+	public CFWSQL whereArrayContains(Object fieldname, Object value) {
 		if(!isQueryCached()) {
-			query.append(" WHERE ARRAY_CONTAINS("+fieldname).append(", ?) ");
+			query.append(" WHERE ARRAY_CONTAINS(").append(fieldname).append(", ?) ");
 		}
 		
 		values.add(value);
@@ -680,7 +696,7 @@ public class CFWSQL {
 	 * This method is case sensitive.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL and(String fieldname, Object value) {
+	public CFWSQL and(Object fieldname, Object value) {
 		return and(fieldname, value, true);
 	}
 	
@@ -688,12 +704,12 @@ public class CFWSQL {
 	 * Adds a WHERE clause to the query.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL and(String fieldname, Object value, boolean isCaseSensitive) {
+	public CFWSQL and(Object fieldname, Object value, boolean isCaseSensitive) {
 		if(!isQueryCached()) {
 			if(isCaseSensitive) {
-				query.append(" AND "+fieldname).append(" = ?");	
+				query.append(" AND ").append(fieldname).append(" = ?");	
 			}else {
-				query.append(" AND LOWER("+fieldname).append(") = LOWER(?)");	
+				query.append(" AND LOWER(").append(fieldname).append(") = LOWER(?)");	
 			}
 		}
 		values.add(value);
@@ -715,7 +731,7 @@ public class CFWSQL {
 	 * This method is case sensitive.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL or(String fieldname, Object value) {
+	public CFWSQL or(Object fieldname, Object value) {
 		return or(fieldname, value, true);
 	}
 	
@@ -723,17 +739,43 @@ public class CFWSQL {
 	 * Adds a WHERE clause to the query.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL or(String fieldname, Object value, boolean isCaseSensitive) {
+	public CFWSQL or(Object fieldname, Object value, boolean isCaseSensitive) {
 		if(!isQueryCached()) {
 			if(isCaseSensitive) {
-				query.append(" OR "+fieldname).append(" = ?");	
+				query.append(" OR ").append(fieldname).append(" = ?");	
 			}else {
-				query.append(" OR LOWER("+fieldname).append(") = LOWER(?)");	
+				query.append(" OR LOWER(").append(fieldname).append(") = LOWER(?)");	
 			}
 		}
 		values.add(value);
 		return this;
 	}
+	
+	/****************************************************************
+	 * Adds a equals operation to the query.
+	 * @return CFWSQL for method chaining
+	 ****************************************************************/
+	public CFWSQL is(Object fieldname, Object value) {
+		if(!isQueryCached()) {
+			query.append(" ").append(fieldname).append(" = ").append(" ? ");
+		}
+		
+		values.add(value);
+		return this;
+	}
+	/****************************************************************
+	 * Adds a LIKE operation to the query.
+	 * @return CFWSQL for method chaining
+	 ****************************************************************/
+	public CFWSQL like(Object fieldname, Object value) {
+		if(!isQueryCached()) {
+			query.append(" ").append(fieldname).append(" LIKE ").append(" ? ");
+		}
+		
+		values.add(value);
+		return this;
+	}
+	
 	
 	/****************************************************************
 	 * Adds a UNION to the statement.
@@ -773,9 +815,9 @@ public class CFWSQL {
 	 * strings.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL orderby(String fieldname) {
+	public CFWSQL orderby(Object fieldname) {
 		if(!isQueryCached()) {
-			if(fields.get(fieldname).getValueClass() == String.class) {
+			if(fields.get(fieldname.toString()).getValueClass() == String.class) {
 				query.append(" ORDER BY LOWER("+fieldname+")");
 			}else {
 				query.append(" ORDER BY "+fieldname);
@@ -792,11 +834,11 @@ public class CFWSQL {
 	public CFWSQL orderby(String... fieldnames) {
 		if(!isQueryCached()) {
 			query.append(" ORDER BY");
-			for(String fieldname : fieldnames) {
-				if(fields.get(fieldname).getValueClass() == String.class) {
-					query.append(" LOWER("+fieldname+"),");
+			for(Object fieldname : fieldnames) {
+				if(fields.get(fieldname.toString()).getValueClass() == String.class) {
+					query.append(" LOWER(").append(fieldname).append("),");
 				}else {
-					query.append(" "+fieldname+",");
+					query.append(" ").append(fieldname).append(",");
 				}
 			}
 			query.deleteCharAt(query.length()-1);
@@ -810,12 +852,12 @@ public class CFWSQL {
 	 * strings. Sort order is descending.
 	 * @return CFWSQL for method chaining
 	 ****************************************************************/
-	public CFWSQL orderbyDesc(String fieldname) {
+	public CFWSQL orderbyDesc(Object fieldname) {
 		if(!isQueryCached()) {				
-			if(fields.get(fieldname).getValueClass() == String.class) {
-				query.append(" ORDER BY LOWER("+fieldname+") DESC");
+			if(fields.get(fieldname.toString()).getValueClass() == String.class) {
+				query.append(" ORDER BY LOWER(").append(fieldname).append(") DESC");
 			}else {
-				query.append(" ORDER BY "+fieldname+" DESC");
+				query.append(" ORDER BY ").append(fieldname).append(" DESC");
 			}
 		}
 		return this;
