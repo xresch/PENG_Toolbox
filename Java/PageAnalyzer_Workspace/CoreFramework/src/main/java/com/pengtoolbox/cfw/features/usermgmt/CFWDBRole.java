@@ -31,7 +31,7 @@ public class CFWDBRole {
 	//####################################################################################################
 	// Preckeck Initialization
 	//####################################################################################################
-	private static PrecheckHandler prechecksCreateUpdate =  new PrecheckHandler() {
+	private static PrecheckHandler prechecksCreate =  new PrecheckHandler() {
 		public boolean doCheck(CFWObject object) {
 			
 			Role role = (Role)object;
@@ -50,6 +50,22 @@ public class CFWDBRole {
 				return false;
 			}
 
+			return true;
+		}
+	};
+	
+	private static PrecheckHandler prechecksUpdate =  new PrecheckHandler() {
+		public boolean doCheck(CFWObject object) {
+			
+			Role role = (Role)object;
+			
+			if(role.name() == null || role.name().isEmpty()) {
+				new CFWLog(logger)
+					.method("doCheck")
+					.warn("The name of the role cannot be null.", new Throwable());
+				return false;
+			}
+			
 			return true;
 		}
 	};
@@ -73,14 +89,14 @@ public class CFWDBRole {
 	//####################################################################################################
 	// CREATE
 	//####################################################################################################
-	public static boolean	create(Role... items) 	{ return CFWDBDefaultOperations.create(prechecksCreateUpdate, items); }
-	public static boolean 	create(Role item) 		{ return CFWDBDefaultOperations.create(prechecksCreateUpdate, item);}
+	public static boolean	create(Role... items) 	{ return CFWDBDefaultOperations.create(prechecksCreate, items); }
+	public static boolean 	create(Role item) 		{ return CFWDBDefaultOperations.create(prechecksCreate, item);}
 	
 	//####################################################################################################
 	// UPDATE
 	//####################################################################################################
-	public static boolean 	update(Role... items) 	{ return CFWDBDefaultOperations.update(prechecksCreateUpdate, items); }
-	public static boolean 	update(Role item) 		{ return CFWDBDefaultOperations.update(prechecksCreateUpdate, item); }
+	public static boolean 	update(Role... items) 	{ return CFWDBDefaultOperations.update(prechecksUpdate, items); }
+	public static boolean 	update(Role item) 		{ return CFWDBDefaultOperations.update(prechecksUpdate, item); }
 	
 	//####################################################################################################
 	// DELETE
