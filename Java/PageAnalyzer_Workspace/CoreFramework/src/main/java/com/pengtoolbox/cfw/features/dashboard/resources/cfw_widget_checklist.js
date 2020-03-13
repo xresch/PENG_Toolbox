@@ -4,8 +4,8 @@
 		{
 			category: "Static Widgets",
 			menuicon: "fas fa-tasks",
-			menulabel: CFWL('cfw_dashboard_widget_cfwchecklist', 'Checklist'),
-			description: CFWL('cfw_dashboard_widget_cfwchecklist_desc', 'Displays a checklist. Every line in the text will be shown as a separate item.'),
+			menulabel: CFWL('cfw_widget_cfwchecklist', 'Checklist'),
+			description: CFWL('cfw_widget_cfwchecklist_desc', 'Displays a checklist. Every line in the text will be shown as a separate item.'),
 			
 			createWidgetInstance: function (widgetObject, callback) {			
 				

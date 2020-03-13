@@ -6,8 +6,8 @@
 		{
 			category: "Static Widgets",
 			menuicon: "fab fa-youtube",
-			menulabel: CFWL('cfw_dashboard_widget_cfwyoutubevideo', "Youtube Video"),
-			description: CFWL('cfw_dashboard_widget_cfwyoutubevideo_desc', "Adds a Youtube video to the dashboard."),
+			menulabel: CFWL('cfw_widget_cfwyoutubevideo', "Youtube Video"),
+			description: CFWL('cfw_widget_cfwyoutubevideo_desc', "Adds a Youtube video to the dashboard."),
 			
 			createWidgetInstance: function (widgetObject, callback) {
 				

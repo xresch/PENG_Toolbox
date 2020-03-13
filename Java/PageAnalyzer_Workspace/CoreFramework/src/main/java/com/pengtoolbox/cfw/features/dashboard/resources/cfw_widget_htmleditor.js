@@ -4,8 +4,8 @@
 		{
 			category: "Static Widgets",
 			menuicon: "fas fa-code",
-			menulabel: CFWL('cfw_dashboard_widget_cfwhtmleditor', 'HTML Editor'),
-			description: CFWL('cfw_dashboard_widget_cfwhtmleditor_desc', 'Display static text. Can be used to create labels and descriptions.'),
+			menulabel: CFWL('cfw_widget_cfwhtmleditor', 'HTML Editor'),
+			description: CFWL('cfw_widget_cfwhtmleditor_desc', 'Display static text. Can be used to create labels and descriptions.'),
 			
 			createWidgetInstance: function (widgetObject, callback) {			
 				

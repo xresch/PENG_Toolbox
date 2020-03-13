@@ -4,8 +4,8 @@
 		{
 			category: "Static Widgets",
 			menuicon: "fas fa-list-ol",
-			menulabel: CFWL('cfw_dashboard_widget_cfwlist', 'List'),
-			description: CFWL('cfw_dashboard_widget_cfwlist_desc', 'Displays a list. Every line in the text will be shown as a separate item.'),
+			menulabel: CFWL('cfw_widget_cfwlist', 'List'),
+			description: CFWL('cfw_widget_cfwlist_desc', 'Displays a list. Every line in the text will be shown as a separate item.'),
 			
 			createWidgetInstance: function (widgetObject, callback) {			
 				

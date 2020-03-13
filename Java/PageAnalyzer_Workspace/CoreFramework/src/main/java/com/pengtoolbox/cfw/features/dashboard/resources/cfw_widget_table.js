@@ -3,8 +3,8 @@
 		{
 			category: "Static Widgets",
 			menuicon: "fas fa-table",
-			menulabel: CFWL('cfw_dashboard_widget_csvtable', "CSV Table"),
-			description: CFWL('cfw_dashboard_widget_csvtable_desc', "Takes values in CSV format and displays them as a table."),
+			menulabel: CFWL('cfw_widget_csvtable', "CSV Table"),
+			description: CFWL('cfw_widget_csvtable_desc', "Takes values in CSV format and displays them as a table."),
 			createWidgetInstance: function (widgetObject, callback) {
 					
 				var separator = widgetObject.JSON_SETTINGS.separator;
