@@ -17,14 +17,13 @@ TODO
 - Dashboard: Favorites
 - Dashboard: Fit Squeeze
 - Dashboard: Filter Widgets
-- Dashboard: Mobile View: Fix edit view and check if resizing/dragging is possible.
-- Dashboard: Default Error / No Access Title
-- Dashboard: Default No Data Title
+- Dashboard: Check if resizing/dragging is possible.
+- Dashboard: Default Error / No Access Tile
+- Dashboard: Default No Data Tile
 
 - Widget: CSV Chart
 - Widget: Cards
 - Widget: Panels
-- Widget: CSV Chart
 - Widget: Website Checker HTMLUnit
 - Widget: Partial HTML Extractor
 - Widget: Nest other Dashboard
@@ -109,6 +108,7 @@ DONE
 - Tags: Display Tags
 - Tags: Save as Key Value Pairs
 - Manual: Documentation Widget Creation
+- Dashboard: Mobile View: Fix edit view
 - Dashboard: Add Owner name to shared list
 - Dashboard: Permission View All
 - Dashboard: Management Page
