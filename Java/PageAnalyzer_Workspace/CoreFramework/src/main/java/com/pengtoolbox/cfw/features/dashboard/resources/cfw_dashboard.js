@@ -214,11 +214,6 @@ function cfw_dashboard_editWidget(widgetGUID){
 	
 	if(customForm != null){
 		compositeDiv.append(customForm);
-		
-		formID = $(customForm).attr("id");
-		// workaround, force evaluation
-		eval($(customForm).find("script").text());
-		eval("intializeForm_"+formID+"();");
 	}
 	
 	compositeDiv.append(defaultForm);
@@ -228,7 +223,12 @@ function cfw_dashboard_editWidget(widgetGUID){
 	
 	//-----------------------------------
 	// Initialize Forms
-
+	if(customForm != null){
+		formID = $(customForm).attr("id");
+		// workaround, force evaluation
+		eval($(customForm).find("script").text());
+		eval("intializeForm_"+formID+"();");
+	}
 	$('#editWidgetComposite [data-toggle="tooltip"]').tooltip();
 				
 }
