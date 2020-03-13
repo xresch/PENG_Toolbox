@@ -14,7 +14,7 @@ import com.pengtoolbox.cfw.utils.CFWArrayUtils;
  * Class to fetch an map hierarchical structures of CFWObjects.
  * The object has to use CFWObject.serHierarchyLevels() to initialize the needed fields.
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  ***************************************************************************************************************************/
 public class CFWHierarchy<T extends CFWObject> {
@@ -270,7 +270,7 @@ public class CFWHierarchy<T extends CFWObject> {
 	 *****************************************************************************/
 	public ArrayList<T> fetchFlatList(String... resultFields) {
 		return (ArrayList<T>)createFetchHierarchyQuery(resultFields)
-					.getObjectList();
+					.asObjectList();
 	}
 	
 	/*****************************************************************************

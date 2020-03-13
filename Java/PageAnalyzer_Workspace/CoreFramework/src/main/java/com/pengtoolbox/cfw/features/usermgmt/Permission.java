@@ -17,7 +17,7 @@ import com.pengtoolbox.cfw.validation.LengthValidator;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class Permission extends CFWObject{
@@ -105,7 +105,7 @@ public class Permission extends CFWObject{
 		ArrayList<CFWObject> permissionArray = 
 				this.select()
 					.where(PermissionFields.CATEGORY.toString(), null)
-					.getObjectList();
+					.asObjectList();
 
 		for(CFWObject permissionObject : permissionArray) {
 			Permission permission = (Permission) permissionObject;

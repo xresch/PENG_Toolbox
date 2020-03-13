@@ -1127,7 +1127,7 @@ public class CFWSQL {
 	/***************************************************************
 	 * Execute the Query and gets the result as Objects.
 	 ****************************************************************/
-	public ArrayList<CFWObject> getObjectList() {
+	public ArrayList<CFWObject> asObjectList() {
 		
 		ArrayList<CFWObject> objectArray = new ArrayList<CFWObject>();
 		

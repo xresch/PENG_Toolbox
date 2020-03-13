@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw.features.dashboard;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,7 +17,7 @@ import com.pengtoolbox.cfw.response.HTMLResponse;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
-/************************************************************************	**************************************
+/**************************************************************************************************************
  * 
  * @author Reto Scheiwiller, � 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
@@ -30,7 +31,7 @@ public class ServletDashboardList extends HttpServlet
 	
 	}
 	
-	/*****************************************************************
+	/******************************************************************
 	 *
 	 ******************************************************************/
 	@Override
@@ -68,6 +69,9 @@ public class ServletDashboardList extends HttpServlet
         
     }
 	
+	/******************************************************************
+	 *
+	 ******************************************************************/
 	private void handleDataRequest(HttpServletRequest request, HttpServletResponse response) {
 		
 		String action = request.getParameter("action");
@@ -81,6 +85,7 @@ public class ServletDashboardList extends HttpServlet
 		//--------------------------------------
 		// Check Permissions
 		if(action.toLowerCase().equals("delete")
+		|| action.toLowerCase().equals("copy")
 		|| action.toLowerCase().equals("getform")) {
 			if(!CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_CREATOR)
 			   && !CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
@@ -107,7 +112,17 @@ public class ServletDashboardList extends HttpServlet
 												break;
 				}
 				break;
-				
+			
+			case "duplicate": 			
+				switch(item.toLowerCase()) {
+
+					case "dashboard": 	duplicateDashboard(jsonResponse, ID);
+										break;  
+										
+					default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
+										break;
+				}
+				break;	
 			case "delete": 			
 				switch(item.toLowerCase()) {
 
@@ -133,7 +148,10 @@ public class ServletDashboardList extends HttpServlet
 								
 		}
 	}
-		
+	
+	/******************************************************************
+	 *
+	 ******************************************************************/
 	private void deleteDashboards(JSONResponse jsonResponse, String IDs) {
 		// TODO Auto-generated method stub
 		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
@@ -143,7 +161,56 @@ public class ServletDashboardList extends HttpServlet
 			jsonResponse.setSuccess(CFW.DB.Dashboards.deleteMultipleByIDForUser(userid, IDs));
 		}
 	}
+	
+	/******************************************************************
+	 *
+	 ******************************************************************/
+	private void duplicateDashboard(JSONResponse jsonResponse, String dashboardID) {
+		// TODO Auto-generated method stub
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_CREATOR)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
+			Dashboard duplicate = CFW.DB.Dashboards.selectByID(dashboardID);
+			duplicate.id(null);
+			duplicate.foreignKeyUser(CFW.Context.Request.getUser().id());
+			duplicate.name(duplicate.name()+"(Copy)");
+			duplicate.isShared(false);
+			duplicate.sharedWithUsers(null);
+			duplicate.editors(null);
+			
+			Integer newID = duplicate.insertGetPrimaryKey();
+			if(newID != null) {
+				ArrayList<CFWObject> widgetList = CFW.DB.DashboardWidgets.getWidgetsForDashboard(dashboardID);
+				
+				boolean success = true;
+				for(CFWObject object : widgetList) {
+					DashboardWidget widgetToCopy = (DashboardWidget)object;
+					widgetToCopy.id(null);
+					widgetToCopy.foreignKeyDashboard(newID);
+					
+					if(!widgetToCopy.insert()) {
+						success = false;
+						CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Error while duplicating widget.");
+					}
+				}
+				
+				if(success) {
+					CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Dashboard duplicated successfully.");
+				}
+				jsonResponse.setSuccess(success);
+				
+			}else {
+				jsonResponse.setSuccess(false);
+			}
+			
+		}else {
+			jsonResponse.setSuccess(false);
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Insufficient permissions to duplicate the dashboard.");
+		}
+	}
 
+	/******************************************************************
+	 *
+	 ******************************************************************/
 	private void createForms() {
 				
 		//--------------------------------------
@@ -172,7 +239,9 @@ public class ServletDashboardList extends HttpServlet
 		}
 	}
 	
-	
+	/******************************************************************
+	 *
+	 ******************************************************************/
 	private void createEditDashboardForm(JSONResponse json, String ID) {
 		
 		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_CREATOR)

@@ -19,7 +19,7 @@ import com.pengtoolbox.cfw.validation.LengthValidator;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class Role extends CFWObject {
@@ -139,7 +139,7 @@ public class Role extends CFWObject {
 		ArrayList<CFWObject> roleArray = 
 				this.select()
 					.where(RoleFields.CATEGORY.toString(), null)
-					.getObjectList();
+					.asObjectList();
 
 		for(CFWObject roleObject : roleArray) {
 			Role role = (Role) roleObject;

@@ -1,5 +1,6 @@
 package com.pengtoolbox.cfw.features.dashboard;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw.datahandling.CFWObject;
@@ -99,6 +100,21 @@ public class CFWDBDashboardWidget {
 				.select()
 				.where(DashboardWidgetFields.FK_ID_DASHBOARD, dashboardID)
 				.getAsJSON();
+		
+	}
+	
+	/***************************************************************
+	 * Return a list of all user widgets
+	 * 
+	 * @return Returns a resultSet with all widgets or null.
+	 ****************************************************************/
+	public static ArrayList<CFWObject> getWidgetsForDashboard(String dashboardID) {
+		
+		return new DashboardWidget()
+				.queryCache(CFWDBDashboardWidget.class, "getWidgetsForDashboard")
+				.select()
+				.where(DashboardWidgetFields.FK_ID_DASHBOARD, dashboardID)
+				.asObjectList();
 		
 	}
 

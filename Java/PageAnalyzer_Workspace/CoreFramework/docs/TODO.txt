@@ -12,10 +12,6 @@ ALWAYS ON
 TODO
 ====
 
-- Dashboard: Duplicate Dashboard
-- Dashboard: Permission View All
-- Dashboard: Management Page
-
 - Dashboard: Merge forms, only one button.
 - Dashboard: Widget Fullscreen
 - Dashboard: Favorites
@@ -114,3 +110,6 @@ DONE
 - Tags: Save as Key Value Pairs
 - Manual: Documentation Widget Creation
 - Dashboard: Add Owner name to shared list
+- Dashboard: Permission View All
+- Dashboard: Management Page
+- Dashboard: Duplicate Dashboard

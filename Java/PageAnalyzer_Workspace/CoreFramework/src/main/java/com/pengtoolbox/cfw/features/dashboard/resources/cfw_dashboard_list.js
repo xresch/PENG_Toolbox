@@ -102,6 +102,21 @@ function cfw_dashboardlist_delete(ids){
 }
 
 /******************************************************************
+ * Delete
+ ******************************************************************/
+function cfw_dashboardlist_duplicate(id){
+	
+	params = {action: "duplicate", item: "dashboard", id: id};
+	CFW.http.getJSON(CFW_DASHBOARDLIST_URL, params, 
+		function(data) {
+			if(data.success){
+				CFW.cache.clearCache();
+				cfw_dashboardlist_draw(CFW_DASHBOARDLIST_LAST_OPTIONS);
+			}
+	});
+}
+
+/******************************************************************
  * 
  ******************************************************************/
 function cfw_dashboardlist_printMyDashboards(data){
@@ -178,11 +193,11 @@ function cfw_dashboardlist_printDashboards(data, type){
 				+ '</a></td>';
 			}];
 
+		//-------------------------
+		// Edit Button
 		if(type == 'mydashboards'
 		|| type == 'admindashboards'){
-			
-			//-------------------------
-			// Edit Button
+
 			actionButtons.push(
 				function (record, id){ 
 					var htmlString = '';
@@ -196,10 +211,27 @@ function cfw_dashboardlist_printDashboards(data, type){
 					}
 					return htmlString;
 				});
+		}
 		
-			
+		if(CFW.hasPermission('Dashboard Creator') 
+		|| CFW.hasPermission('Dashboard Admin')){
 			//-------------------------
-			// Delete Button
+			// Duplicate Button
+			actionButtons.push(
+				function (record, id){
+					var htmlString = '<td><button class="btn btn-warning btn-sm" alt="Duplicate" title="Duplicate" '
+							+'onclick="CFW.ui.confirmExecute(\'This will create a duplicate of the selected dashboard and add it to your dashboards.\', \'Do it!\', \'cfw_dashboardlist_duplicate('+id+');\')">'
+							+ '<i class="fas fa-clone"></i>'
+							+ '</button></td>';
+					
+					return htmlString;
+				});
+		}
+		
+		//-------------------------
+		// Delete Button
+		if(type == 'mydashboards'
+		|| type == 'admindashboards'){
 			actionButtons.push(
 				function (record, id){
 					var htmlString = '';
@@ -213,8 +245,8 @@ function cfw_dashboardlist_printDashboards(data, type){
 					}
 					return htmlString;
 				});
-			
 		}
+
 		
 
 		//-----------------------------------
