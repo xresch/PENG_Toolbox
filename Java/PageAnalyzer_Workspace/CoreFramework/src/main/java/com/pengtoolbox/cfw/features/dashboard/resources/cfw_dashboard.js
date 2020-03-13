@@ -100,15 +100,17 @@ function cfw_dashboard_editWidget(widgetGUID){
 	//##################################################
 	// Create Widget Specific Form
 	//##################################################
-	var customForm = $(widgetDef.getEditForm(widgetObject));
-	var buttons = customForm.find('input[type="button"]');
-	if(buttons.length > 0){
-		buttons.remove();
-	}
-	var customFormButton = '<input type="button" onclick="cfw_dashboard_saveCustomSettings(this, \''+widgetGUID+'\')" class="form-control btn-primary" value="'+CFWL('cfw_core_save', 'Save')+'">';
-	
-	customForm.append(customFormButton);
+	var customForm = widgetDef.getEditForm(widgetObject);
+	if(customForm != null){
+		customForm = $(customForm);
+		var buttons = customForm.find('input[type="button"]');
+		if(buttons.length > 0){
+			buttons.remove();
+		}
+		var customFormButton = '<input type="button" onclick="cfw_dashboard_saveCustomSettings(this, \''+widgetGUID+'\')" class="form-control btn-primary" value="'+CFWL('cfw_core_save', 'Save')+'">';
 		
+		customForm.append(customFormButton);
+	}
 	//##################################################
 	// Show Form for Default values
 	//##################################################
@@ -209,7 +211,16 @@ function cfw_dashboard_editWidget(widgetGUID){
 	//##################################################
 	var compositeDiv = $('<div id="editWidgetComposite">');
 	compositeDiv.append('<p>'+widgetDef.description+'</p>');
-	compositeDiv.append(customForm);
+	
+	if(customForm != null){
+		compositeDiv.append(customForm);
+		
+		formID = $(customForm).attr("id");
+		// workaround, force evaluation
+		eval($(customForm).find("script").text());
+		eval("intializeForm_"+formID+"();");
+	}
+	
 	compositeDiv.append(defaultForm);
 
 	
@@ -219,11 +230,6 @@ function cfw_dashboard_editWidget(widgetGUID){
 	// Initialize Forms
 
 	$('#editWidgetComposite [data-toggle="tooltip"]').tooltip();
-	
-	formID = $(customForm).attr("id");
-	// workaround, force evaluation
-	eval($(customForm).find("script").text());
-	eval("intializeForm_"+formID+"();");
 				
 }
 
