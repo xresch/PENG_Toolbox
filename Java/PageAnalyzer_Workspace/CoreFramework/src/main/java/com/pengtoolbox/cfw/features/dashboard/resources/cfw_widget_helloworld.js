@@ -2,14 +2,14 @@
 	/******************************************************************
 	 * 
 	 ******************************************************************/
-	CFW.dashboard.registerCategory("fas fa-flask", "Server Side Category");
+	//CFW.dashboard.registerCategory("fas fa-flask", "Server Side Category");
 	
 	/******************************************************************
 	 * 
 	 ******************************************************************/
 	CFW.dashboard.registerWidget("cfw_helloworld",
 		{
-			category: "Server Side Category",
+			category: "Easter Eggs",
 			menuicon: "fas fa-font",
 			menulabel: 'Hello World',
 			description: CFWL('cfw_widget_helloworld_desc', 'Takes a name and greats a person.'),
