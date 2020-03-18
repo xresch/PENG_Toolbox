@@ -526,7 +526,7 @@ class CFWPanel{
 		 this.title = "";
 		 
 		 this.panel = $(document.createElement("div"));
-		 this.panel.addClass("card border-"+style);
+		 this.panel.addClass("cfwRecordContainer card border-"+style);
 		 
 		 this.counter = CFW_GLOBAL_PANEL_COUNTER++;
 		

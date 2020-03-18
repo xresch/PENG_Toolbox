@@ -378,6 +378,142 @@ CFW.render.registerRenderer("table",
 );
 
 /******************************************************************
+ * 
+ ******************************************************************/
+CFW.render.registerRenderer("panels",
+	new CFWRenderer(
+		function (renderDef) {
+						
+			//-----------------------------------
+			// Check Data
+			if(renderDef.datatype != "array"){
+				return "<span>Unable to convert data into table.</span>";
+			}
+			
+			//===================================================
+			// Create Table
+			//===================================================
+			//TODO: Wrapper Diff flex-grow-1 / w-100 h-100
+			//var cfwTable = new CFWTable(renderDef.rendererSettings.table);
+			var wrapper = $("<div class='flex-grow-1'>");
+			
+			var selectorGroupClass = "panel-checkboxes-"+CFW.utils.randomString(16);
+			//-----------------------------------
+			// Print Records
+			for(var i = 0; i < renderDef.data.length; i++ ){
+				var currentRecord = renderDef.data[i];
+				var cfwPanel = new CFWPanel(currentRecord[renderDef.bgstylefield]);
+				cfwPanel.title = $('<div>');
+				cfwPanel.body = "";
+				
+				var titleString = "";
+				for (var j = 0; j < renderDef.titlefields.length; j++) {
+					if (j != 0) {
+						titleString += renderDef.titledelimiter;
+					}
+					titleString += currentRecord[renderDef.titlefields[j]];
+				}
+				cfwPanel.title.append(titleString);	
+				
+				//-------------------------
+				// Checkboxes for selects
+
+				if(renderDef.bulkActions != null){
+					
+					var value = "";
+					if(renderDef.idfield != null){
+						value = currentRecord[renderDef.idfield];
+					}
+					
+					var checkboxDiv = $('<div>');
+					var checkbox = $('<input class="form-input float-left mt-1 mr-2 '+selectorGroupClass+'" type="checkbox" value="'+value+'" >');
+					checkbox.data('idfield', renderDef.idfield);
+					checkbox.data('record', currentRecord);
+					checkboxDiv.append(checkbox);
+					
+					cfwPanel.title.prepend(checkboxDiv);
+				}
+				
+				//-------------------------
+				// Add field Values as Unordered List
+				var listHtml = "<ul>";
+				for(var key in renderDef.visiblefields){
+					var fieldname = renderDef.visiblefields[key];
+					var value = currentRecord[fieldname];
+					
+					if(renderDef.customizers[fieldname] == null){
+						if(value != null){
+							listHtml += '<li><b>' + fieldname + ':</b> ' + value + '</li>';
+						}else{
+							listHtml += '&nbsp;';
+						}
+					}else{
+						
+						var customizer = renderDef.customizers[fieldname];
+						listHtml += '<li><b>' + fieldname + ':</b>	' + customizer(currentRecord, value) + '</li>';
+					}
+				}
+				listHtml += '</ul>';
+				//-------------------------
+				// Add Action buttons
+				// TODO: IGNORE!!! for now....
+//				var id = null;
+//				if(renderDef.idfield != null){
+//					id = currentRecord[renderDef.idfield];
+//				}
+//				for(var fieldKey in renderDef.actions){
+//					
+//					cellHTML += '<td>'+renderDef.actions[fieldKey](currentRecord, id )+'</td>';
+//				}
+//				row.append(cellHTML);
+//				cfwTable.addRow(row);
+				cfwPanel.body = listHtml;
+				cfwPanel.appendTo(wrapper);
+			}
+			
+			//----------------------------------
+			// Create multi buttons
+			
+			
+			
+			if(renderDef.bulkActions != null){
+				var actionsDivTop  = $('<div class="m-1">');
+				var actionsDivBottom  = $('<div class="m-1">');
+				for(var buttonLabel in renderDef.bulkActions){
+					//----------------------------
+					// Top 
+					if(renderDef.bulkActionsPos == 'both' || renderDef.bulkActionsPos == 'top' ){
+						var func = renderDef.bulkActions[buttonLabel];
+						var button = $('<button class="btn btn-sm btn-primary mr-1" onclick="cfw_internal_executeMultiAction(this)">'+buttonLabel+'</button>');
+						button.data('checkboxSelector', '.'+selectorGroupClass); 
+						button.data("function", func); 
+						actionsDivTop.append(button);
+					}
+					
+					//----------------------------
+					// Bottom
+					if(renderDef.bulkActionsPos == 'both' || renderDef.bulkActionsPos == 'bottom' ){
+						var func = renderDef.bulkActions[buttonLabel];
+						var button = $('<button class="btn btn-sm btn-primary mr-1" onclick="cfw_internal_executeMultiAction(this)">'+buttonLabel+'</button>');
+						button.data('checkboxSelector', '.'+selectorGroupClass); 
+						button.data("function", func); 
+						actionsDivBottom.append(button);
+					}
+				}
+				
+				if(renderDef.bulkActionsPos == 'both' || renderDef.bulkActionsPos == 'top' ){
+					wrapper.prepend(actionsDivTop);
+				}
+				if(renderDef.bulkActionsPos == 'both' || renderDef.bulkActionsPos == 'bottom' ){
+					wrapper.append(actionsDivBottom);
+				}
+				
+			}
+			return wrapper;
+	})
+);
+
+/******************************************************************
  * Execute a multi action.
  * Element needs the following JQuery.data() attributes:
  *   - checkboxSelector: JQuery selection string without ":checked"

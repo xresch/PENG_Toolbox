@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import com.google.gson.JsonObject;
-import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.datahandling.CFWField;
