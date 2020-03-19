@@ -132,9 +132,16 @@ function cfw_apioverview_printLoginPanel(parent){
 	
 	//---------------------------
 	// Create Panel
-	cfwPanel = new CFWPanel('primary');
-	cfwPanel.title = "Login and Usage";
-	cfwPanel.body = $(html);
+	
+	 var panelSettings = {
+			cardstyle: 'cfw-blue',
+			textstyle: null,
+			textstyleheader: null,
+			title: "Login and Usage",
+			body: html,
+	};
+	
+	var cfwPanel = new CFWPanel(panelSettings);
 	cfwPanel.appendTo(parent);
 	
 	//---------------------------
@@ -190,10 +197,15 @@ function cfw_apioverview_printOverview(data){
 		
 		for(name in panels){
 			current = panels[name];
-			cfwPanel = new CFWPanel('primary');
-			cfwPanel.title = name;
-			cfwPanel.body = $('<div>');
 			
+			 var panelSettings = {
+						cardstyle: 'cfw-blue',
+						textstyle: null,
+						textstyleheader: null,
+						title: name,
+						body: $('<div>'),
+				};
+
 			for(action in current){
 				sub = current[action];
 				
@@ -261,15 +273,19 @@ function cfw_apioverview_printOverview(data){
 				//----------------------------------------
 				// Create Panel
 				//----------------------------------------
-				
-				subPanel = new CFWPanel('success');
-				subPanel.title = action;
-				subPanel.body = content;
-				subPanel.appendTo(cfwPanel.body);
+				 var subpanelSettings = {
+							cardstyle: 'cfw-green',
+							textstyle: null,
+							textstyleheader: null,
+							title: action,
+							body: content,
+					};
+				var subPanel = new CFWPanel(subpanelSettings);
+				subPanel.appendTo(panelSettings.body);
 
 			}
 			
-			cfwPanel.appendTo(parent);
+			new CFWPanel(panelSettings).appendTo(parent);
 		}
 
 

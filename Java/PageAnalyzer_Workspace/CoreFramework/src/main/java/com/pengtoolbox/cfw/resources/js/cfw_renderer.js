@@ -401,11 +401,21 @@ CFW.render.registerRenderer("panels",
 			//-----------------------------------
 			// Print Records
 			for(var i = 0; i < renderDef.data.length; i++ ){
-				var currentRecord = renderDef.data[i];
-				var cfwPanel = new CFWPanel(currentRecord[renderDef.bgstylefield]);
-				cfwPanel.title = $('<div>');
-				cfwPanel.body = "";
 				
+				//---------------------------
+				// Preprarations
+				var currentRecord = renderDef.data[i];
+				
+				 var panelSettings = {
+						cardstyle: currentRecord[renderDef.bgstylefield],
+						textstyle: currentRecord[renderDef.textstylefield],
+						textstyleheader: null,
+						title: $('<div>'),
+						body: "&nbsp;",
+				};
+				 
+				//---------------------------
+				// Resolve Title
 				var titleString = "";
 				for (var j = 0; j < renderDef.titlefields.length; j++) {
 					if (j != 0) {
@@ -413,11 +423,11 @@ CFW.render.registerRenderer("panels",
 					}
 					titleString += currentRecord[renderDef.titlefields[j]];
 				}
-				cfwPanel.title.append(titleString);	
+				
+				panelSettings.title.append(titleString);	
 				
 				//-------------------------
 				// Checkboxes for selects
-
 				if(renderDef.bulkActions != null){
 					
 					var value = "";
@@ -431,7 +441,7 @@ CFW.render.registerRenderer("panels",
 					checkbox.data('record', currentRecord);
 					checkboxDiv.append(checkbox);
 					
-					cfwPanel.title.prepend(checkboxDiv);
+					panelSettings.title.prepend(checkboxDiv);
 				}
 				
 				//-------------------------
@@ -454,6 +464,8 @@ CFW.render.registerRenderer("panels",
 					}
 				}
 				listHtml += '</ul>';
+				panelSettings.body = listHtml;
+				
 				//-------------------------
 				// Add Action buttons
 				// TODO: IGNORE!!! for now....
@@ -467,15 +479,15 @@ CFW.render.registerRenderer("panels",
 //				}
 //				row.append(cellHTML);
 //				cfwTable.addRow(row);
-				cfwPanel.body = listHtml;
+				
+				//-------------------------
+				// Add Panel to Wrapper
+				var cfwPanel = new CFWPanel(panelSettings);
 				cfwPanel.appendTo(wrapper);
 			}
 			
 			//----------------------------------
 			// Create multi buttons
-			
-			
-			
 			if(renderDef.bulkActions != null){
 				var actionsDivTop  = $('<div class="m-1">');
 				var actionsDivBottom  = $('<div class="m-1">');

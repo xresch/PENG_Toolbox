@@ -514,26 +514,51 @@ CFW_GLOBAL_PANEL_COUNTER = 0;
 
 class CFWPanel{
 	
-	 constructor(style){
+	 constructor(customSettings){
 		 
-		 //----------------------------
-	     // to be set by user
-		 this.title = "Default Title, use something like CFWPanel.title = $('<span>your title</span>'); to change. ";
-		 this.body = "Default Title, use something like CFWPanel.body = $('<span>your title</span>'); to change. ";
+		 this.settings = {
+			// the style to define the cards color
+			cardstyle: null,
+			// the style used for the text
+			textstyle: null,
+			// the style used for the header text, if null, textstyle will be used
+			textstyleheader: null,
+			// the title of the panel
+			title: "&nbsp;",
+			//the content of the panel
+			body: "&nbsp;",
+		}
+		 
+		 Object.assign(this.settings, customSettings);
 		 
 		//----------------------------
-	     // to be set by user
-		 this.title = "";
-		 
+		// resolve classes
+		var panelClasses = 'cfwRecordContainer card';
+		var panelHeaderClasses = 'card-header';
+		
+		if(this.settings.cardstyle != null){
+			panelClasses += ' border-'+this.settings.cardstyle;
+			panelHeaderClasses += 'bg-'+this.settings.cardstyle;
+		}
+		
+		if(this.settings.textstyle != null){
+			panelClasses += ' text-'+this.settings.textstyle;
+		} 
+		
+		if(this.settings.textstyleheader != null){
+			panelHeaderClasses += ' text-'+this.settings.textstyleheader;
+		} 
+		//----------------------------
+	     // Create Panel
 		 this.panel = $(document.createElement("div"));
-		 this.panel.addClass("cfwRecordContainer card border-"+style);
+		 this.panel.addClass(panelClasses);
 		 
 		 this.counter = CFW_GLOBAL_PANEL_COUNTER++;
 		
 		//----------------------------
 		// Create Header
 		this.panelHeader = $(document.createElement("div"));
-		this.panelHeader.addClass("card-header text-light bg-"+style);
+		this.panelHeader.addClass("card-header text-light bg-"+this.settings.cardstyle);
 		this.panelHeader.attr("id", "panelHead"+this.counter);
 		this.panelHeader.attr("role", "button");
 		this.panelHeader.attr("data-toggle", "collapse");		
@@ -549,7 +574,7 @@ class CFWPanel{
 		//----------------------------
 		// Populate Header
 		this.panelHeader.html("");
-		this.panelHeader.append(this.title); 
+		this.panelHeader.append(this.settings.title); 
 			
 		this.panel.append(this.panelHeader);
 
@@ -568,7 +593,7 @@ class CFWPanel{
 		var panelBody = $(document.createElement("div"));
 		panelBody.addClass("card-body");
 		collapseContainer.append(panelBody);
-		panelBody.append(this.body);
+		panelBody.append(this.settings.body);
 		
 		 parent.append(this.panel);
 		 
