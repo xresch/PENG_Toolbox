@@ -7,11 +7,12 @@ ALWAYS ON
 - Check special chars like äöüÄÖÜ in localization property files
 - Add Copyrights
 - Test Cases
--Test with cache enabled
+- Test with cache enabled
 
 TODO
 ====
 
+- Dashboard: Text Alignment
 - Dashboard: Merge forms, only one button.
 - Dashboard: Widget Fullscreen
 - Dashboard: Favorites
@@ -21,6 +22,8 @@ TODO
 - Dashboard: Default Error / No Access Tile
 - Dashboard: Default No Data Tile
 
+- Widget: Link
+- Widget: Dashboard Link
 - Widget: CSV Chart
 - Widget: Cards
 - Widget: Panels
