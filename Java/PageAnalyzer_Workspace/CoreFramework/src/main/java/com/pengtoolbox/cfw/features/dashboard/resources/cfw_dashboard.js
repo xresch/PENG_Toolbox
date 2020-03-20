@@ -654,7 +654,10 @@ function cfw_dashboard_setReloadInterval(selector) {
 	
 	CFW_DASHBOARD_REFRESH_INTERVAL_ID = setInterval(function(){
     	if(!CFW_DASHBOARD_EDIT_MODE){
-    		$('.grid-stack').html('');
+    		// Use gridstack.removeAll() to prevent widgets from jumping around on reload
+    		//$('.grid-stack').html('');
+    		var grid = $('.grid-stack').data('gridstack');
+    		grid.removeAll();
 	    	cfw_dashboard_draw();
 	    };
     }, refreshInterval);
