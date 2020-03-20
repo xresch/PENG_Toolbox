@@ -77,11 +77,19 @@ CFW.render.registerRenderer("tiles",
 			if(settings.showlabels != true && settings.showlabels != "true"){
 				allTiles.addClass('align-items-start');
 			}
-			
+						
 			for(var i = 0; i < renderDef.data.length; i++ ){
 				var currentRecord = renderDef.data[i];
-				var currentTile = $('<div class="d-flex p-3 m-1 cursor-pointer">');
+				var currentTile = $('<div class="d-flex p-2 m-1 cursor-pointer">');
 				
+				//=====================================
+				// Add padding
+				if(settings.showlabels == true && settings.showlabels == "true"){
+					if(settings.sizefactor <= 0.5)		{ currentTile.addClass('p-1'); }
+					else if(settings.sizefactor <= 1.5)	{ currentTile.addClass('p-2'); }
+					else if(settings.sizefactor <= 2.5)	{ currentTile.addClass('p-3'); }
+					else 								{ currentTile.addClass('p-4'); }
+				}
 				//=====================================
 				// Add Styles
 				if(renderDef.bgstylefield != null){
@@ -137,7 +145,7 @@ CFW.render.registerRenderer("tiles",
 						}
 						
 					}
-					currentTile.append('<p class="text-center" style="font-size: '+18*settings.sizefactor+'px;"><b>'+tileTitle+'</b></p>');
+					currentTile.append('<span class="text-center" style="font-size: '+18*settings.sizefactor+'px;"><b>'+tileTitle+'</b></span>');
 					//-------------------------
 					// Add field Values as Cells
 					for(var key in renderDef.visiblefields){
