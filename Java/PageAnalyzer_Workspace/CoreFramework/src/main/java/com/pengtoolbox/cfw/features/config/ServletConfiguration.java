@@ -22,7 +22,7 @@ import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class ServletConfiguration extends HttpServlet
@@ -72,7 +72,7 @@ public class ServletConfiguration extends HttpServlet
 		// Create Group Form
 		
 		CFWForm configForm = new CFWForm("cfwConfigMgmt", "Save");
-		
+		configForm.addAttribute("autocomplete", "off");
 		ArrayList<CFWObject> configObjects = CFW.DB.Config.getConfigObjectList();
 		for(CFWObject object :  configObjects) {
 			Configuration config = (Configuration)object;
@@ -82,6 +82,7 @@ public class ServletConfiguration extends HttpServlet
 			field.setDescription(config.description());
 			field.setOptions(config.options());		
 			field.disableSecurity();
+			
 			
 			configForm.addField(field);
 		}

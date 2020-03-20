@@ -66,7 +66,7 @@ public class CFWForm extends HierarchicalHTMLItem {
 	 ***********************************************************************************/
 	protected void createHTML(StringBuilder html) {
 
-		html.append("<form id=\""+formID+"\" class=\"form\" method=\"post\">");
+		html.append("<form id=\""+formID+"\" class=\"form\" method=\"post\" "+getAttributesString()+">");
 		
 		if(this.hasChildren()) {
 				
