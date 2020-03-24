@@ -17,7 +17,34 @@ var CFW_DASHBOARDVIEW_URL = "/app/dashboard/view";
  ************************************************************************************************/
 function cfw_dashboard_registerWidget(widgetUniqueType, widgetObject){
 	
-	CFW_DASHBOARD_WIDGET_REGISTRY[widgetUniqueType] = widgetObject;
+	var defaultObject = {
+			category: "Static Widgets",
+			menuicon: "fas fa-th-large",
+			menulabel: "Unnamed Widget",
+			description: "",
+			createWidgetInstance: function (widgetObject, callback) {			
+						
+				callback(widgetObject, "Please specify a function on your widgetDefinition.createWidgetInstance.");
+				
+			},
+			
+			
+			getEditForm: function (widgetObject) {
+				return CFW.dashboard.getSettingsForm(widgetObject);
+			},
+			
+			onSave: function (form, widgetObject) {
+				widgetObject.JSON_SETTINGS = CFW.format.formToObject(form);
+				return true;
+			}
+	}
+	
+	var merged = Object.assign({}, defaultObject, widgetObject);
+	if(merged.defaulttitle == undefined){
+		merged.defaulttitle = merged.menulabel;
+	}
+	
+	CFW_DASHBOARD_WIDGET_REGISTRY[widgetUniqueType] = merged;
 	
 	var category =  widgetObject.category;
 	var menulabel =  widgetObject.menulabel;
@@ -425,10 +452,10 @@ function cfw_dashboard_addWidget(type) {
 			if(widgetObject != null){
 				var widgetDefinition = CFW.dashboard.getWidgetDefinition(type);
 				widgetObject.TYPE = type;
-				widgetObject.TITLE = widgetDefinition.menulabel;
-				var merged = Object.assign({}, widgetDefinition.defaultValues, widgetObject);
+				widgetObject.TITLE = widgetDefinition.defaulttitle;
+				//var merged = Object.assign({}, widgetDefinition.defaultValues, widgetObject);
 				
-				cfw_dashboard_createWidgetInstance(merged, true);
+				cfw_dashboard_createWidgetInstance(widgetObject, true);
 			}
 		}
 	);
@@ -553,6 +580,7 @@ function cfw_dashboard_createWidgetInstance(widgetObject, doAutoposition) {
 		);
 		}catch(err){
 			CFW.ui.addToastDanger('An error occured while creating a widget instance: '+err.message);
+			console.log(err);
 		}
 	}
 	

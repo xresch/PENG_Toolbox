@@ -6,7 +6,7 @@
 			menuicon: "fas fa-font fa-rotate-270",
 			menulabel: CFWL('cfw_widget_cfwverticallabel', 'Vertical Label'),
 			description: CFWL('cfw_widget_cfwverticallabel_desc', 'Displays a vertical label.'),
-			
+			defaulttitle: "",
 			createWidgetInstance: function (widgetObject, callback) {	
 				var settings = widgetObject.JSON_SETTINGS;
 				if(settings.label != null){
@@ -19,14 +19,14 @@
 
 			},
 			
-			getEditForm: function (widgetObject) {
-				return CFW.dashboard.getSettingsForm(widgetObject);
-			},
-			
-			onSave: function (form, widgetObject) {
-				widgetObject.JSON_SETTINGS = CFW.format.formToObject(form);
-				return true;
-			}
+//			getEditForm: function (widgetObject) {
+//				return CFW.dashboard.getSettingsForm(widgetObject);
+//			},
+//			
+//			onSave: function (form, widgetObject) {
+//				widgetObject.JSON_SETTINGS = CFW.format.formToObject(form);
+//				return true;
+//			}
 			
 		}
 	);

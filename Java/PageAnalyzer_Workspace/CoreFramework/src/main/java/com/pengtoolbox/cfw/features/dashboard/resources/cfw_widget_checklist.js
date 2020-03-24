@@ -10,9 +10,16 @@
 			createWidgetInstance: function (widgetObject, callback) {			
 				
 				//-------------------------
-				//Create List HTML
-				var lines = widgetObject.JSON_SETTINGS.content.trim().split(/\r\n|\r|\n/);
+				// Prepare input
+				var lines = "";
+				if(widgetObject.JSON_SETTINGS.content != null){
+					lines = widgetObject.JSON_SETTINGS.content.trim().split(/\r\n|\r|\n/);
+				}else{
+					callback(widgetObject, '');
+				}
 				
+				//-------------------------
+				//Create List HTML
 				var checkboxGroup = $('<div class="form-group">');
 				checkboxGroup.data('widgetObject', widgetObject);
 				

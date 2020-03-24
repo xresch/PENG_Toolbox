@@ -22,7 +22,7 @@ public class WidgetVerticalLabel extends WidgetDefinition {
 	public CFWObject getSettings() {
 		return new CFWObject()
 				.addField(CFWField.newString(FormFieldType.TEXT, "label")
-						.setValue("")
+						.setValue("Label")
 						)
 				.addField(CFWField.newString(FormFieldType.SELECT, "sizefactor")
 						.setLabel("{!cfw_widget_cfwverticallabel_sizefactor!}")
