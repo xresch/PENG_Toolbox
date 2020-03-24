@@ -627,7 +627,7 @@ function cfw_dashboard_toggleFullscreenMode(){
 		$('.hideOnFullScreen').css('display', '');
 		$('.navbar').css('display', '');
 		$('#cfw-dashboard-control-panel').css('padding', '');
-		
+		$('#cfw-dashboard-control-panel').css('margin', '');
 		$('#fullscreenButton')
 			.removeClass('fullscreened-button')
 			.addClass('fullscreenButton');
@@ -641,7 +641,7 @@ function cfw_dashboard_toggleFullscreenMode(){
 		$('.hideOnFullScreen').css('display', 'none');
 		$('.navbar').css('display', 'none');
 		$('#cfw-dashboard-control-panel').css('padding', '0px');
-		
+		$('#cfw-dashboard-control-panel').css('margin', '0px');
 		$('#fullscreenButton')
 			.removeClass('fullscreenButton')
 			.addClass('fullscreened-button');

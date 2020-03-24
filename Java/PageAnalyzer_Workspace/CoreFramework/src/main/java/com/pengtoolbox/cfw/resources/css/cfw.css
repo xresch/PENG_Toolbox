@@ -122,6 +122,11 @@
 	max-height: 80%; 
 }
 
+/* make navbars same height*/
+.navbar {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
 /* make sure all top navbar items are always white*/
 .navbar-nav > li > a{
 	color: white;
@@ -380,6 +385,11 @@
 #cfw-content {
 	min-height: 90%;
 	padding: 40px 20px 20px 20px;
+	background: inherit;
+}
+
+#cfw-container {
+	background: inherit;
 }
 
 #cfw-footer {

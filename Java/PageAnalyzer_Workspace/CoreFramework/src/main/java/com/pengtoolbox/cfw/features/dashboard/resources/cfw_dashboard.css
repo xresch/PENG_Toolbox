@@ -181,7 +181,13 @@
  * Dashboard styling
  **************************************************************/
 #cfw-dashboard-control-panel {
-	padding: 15px;
+    padding: 10px 0px 5px 15px;
+    margin-bottom: 10px;
+    position: sticky;
+    top: 40px;
+    z-index: 16;
+    background: inherit;
+    width: 101%;
 }
 
 .cfw-dashboard-widget-title {
@@ -226,14 +232,14 @@
 
 .fullscreenButton{
     position: absolute;
-    right: 20px;
+    right: 10px;
 }
 
 .fullscreened-button{
 	position: absolute;
     z-index: 1024;
-    top: 0px;
-    right: 0px;
+    top: -40px;
+    right: 5px;
     padding: 2px;
     line-height: 4px;
 }
