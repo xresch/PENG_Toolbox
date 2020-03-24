@@ -12,27 +12,33 @@ import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.response.JSONResponse;
 
-public class WidgetVerticalLabel extends WidgetDefinition {
+public class WidgetLabel extends WidgetDefinition {
 
 	@Override
-	public String getWidgetType() {return "cfw_verticallabel";}
+	public String getWidgetType() {return "cfw_label";}
 
 	@Override
 	public CFWObject getSettings() {
 		return new CFWObject()
 				.addField(CFWField.newString(FormFieldType.TEXT, "label")
-						.setLabel("{!cfw_widget_cfwverticallabel_label!}")
-						.setDescription("{!cfw_widget_cfwverticallabel_label_desc!}")
+						.setLabel("{!cfw_widget_cfwlabel_label!}")
+						.setDescription("{!cfw_widget_cfwlabel_label_desc!}")
 						.setValue("Label")
 						)
 				.addField(CFWField.newString(FormFieldType.TEXT, "link")
-						.setLabel("{!cfw_widget_cfwverticallabel_link!}")
-						.setDescription("{!cfw_widget_cfwverticallabel_link_desc!}")
+						.setLabel("{!cfw_widget_cfwlabel_link!}")
+						.setDescription("{!cfw_widget_cfwlabel_link_desc!}")
 						.setValue("")
 						)
+				.addField(CFWField.newString(FormFieldType.SELECT, "direction")
+						.setLabel("{!cfw_widget_cfwlabel_direction!}")
+						.setDescription("{!cfw_widget_cfwlabel_direction_desc!}")
+						.setOptions(new String[] {"Left to Right", "Bottom to Top", "Top to Bottom", "Upside Down"})
+						.setValue("Left to Right")
+						)
 				.addField(CFWField.newString(FormFieldType.SELECT, "sizefactor")
-						.setLabel("{!cfw_widget_cfwverticallabel_sizefactor!}")
-						.setDescription("{!cfw_widget_cfwverticallabel_sizefactor_desc!}")
+						.setLabel("{!cfw_widget_cfwlabel_sizefactor!}")
+						.setDescription("{!cfw_widget_cfwlabel_sizefactor_desc!}")
 						.setOptions(new String[]{"0.5", "1", "1.25", "1.5", "1.75", "2.0", "2.5", "3.0", "4.0"})
 						.setValue("1")
 				)
@@ -44,7 +50,7 @@ public class WidgetVerticalLabel extends WidgetDefinition {
 
 	@Override
 	public ArrayList<FileDefinition> getJavascriptFiles() {
-		FileDefinition js = new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_widget_verticallabel.js");
+		FileDefinition js = new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_widget_label.js");
 		ArrayList<FileDefinition> array = new ArrayList<FileDefinition>();
 		array.add(js);
 		return array;
