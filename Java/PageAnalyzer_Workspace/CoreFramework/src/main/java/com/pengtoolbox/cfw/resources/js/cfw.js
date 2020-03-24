@@ -108,7 +108,8 @@ function cfw_initializeSummernote(formID, editorID){
 	editor.summernote({
         placeholder: 'Enter your Text',
         tabsize: 2,
-        height: 200
+        height: 200,
+        dialogsInBody: true
       });
 	
 	//--------------------------------------
@@ -1032,11 +1033,25 @@ function cfw_showModal(modalTitle, modalBody, jsCode){
 				+ '</div>');
 		
 		defaultModal.modal();
+		
+		// Prevent other modals to close the modal
+//		defaultModal.on('hidden.bs.modal', function (e) {
+//			  console.log('e.target.id'+e.target.id);
+//			  console.log('modalID'+modalID);
+//			  console.log(e.target);
+//			  if(e.target.id != modalID) { // ignore events which are raised from child modals
+//			    return false;
+//			  }
+//			  // your code
+//			});
+		
 //		defaultModal.modal({
 //		    backdrop: 'static',
 //		    keyboard: false
 //		});
 		$('body').prepend(defaultModal);
+		
+
 	}
 
 	//---------------------------------
