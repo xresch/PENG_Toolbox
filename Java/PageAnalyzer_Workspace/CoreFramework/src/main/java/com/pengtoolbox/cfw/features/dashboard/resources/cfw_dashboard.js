@@ -18,21 +18,33 @@ var CFW_DASHBOARDVIEW_URL = "/app/dashboard/view";
 function cfw_dashboard_registerWidget(widgetUniqueType, widgetObject){
 	
 	var defaultObject = {
+			// The category the widget should be added to
 			category: "Static Widgets",
+			// The icon of the widget shown in the menu
 			menuicon: "fas fa-th-large",
+			// the label of the widget
 			menulabel: "Unnamed Widget",
+			// Description of the widget
 			description: "",
+			// Override to customize initial widget title. If null, the menu label will be used as default.
+			defaulttitle: null,
+			// Override to customize initial widget height. If null, default value defined in DashboardWidget.java is used.
+			defaultheight: null,
+			// Override to customize initial widget defaultwidth. If null, default value defined in DashboardWidget.java is used.
+			defaultwidth: null,
+			// function that creates the widget content and returns them to the framework by calling the callback function
 			createWidgetInstance: function (widgetObject, callback) {			
 						
 				callback(widgetObject, "Please specify a function on your widgetDefinition.createWidgetInstance.");
 				
 			},
 			
-			
+			// Must return a html string representing a HTML form. Or null if no settings are needed for this widget.
 			getEditForm: function (widgetObject) {
 				return CFW.dashboard.getSettingsForm(widgetObject);
 			},
 			
+			// Store the values to the widgetObject. Return true if the data should be saved to the server, false otherwise.
 			onSave: function (form, widgetObject) {
 				widgetObject.JSON_SETTINGS = CFW.format.formToObject(form);
 				return true;
@@ -40,7 +52,7 @@ function cfw_dashboard_registerWidget(widgetUniqueType, widgetObject){
 	}
 	
 	var merged = Object.assign({}, defaultObject, widgetObject);
-	if(merged.defaulttitle == undefined){
+	if(merged.defaulttitle == null){
 		merged.defaulttitle = merged.menulabel;
 	}
 	
@@ -270,8 +282,6 @@ function cfw_dashboard_duplicateWidget(widgetGUID) {
 	
 	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, {action: 'create', item: 'widget', type: widgetObject.TYPE, dashboardid: CFW_DASHBOARDVIEW_PARAMS.id }, function(data){
 			var newWidgetObject = data.payload;
-			console.log('duplicate');
-			console.log(widgetObject);
 			if(newWidgetObject != null){
 				//---------------------------------
 				// remove content to avoid circular 
@@ -451,8 +461,15 @@ function cfw_dashboard_addWidget(type) {
 			var widgetObject = data.payload;
 			if(widgetObject != null){
 				var widgetDefinition = CFW.dashboard.getWidgetDefinition(type);
-				widgetObject.TYPE = type;
-				widgetObject.TITLE = widgetDefinition.defaulttitle;
+				widgetObject.TYPE   = type;
+				widgetObject.TITLE  = widgetDefinition.defaulttitle;
+				
+				if(widgetDefinition.defaultheight != null){
+					widgetObject.HEIGHT = widgetDefinition.defaultheight;
+				}
+				if(widgetDefinition.defaultwidth != null){
+					widgetObject.WIDTH  = widgetDefinition.defaultwidth;
+				}
 				//var merged = Object.assign({}, widgetDefinition.defaultValues, widgetObject);
 				
 				cfw_dashboard_createWidgetInstance(widgetObject, true);
