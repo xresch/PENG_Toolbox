@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import com.google.gson.JsonObject;
-import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.datahandling.CFWField;
@@ -22,7 +21,14 @@ public class WidgetVerticalLabel extends WidgetDefinition {
 	public CFWObject getSettings() {
 		return new CFWObject()
 				.addField(CFWField.newString(FormFieldType.TEXT, "label")
+						.setLabel("{!cfw_widget_cfwverticallabel_label!}")
+						.setDescription("{!cfw_widget_cfwverticallabel_label_desc!}")
 						.setValue("Label")
+						)
+				.addField(CFWField.newString(FormFieldType.TEXT, "link")
+						.setLabel("{!cfw_widget_cfwverticallabel_link!}")
+						.setDescription("{!cfw_widget_cfwverticallabel_link_desc!}")
+						.setValue("")
 						)
 				.addField(CFWField.newString(FormFieldType.SELECT, "sizefactor")
 						.setLabel("{!cfw_widget_cfwverticallabel_sizefactor!}")

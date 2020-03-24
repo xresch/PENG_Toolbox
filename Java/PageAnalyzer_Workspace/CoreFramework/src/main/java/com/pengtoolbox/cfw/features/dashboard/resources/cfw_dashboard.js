@@ -204,7 +204,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 	//------------------------------
 	// Color Selectors
 	var selectOptions = {
-			'Default': '', 
+			'': 			'Default', 
 			'cfw-blue': 	'Blue', 
 			'cfw-indigo': 	'Indigo',
 			'cfw-purple': 	'Purple', 

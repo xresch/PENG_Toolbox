@@ -13,7 +13,16 @@
 				var settings = widgetObject.JSON_SETTINGS;
 				if(settings.label != null){
 					
-					var labelHTML = '<div class="w-100 h-100 d-flex align-items-center justify-content-center"><span class="rotate-270 text-center" style="white-space: nowrap; font-size: '+24*settings.sizefactor+'px;"">'+widgetObject.JSON_SETTINGS.label+'</span></div>'; 
+					var labelHTML = '<div class="label-box"><span class="rotate-270 text-center" style="white-space: nowrap; font-size: '+24*settings.sizefactor+'px;"">';
+					
+					if(widgetObject.JSON_SETTINGS.link != null && widgetObject.JSON_SETTINGS.link != ''){
+						labelHTML += '<a target="_blank" class="text-'+widgetObject.FGCOLOR+'" href="'+widgetObject.JSON_SETTINGS.link+'">'+widgetObject.JSON_SETTINGS.label+'</a>'
+						+'</span></div>'; 
+					}else{
+						labelHTML += widgetObject.JSON_SETTINGS.label
+						+'</span></div>'; 
+					}
+					
 					callback(widgetObject, labelHTML);
 				}else{
 					callback(widgetObject, '');
