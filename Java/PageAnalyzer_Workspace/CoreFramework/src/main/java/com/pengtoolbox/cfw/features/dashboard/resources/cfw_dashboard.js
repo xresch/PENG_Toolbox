@@ -243,8 +243,18 @@ function cfw_dashboard_duplicateWidget(widgetGUID) {
 	
 	CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, {action: 'create', item: 'widget', type: widgetObject.TYPE, dashboardid: CFW_DASHBOARDVIEW_PARAMS.id }, function(data){
 			var newWidgetObject = data.payload;
+			console.log('duplicate');
+			console.log(widgetObject);
 			if(newWidgetObject != null){
-				var deepCopyWidgetObject = JSON.parse(JSON.stringify(widgetObject));
+				//---------------------------------
+				// remove content to avoid circular 
+				// references on deep copy
+				var withoutContent = Object.assign(widgetObject);
+				delete withoutContent.content;
+				
+				//---------------------------------
+				// Deep copy and create Duplicate
+				var deepCopyWidgetObject = JSON.parse(JSON.stringify(withoutContent));
 				deepCopyWidgetObject.PK_ID = newWidgetObject.PK_ID;
 				delete deepCopyWidgetObject.guid;
 				cfw_dashboard_createWidgetInstance(deepCopyWidgetObject, true);
