@@ -258,6 +258,8 @@ function cfw_dashboard_editWidget(widgetGUID){
 	compositeDiv.append(defaultForm);
 
 	
+	//----------------------------------
+	// Show Modal
 	CFW.ui.showModal(CFWL('cfw_core_settings', 'Settings'), compositeDiv, "CFW.cache.clearCache();");
 	
 	//-----------------------------------

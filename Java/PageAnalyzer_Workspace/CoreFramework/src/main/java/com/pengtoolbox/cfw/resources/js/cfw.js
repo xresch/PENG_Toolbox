@@ -1033,6 +1033,12 @@ function cfw_showModal(modalTitle, modalBody, jsCode){
 				+ '</div>');
 		
 		defaultModal.modal();
+		defaultModal.draggable({
+		    handle: ".modal-header"
+		}); 
+		
+		// remove position relative to show content in background
+		defaultModal.css('position', '');
 		
 		// Prevent other modals to close the modal
 //		defaultModal.on('hidden.bs.modal', function (e) {
@@ -1088,7 +1094,7 @@ function cfw_showSmallModal(modalTitle, modalBody, jsCode){
 	
 		smallModal = $(
 				'<div id="'+modalID+'" class="modal fade"  tabindex="-1" role="dialog">'
-				+ '  <div class="modal-dialog modal-sm" role="document">'
+				+ '  <div class="modal-dialog" role="document">'
 				+ '    <div class="modal-content">'
 				+ '      <div class="modal-header p-2">'
 				+ '        <h4 class="modal-title">Title</h4>'
@@ -1104,6 +1110,15 @@ function cfw_showSmallModal(modalTitle, modalBody, jsCode){
 				+ '</div>');
 
 		smallModal.modal();
+		
+		smallModal.draggable({
+			backdrop: false,
+		    handle: ".modal-header"
+		}); 
+		
+		// remove position relative to show content in background
+		smallModal.css('position', '');
+		
 //		smallModal.modal({
 //		    backdrop: 'static',
 //		    keyboard: false
@@ -1116,7 +1131,7 @@ function cfw_showSmallModal(modalTitle, modalBody, jsCode){
 	// Add Callback
 	if(jsCode != null){
 
-		defaultModal.on('hidden.bs.modal', function () {
+		smallModal.on('hidden.bs.modal', function () {
 			cfw_executeCodeOrFunction(jsCode);
 			$("#"+modalID).off('hidden.bs.modal');
 		});	

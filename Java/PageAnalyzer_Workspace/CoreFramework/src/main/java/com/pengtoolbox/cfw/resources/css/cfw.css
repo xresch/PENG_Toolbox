@@ -414,8 +414,13 @@
 }
 
 #cfw-default-modal{
-	
+	position: fixed;
 }
+
+#cfw-small-modal{
+	position: fixed;
+}
+
 
 #cfw-loader{
 	position: absolute;
