@@ -40,14 +40,14 @@ public class HTMLResponse extends AbstractHTMLResponse {
 		}
 		this.addCSSFileCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "bootstrap-tagsinput.css");
 		this.addCSSFileCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "summernote-bs4.css");
-		//this.addCSSFile(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "jquery-ui.min.css");
+		this.addCSSFileCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "jquery-ui.min.css");
 		this.addCSSFileCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "font-awesome.css");
 		this.addCSSFileCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "highlightjs_"+CFW.DB.Config.getConfigAsString(Configuration.CODE_THEME)+".css");
 		this.addCSSFileCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".css", "cfw.css");
 		this.addCSSFileCFW(FileDefinition.HandlingType.FILE, "./resources/css", "custom.css");
 		
 		this.addJSFileBottomCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "jquery-3.4.1.min.js");
-		//this.addJSFileBottomAssembly(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "jquery-ui-1.12.3.min.js");
+		this.addJSFileBottomCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "jquery-ui-1.12.3.min.js");
 		this.addJSFileBottomCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap.bundle.min.js");
 		this.addJSFileBottomCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "bootstrap-tagsinput.js");
 		

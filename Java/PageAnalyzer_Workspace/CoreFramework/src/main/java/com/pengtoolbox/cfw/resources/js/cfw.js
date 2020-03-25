@@ -1032,8 +1032,9 @@ function cfw_showModal(modalTitle, modalBody, jsCode){
 				+ '  </div>'
 				+ '</div>');
 		
-		defaultModal.modal();
-		defaultModal.draggable({
+		defaultModal
+		.modal()
+		.draggable({
 		    handle: ".modal-header"
 		}); 
 		

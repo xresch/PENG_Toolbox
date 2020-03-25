@@ -385,11 +385,10 @@
 #cfw-content {
 	min-height: 90%;
 	padding: 40px 20px 20px 20px;
-	background: inherit;
 }
 
 #cfw-container {
-	background: inherit;
+
 }
 
 #cfw-footer {
@@ -415,12 +414,19 @@
 
 #cfw-default-modal{
 	position: fixed;
+	-ms-overflow-style: none;
+}
+#cfw-default-modal::-webkit-scrollbar{
+	display: none;
 }
 
 #cfw-small-modal{
 	position: fixed;
+	-ms-overflow-style: none;
 }
-
+#cfw-small-modal::-webkit-scrollbar{
+	display: none;
+}
 
 #cfw-loader{
 	position: absolute;

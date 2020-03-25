@@ -59,6 +59,8 @@ CFW.render.registerRenderer("tiles",
 				sizefactor: 1,
 				// show or hide labels
 				showlabels: false, 
+				// the border style of the tile, choose between: null | 'none' | 'round' | 'superround' | 'asymmetric' | 'superasymmetric' | 'ellipsis'
+				borderstyle: null
 			};
 			
 			var settings = Object.assign({}, defaultSettings, renderDef.rendererSettings.tiles);
@@ -98,6 +100,31 @@ CFW.render.registerRenderer("tiles",
 				
 				if(renderDef.textstylefield != null){
 					currentTile.addClass('text-'+currentRecord[renderDef.textstylefield]);
+				}
+				
+				if(settings.borderstyle != null){
+					var baseradius = 10;
+					switch(settings.borderstyle.toLowerCase()){
+						case 'round':  			currentTile.css('border-radius', baseradius * settings.sizefactor+'px');
+												break;
+												
+						case 'superround':  	currentTile.css('border-radius', baseradius * 2 * settings.sizefactor+'px');
+												break;
+						
+						case 'asymmetric':  	var radius = baseradius * 2.4 * settings.sizefactor+'px ';
+												radius += baseradius * 0.8 * settings.sizefactor+'px';
+												currentTile.css('border-radius', radius);
+												break;
+												
+						case 'superasymmetric':	var radius = baseradius * 5 * settings.sizefactor+'px ';
+												radius += baseradius * 2 * settings.sizefactor+'px';
+												currentTile.css('border-radius', radius);
+												break;
+												
+						case 'ellipsis':  		currentTile.css('border-radius', '50%');
+												break;						
+						
+					}
 				}
 				
 				//=====================================
