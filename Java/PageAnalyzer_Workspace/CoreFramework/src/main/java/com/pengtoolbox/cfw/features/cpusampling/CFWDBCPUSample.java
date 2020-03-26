@@ -179,7 +179,6 @@ public class CFWDBCPUSample {
 						" GROUP BY FK_ID_SIGNATURE, FK_ID_PARENT;"
 						,newGranularity ,startTime, endTime, newGranularity)
 				.execute();
-		System.out.println("CreateAggregation: "+success);
 		
 		success &=  new CPUSample()
 				.queryCache(CFWDBCPUSample.class, "aggregateStatistics"+(cacheCounter++))
@@ -189,7 +188,6 @@ public class CFWDBCPUSample {
 						" AND GRANULARITY < ?;"
 						 ,startTime, endTime, newGranularity)
 				.execute();
-		System.out.println("Delete: "+success);
 		
 		
 		success &=  new CPUSample()
@@ -198,13 +196,11 @@ public class CFWDBCPUSample {
 						" SELECT * FROM CFW_STATS_CPUSAMPLE_AGGREGATION;")
 				.execute();
 		
-		System.out.println("Insert: "+success);
 		success &=  new CPUSample()
 				.queryCache(CFWDBCPUSample.class, "aggregateStatistics"+(cacheCounter++))
 				.custom("DELETE FROM CFW_STATS_CPUSAMPLE_AGGREGATION;\r\n")
 				.execute();
 		
-		System.out.println("successDelete: "+success);
 		
 		//CFWDB.rollbackTransaction();
 		if(success) {

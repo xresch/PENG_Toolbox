@@ -835,7 +835,7 @@ function addTestdata(){
 //		}
 //	});
 	
-//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_iframe', X:6, Y:0, HEIGHT: 4, WIDTH: 7, TITLE: "", JSON_SETTINGS: { url: "/app/cpusampling" } } );
+//	cfw_dashboard_createWidgetInstance({TYPE:'cfw_website', X:6, Y:0, HEIGHT: 4, WIDTH: 7, TITLE: "", JSON_SETTINGS: { url: "/app/cpusampling" } } );
 //	
 //	cfw_dashboard_createWidgetInstance({TYPE:'cfw_table', X:0, Y:0, HEIGHT: 4, WIDTH: 5, TITLE: "Table Test Minimal", 
 //		JSON_SETTINGS: {

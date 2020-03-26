@@ -425,7 +425,7 @@ public abstract class DBInterface {
 			result = prepared.executeQuery();
 			
 		} catch (SQLException e) {
-			log.severe("Issue executing prepared statement.", e);
+			log.severe("Issue executing prepared statement: "+e.getLocalizedMessage(), e);
 			try {
 				if(conn != null && transactionConnection == null) { 
 					removeOpenConnection(conn);

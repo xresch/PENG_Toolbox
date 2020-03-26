@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import com.google.gson.JsonObject;
-import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.datahandling.CFWField;
@@ -13,10 +12,10 @@ import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.response.JSONResponse;
 
-public class WidgetIframe extends WidgetDefinition {
+public class WidgetWebsite extends WidgetDefinition {
 
 	@Override
-	public String getWidgetType() {return "cfw_iframe";}
+	public String getWidgetType() {return "cfw_website";}
 
 	@Override
 	public CFWObject getSettings() {
@@ -34,7 +33,7 @@ public class WidgetIframe extends WidgetDefinition {
 
 	@Override
 	public ArrayList<FileDefinition> getJavascriptFiles() {
-		FileDefinition js = new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_widget_iframe.js");
+		FileDefinition js = new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_widget_website.js");
 		ArrayList<FileDefinition> array = new ArrayList<FileDefinition>();
 		array.add(js);
 		return array;
