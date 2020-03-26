@@ -1088,7 +1088,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				}else {
 					new CFWLog(logger)
 						.method("mapAndValidateParamsToFields")
-						.silent()
+						.silent(true)
 						.finest("The field with name '"+key+"' is unknown for this type.");
 				}
 			}
@@ -1131,7 +1131,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				}else {
 					new CFWLog(logger)
 						.method("mapAndValidateJsonToFields")
-						.silent()
+						.silent(true)
 						.finest("The field with name '"+key+"' is unknown for this type.");
 				}
 			}
@@ -1195,7 +1195,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					success = false;
 					new CFWLog(logger)
 						.method("mapResultSetColumnsToFields")
-						.silent()
+						.silent(true)
 						.warn("The object doesn't contain a field with name '"+colName+"'.");
 				}
 			}

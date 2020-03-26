@@ -392,16 +392,37 @@ public abstract class DBInterface {
 		log.custom("sql", sql).end();
 		return generatedID;
 	}
-	
 	/********************************************************************************************
 	 * Returns the result or null if there was any issue.
 	 * 
-	 * @param request HttpServletRequest containing session data used for logging information(null allowed).
 	 * @param sql string with placeholders
 	 * @param values the values to be placed in the prepared statement
 	 * @throws SQLException 
 	 ********************************************************************************************/
-	public ResultSet preparedExecuteQuery(String sql, Object... values){	
+	public ResultSet preparedExecuteQuery(String sql, Object... values){
+		return preparedExecuteQuery(false, sql, values);
+	}
+	
+	/********************************************************************************************
+	 * Returns the result or null if there was any issue.
+	 * Errors will be written to log but not be propagated to client.
+	 * @param sql string with placeholders
+	 * @param values the values to be placed in the prepared statement
+	 * @throws SQLException 
+	 ********************************************************************************************/
+	public ResultSet preparedExecuteQuerySilent(String sql, Object... values){
+		return preparedExecuteQuery(true, sql, values);
+	}
+	
+	/********************************************************************************************
+	 * Returns the result or null if there was any issue.
+	 * 
+	 * @param isSilent write errors to log but do not propagate to client
+	 * @param sql string with placeholders
+	 * @param values the values to be placed in the prepared statement
+	 * @throws SQLException 
+	 ********************************************************************************************/
+	private ResultSet preparedExecuteQuery(boolean isSilent, String sql, Object... values){	
         
 		CFWLog log = new CFWLog(logger)
 				.method("preparedExecuteQuery")
@@ -425,7 +446,8 @@ public abstract class DBInterface {
 			result = prepared.executeQuery();
 			
 		} catch (SQLException e) {
-			log.severe("Issue executing prepared statement: "+e.getLocalizedMessage(), e);
+			log.silent(isSilent)
+				.severe("Issue executing prepared statement: "+e.getLocalizedMessage(), e);
 			try {
 				if(conn != null && transactionConnection == null) { 
 					removeOpenConnection(conn);
@@ -433,7 +455,8 @@ public abstract class DBInterface {
 				}
 				if(prepared != null) { prepared.close(); }
 			} catch (SQLException e2) {
-				log.severe("Issue closing resources.", e2);
+				log.silent(isSilent)
+					.severe("Issue closing resources.", e2);
 			}
 		} 
 		

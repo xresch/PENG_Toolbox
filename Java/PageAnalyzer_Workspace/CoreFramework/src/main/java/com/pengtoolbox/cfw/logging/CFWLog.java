@@ -76,8 +76,8 @@ public class CFWLog {
 	/***********************************************************************
 	 * Make the next log silent. No messages will be propagated to the UI.
 	 ***********************************************************************/
-	public CFWLog silent() {
-		this.silent = true;
+	public CFWLog silent(boolean isSilent) {
+		this.silent = isSilent;
 		return this;
 	}
 	

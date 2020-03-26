@@ -3,6 +3,7 @@ package com.pengtoolbox.cfw._main;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +29,7 @@ public class CFWContextRequest {
 	private static InheritableThreadLocal<AbstractResponse> responseContent = new InheritableThreadLocal<AbstractResponse>();
 	private static InheritableThreadLocal<SessionData> sessionData = new InheritableThreadLocal<SessionData>();
 	
-	private static InheritableThreadLocal<HashMap<String,AlertMessage>> messageArray = new InheritableThreadLocal<HashMap<String,AlertMessage>>();
+	private static InheritableThreadLocal<LinkedHashMap<String,AlertMessage>> messageArray = new InheritableThreadLocal<LinkedHashMap<String,AlertMessage>>();
 		
 	private static int localeFilesID = 0;
 	private static HashMap<String, FileDefinition> localeFiles = new HashMap<String, FileDefinition>();
@@ -119,13 +120,28 @@ public class CFWContextRequest {
 	public static void addAlertMessage(MessageType type, String message){
 		
 		if(messageArray.get() == null) {
-			messageArray.set(new HashMap<String,AlertMessage>());
+			messageArray.set(new LinkedHashMap<String,AlertMessage>());
 		}
 		
 		messageArray.get().put(message, new AlertMessage(type, message));
 				
 	}
 	
+	/****************************************************************
+	 * Returns a collection of alert Messages
+	 *   
+	 * @return Map or null
+	 *   
+	 ****************************************************************/
+	public static LinkedHashMap<String,AlertMessage> getAlertMap() {
+		return messageArray.get();
+	}
+	/****************************************************************
+	 * Returns a collection of alert Messages
+	 *   
+	 * @param alertType alert type from OMKeys
+	 *   
+	 ****************************************************************/
 	public static Collection<AlertMessage> getAlertMessages() {
 		if(messageArray.get() == null) {
 			return new ArrayList<AlertMessage>();
