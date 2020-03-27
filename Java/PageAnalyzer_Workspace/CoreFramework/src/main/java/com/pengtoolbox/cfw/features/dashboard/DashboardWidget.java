@@ -102,6 +102,7 @@ public class DashboardWidget extends CFWObject {
 	private CFWField<String> settings = CFWField.newString(FormFieldType.TEXT, DashboardWidgetFields.JSON_SETTINGS.toString())
 			.setDescription("The custom settings of the widget as JSON.")
 			.disableSecurity();
+	
 	public DashboardWidget() {
 		initializeFields();
 	}

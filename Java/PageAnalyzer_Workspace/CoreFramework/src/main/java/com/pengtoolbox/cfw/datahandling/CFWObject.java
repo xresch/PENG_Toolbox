@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +52,11 @@ public class CFWObject {
 	public boolean mapRequestParameters(HttpServletRequest request) {
 		
 		return CFWField.mapAndValidateParamsToFields(request, fields);
+	}
+	
+	
+	public boolean mapJsonFields(String json) {
+		return mapJsonFields(CFW.JSON.fromJson(json));
 	}
 	
 	public boolean mapJsonFields(JsonObject object) {
@@ -121,6 +127,10 @@ public class CFWObject {
 		for(CFWField<?> field : fields) {
 			this.addField(field);
 		}
+	}
+	
+	public void addFields(LinkedHashMap<String, CFWField<?>> fields) {
+		this.fields.putAll(fields);
 	}
 	
 	public CFWField<?> getField(String name) {

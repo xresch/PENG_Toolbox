@@ -47,6 +47,7 @@ TODO
 - Manual: Multilingual manual
 - Manual: Print View Button
 
+- CFW: CFWApplicationExecutor - ForwardedRequestCustomizer make it work with reverse proxy
 - CFW: Implement custom shutdown stopping database, application, features, etc...
 - CFW: Configuration - Add feature to listen for config changes.
 - CFW: Move core stuff to core feature

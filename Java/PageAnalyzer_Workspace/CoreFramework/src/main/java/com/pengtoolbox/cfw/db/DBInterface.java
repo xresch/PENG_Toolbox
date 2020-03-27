@@ -76,6 +76,7 @@ public abstract class DBInterface {
 				connArray.remove(con);
 			} catch (SQLException e) {
 				new CFWLog(logger)
+					.silent(true)
 					.method("forceCloseRemainingConnections")
 					.severe("Error on forced closing of DB connection.", e);
 			}
@@ -83,8 +84,9 @@ public abstract class DBInterface {
 		
 		if(counter > 0) {
 			new CFWLog(logger)
-			.method("forceCloseRemainingConnections")
-			.warn(""+counter+" database connection(s) not closed properly.");
+				.silent(true)
+				.method("forceCloseRemainingConnections")
+				.warn(""+counter+" database connection(s) not closed properly.");
 		}
 	}
 	

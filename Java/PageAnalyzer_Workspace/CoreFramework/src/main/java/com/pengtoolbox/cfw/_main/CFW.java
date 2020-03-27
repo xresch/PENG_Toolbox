@@ -15,13 +15,16 @@ import com.pengtoolbox.cfw.features.api.CFWRegistryAPI;
 import com.pengtoolbox.cfw.features.api.FeatureAPI;
 import com.pengtoolbox.cfw.features.config.CFWDBConfig;
 import com.pengtoolbox.cfw.features.config.FeatureConfiguration;
+import com.pengtoolbox.cfw.features.contextsettings.CFWDBContextSettings;
+import com.pengtoolbox.cfw.features.contextsettings.CFWRegistryContextSettings;
+import com.pengtoolbox.cfw.features.contextsettings.FeatureContextSettings;
 import com.pengtoolbox.cfw.features.core.CFWLocalization;
 import com.pengtoolbox.cfw.features.core.FeatureCore;
 import com.pengtoolbox.cfw.features.cpusampling.FeatureCPUSampling;
 import com.pengtoolbox.cfw.features.dashboard.CFWDBDashboard;
 import com.pengtoolbox.cfw.features.dashboard.CFWDBDashboardWidget;
-import com.pengtoolbox.cfw.features.dashboard.FeatureDashboard;
 import com.pengtoolbox.cfw.features.dashboard.CFWRegistryWidgets;
+import com.pengtoolbox.cfw.features.dashboard.FeatureDashboard;
 import com.pengtoolbox.cfw.features.manual.CFWRegistryManual;
 import com.pengtoolbox.cfw.features.manual.FeatureManual;
 import com.pengtoolbox.cfw.features.usermgmt.CFWDBPermission;
@@ -33,8 +36,8 @@ import com.pengtoolbox.cfw.features.usermgmt.FeatureUserManagement;
 import com.pengtoolbox.cfw.mail.CFWMail;
 import com.pengtoolbox.cfw.schedule.CFWSchedule;
 import com.pengtoolbox.cfw.utils.CFWDump;
-import com.pengtoolbox.cfw.utils.CFWSecurity;
 import com.pengtoolbox.cfw.utils.CFWFiles;
+import com.pengtoolbox.cfw.utils.CFWSecurity;
 import com.pengtoolbox.cfw.utils.CFWTime;
 import com.pengtoolbox.cfw.utils.json.CFWJson;
 import com.pengtoolbox.cfw.validation.CFWValidation;
@@ -53,6 +56,7 @@ public class CFW {
 	
 	public static class DB extends CFWDB {
 		public static class Config extends CFWDBConfig{};
+		public static class ContextSettings extends CFWDBContextSettings{};
 		public static class Dashboards extends CFWDBDashboard{};
 		public static class DashboardWidgets extends CFWDBDashboardWidget{};
 		public static class Users extends CFWDBUser{};
@@ -82,12 +86,11 @@ public class CFW {
 	public class Registry {
 		public class API extends CFWRegistryAPI {}
 		public class Components extends CFWRegistryComponents {} 
+		public class ContextSettings extends CFWRegistryContextSettings {} 
 		public class Features extends CFWRegistryFeatures {} 
 		public class Manual extends CFWRegistryManual {} 
 		public class Objects extends CFWRegistryObjects {} 
 		public class Widgets extends CFWRegistryWidgets {} 
-		
-	
 	}
 	public class Schedule extends CFWSchedule {}
 	public class Time extends CFWTime {}
@@ -202,6 +205,7 @@ public class CFW {
 		// Register Features
 		CFW.Registry.Features.addFeature(FeatureCore.class);	
 		CFW.Registry.Features.addFeature(FeatureConfiguration.class);	
+		CFW.Registry.Features.addFeature(FeatureContextSettings.class);	
 		CFW.Registry.Features.addFeature(FeatureUserManagement.class);	
 		CFW.Registry.Features.addFeature(FeatureAPI.class);	
 		CFW.Registry.Features.addFeature(FeatureCPUSampling.class);		

@@ -328,13 +328,14 @@ public class CFWApplicationExecutor {
 		
 		CFWApplicationExecutor.idmanager = new DefaultSessionIdManager(server);
 	    server.setSessionIdManager(CFWApplicationExecutor.idmanager);
-	    
 		
 		if(CFWProperties.HTTP_ENABLED) {
 			HttpConfiguration httpConf = new HttpConfiguration();
 			httpConf.setSecurePort(CFWProperties.HTTPS_PORT);
 			httpConf.setSecureScheme("https");
-			
+		    // Add support for X-Forwarded headers
+			httpConf.addCustomizer( new org.eclipse.jetty.server.ForwardedRequestCustomizer());
+
 			ServerConnector httpConnector = new ServerConnector(server, new HttpConnectionFactory(httpConf));
 			httpConnector.setName("unsecured");
 			httpConnector.setHost(CFWProperties.HTTP_CONNECTOR_HOST);
@@ -347,7 +348,9 @@ public class CFWApplicationExecutor {
 			httpsConf.addCustomizer(new SecureRequestCustomizer());
 			httpsConf.setSecurePort(CFWProperties.HTTPS_PORT);
 			httpsConf.setSecureScheme("https");
-			
+			// Add support for X-Forwarded headers
+			httpsConf.addCustomizer( new org.eclipse.jetty.server.ForwardedRequestCustomizer());
+		
 			SslContextFactory sslContextFactory = new SslContextFactory();
 			sslContextFactory.setKeyStorePath(CFWProperties.HTTPS_KEYSTORE_PATH);
 			sslContextFactory.setKeyStorePassword(CFWProperties.HTTPS_KEYSTORE_PASSWORD);
