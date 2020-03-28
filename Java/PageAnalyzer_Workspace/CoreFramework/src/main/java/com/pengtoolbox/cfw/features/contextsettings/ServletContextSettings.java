@@ -103,7 +103,7 @@ public class ServletContextSettings extends HttpServlet
 			case "delete": 			
 				switch(item.toLowerCase()) {
 
-					case "contextsettings": 	deleteContextSettings(jsonResponse, IDs);
+					case "contextsettings": 	deleteContextSettings(jsonResponse, ID);
 												break;  
 										
 					default: 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The value of item '"+item+"' is not supported.");
@@ -131,13 +131,16 @@ public class ServletContextSettings extends HttpServlet
 	/******************************************************************
 	 *
 	 ******************************************************************/
-	private void deleteContextSettings(JSONResponse jsonResponse, String IDs) {
+	private void deleteContextSettings(JSONResponse jsonResponse, String id) {
 		// TODO Auto-generated method stub
 		if(CFW.Context.Request.hasPermission(FeatureContextSettings.PERMISSION_CONTEXT_SETTINGS)) {
-			jsonResponse.setSuccess(CFW.DB.ContextSettings.deleteMultipleByID(IDs));
-		}else {
-			int userid = CFW.Context.Request.getUser().id();
-			jsonResponse.setSuccess(CFW.DB.ContextSettings.deleteMultipleByID(IDs));
+			
+			ContextSettings settings = CFW.DB.ContextSettings.selectByID(id);
+			AbstractContextSettings typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(settings.type());
+			typeSettings.mapJsonFields(settings.settings());
+			if(typeSettings.isDeletable(settings.id())) {
+				jsonResponse.setSuccess(CFW.DB.ContextSettings.deleteByID(id));
+			}
 		}
 	}
 	
@@ -178,7 +181,7 @@ public class ServletContextSettings extends HttpServlet
 			
 			//--------------------------------
 			// Create instance for type
-			CFWObject typeSettings = CFW.Registry.ContextSettings.getContextSettingInstance(type);
+			CFWObject typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(type);
 			settings.addFields(typeSettings.getFields());
 			
 			//--------------------------------
@@ -201,7 +204,7 @@ public class ServletContextSettings extends HttpServlet
 						
 						//--------------------------------
 						// Create instance for type
-						CFWObject typeSettings = CFW.Registry.ContextSettings.getContextSettingInstance(type);
+						CFWObject typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(type);
 						
 						if(typeSettings.mapRequestParameters(request) && areFieldsValid) {
 							settings.settings(typeSettings.toJSON());
@@ -230,7 +233,7 @@ public class ServletContextSettings extends HttpServlet
 			
 			//--------------------------------
 			// Create instance for type
-			CFWObject typeSettings = CFW.Registry.ContextSettings.getContextSettingInstance(settings.type());
+			CFWObject typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(settings.type());
 			typeSettings.mapJsonFields(settings.settings());
 			// reduce overhead
 			settings.settings("");
@@ -255,7 +258,7 @@ public class ServletContextSettings extends HttpServlet
 							
 							//--------------------------------
 							// Create instance for type
-							CFWObject typeSettings = CFW.Registry.ContextSettings.getContextSettingInstance(settings.type());
+							CFWObject typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(settings.type());
 							
 							if(typeSettings.mapRequestParameters(request) && areFieldsValid) {
 								settings.settings(typeSettings.toJSON());

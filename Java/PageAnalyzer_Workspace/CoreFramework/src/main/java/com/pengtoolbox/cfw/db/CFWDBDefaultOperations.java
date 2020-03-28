@@ -279,7 +279,7 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 					.queryCache(cfwObjectClass, "CFWDBDefaultOperations.selectBy"+column)
 					.select()
 					.where(column, value)
-					.asObjectList();
+					.getAsObjectList();
 			
 		} catch (Exception e) {
 			new CFWLog(logger)

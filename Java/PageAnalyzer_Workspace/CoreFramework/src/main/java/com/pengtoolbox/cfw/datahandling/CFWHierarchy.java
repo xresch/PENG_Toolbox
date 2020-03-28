@@ -270,7 +270,7 @@ public class CFWHierarchy<T extends CFWObject> {
 	 *****************************************************************************/
 	public ArrayList<T> fetchFlatList(String... resultFields) {
 		return (ArrayList<T>)createFetchHierarchyQuery(resultFields)
-					.asObjectList();
+					.getAsObjectList();
 	}
 	
 	/*****************************************************************************

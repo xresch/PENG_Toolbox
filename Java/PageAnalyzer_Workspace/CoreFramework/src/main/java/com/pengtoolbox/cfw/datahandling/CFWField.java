@@ -817,7 +817,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @return instance for chaining
 	 ******************************************************************************************************/
 	@SuppressWarnings("rawtypes")
-	public CFWField<T> setValueLabelOptions(LinkedHashMap valueLabelPairs) {
+	public CFWField<T> setOptions(LinkedHashMap valueLabelPairs) {
 		this.valueLabelOptions = valueLabelPairs;
 		return this;
 	}

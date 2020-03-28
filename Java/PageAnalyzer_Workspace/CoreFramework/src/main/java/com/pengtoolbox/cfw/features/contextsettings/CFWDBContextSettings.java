@@ -1,6 +1,8 @@
 package com.pengtoolbox.cfw.features.contextsettings;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
@@ -29,12 +31,19 @@ public class CFWDBContextSettings {
 	private static PrecheckHandler prechecksCreateUpdate =  new PrecheckHandler() {
 		public boolean doCheck(CFWObject object) {
 			
-			ContextSettings environment = (ContextSettings)object;
+			ContextSettings settings = (ContextSettings)object;
 			
-			if(environment == null || environment.name().isEmpty()) {
+			if(settings == null || settings.name().isEmpty()) {
 				new CFWLog(logger)
 					.method("doCheck")
-					.warn("Please specify a name for the environment.", new Throwable());
+					.severe("Please specify a name for the environment.", new Throwable());
+				return false;
+			}
+			
+			if(checkExists(settings)) {
+				new CFWLog(logger)
+					.method("doCheck")
+					.severe("A setting with the name '"+settings.name()+"' already exists.", new Throwable());
 				return false;
 			}
 
@@ -70,7 +79,7 @@ public class CFWDBContextSettings {
 	//####################################################################################################
 	// DELETE
 	//####################################################################################################
-	public static boolean 	deleteByID(int id) 					{ return CFWDBDefaultOperations.deleteFirstBy(prechecksDelete, cfwObjectClass, ContextSettingsFields.PK_ID.toString(), id); }
+	public static boolean 	deleteByID(String id) 					{ return CFWDBDefaultOperations.deleteFirstBy(prechecksDelete, cfwObjectClass, ContextSettingsFields.PK_ID.toString(), id); }
 	public static boolean 	deleteMultipleByID(String itemIDs) 	{ return CFWDBDefaultOperations.deleteMultipleByID(cfwObjectClass, itemIDs); }
 		
 	public static boolean 	deleteByName(String name) 		{ 
@@ -108,6 +117,49 @@ public class CFWDBContextSettings {
 	}
 	
 	/***************************************************************
+	 * Select a dashboard by it's ID and return it as JSON string.
+	 * @param id of the dashboard
+	 * @return Returns a dashboard or null if not found or in case of exception.
+	 ****************************************************************/
+	public static ArrayList<AbstractContextSettings> getContextSettingsForType(String type) {
+		
+		ArrayList<CFWObject> objects =  new ContextSettings()
+				.queryCache(CFWDBContextSettings.class, "getContextSettingsForType")
+				.select()
+				.where(ContextSettingsFields.CFW_CTXSETTINGS_TYPE, type)
+				.getAsObjectList();
+
+		ArrayList<AbstractContextSettings> settingsArray = new ArrayList<AbstractContextSettings>();
+		
+		for(CFWObject object : objects) {
+			ContextSettings current = (ContextSettings)object;
+			AbstractContextSettings typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(current.type());
+			
+			typeSettings.mapJsonFields(current.settings());
+			typeSettings.setWrapper(current);
+			settingsArray.add(typeSettings);
+		}
+		
+		return settingsArray;
+	}
+	
+	/***************************************************************
+	 * Returns a map with ID/Name values for select options.
+	 * @param type of the context setting
+	 ****************************************************************/
+	public static LinkedHashMap<Object, Object> getSelectOptionsForType(String type) {
+		
+		LinkedHashMap<Object, Object> objects =  new ContextSettings()
+				.queryCache(CFWDBContextSettings.class, "getSelectOptionsForType")
+				.select()
+				.where(ContextSettingsFields.CFW_CTXSETTINGS_TYPE.toString(), type)
+				.orderby(ContextSettingsFields.CFW_CTXSETTINGS_NAME)
+				.getAsLinkedHashMap(ContextSettingsFields.PK_ID, ContextSettingsFields.CFW_CTXSETTINGS_NAME);
+		
+		return objects;
+	}
+	
+	/***************************************************************
 	 * Return a list of all user dashboards
 	 * 
 	 * @return Returns a resultSet with all dashboards or null.
@@ -122,22 +174,6 @@ public class CFWDBContextSettings {
 		
 	}
 	
-	/***************************************************************
-	 * Return a list of all user dashboards
-	 * 
-	 * @return Returns a resultSet with all dashboards or null.
-	 ****************************************************************/
-//	public static ResultSet getSharedContextSettingsList() {
-//		// SELECT (SELECT USERNAME FROM CFW_USER WHERE PK_ID = FK_ID_USER ) AS USERNAME, * FROM CFW_DASHBOARD WHERE IS_SHARED = TRUE ORDER BY LOWER(NAME)
-//		return new ContextSettings()
-//				.queryCache(CFWDBContextSettings.class, "getSharedContextSettingsList")
-//				.columnSubquery("OWNER", "SELECT USERNAME FROM CFW_USER WHERE PK_ID = FK_ID_USER")
-//				.select()
-//				.where(ContextSettingsFields.IS_SHARED.toString(), true)
-//				.orderby(ContextSettingsFields.NAME.toString())
-//				.getResultSet();
-//		
-//	}
 	
 	/***************************************************************
 	 * Return a list of all user dashboards as json string.
@@ -149,7 +185,7 @@ public class CFWDBContextSettings {
 		return new ContextSettings()
 				.queryCache(CFWDBContextSettings.class, "getUserContextSettingsListAsJSON")
 				.select()
-				.orderby(ContextSettingsFields.CFW_CTXSETTINGS_TYPE.toString())
+				.orderby(ContextSettingsFields.CFW_CTXSETTINGS_TYPE)
 				.getAsJSON();
 	}
 	
@@ -158,12 +194,20 @@ public class CFWDBContextSettings {
 	//####################################################################################################
 	// CHECKS
 	//####################################################################################################
-	public static boolean checkExistsByName(String itemName) {	return CFWDBDefaultOperations.checkExistsBy(cfwObjectClass, ContextSettingsFields.CFW_CTXSETTINGS_NAME.toString(), itemName); }
-	public static boolean checkExistsByName(ContextSettings item) {
-		if(item != null) {
-			return checkExistsByName(item.name());
-		}
-		return false;
+	public static boolean checkExists(ContextSettings settings) {
+		return checkExists(settings.type(), settings.name());
 	}
+	public static boolean checkExists(String type, String name) {	
+		int count = new ContextSettings()
+				.queryCache(CFWDBContextSettings.class, "checkExists")
+				.selectCount()
+				.where(ContextSettingsFields.CFW_CTXSETTINGS_TYPE, type)
+				.and(ContextSettingsFields.CFW_CTXSETTINGS_NAME, name)
+				.limit(1)
+				.getCount();
+		
+		return (count > 0);
+	}
+
 		
 }

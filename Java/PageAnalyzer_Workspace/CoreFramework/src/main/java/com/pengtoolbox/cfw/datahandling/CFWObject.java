@@ -320,7 +320,7 @@ public class CFWObject {
 		this.childObjects.remove(((Integer)child.getPrimaryField().getValue()));
 	}
 		
-	public CFWObject getParent() {
+	public CFWObject getWrapper() {
 		return parent;
 	}
 	/****************************************************************

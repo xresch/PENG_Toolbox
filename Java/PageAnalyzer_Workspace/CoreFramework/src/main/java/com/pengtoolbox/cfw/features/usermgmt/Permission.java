@@ -105,7 +105,7 @@ public class Permission extends CFWObject{
 		ArrayList<CFWObject> permissionArray = 
 				this.select()
 					.where(PermissionFields.CATEGORY.toString(), null)
-					.asObjectList();
+					.getAsObjectList();
 
 		for(CFWObject permissionObject : permissionArray) {
 			Permission permission = (Permission) permissionObject;

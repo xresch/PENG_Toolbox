@@ -92,7 +92,7 @@ public class CFWObjectMockup extends CFWObject{
 		options.put(2, "Banana");
 		options.put(3, "Plumb");
 		options.put(4, "Strawwberry");
-		keyValSelect.setValueLabelOptions(options);
+		keyValSelect.setOptions(options);
 		
 		this.addFields(firstname, lastname, withValue, description, textarea, number, date, timestamp, select, keyValSelect, editor, tags, tagsselector, autocomplete);
 	}

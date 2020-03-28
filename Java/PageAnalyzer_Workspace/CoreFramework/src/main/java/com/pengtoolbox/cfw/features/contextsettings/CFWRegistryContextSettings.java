@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
-import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
@@ -16,13 +15,13 @@ public class CFWRegistryContextSettings {
 	
 	public static Logger logger = CFWLog.getLogger(CFWRegistryContextSettings.class.getName());
 	
-	private static LinkedHashMap<String, Class<? extends CFWObject>> contextSettings = new LinkedHashMap<String, Class<? extends CFWObject>>();
+	private static LinkedHashMap<String, Class<? extends AbstractContextSettings>> contextSettings = new LinkedHashMap<String, Class<? extends AbstractContextSettings>>();
 	
 	/***********************************************************************
 	 * Adds a CFWObject class to the registry.
 	 * @param objectClass
 	 ***********************************************************************/
-	public static void register(String type, Class<? extends CFWObject> environmentClass)  {
+	public static void register(String type, Class<? extends AbstractContextSettings> environmentClass)  {
 		contextSettings.put(type, environmentClass);
 	}
 	
@@ -38,7 +37,7 @@ public class CFWRegistryContextSettings {
 	 * Removes a CFWObject class to the registry.
 	 * @param objectClass
 	 ***********************************************************************/
-	public static LinkedHashMap<String, Class<? extends CFWObject>> getContextSettingList()  {
+	public static LinkedHashMap<String, Class<? extends AbstractContextSettings>> getContextSettingList()  {
 		return contextSettings;
 	}
 	
@@ -46,12 +45,12 @@ public class CFWRegistryContextSettings {
 	 * Get a list of Environment instances.
 	 * 
 	 ***********************************************************************/
-	public static ArrayList<CFWObject> getContextSettingInstances()  {
-		ArrayList<CFWObject> instanceArray = new ArrayList<CFWObject>();
+	public static ArrayList<AbstractContextSettings> createContextSettingInstances()  {
+		ArrayList<AbstractContextSettings> instanceArray = new ArrayList<AbstractContextSettings>();
 		
-		for(Class<? extends CFWObject> clazz : contextSettings.values()) {
+		for(Class<? extends AbstractContextSettings> clazz : contextSettings.values()) {
 			try {
-				CFWObject instance = clazz.newInstance();
+				AbstractContextSettings instance = clazz.newInstance();
 				instanceArray.add(instance);
 			} catch (Exception e) {
 				new CFWLog(logger).severe("Issue creating instance for Class '"+clazz.getName()+"': "+e.getMessage(), e);
@@ -64,10 +63,10 @@ public class CFWRegistryContextSettings {
 	 * Get a new instance for the specified ContextSetting.
 	 * Returns null if the  is undefined.
 	 ***********************************************************************/
-	public static CFWObject getContextSettingInstance(String type)  {
+	public static AbstractContextSettings createContextSettingInstance(String type)  {
 		
-		CFWObject instance = null;
-		Class<? extends CFWObject> clazz =  contextSettings.get(type);
+		AbstractContextSettings instance = null;
+		Class<? extends AbstractContextSettings> clazz =  contextSettings.get(type);
 		try {
 			if(clazz != null) {
 				instance = clazz.newInstance();

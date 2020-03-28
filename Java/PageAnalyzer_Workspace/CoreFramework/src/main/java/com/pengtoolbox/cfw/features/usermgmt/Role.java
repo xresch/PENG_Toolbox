@@ -139,7 +139,7 @@ public class Role extends CFWObject {
 		ArrayList<CFWObject> roleArray = 
 				this.select()
 					.where(RoleFields.CATEGORY.toString(), null)
-					.asObjectList();
+					.getAsObjectList();
 
 		for(CFWObject roleObject : roleArray) {
 			Role role = (Role) roleObject;

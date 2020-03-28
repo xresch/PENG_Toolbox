@@ -114,7 +114,7 @@ public class CFWDBDashboardWidget {
 				.queryCache(CFWDBDashboardWidget.class, "getWidgetsForDashboard")
 				.select()
 				.where(DashboardWidgetFields.FK_ID_DASHBOARD, dashboardID)
-				.asObjectList();
+				.getAsObjectList();
 		
 	}
 
