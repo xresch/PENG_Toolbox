@@ -10,6 +10,7 @@ import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.db.CFWDBDefaultOperations;
 import com.pengtoolbox.cfw.db.PrecheckHandler;
+import com.pengtoolbox.cfw.features.config.ConfigChangeListener;
 import com.pengtoolbox.cfw.features.contextsettings.ContextSettings.ContextSettingsFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
@@ -24,7 +25,17 @@ public class CFWDBContextSettings {
 	private static Class<ContextSettings> cfwObjectClass = ContextSettings.class;
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBContextSettings.class.getName());
-		
+	
+	public static ArrayList<ContextSettingsChangeListener> changeListeners = new ArrayList<ContextSettingsChangeListener>();
+	
+	/********************************************************************************************
+	 * Add a change listener that listens to config changes.
+	 * 
+	 ********************************************************************************************/
+	public static void addChangeListener(ContextSettingsChangeListener listener) {
+		changeListeners.add(listener);
+	}
+	
 	//####################################################################################################
 	// Preckeck Initialization
 	//####################################################################################################
@@ -40,10 +51,10 @@ public class CFWDBContextSettings {
 				return false;
 			}
 			
-			if(checkExists(settings)) {
+			if(checkExistsIgnoreCurrent(settings)) {
 				new CFWLog(logger)
 					.method("doCheck")
-					.severe("A setting with the name '"+settings.name()+"' already exists.", new Throwable());
+					.severe("A setting of type '"+settings.type()+"' and the name '"+settings.name()+"' already exists.", new Throwable());
 				return false;
 			}
 
@@ -73,8 +84,25 @@ public class CFWDBContextSettings {
 	//####################################################################################################
 	// UPDATE
 	//####################################################################################################
-	public static boolean 	update(ContextSettings... items) 	{ return CFWDBDefaultOperations.update(prechecksCreateUpdate, items); }
-	public static boolean 	update(ContextSettings item) 		{ return CFWDBDefaultOperations.update(prechecksCreateUpdate, item); }
+	public static boolean 	update(ContextSettings item) 		{ 
+		
+		boolean success = CFWDBDefaultOperations.update(prechecksCreateUpdate, item); ;
+		for(ContextSettingsChangeListener listener : changeListeners) {
+			
+			if(listener.listensOnType(item.type())) {
+				//System.out.println("====================");
+				//System.out.println("Updated item.type():"+item.type());
+				
+				AbstractContextSettings typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(item.type());
+				
+				typeSettings.mapJsonFields(item.settings());
+				typeSettings.setWrapper(item);
+				
+				listener.onChange(typeSettings);
+			}
+		}
+		return success;
+	}
 	
 	//####################################################################################################
 	// DELETE
@@ -197,12 +225,30 @@ public class CFWDBContextSettings {
 	public static boolean checkExists(ContextSettings settings) {
 		return checkExists(settings.type(), settings.name());
 	}
+	
 	public static boolean checkExists(String type, String name) {	
 		int count = new ContextSettings()
 				.queryCache(CFWDBContextSettings.class, "checkExists")
 				.selectCount()
 				.where(ContextSettingsFields.CFW_CTXSETTINGS_TYPE, type)
 				.and(ContextSettingsFields.CFW_CTXSETTINGS_NAME, name)
+				.limit(1)
+				.getCount();
+		
+		return (count > 0);
+	}
+	
+	public static boolean checkExistsIgnoreCurrent(ContextSettings settings) {
+		return checkExistsIgnoreCurrent(settings.id(), settings.type(), settings.name());
+	}
+	
+	public static boolean checkExistsIgnoreCurrent(int currentID, String type, String name) {	
+		int count = new ContextSettings()
+				.queryCache(CFWDBContextSettings.class, "checkExists")
+				.selectCount()
+				.where(ContextSettingsFields.CFW_CTXSETTINGS_TYPE, type)
+				.and(ContextSettingsFields.CFW_CTXSETTINGS_NAME, name)
+				.and().not().is(ContextSettingsFields.PK_ID, currentID)
 				.limit(1)
 				.getCount();
 		

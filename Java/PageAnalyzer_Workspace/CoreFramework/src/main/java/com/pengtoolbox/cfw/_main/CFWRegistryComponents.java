@@ -143,7 +143,7 @@ public class CFWRegistryComponents {
 		menu.setLabel(CFW.DB.Config.getConfigAsString(Configuration.MENU_TITLE));
 		
 		//======================================
-		// User Menus
+		// Regular Menus
 		//======================================
 		for(MenuItem item : regularMenuItems.values() ) {
 			menu.addChild(item.createCopy());

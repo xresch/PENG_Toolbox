@@ -36,9 +36,14 @@ public class CFWDBConfig {
 		new Configuration().createTable();
 	}
 	
+	/********************************************************************************************
+	 * Add a change listener that listens to config changes.
+	 * 
+	 ********************************************************************************************/
 	public static void addChangeListener(ConfigChangeListener listener) {
 		changeListeners.add(listener);
 	}
+	
 	/********************************************************************************************
 	 * Creates the table and default admin user if not already exists.
 	 * This method is executed by CFW.DB.initialize().
@@ -99,10 +104,10 @@ public class CFWDBConfig {
 			|| (oldValue != null && newValue != null && !oldValue.equals(newValue) ) ) {
 				for(ConfigChangeListener listener : changeListeners) {
 					if ( (!triggered.contains(listener)) && listener.listensOnConfig(configName)) {
-						System.out.println("====================");
-						System.out.println("configName:"+configName);
-						System.out.println("newValue:"+newValue);
-						System.out.println("oldValue:"+oldValue);
+//						System.out.println("====================");
+//						System.out.println("configName:"+configName);
+//						System.out.println("newValue:"+newValue);
+//						System.out.println("oldValue:"+oldValue);
 						listener.onChange();
 						triggered.add(listener);
 					}

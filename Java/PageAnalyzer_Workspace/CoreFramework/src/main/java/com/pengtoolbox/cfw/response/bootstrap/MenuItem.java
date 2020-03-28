@@ -39,6 +39,7 @@ public class MenuItem extends HierarchicalHTMLItem {
 	
 	public MenuItem(String label, HashSet<String> permissions) {
 		this.menuName = label;
+		this.label = label;
 		this.permissions = permissions;
 		this.addAttribute("href", "#");
 	}
@@ -69,7 +70,7 @@ public class MenuItem extends HierarchicalHTMLItem {
 	 * Create the HTML representation of this item.
 	 * @return String html for this item. 
 	 ***********************************************************************************/
-	public void createHTML(StringBuilder html) {
+	protected void createHTML(StringBuilder html) {
 		
 		//Check Login
 //		SessionData session = CFW.Context.Request.getSessionData();
@@ -243,6 +244,7 @@ public class MenuItem extends HierarchicalHTMLItem {
 		
 		//------------------------------------
 		// Copy Menu Fields
+		targetItem.creator = this.creator;
 		targetItem.menuName = this.menuName;
 		targetItem.label = this.label;
 		targetItem.alignRightClass = this.alignRightClass;

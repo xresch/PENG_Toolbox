@@ -15,7 +15,10 @@ public abstract class HierarchicalHTMLItem {
 	
 	protected ArrayList<HierarchicalHTMLItem> children = new ArrayList<HierarchicalHTMLItem> ();
 	protected ArrayList<HierarchicalHTMLItem> oneTimeChildren = new ArrayList<HierarchicalHTMLItem> ();
+	
+	protected DynamicItemCreator creator = null; 
 	protected boolean hasChanged = true;
+	
 	protected StringBuilder html = null;
 	
 	protected LinkedHashMap<String, String> attributes = new LinkedHashMap<String, String>();
@@ -40,19 +43,27 @@ public abstract class HierarchicalHTMLItem {
 	 ***********************************************************************************/
 	public String getHTML() {
 		
+		//-----------------------------------------
+		// Check for dynamic items
+		if(creator != null) {
+			this.setOneTimeChildren(creator.createDynamicItems());
+		}
+		
+		//-----------------------------------------
+		// Create HTML
 		if(hasChanged || html == null) {
+			hasChanged = false;
 			html = new StringBuilder();
 			createHTML(html);
-			hasChanged = false;
 		}
 		
 		//-----------------------------------------
 		// Reset oneTimeChildren
 		if(oneTimeChildren.size() > 0) {
 			oneTimeChildren = new ArrayList<HierarchicalHTMLItem> ();
-			hasChanged = true;
+			fireChange();
 		}
-		
+
 		return html.toString();
 	}
 	
@@ -230,6 +241,16 @@ public abstract class HierarchicalHTMLItem {
 	 ***********************************************************************************/
 	public HierarchicalHTMLItem onclick(String onclick) {
 		return addAttribute("onclick", onclick);
+	}
+
+	/***********************************************************************************
+	 * Set a dynamic creator that always creates the child items on the fly and will
+	 * not be cached.
+	 ***********************************************************************************/
+	public HierarchicalHTMLItem setDynamicCreator(DynamicItemCreator creator) {
+		fireChange();
+		this.creator = creator;
+		return this;
 	}
 		
 }
