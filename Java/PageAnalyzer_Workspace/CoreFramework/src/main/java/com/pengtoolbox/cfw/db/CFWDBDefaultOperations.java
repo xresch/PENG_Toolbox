@@ -60,7 +60,7 @@ public abstract class CFWDBDefaultOperations<O extends CFWObject> {
 	/********************************************************************************************
 	 * Creates a new item in the DB.
 	 * @param Object with the values that should be inserted. ID will be set by the Database.
-	 * @return true if successful, false otherwise
+	 * @return primary key or null if not successful
 	 * 
 	 ********************************************************************************************/
 	public static <O extends CFWObject> Integer createGetPrimaryKey(PrecheckHandler precheck, O object) {

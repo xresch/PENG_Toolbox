@@ -154,7 +154,7 @@ public class ServletContextSettings extends HttpServlet
 			duplicate.id(null);
 			duplicate.name(duplicate.name()+"(Copy)");
 			
-			Integer newID = duplicate.insertGetPrimaryKey();
+			Integer newID = CFW.DB.ContextSettings.createGetPrimaryKey(duplicate);
 			if(newID == null) {
 				jsonResponse.setSuccess(false);
 			}
@@ -209,7 +209,7 @@ public class ServletContextSettings extends HttpServlet
 						if(typeSettings.mapRequestParameters(request) && areFieldsValid) {
 							settings.settings(typeSettings.toJSON());
 	
-							if( CFW.DB.ContextSettings.create(settings) ) {
+							if( CFW.DB.ContextSettings.createGetPrimaryKey(settings) != null ) {
 								CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Context Settings created successfully!");
 							}
 						}

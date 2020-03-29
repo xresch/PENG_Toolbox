@@ -78,8 +78,30 @@ public class CFWDBContextSettings {
 	//####################################################################################################
 	// CREATE
 	//####################################################################################################
-	public static boolean	create(ContextSettings... items) 	{ return CFWDBDefaultOperations.create(prechecksCreateUpdate, items); }
-	public static boolean 	create(ContextSettings item) 		{ return CFWDBDefaultOperations.create(prechecksCreateUpdate, item);}
+	public static Integer createGetPrimaryKey(ContextSettings item) 		{ 
+		
+		Integer primaryKey = CFWDBDefaultOperations.createGetPrimaryKey(prechecksCreateUpdate, item);
+		
+		if(primaryKey != null) {
+			
+			ContextSettings fromDB = CFW.DB.ContextSettings.selectByID(primaryKey);
+			for(ContextSettingsChangeListener listener : changeListeners) {
+				
+				if(listener.listensOnType(item.type())) {
+					//System.out.println("====================");
+					//System.out.println("Updated item.type():"+item.type());
+					
+					AbstractContextSettings typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(fromDB.type());
+					
+					typeSettings.mapJsonFields(fromDB.settings());
+					typeSettings.setWrapper(fromDB);
+					
+					listener.onChange(typeSettings, true);
+				}
+			}
+		}
+		return primaryKey;
+	}
 	
 	//####################################################################################################
 	// UPDATE
@@ -98,7 +120,7 @@ public class CFWDBContextSettings {
 				typeSettings.mapJsonFields(item.settings());
 				typeSettings.setWrapper(item);
 				
-				listener.onChange(typeSettings);
+				listener.onChange(typeSettings, false);
 			}
 		}
 		return success;
@@ -242,7 +264,7 @@ public class CFWDBContextSettings {
 		return checkExistsIgnoreCurrent(settings.id(), settings.type(), settings.name());
 	}
 	
-	public static boolean checkExistsIgnoreCurrent(int currentID, String type, String name) {	
+	public static boolean checkExistsIgnoreCurrent(Integer currentID, String type, String name) {	
 		int count = new ContextSettings()
 				.queryCache(CFWDBContextSettings.class, "checkExists")
 				.selectCount()

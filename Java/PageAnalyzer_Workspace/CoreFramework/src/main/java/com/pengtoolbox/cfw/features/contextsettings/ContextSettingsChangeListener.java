@@ -18,8 +18,9 @@ public abstract class ContextSettingsChangeListener {
 	
 	/***********************************************************
 	 * Will be triggered for every context setting that changes.
+	 * @param isNew TODO
 	 * 
 	 ***********************************************************/
-	public abstract void onChange(AbstractContextSettings changedSetting);
+	public abstract void onChange(AbstractContextSettings changedSetting, boolean isNew);
 
 }
