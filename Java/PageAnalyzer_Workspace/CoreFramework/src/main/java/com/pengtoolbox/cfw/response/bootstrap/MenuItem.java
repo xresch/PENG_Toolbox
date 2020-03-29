@@ -116,6 +116,7 @@ public class MenuItem extends HierarchicalHTMLItem {
 			if(parent instanceof MenuItem) {
 				submenuClass = "";
 			}
+			
 			html.append("\n<li class=\"dropdown "+cssClass+"\">")
 				.append("\n<a "+this.getAttributesString()+"class=\"dropdown-item dropdown-toggle\" id=\"cfwMenuDropdown\" data-toggle=\"dropdown\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">")
 					.append("<div class=\"cfw-fa-box\"><i class=\""+faiconClasses+"\"></i></div>")

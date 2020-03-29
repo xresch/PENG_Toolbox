@@ -12,6 +12,8 @@ ALWAYS ON
 TODO
 ====
 
+- Theusinator: Fix Dropdown Issue
+
 - Dashboard: Text Alignment
 - Dashboard: Merge forms, only one button.
 - Dashboard: Widget Fullscreen
