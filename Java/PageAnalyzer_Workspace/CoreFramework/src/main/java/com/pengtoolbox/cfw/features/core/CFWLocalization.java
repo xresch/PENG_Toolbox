@@ -2,6 +2,7 @@ package com.pengtoolbox.cfw.features.core;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -52,6 +53,20 @@ public class CFWLocalization {
 			return value;
 		}else {
 			return defaultValue;
+		}
+	}
+	
+	/******************************************************************************************
+	 * Return a localized value or the default value.
+	 ******************************************************************************************/
+	public static String getLocalized(String key, String defaultValue, Object placeholders) {
+		
+		String value = getLanguagePack(getLocalesForRequest(), null).getProperty(key);
+		
+		if(value != null) {
+			return MessageFormat.format(value, placeholders);
+		}else {
+			return MessageFormat.format(value, placeholders);
 		}
 	}
 	

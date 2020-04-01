@@ -181,6 +181,10 @@ public class Dashboard extends CFWObject {
 		//----------------------------------
 		// Export
 		apis.add(new APIDashboardExport(this.getClass().getSimpleName(), "export"));
+		
+		//----------------------------------
+		// Import
+		apis.add(new APIDashboardImport(this.getClass().getSimpleName(), "import"));
 		return apis;
 	}
 

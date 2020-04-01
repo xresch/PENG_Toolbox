@@ -123,6 +123,29 @@ public class CFWDBUser {
 	}
 	
 	/***************************************************************
+	 * Select the username for the given ID.
+	 * 
+	 * @param id of the User
+	 * @return username or null if not found or in case of exception.
+	 ****************************************************************/
+	public static String selectUsernameByID(int id) {
+		
+		
+		User user = (User)new User()
+				.queryCache(CFWDBUser.class, "selectByID")
+				.select(UserFields.USERNAME)
+				.where(UserFields.PK_ID.toString(), id)
+				.getFirstObject()
+				;
+		
+		if(user == null) {
+			return null;
+		}
+		
+		return user.username();
+	}
+	
+	/***************************************************************
 	 * Select a user by it's ID and return it as a JSON string.
 	 * 
 	 * @param id of the User

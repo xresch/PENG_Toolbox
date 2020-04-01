@@ -60,7 +60,7 @@ public class APIDefinition {
 		this.outputFieldnames = outputFieldnames;
 		
 		try {
-			instance = clazz.newInstance();
+			instance = createObjectInstance();
 		} catch (Exception e) {
 			new CFWLog(logger)
 				.method("APIDefinition.<init>")

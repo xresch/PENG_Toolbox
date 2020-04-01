@@ -1100,8 +1100,8 @@ public class CFWSQL {
 	}
 	
 	/****************************************************************
-	 * Executes the query and returns the result set.
-	 * @return CFWObject the resulting object
+	 * Executes the query and returns the first result as object.
+	 * @return CFWObject the resulting object or null if not found.
 	 ****************************************************************/
 	public CFWObject getFirstObject() {
 		

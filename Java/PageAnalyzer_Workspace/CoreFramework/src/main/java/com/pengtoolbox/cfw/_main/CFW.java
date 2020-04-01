@@ -52,7 +52,8 @@ public class CFW {
 	//##############################################################################
 	// Hierarchical Binding
 	//##############################################################################
-	public static String L(String key, String defaultValue) { return CFW.Localization.getLocalized(key, defaultValue); }
+	public static String L(String key, String defaultText) { return CFW.Localization.getLocalized(key, defaultText); }
+	public static String L(String key, String defaultTextWithPlaceholders, Object placeholderValues) { return CFW.Localization.getLocalized(key, defaultTextWithPlaceholders, placeholderValues); }
 	
 	public static class DB extends CFWDB {
 		public static class Config extends CFWDBConfig{};

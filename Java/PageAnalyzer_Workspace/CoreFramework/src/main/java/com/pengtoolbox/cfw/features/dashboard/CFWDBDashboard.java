@@ -1,6 +1,7 @@
 package com.pengtoolbox.cfw.features.dashboard;
 
 import java.sql.ResultSet;
+import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 import com.google.common.base.Strings;
@@ -14,6 +15,7 @@ import com.pengtoolbox.cfw.db.CFWDBDefaultOperations;
 import com.pengtoolbox.cfw.db.PrecheckHandler;
 import com.pengtoolbox.cfw.features.api.FeatureAPI;
 import com.pengtoolbox.cfw.features.dashboard.Dashboard.DashboardFields;
+import com.pengtoolbox.cfw.features.usermgmt.User;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
@@ -68,7 +70,7 @@ public class CFWDBDashboard {
 	//####################################################################################################
 	public static boolean	create(Dashboard... items) 	{ return CFWDBDefaultOperations.create(prechecksCreateUpdate, items); }
 	public static boolean 	create(Dashboard item) 		{ return CFWDBDefaultOperations.create(prechecksCreateUpdate, item);}
-	
+	public static Integer 	createGetPrimaryKey(Dashboard item) { return CFWDBDefaultOperations.createGetPrimaryKey(prechecksCreateUpdate, item);}
 	//####################################################################################################
 	// UPDATE
 	//####################################################################################################
@@ -253,7 +255,16 @@ public class CFWDBDashboard {
 									 
 			for(JsonElement element : elements) {
 				if(element.isJsonObject()) {
-					JsonElement idElement = element.getAsJsonObject().get("PK_ID");
+					//-------------------------------
+					// Get Username
+					JsonElement useridElement = element.getAsJsonObject().get(DashboardFields.FK_ID_USER.toString());
+					if(!useridElement.isJsonNull() && useridElement.isJsonPrimitive()) {
+						String username = CFW.DB.Users.selectUsernameByID(useridElement.getAsInt());
+						element.getAsJsonObject().addProperty("username", username);
+					}
+					//-------------------------------
+					// Get Widgets
+					JsonElement idElement = element.getAsJsonObject().get(DashboardFields.PK_ID.toString());
 					if(!idElement.isJsonNull() && idElement.isJsonPrimitive()) {
 						JsonArray widgets = CFW.DB.DashboardWidgets.getJsonArrayForExport(idElement.getAsString());
 						element.getAsJsonObject().add("widgets", widgets);
@@ -273,11 +284,11 @@ public class CFWDBDashboard {
 	 * 
 	 * @return Returns a JSON array string.
 	 ****************************************************************/
-	public static String importByJson(String jsonArray) {
+	public static boolean importByJson(String jsonArray, boolean keepOwner) {
 
 		//-----------------------------
 		// Resolve JSON Array
-		JsonElement element = CFW.JSON.toJSONElement(jsonArray);
+		JsonElement element = CFW.JSON.jsonStringToJsonElement(jsonArray);
 		JsonArray array = null;
 		
 		if(element.isJsonArray()) {
@@ -285,46 +296,143 @@ public class CFWDBDashboard {
 		}else if(element.isJsonObject()) {
 			JsonObject object = element.getAsJsonObject();
 			if(object.has("payload")) {
-				array = object.getAsJsonArray();
+				array = object.get("payload").getAsJsonArray();
 			}else {
-				CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_wronginputformat","The provided import format seems not to be supported."));
+				new CFWLog(logger)
+					.method("importByJson")
+					.severe(CFW.L("cfw_core_error_wronginputformat","The provided import format seems not to be supported."), new Exception());
+				return false;
 			}
 		}else {
-			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_wronginputformat","The provided import format seems not to be supported."));
+			new CFWLog(logger)
+				.method("importByJson")
+				.severe(CFW.L("cfw_core_error_wronginputformat","The provided import format seems not to be supported."), new Exception());
+			return false;
 		}
 		
-		return null;
-//		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)
-//		|| CFW.Context.Request.hasPermission(FeatureAPI.PERMISSION_CFW_API)) {			
-//			JsonArray elements = null;
-//			if(Strings.isNullOrEmpty(dashboardID)) {
-//				elements = new Dashboard()
-//						.queryCache(CFWDBDashboard.class, "getJsonArrayForExportAll")
-//						.select()
-//						.getAsJSONArray();
-//			}else {
-//				elements = new Dashboard()
-//						.queryCache(CFWDBDashboard.class, "getJsonArrayForExport")
-//						.select()
-//						.where(DashboardFields.PK_ID, dashboardID)
-//						.getAsJSONArray();
-//			}
-//									 
-//			for(JsonElement element : elements) {
-//				if(element.isJsonObject()) {
-//					JsonElement idElement = element.getAsJsonObject().get("PK_ID");
-//					if(!idElement.isJsonNull() && idElement.isJsonPrimitive()) {
-//						JsonArray widgets = CFW.DB.DashboardWidgets.getJsonArrayForExport(idElement.getAsString());
-//						element.getAsJsonObject().add("widgets", widgets);
-//					}
-//				}
-//			}
-//			
-//			return CFW.JSON.toJSON(elements);
-//		}else {
-//			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_accessdenied", "Access Denied!"));
-//			return "[]";
-//		}
+		//-----------------------------
+		// Create Dashboards
+		for(JsonElement dashboardElement : array) {
+			if(dashboardElement.isJsonObject()) {
+				JsonObject dashboardObject = dashboardElement.getAsJsonObject();
+				//-----------------------------
+				// Map values
+				Dashboard dashboard = new Dashboard();
+				dashboard.mapJsonFields(dashboardObject);
+				
+				//-----------------------------
+				// Reset Dashboard ID and Owner
+				dashboard.id(null);
+				
+				if(keepOwner && dashboardObject.has("username")) {
+					String username = dashboardObject.get("username").getAsString();
+					User owner = CFW.DB.Users.selectByUsernameOrMail(username);
+					if(owner != null) {
+						dashboard.foreignKeyUser(owner.id());
+					}else {
+						CFW.Context.Request.addAlertMessage(MessageType.WARNING, 
+								CFW.L("cfw_dashboard_error_usernotresolved",
+									  "The the dashboard owner with name '{1}' could not be resolved. Set the owner to the importing user.",
+									  dashboardObject.has("username"))
+						);
+						dashboard.foreignKeyUser(CFW.Context.Request.getUser().id());
+					}
+				}else {
+					dashboard.foreignKeyUser(CFW.Context.Request.getUser().id());
+				}
+				
+				
+				//-----------------------------
+				// Resolve Shared Users
+				if(dashboard.sharedWithUsers() != null) {
+					LinkedHashMap<String, String> resolvedEditors = new LinkedHashMap<String, String>();
+					for(String username : dashboard.sharedWithUsers().values()) {
+						User user = CFW.DB.Users.selectByUsernameOrMail(username);
+						if(user != null) {
+							resolvedEditors.put(""+user.id(), user.username());
+						}else {
+							CFW.Context.Request.addAlertMessage(MessageType.WARNING, 
+									CFW.L("cfw_core_error_usernotfound",
+										  "The user '{1}' could not be found.",
+										  username)
+							);
+						}
+						
+					}
+					dashboard.sharedWithUsers(resolvedEditors);
+				}
+				
+				//-----------------------------
+				// Resolve Editors
+				if(dashboard.editors() != null) {
+					LinkedHashMap<String, String> resolvedEditors = new LinkedHashMap<String, String>();
+					for(String username : dashboard.editors().values()) {
+						User user = CFW.DB.Users.selectByUsernameOrMail(username);
+						if(user != null) {
+							resolvedEditors.put(""+user.id(), user.username());
+						}else {
+							CFW.Context.Request.addAlertMessage(MessageType.WARNING, 
+									CFW.L("cfw_core_error_usernotfound",
+										  "The user '{1}' could not be found.",
+										  username)
+							);
+						}
+					}
+					dashboard.editors(resolvedEditors);
+				}
+				
+				//-----------------------------
+				// Create Dashboard
+				Integer newDashboardID = CFW.DB.Dashboards.createGetPrimaryKey(dashboard);
+				if(newDashboardID == null) {
+					continue;
+				}
+				System.out.println("after null");
+				//-----------------------------
+				// Create Widgets
+				if(dashboardObject.has("widgets")) {
+					System.out.println("after haswidgets");
+					//-----------------------------
+					// Check format
+					if(!dashboardObject.get("widgets").isJsonArray()) {
+						CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_wronginputformat","The provided import format seems not to be supported."));
+						continue;
+					}
+					System.out.println("after format check");
+					//-----------------------------
+					// Create Widgets
+					JsonArray widgetsArray = dashboardObject.get("widgets").getAsJsonArray();
+					for(JsonElement widgetElement : widgetsArray) {
+						System.out.println("in loop");
+						if(widgetElement.isJsonObject()) {
+							System.out.println("in isObject");
+							JsonObject widgetObject = widgetElement.getAsJsonObject();
+							//-----------------------------
+							// Map values
+							DashboardWidget widget = new DashboardWidget();
+							widget.mapJsonFields(widgetObject);
+							
+							//-----------------------------
+							// Reset Dashboard ID and Owner
+							widget.foreignKeyDashboard(newDashboardID);
+							
+							//-----------------------------
+							// Create Widget
+							if(!CFW.DB.DashboardWidgets.create(widget)) {
+								CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Error creating imported widget.");
+							}
+							
+						}
+					}
+				}
+				
+			}else {
+				CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_wronginputformat","The provided import format seems not to be supported."));
+				continue;
+			}
+		}
+		
+		return true;
 	}
 	
 	public static boolean isDashboardOfCurrentUser(String dashboardID) {
