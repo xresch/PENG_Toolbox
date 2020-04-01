@@ -62,7 +62,7 @@ public class ServletUserManagement extends HttpServlet
 	        response.setStatus(HttpServletResponse.SC_OK);
 			
 		}else {
-			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied!!!");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_accessdenied", "Access Denied!"));
 		}
         
     }

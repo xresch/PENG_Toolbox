@@ -108,12 +108,9 @@ public class LogFormatterJSON extends Formatter {
 			
 			if(log.customEntries != null && log.customEntries.size() > 0) {
 				for(Entry<String, String> entry : log.customEntries.entrySet()) {
-					
-					if(log.durationMillis != -1){
 						buf.append(", \""+entry.getKey()+"\":\"");
 						buf.append(CFW.JSON.escapeString(entry.getValue()));
 						buf.append("\"");
-					}
 				}
 			}
 						

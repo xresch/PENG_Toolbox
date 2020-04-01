@@ -56,7 +56,7 @@ public class ServletManual extends HttpServlet
 				handleDataRequest(request, response);
 			}
 		}else {
-			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied!!!");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_accessdenied", "Access Denied!"));
 		}
         
     }

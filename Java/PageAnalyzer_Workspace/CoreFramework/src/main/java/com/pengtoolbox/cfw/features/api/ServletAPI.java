@@ -74,7 +74,7 @@ public class ServletAPI extends HttpServlet
 		}else {
 			@SuppressWarnings("unused")
 			HTMLResponse html = new HTMLResponse("Error");
-			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied.");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_accessdenied", "Access Denied!"));
 		}
         
     }
@@ -100,7 +100,7 @@ public class ServletAPI extends HttpServlet
 
 		}else {
 
-			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied!!!");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_accessdenied", "Access Denied!"));
 		}
 	}
 	

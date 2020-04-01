@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.features.api.APIDefinition;
@@ -45,30 +46,45 @@ public class CFWObject {
 		public String ondelete;
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public CFWObject() {
 
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public boolean mapRequestParameters(HttpServletRequest request) {
 		
 		return CFWField.mapAndValidateParamsToFields(request, fields);
 	}
 	
-	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public boolean mapJsonFields(String json) {
 		return mapJsonFields(CFW.JSON.fromJson(json));
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public boolean mapJsonFields(JsonObject object) {
-		
 		return CFWField.mapAndValidateJsonToFields(object, fields);
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public boolean mapResultSet(ResultSet result) {
-
 		return CFWField.mapResultSetColumnsToFields(result, fields);
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public CFWForm toForm(String formID, String submitLabel) {
 		
 		CFWForm form = new CFWForm(formID, submitLabel);
@@ -81,6 +97,9 @@ public class CFWObject {
 		return form;
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public CFWForm toForm(String formID, String submitLabel, String ...fieldNames) {
 		
 		CFWForm form = new CFWForm(formID, submitLabel);
@@ -99,11 +118,24 @@ public class CFWObject {
 		return form;
 	}
 	
-	
+	/****************************************************************
+	 * Return a JSON string containing all values of the fields of this 
+	 * object.
+	 ****************************************************************/
 	public String toJSON() {		
 		return CFW.JSON.toJSON(this);
 	}
 	
+	/****************************************************************
+	 * Return a JSON Element containing all values of the fields of this 
+	 * object.
+	 ****************************************************************/
+	public JsonElement toJSONElement() {		
+		return CFW.JSON.toJSONElement(this);
+	}
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public CFWObject addField(CFWField<?> field) {
 		
 		if(!fields.containsKey(field.getName())) {
@@ -117,26 +149,41 @@ public class CFWObject {
 		return this;
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public void addAllFields(CFWField<?>[] fields) {
 		for(CFWField<?> field : fields) {
 			this.addField(field);
 		}
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public void addFields(CFWField<?> ...fields) {
 		for(CFWField<?> field : fields) {
 			this.addField(field);
 		}
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public void addFields(LinkedHashMap<String, CFWField<?>> fields) {
 		this.fields.putAll(fields);
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public CFWField<?> getField(String name) {
 		return fields.get(name);
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public CFWField<?> getFieldIgnoreCase(String name) {
 		
 		for(String current : fields.keySet()) {
@@ -147,18 +194,30 @@ public class CFWObject {
 		return null;
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public LinkedHashMap<String, CFWField<?>> getFields(){
 		return fields;
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public String[] getFieldnames() {
 		return fields.keySet().toArray(new String[] {});
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public String getTableName() {
 		return tableName;
 	}
-
+	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public CFWObject setTableName(String tableName) {
 		this.tableName = tableName;
 		return this;
@@ -171,15 +230,24 @@ public class CFWObject {
 	public ArrayList<APIDefinition> getAPIDefinitions() {
 		return null;
 	}
-
+	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public CFWField<Integer> getPrimaryField() {
 		return primaryField;
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public Integer getPrimaryKey() {
 		return primaryField.getValue();
 	}
-
+	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	protected CFWObject setPrimaryField(CFWField<Integer> primaryField) {
 		if(this.primaryField == null) {
 			this.primaryField = primaryField;
@@ -210,11 +278,17 @@ public class CFWObject {
 		return this;
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public ArrayList<ForeignKeyDefinition> getForeignKeys() {
 		return foreignKeys;
 	}
 
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public String dumpFieldsAsKeyValueString() {
 		
 		StringBuilder builder = new StringBuilder();
@@ -234,6 +308,9 @@ public class CFWObject {
 		return builder.toString();
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public String dumpFieldsAsKeyValueHTML() {
 		
 		StringBuilder builder = new StringBuilder();
@@ -248,6 +325,9 @@ public class CFWObject {
 		return builder.toString();
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public String dumpFieldsAsJSON(String... fieldnames) {
 		
 		StringBuilder builder = new StringBuilder();
@@ -272,6 +352,9 @@ public class CFWObject {
 		return builder.toString();
 	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public String dumpFieldsAsPlaintext(String... fieldnames) {
 		
 		StringBuilder builder = new StringBuilder();
@@ -291,22 +374,39 @@ public class CFWObject {
 	//##############################################################################
 	// HIERARCHY
 	//##############################################################################
+	
+	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public boolean isHierarchical() {
 		return (hierarchyLevels > 0);
 	}
-
+	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public int getHierarchyLevels() {
 		return hierarchyLevels;		
 	}
-
+	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public void setHierarchyLevels(int hierarchyLevels) {
 		CFWHierarchy.setHierarchyLevels(this, hierarchyLevels);
 	}
-
+	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public LinkedHashMap<Integer, CFWObject> getChildObjects() {
 		return childObjects;
 	}
-
+	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public void getChildObjects(LinkedHashMap<Integer, CFWObject> childObjects) {
 		this.childObjects = childObjects;
 	}
@@ -316,13 +416,20 @@ public class CFWObject {
 //		return this;
 //	}
 	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public void removeChildObject(CFWObject child) {
 		this.childObjects.remove(((Integer)child.getPrimaryField().getValue()));
 	}
-		
+	
+	/****************************************************************
+	 * 
+	 ****************************************************************/
 	public CFWObject getWrapper() {
 		return parent;
 	}
+	
 	/****************************************************************
 	 * Set the parent object of this object and adds it to the 
 	 * The childs db entry has to be updated manually afterwards.

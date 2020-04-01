@@ -9,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWObject.ForeignKeyDefinition;
 import com.pengtoolbox.cfw.db.CFWDB;
@@ -1276,6 +1278,36 @@ public class CFWSQL {
 		
 		return string;
 		
+	}
+	
+	/***************************************************************
+	 * Execute the Query and gets the result as JsonElements.
+	 ****************************************************************/
+	public ArrayList<JsonElement> getAsJSONElements() {
+		
+		ArrayList<CFWObject> objects = this.getAsObjectList();
+		ArrayList<JsonElement> elements = new ArrayList<JsonElement>();
+		
+		for(CFWObject object : objects) {
+			elements.add(object.toJSONElement());
+		}
+		
+		return elements;
+	}
+	
+	/***************************************************************
+	 * Execute the Query and gets the result as JSON string.
+	 ****************************************************************/
+	public JsonArray getAsJSONArray() {
+		
+		ArrayList<CFWObject> objects = this.getAsObjectList();
+		JsonArray elements = new JsonArray();
+		
+		for(CFWObject object : objects) {
+			elements.add(object.toJSONElement());
+		}
+		
+		return elements;
 	}
 	
 	/***************************************************************

@@ -50,7 +50,7 @@ public class ServletManual extends HttpServlet
 			}
 		}else {
 			// Add an alert message to the request context. This will be added to the response as a message shown to the user.
-			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied!!!");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_accessdenied", "Access Denied!"));
 		}
         
     }

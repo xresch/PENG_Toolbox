@@ -3,13 +3,16 @@ package com.pengtoolbox.cfw.features.dashboard;
 import java.sql.ResultSet;
 import java.util.logging.Logger;
 
-import javax.mail.search.AndTerm;
-
+import com.google.common.base.Strings;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.db.CFWDBDefaultOperations;
 import com.pengtoolbox.cfw.db.PrecheckHandler;
+import com.pengtoolbox.cfw.features.api.FeatureAPI;
 import com.pengtoolbox.cfw.features.dashboard.Dashboard.DashboardFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
@@ -181,7 +184,7 @@ public class CFWDBDashboard {
 				.orderby(DashboardFields.NAME.toString())
 				.getAsJSON();
 		}else {
-			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access Denied!");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_accessdenied", "Access Denied!"));
 			return "[]";
 		}
 	}
@@ -221,6 +224,107 @@ public class CFWDBDashboard {
 				.or().like(DashboardFields.JSON_EDITORS, likeID)
 				.orderby(DashboardFields.NAME)
 				.getAsJSON();
+	}
+	
+	
+	/***************************************************************
+	 * Return a JSON string for export.
+	 * 
+	 * @return Returns a JSON array string.
+	 ****************************************************************/
+	public static String getJsonArrayForExport(String dashboardID) {
+
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)
+		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_CREATOR)
+		|| CFW.Context.Request.hasPermission(FeatureAPI.PERMISSION_CFW_API)) {			
+			JsonArray elements = null;
+			if(Strings.isNullOrEmpty(dashboardID)) {
+				elements = new Dashboard()
+						.queryCache(CFWDBDashboard.class, "getJsonArrayForExportAll")
+						.select()
+						.getAsJSONArray();
+			}else {
+				elements = new Dashboard()
+						.queryCache(CFWDBDashboard.class, "getJsonArrayForExport")
+						.select()
+						.where(DashboardFields.PK_ID, dashboardID)
+						.getAsJSONArray();
+			}
+									 
+			for(JsonElement element : elements) {
+				if(element.isJsonObject()) {
+					JsonElement idElement = element.getAsJsonObject().get("PK_ID");
+					if(!idElement.isJsonNull() && idElement.isJsonPrimitive()) {
+						JsonArray widgets = CFW.DB.DashboardWidgets.getJsonArrayForExport(idElement.getAsString());
+						element.getAsJsonObject().add("widgets", widgets);
+					}
+				}
+			}
+			
+			return CFW.JSON.toJSON(elements);
+		}else {
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_accessdenied", "Access Denied!") );
+			return "[]";
+		}
+	}
+	
+	/***************************************************************
+	 * Import an jsonArray exported with getJsonArrayForExport().
+	 * 
+	 * @return Returns a JSON array string.
+	 ****************************************************************/
+	public static String importByJson(String jsonArray) {
+
+		//-----------------------------
+		// Resolve JSON Array
+		JsonElement element = CFW.JSON.toJSONElement(jsonArray);
+		JsonArray array = null;
+		
+		if(element.isJsonArray()) {
+			array = element.getAsJsonArray();
+		}else if(element.isJsonObject()) {
+			JsonObject object = element.getAsJsonObject();
+			if(object.has("payload")) {
+				array = object.getAsJsonArray();
+			}else {
+				CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_wronginputformat","The provided import format seems not to be supported."));
+			}
+		}else {
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_wronginputformat","The provided import format seems not to be supported."));
+		}
+		
+		return null;
+//		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)
+//		|| CFW.Context.Request.hasPermission(FeatureAPI.PERMISSION_CFW_API)) {			
+//			JsonArray elements = null;
+//			if(Strings.isNullOrEmpty(dashboardID)) {
+//				elements = new Dashboard()
+//						.queryCache(CFWDBDashboard.class, "getJsonArrayForExportAll")
+//						.select()
+//						.getAsJSONArray();
+//			}else {
+//				elements = new Dashboard()
+//						.queryCache(CFWDBDashboard.class, "getJsonArrayForExport")
+//						.select()
+//						.where(DashboardFields.PK_ID, dashboardID)
+//						.getAsJSONArray();
+//			}
+//									 
+//			for(JsonElement element : elements) {
+//				if(element.isJsonObject()) {
+//					JsonElement idElement = element.getAsJsonObject().get("PK_ID");
+//					if(!idElement.isJsonNull() && idElement.isJsonPrimitive()) {
+//						JsonArray widgets = CFW.DB.DashboardWidgets.getJsonArrayForExport(idElement.getAsString());
+//						element.getAsJsonObject().add("widgets", widgets);
+//					}
+//				}
+//			}
+//			
+//			return CFW.JSON.toJSON(elements);
+//		}else {
+//			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_accessdenied", "Access Denied!"));
+//			return "[]";
+//		}
 	}
 	
 	public static boolean isDashboardOfCurrentUser(String dashboardID) {

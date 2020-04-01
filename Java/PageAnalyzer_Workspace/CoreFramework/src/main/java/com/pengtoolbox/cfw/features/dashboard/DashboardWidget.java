@@ -12,7 +12,6 @@ import com.pengtoolbox.cfw.features.api.APIDefinition;
 import com.pengtoolbox.cfw.features.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.features.dashboard.Dashboard.DashboardFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
-import com.pengtoolbox.cfw.validation.IntegerValidator;
 import com.pengtoolbox.cfw.validation.NumberRangeValidator;
 
 /**************************************************************************************************************

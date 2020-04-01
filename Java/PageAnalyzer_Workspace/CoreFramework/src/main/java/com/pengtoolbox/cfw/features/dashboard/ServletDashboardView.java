@@ -73,7 +73,7 @@ public class ServletDashboardView extends HttpServlet
 				handleDataRequest(request, response);
 			}
 		}else {
-			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied!!!");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_accessdenied", "Access Denied!"));
 		}
         
     }
@@ -89,7 +89,7 @@ public class ServletDashboardView extends HttpServlet
 		|| CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)) {
 			handleDataRequest(request, response);
 		}else {
-			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Access denied!!!");
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_accessdenied", "Access Denied!"));
 		}
         
     }

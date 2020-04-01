@@ -76,6 +76,13 @@ public class CFWJson {
 	/*************************************************************************************
 	 * 
 	 *************************************************************************************/
+	public static JsonElement toJSONElement(Object object) {
+		return gsonInstance.toJsonTree(object);
+	}
+	
+	/*************************************************************************************
+	 * 
+	 *************************************************************************************/
 	public static JsonObject fromJson(String jsonString) {
 		JsonParser parser = new JsonParser();
 		JsonObject jsonObject = (JsonObject) parser.parse(jsonString);

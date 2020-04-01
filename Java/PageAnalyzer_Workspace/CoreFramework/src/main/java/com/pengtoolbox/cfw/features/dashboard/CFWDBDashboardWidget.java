@@ -3,11 +3,19 @@ package com.pengtoolbox.cfw.features.dashboard;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import com.google.common.base.Strings;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
+import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.db.CFWDBDefaultOperations;
 import com.pengtoolbox.cfw.db.PrecheckHandler;
+import com.pengtoolbox.cfw.features.api.FeatureAPI;
+import com.pengtoolbox.cfw.features.dashboard.Dashboard.DashboardFields;
 import com.pengtoolbox.cfw.features.dashboard.DashboardWidget.DashboardWidgetFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 /**************************************************************************************************************
  * 
@@ -116,6 +124,32 @@ public class CFWDBDashboardWidget {
 				.where(DashboardWidgetFields.FK_ID_DASHBOARD, dashboardID)
 				.getAsObjectList();
 		
+	}
+	
+	/***************************************************************
+	 * Return a JSON string for export.
+	 * 
+	 * @return Returns a JsonArray or null on error.
+	 ****************************************************************/
+	public static JsonArray getJsonArrayForExport(String dashboardID) {
+		
+		if(CFW.Context.Request.hasPermission(FeatureDashboard.PERMISSION_DASHBOARD_ADMIN)
+		|| CFW.Context.Request.hasPermission(FeatureAPI.PERMISSION_CFW_API)) {
+			CFWSQL selectForExport = new DashboardWidget()
+				.queryCache(CFWDBDashboardWidget.class, "getJsonArrayForExport")
+				.select();
+			
+			if(!Strings.isNullOrEmpty(dashboardID)) {
+				selectForExport.where(DashboardWidgetFields.FK_ID_DASHBOARD, dashboardID);
+				return  selectForExport.getAsJSONArray();
+			}
+							
+			return null;
+		 
+		}else {
+			CFW.Context.Request.addAlertMessage(MessageType.ERROR, CFW.L("cfw_core_error_accessdenied", "Access Denied!"));
+			return null;
+		}
 	}
 
 }
