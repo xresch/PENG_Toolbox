@@ -171,7 +171,7 @@ public class APIDefinition {
 				//ignore unavailable fields that where added to the base CFWOBject
 				if(field != null) {
 					counter++;
-					json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())
+					json.append("{\"name\"").append(": \"").append(field.getName())
 					.append("\", \"type\"").append(": \"").append(field.getValueClass().getSimpleName())
 					.append("\", \"description\"").append(": \"").append(field.getDescription()).append("\"},");
 				}
@@ -193,7 +193,7 @@ public class APIDefinition {
 				CFWField<?> field = instance.getField(name);
 				if(field != null) {
 					counter++;
-					json.append("{\"name\"").append(": \"").append(field.getName().toLowerCase())
+					json.append("{\"name\"").append(": \"").append(field.getName())
 					.append("\", \"type\"").append(": \"").append(field.getValueClass().getSimpleName())
 					.append("\", \"description\"").append(": \"").append(field.getDescription()).append("\"},");
 				}

@@ -52,7 +52,7 @@ public class FeatureDashboard extends CFWAppFeature {
 		CFW.Registry.Widgets.add(new WidgetHTMLEditor());
 		CFW.Registry.Widgets.add(new WidgetWebsite());
 		CFW.Registry.Widgets.add(new WidgetYoutubeVideo());
-		
+		CFW.Registry.Widgets.add(new WidgetRefreshTime());
 		CFW.Registry.Widgets.add(new WidgetEasterEggsDiscoMode());
     	//----------------------------------
     	// Register Regular Menu

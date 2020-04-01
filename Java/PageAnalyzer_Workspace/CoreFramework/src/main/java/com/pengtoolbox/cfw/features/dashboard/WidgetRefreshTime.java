@@ -12,24 +12,14 @@ import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.response.JSONResponse;
 
-public class WidgetLabel extends WidgetDefinition {
+public class WidgetRefreshTime extends WidgetDefinition {
 
 	@Override
-	public String getWidgetType() {return "cfw_label";}
+	public String getWidgetType() {return "cfw_refreshtime";}
 
 	@Override
 	public CFWObject getSettings() {
 		return new CFWObject()
-				.addField(CFWField.newString(FormFieldType.TEXT, "label")
-						.setLabel("{!cfw_widget_cfwlabel_label!}")
-						.setDescription("{!cfw_widget_cfwlabel_label_desc!}")
-						.setValue("Label")
-						)
-				.addField(CFWField.newString(FormFieldType.TEXT, "link")
-						.setLabel("{!cfw_widget_cfwlabel_link!}")
-						.setDescription("{!cfw_widget_cfwlabel_link_desc!}")
-						.setValue("")
-						)
 				.addField(CFWField.newString(FormFieldType.SELECT, "direction")
 						.setLabel("{!cfw_widget_cfwlabel_direction!}")
 						.setDescription("{!cfw_widget_cfwlabel_direction_desc!}")
@@ -46,11 +36,14 @@ public class WidgetLabel extends WidgetDefinition {
 	}
 
 	@Override
-	public void fetchData(JSONResponse response, JsonObject settings) { }
+	public void fetchData(JSONResponse response, JsonObject settings) {
+		
+		response.getContent().append(System.currentTimeMillis());
+	}
 
 	@Override
 	public ArrayList<FileDefinition> getJavascriptFiles() {
-		FileDefinition js = new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_widget_label.js");
+		FileDefinition js = new FileDefinition(HandlingType.JAR_RESOURCE, FeatureDashboard.RESOURCE_PACKAGE, "cfw_widget_refreshtime.js");
 		ArrayList<FileDefinition> array = new ArrayList<FileDefinition>();
 		array.add(js);
 		return array;
