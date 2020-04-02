@@ -1,7 +1,5 @@
 package com.pengtoolbox.cfw.db;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
@@ -16,12 +14,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.h2.jdbcx.JdbcDataSource;
-import org.h2.tools.Server;
-
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************
@@ -365,7 +358,7 @@ public abstract class DBInterface {
 			
 			//-----------------------------------------
 			// Prepare Statement
-			this.prepareStatement(prepared, values);
+			prepareStatement(prepared, values);
 			
 			//-----------------------------------------
 			// Execute
@@ -454,6 +447,7 @@ public abstract class DBInterface {
 				if(conn != null && transactionConnection == null) { 
 					removeOpenConnection(conn);
 					conn.close(); 
+					conn = null;
 				}
 				if(prepared != null) { prepared.close(); }
 			} catch (SQLException e2) {
@@ -512,6 +506,7 @@ public abstract class DBInterface {
 			if(!conn.isClosed()) {
 				removeOpenConnection(conn);
 				conn.close();
+				conn = null;
 			}
 		} catch (SQLException e) {
 			new CFWLog(logger)

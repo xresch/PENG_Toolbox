@@ -13,7 +13,7 @@ TODO
 ====
 
 - Theusinator: Fix Dropdown Issue
-
+- Dashboard: Check Settings - Provide a bulk action to show all settings of all widgets as an overview. 
 - Dashboard: Text Alignment
 - Dashboard: Merge forms, only one button.
 - Dashboard: Widget Fullscreen
