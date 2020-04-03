@@ -426,7 +426,7 @@ public class CFWObject {
 	/****************************************************************
 	 * 
 	 ****************************************************************/
-	public CFWObject getWrapper() {
+	public CFWObject getDefaultObject() {
 		return parent;
 	}
 	

@@ -26,7 +26,11 @@ public class CFWDBContextSettings {
 	
 	public static Logger logger = CFWLog.getLogger(CFWDBContextSettings.class.getName());
 	
-	public static ArrayList<ContextSettingsChangeListener> changeListeners = new ArrayList<ContextSettingsChangeListener>();
+	private static ArrayList<ContextSettingsChangeListener> changeListeners = new ArrayList<ContextSettingsChangeListener>();
+	
+	// Cache with Type and List of Contexts
+	// Will be cleared when the settings change.
+	private static LinkedHashMap<String, ArrayList<AbstractContextSettings>> settingsCache = new LinkedHashMap<String, ArrayList<AbstractContextSettings>>();
 	
 	/********************************************************************************************
 	 * Add a change listener that listens to config changes.
@@ -34,6 +38,14 @@ public class CFWDBContextSettings {
 	 ********************************************************************************************/
 	public static void addChangeListener(ContextSettingsChangeListener listener) {
 		changeListeners.add(listener);
+	}
+	
+	/********************************************************************************************
+	 * Clear the Cache if the configuration changes.
+	 * 
+	 ********************************************************************************************/
+	private static void clearCache() {
+		settingsCache = new LinkedHashMap<String, ArrayList<AbstractContextSettings>>();
 	}
 	
 	//####################################################################################################
@@ -85,20 +97,19 @@ public class CFWDBContextSettings {
 		if(primaryKey != null) {
 			
 			ContextSettings fromDB = CFW.DB.ContextSettings.selectByID(primaryKey);
+			
+			AbstractContextSettings typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(fromDB.type());
+			typeSettings.mapJsonFields(fromDB.settings());
+			typeSettings.setWrapper(fromDB);
+			
 			for(ContextSettingsChangeListener listener : changeListeners) {
 				
-				if(listener.listensOnType(item.type())) {
-					//System.out.println("====================");
-					//System.out.println("Updated item.type():"+item.type());
-					
-					AbstractContextSettings typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(fromDB.type());
-					
-					typeSettings.mapJsonFields(fromDB.settings());
-					typeSettings.setWrapper(fromDB);
-					
+				if(listener.listensOnType(item.type())) {					
 					listener.onChange(typeSettings, true);
 				}
 			}
+			
+			clearCache();
 		}
 		return primaryKey;
 	}
@@ -108,32 +119,50 @@ public class CFWDBContextSettings {
 	//####################################################################################################
 	public static boolean 	update(ContextSettings item) 		{ 
 		
-		boolean success = CFWDBDefaultOperations.update(prechecksCreateUpdate, item); ;
+		boolean success = CFWDBDefaultOperations.update(prechecksCreateUpdate, item);
+		
+		AbstractContextSettings typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(item.type());
+		typeSettings.mapJsonFields(item.settings());
+		typeSettings.setWrapper(item);
+		
 		for(ContextSettingsChangeListener listener : changeListeners) {
 			
 			if(listener.listensOnType(item.type())) {
-				//System.out.println("====================");
-				//System.out.println("Updated item.type():"+item.type());
-				
-				AbstractContextSettings typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(item.type());
-				
-				typeSettings.mapJsonFields(item.settings());
-				typeSettings.setWrapper(item);
-				
 				listener.onChange(typeSettings, false);
 			}
 		}
+		
+		if(success) {
+			clearCache();
+		}
+		
 		return success;
 	}
 	
 	//####################################################################################################
 	// DELETE
 	//####################################################################################################
-	public static boolean 	deleteByID(String id) 					{ return CFWDBDefaultOperations.deleteFirstBy(prechecksDelete, cfwObjectClass, ContextSettingsFields.PK_ID.toString(), id); }
-	public static boolean 	deleteMultipleByID(String itemIDs) 	{ return CFWDBDefaultOperations.deleteMultipleByID(cfwObjectClass, itemIDs); }
+	public static boolean 	deleteByID(String id) 					{ 
+		clearCache(); 
+		ContextSettings item = CFW.DB.ContextSettings.selectByID(id);
 		
-	public static boolean 	deleteByName(String name) 		{ 
-		return CFWDBDefaultOperations.deleteFirstBy(prechecksDelete, cfwObjectClass, ContextSettingsFields.CFW_CTXSETTINGS_NAME.toString(), name); 
+		boolean success = CFWDBDefaultOperations.deleteFirstBy(prechecksDelete, cfwObjectClass, ContextSettingsFields.PK_ID.toString(), id); 
+				
+		if(success) {
+			clearCache();
+			AbstractContextSettings typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(item.type());
+			typeSettings.mapJsonFields(item.settings());
+			typeSettings.setWrapper(item);
+			
+			for(ContextSettingsChangeListener listener : changeListeners) {
+				
+				if(listener.listensOnType(item.type())) {
+					listener.onDelete(typeSettings);
+				}
+			}
+		}
+		
+		return success;
 	}
 		
 	//####################################################################################################
@@ -173,6 +202,10 @@ public class CFWDBContextSettings {
 	 ****************************************************************/
 	public static ArrayList<AbstractContextSettings> getContextSettingsForType(String type) {
 		
+		if(settingsCache.containsKey(type)) {
+			return settingsCache.get(type);
+		}
+		
 		ArrayList<CFWObject> objects =  new ContextSettings()
 				.queryCache(CFWDBContextSettings.class, "getContextSettingsForType")
 				.select()
@@ -190,6 +223,7 @@ public class CFWDBContextSettings {
 			settingsArray.add(typeSettings);
 		}
 		
+		settingsCache.put(type, settingsArray);
 		return settingsArray;
 	}
 	
