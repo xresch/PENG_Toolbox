@@ -49,6 +49,7 @@
 .bg-cfw-gray {			background-color: var(--cfw-gray); }
 .bg-cfw-darkgray {		background-color: var(--cfw-darkgray); }
 .bg-cfw-black {			background-color: var(--cfw-black); }
+.bg-cfw-none {			background-color: none; }
 
 .text-cfw-excellent{ 		color: var(--cfw-excellent); }
 .text-cfw-good{ 			color: var(--cfw-good); }
@@ -69,6 +70,7 @@
 .text-cfw-gray {			color: var(--cfw-gray); }
 .text-cfw-darkgray {		color: var(--cfw-darkgray); }
 .text-cfw-black {			color: var(--cfw-black); }
+.text-cfw-none {			color: none; }
 
 .border-cfw-excellent{ 		border-color: var(--cfw-excellent); }
 .border-cfw-good{ 			border-color: var(--cfw-good); }
@@ -89,6 +91,7 @@
 .border-cfw-gray {			border-color: var(--cfw-gray); }
 .border-cfw-darkgray {		border-color: var(--cfw-darkgray); }
 .border-cfw-black {			border-color: var(--cfw-black); }
+.border-cfw-none {			border-color: none; }
 
 .table-cfw-excellent, .table-cfw-excellent th, .table-cfw-excellent td, .table-cfw-excellent thead, .table-cfw-excellent tbody, .table-hover .table-cfw-excellent:hover {		background-color: var(--cfw-excellent); }
 .table-cfw-good, .table-cfw-good th, .table-cfw-good td, .table-cfw-good thead, .table-cfw-good tbody, .table-hover .table-cfw-good:hover {		background-color: var(--cfw-good); }
