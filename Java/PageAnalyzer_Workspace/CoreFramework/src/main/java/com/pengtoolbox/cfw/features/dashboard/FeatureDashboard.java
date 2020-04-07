@@ -7,6 +7,7 @@ import com.pengtoolbox.cfw._main.CFWAppFeature;
 import com.pengtoolbox.cfw._main.CFWApplicationExecutor;
 import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
+import com.pengtoolbox.cfw.features.manual.ManualPage;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 
@@ -22,18 +23,22 @@ public class FeatureDashboard extends CFWAppFeature {
 	public static final String PERMISSION_DASHBOARD_ADMIN = "Dashboard Admin";
 
 	
-	public static final String RESOURCE_PACKAGE = "com.pengtoolbox.cfw.features.dashboard.resources";
+	public static final String PACKAGE_RESOURCES = "com.pengtoolbox.cfw.features.dashboard.resources";
+	public static final String PACKAGE_MANUAL = "com.pengtoolbox.cfw.features.dashboard.manual";
+	
+	public static final ManualPage ROOT_MANUAL_PAGE = CFW.Registry.Manual.addManualPage(null, new ManualPage("Dashboard").faicon("fas fa-tachometer-alt"));
 	
 	@Override
 	public void register() {
 		//----------------------------------
 		// Register Package
-		CFW.Files.addAllowedPackage(RESOURCE_PACKAGE);
+		CFW.Files.addAllowedPackage(PACKAGE_RESOURCES);
+		CFW.Files.addAllowedPackage(PACKAGE_MANUAL);
 		
 		//----------------------------------
 		// Register Languages
-		CFW.Localization.registerLocaleFile(Locale.ENGLISH, "/app/dashboard", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "lang_en_dashboard.properties"));
-		CFW.Localization.registerLocaleFile(Locale.GERMAN, "/app/dashboard", new FileDefinition(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "lang_de_dashboard.properties"));
+		CFW.Localization.registerLocaleFile(Locale.ENGLISH, "/app/dashboard", new FileDefinition(HandlingType.JAR_RESOURCE, PACKAGE_RESOURCES, "lang_en_dashboard.properties"));
+		CFW.Localization.registerLocaleFile(Locale.GERMAN, "/app/dashboard", new FileDefinition(HandlingType.JAR_RESOURCE, PACKAGE_RESOURCES, "lang_de_dashboard.properties"));
 		
     	//----------------------------------
     	// Register Objects
@@ -54,8 +59,9 @@ public class FeatureDashboard extends CFWAppFeature {
 		CFW.Registry.Widgets.add(new WidgetYoutubeVideo());
 		CFW.Registry.Widgets.add(new WidgetRefreshTime());
 		CFW.Registry.Widgets.add(new WidgetEasterEggsDiscoMode());
-    	//----------------------------------
-    	// Register Regular Menu
+    	
+		//----------------------------------
+    	// Register Menu
 		CFW.Registry.Components.addRegularMenuItem(
 				(MenuItem)new MenuItem("Dashboards")
 					.faicon("fas fa-tachometer-alt")
@@ -71,6 +77,9 @@ public class FeatureDashboard extends CFWAppFeature {
 					.href("/app/dashboard/list")
 				, "Dashboards");
 		
+		//----------------------------------
+    	// Register Manual
+		registerDashboardManual();
 	}
 
 	@Override
@@ -114,6 +123,46 @@ public class FeatureDashboard extends CFWAppFeature {
 	public void stopFeature() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private void registerDashboardManual() {
+		
+		// Creating Dashboards
+		//   The Dashboard List
+		//   Editing a Dashboard
+		//   Adding Widgets
+		
+		// Widgets
+		//   Default Widgets
+		
+		ROOT_MANUAL_PAGE.addChild(
+				new ManualPage("Introduction")
+					.faicon("fas fa-star")
+					.addPermission(PERMISSION_DASHBOARD_VIEWER)
+					.addPermission(PERMISSION_DASHBOARD_CREATOR)
+					.addPermission(PERMISSION_DASHBOARD_ADMIN)
+					.content(HandlingType.JAR_RESOURCE, PACKAGE_MANUAL, "manual_00_introduction.html")
+			);
+		
+		ROOT_MANUAL_PAGE.addChild(
+				new ManualPage("Widgets")
+					.faicon("fas fa-th-large")
+					.addPermission(PERMISSION_DASHBOARD_VIEWER)
+					.addPermission(PERMISSION_DASHBOARD_CREATOR)
+					.addPermission(PERMISSION_DASHBOARD_ADMIN)
+					.content(HandlingType.JAR_RESOURCE, PACKAGE_MANUAL, "manual_widgets.html")
+			);
+		ROOT_MANUAL_PAGE.addChild(
+				new ManualPage("Tips and Tricks")
+					.faicon("fas fa-asterisk")
+					.addPermission(PERMISSION_DASHBOARD_VIEWER)
+					.addPermission(PERMISSION_DASHBOARD_CREATOR)
+					.addPermission(PERMISSION_DASHBOARD_ADMIN)
+					.content(HandlingType.JAR_RESOURCE, PACKAGE_MANUAL, "manual_tips_tricks.html")
+			);
+		
+		
+			
 	}
 
 }
