@@ -95,6 +95,15 @@ function cfw_manual_createMenuItem(pageData){
  * 
  ******************************************************************/
 function cfw_manual_printContent(domElement){
+	
+	//---------------------------------------------
+	// Open all parent elements
+	$('.cfw-manual-selected').removeClass('cfw-manual-selected');
+	$(domElement).closest('li').addClass('cfw-manual-selected');
+	$(domElement).parents('ul').collapse('show');
+	
+	//---------------------------------------------
+	// Open all parent elements
 	var id = $(domElement).attr('id');
 	var page = CFW_MANUAL_GUID_PAGE_MAP[id];
 	

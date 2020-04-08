@@ -145,6 +145,15 @@ public class FeatureDashboard extends CFWAppFeature {
 			);
 		
 		ROOT_MANUAL_PAGE.addChild(
+				new ManualPage("Creating Dashboards")
+					.faicon("fas fa-plus-circle")
+					.addPermission(PERMISSION_DASHBOARD_VIEWER)
+					.addPermission(PERMISSION_DASHBOARD_CREATOR)
+					.addPermission(PERMISSION_DASHBOARD_ADMIN)
+					.content(HandlingType.JAR_RESOURCE, PACKAGE_MANUAL, "manual_creating_dashboards.html")
+			);
+		
+		ROOT_MANUAL_PAGE.addChild(
 				new ManualPage("Widgets")
 					.faicon("fas fa-th-large")
 					.addPermission(PERMISSION_DASHBOARD_VIEWER)
@@ -152,6 +161,7 @@ public class FeatureDashboard extends CFWAppFeature {
 					.addPermission(PERMISSION_DASHBOARD_ADMIN)
 					.content(HandlingType.JAR_RESOURCE, PACKAGE_MANUAL, "manual_widgets.html")
 			);
+		
 		ROOT_MANUAL_PAGE.addChild(
 				new ManualPage("Tips and Tricks")
 					.faicon("fas fa-asterisk")
