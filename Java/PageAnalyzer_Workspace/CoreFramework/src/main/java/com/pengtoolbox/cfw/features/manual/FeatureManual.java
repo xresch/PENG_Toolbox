@@ -18,6 +18,19 @@ public class FeatureManual extends CFWAppFeature {
 
 	public static final String RESOURCE_PACKAGE = "com.pengtoolbox.cfw.features.manual.resources";
 	
+	public static final ManualPage TOP_PAGE_ADMIN = CFW.Registry.Manual.addManualPage(null, 
+			new ManualPage("Administration")
+				.faicon("fa fa-cog")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+			);
+	
+	public static final ManualPage TOP_PAGE_DEV = CFW.Registry.Manual.addManualPage(null, 
+			new ManualPage("Development")
+				.faicon("fa fa-code")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+			);
+	
+	
 	@Override
 	public void register() {
 		//----------------------------------
@@ -30,10 +43,10 @@ public class FeatureManual extends CFWAppFeature {
 		
 		//---------------------------
 		// Admin Manuals
-		CFW.Registry.Manual.addManualPage(null, new ManualPage("Administration").faicon("fa fa-cog").addPermission(PERMISSION_ADMIN_MANUAL));
-		
+
 		//---------------------------
 		// Developer Manual
+		registerAdminManual();
 		registerDeveloperManual();
 	}
 
@@ -73,19 +86,41 @@ public class FeatureManual extends CFWAppFeature {
 		
 	}
 	
-	
-	private void registerDeveloperManual() {
+	/*****************************************************************
+	 * 
+	 *****************************************************************/
+	private void registerAdminManual() {
 		
-		ManualPage dev = CFW.Registry.Manual.addManualPage(null, new ManualPage("Development").faicon("fa fa-code").addPermission(PERMISSION_ADMIN_MANUAL));
+		TOP_PAGE_ADMIN.addChild(new ManualPage("Introduction")
+				.faicon("fas fa-star")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_admin_00_intro.html")
+			);
 		
-		ManualPage quickstart = new ManualPage("Quickstart").faicon("fas fa-fighter-jet").addPermission(PERMISSION_ADMIN_MANUAL);
-		dev.addChild(quickstart);
-		
-		registerDeveloperQuickstart(dev);
-		registerDeveloperCFWJS(dev);
-		registerDeveloperDashboard(dev);
+		TOP_PAGE_ADMIN.addChild(new ManualPage("User Management")
+				.faicon("fas fa-users")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_admin_usermanagement.html")
+			);
+
 	}
 	
+	/*****************************************************************
+	 * 
+	 *****************************************************************/
+	private void registerDeveloperManual() {
+		
+		ManualPage quickstart = new ManualPage("Quickstart").faicon("fas fa-fighter-jet").addPermission(PERMISSION_ADMIN_MANUAL);
+		TOP_PAGE_DEV.addChild(quickstart);
+		
+		registerDeveloperQuickstart(TOP_PAGE_DEV);
+		registerDeveloperCFWJS(TOP_PAGE_DEV);
+		registerDeveloperDashboard(TOP_PAGE_DEV);
+	}
+	
+	/*****************************************************************
+	 * 
+	 *****************************************************************/
 	private void registerDeveloperQuickstart(ManualPage parent) {
 		
 		ManualPage quickstart = new ManualPage("Quickstart").faicon("fas fa-fighter-jet").addPermission(PERMISSION_ADMIN_MANUAL);
@@ -157,6 +192,9 @@ public class FeatureManual extends CFWAppFeature {
 		
 	}
 	
+	/*****************************************************************
+	 * 
+	 *****************************************************************/
 	private void registerDeveloperCFWJS(ManualPage parent) {
 		
 		ManualPage javascript = new ManualPage("Javascript").faicon("fab fa-js-square").addPermission(PERMISSION_ADMIN_MANUAL);
@@ -176,6 +214,9 @@ public class FeatureManual extends CFWAppFeature {
 		
 	}
 	
+	/*****************************************************************
+	 * 
+	 *****************************************************************/
 	private void registerDeveloperDashboard(ManualPage parent) {
 		
 		ManualPage dashboard = new ManualPage("Dashboard").faicon("fas fa-tachometer-alt").addPermission(PERMISSION_ADMIN_MANUAL);

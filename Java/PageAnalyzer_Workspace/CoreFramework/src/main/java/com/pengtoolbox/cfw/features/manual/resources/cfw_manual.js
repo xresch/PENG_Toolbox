@@ -97,7 +97,7 @@ function cfw_manual_createMenuItem(pageData){
 function cfw_manual_printContent(domElement){
 	
 	//---------------------------------------------
-	// Open all parent elements
+	// Open all parent elements and highlight
 	$('.cfw-manual-selected').removeClass('cfw-manual-selected');
 	$(domElement).closest('li').addClass('cfw-manual-selected');
 	$(domElement).parents('ul').collapse('show');

@@ -135,6 +135,8 @@ public class FeatureDashboard extends CFWAppFeature {
 		// Widgets
 		//   Default Widgets
 		
+		//----------------------------------
+		//
 		ROOT_MANUAL_PAGE.addChild(
 				new ManualPage("Introduction")
 					.faicon("fas fa-star")
@@ -144,6 +146,8 @@ public class FeatureDashboard extends CFWAppFeature {
 					.content(HandlingType.JAR_RESOURCE, PACKAGE_MANUAL, "manual_00_introduction.html")
 			);
 		
+		//----------------------------------
+		//
 		ROOT_MANUAL_PAGE.addChild(
 				new ManualPage("Creating Dashboards")
 					.faicon("fas fa-plus-circle")
@@ -153,15 +157,29 @@ public class FeatureDashboard extends CFWAppFeature {
 					.content(HandlingType.JAR_RESOURCE, PACKAGE_MANUAL, "manual_creating_dashboards.html")
 			);
 		
-		ROOT_MANUAL_PAGE.addChild(
-				new ManualPage("Widgets")
+		//----------------------------------
+		//
+		ManualPage widgets = 
+			new ManualPage("Widgets")
+				.faicon("fas fa-th")
+				.addPermission(PERMISSION_DASHBOARD_VIEWER)
+				.addPermission(PERMISSION_DASHBOARD_CREATOR)
+				.addPermission(PERMISSION_DASHBOARD_ADMIN)
+				.content(HandlingType.JAR_RESOURCE, PACKAGE_MANUAL, "manual_widgets_00.html");
+		
+		ROOT_MANUAL_PAGE.addChild(widgets );
+		
+		widgets.addChild(
+				new ManualPage("Static Widgets")
 					.faicon("fas fa-th-large")
 					.addPermission(PERMISSION_DASHBOARD_VIEWER)
 					.addPermission(PERMISSION_DASHBOARD_CREATOR)
 					.addPermission(PERMISSION_DASHBOARD_ADMIN)
-					.content(HandlingType.JAR_RESOURCE, PACKAGE_MANUAL, "manual_widgets.html")
+					.content(HandlingType.JAR_RESOURCE, PACKAGE_MANUAL, "manual_widgets_staticwidgets.html")
 			);
 		
+		//----------------------------------
+		//
 		ROOT_MANUAL_PAGE.addChild(
 				new ManualPage("Tips and Tricks")
 					.faicon("fas fa-asterisk")
