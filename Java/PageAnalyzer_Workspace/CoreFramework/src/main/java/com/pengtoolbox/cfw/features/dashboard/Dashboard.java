@@ -91,6 +91,7 @@ public class Dashboard extends CFWObject {
 					return CFW.DB.Users.autocompleteUser(searchValue, this.getMaxResults());					
 				}
 			});
+	
 	private CFWField<LinkedHashMap<String,String>> editors = CFWField.newTagsSelector(DashboardFields.JSON_EDITORS)
 			.setLabel("Editors")
 			.setDescription("Allow other users to view and edit the dashboard, even when the dashboard is not shared.")
@@ -101,6 +102,7 @@ public class Dashboard extends CFWObject {
 					return CFW.DB.Users.autocompleteUser(searchValue, this.getMaxResults());
 				}
 			});
+	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, DashboardFields.IS_DELETABLE.toString())
 			.setDescription("Flag to define if the dashboard can be deleted or not.")
 			.setColumnDefinition("BOOLEAN")

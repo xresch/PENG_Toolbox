@@ -836,17 +836,22 @@ function cfw_addAlertMessage(type, message){
  * @param contentAreaSelector the jQuery selector for the element containing all 
  * the headers to show in the table of contents
  * @param targetSelector the jQuery selector for the resulting element
+ * @param headerTag the tag used for the Table Header e.g. h1, h2, h3 (default h1)
  * @return nothing
  *************************************************************************************/
-function cfw_table_toc(contentAreaSelector, resultSelector){
+function cfw_table_toc(contentAreaSelector, resultSelector, headerTag){
 	
 	var target = $(resultSelector);
 	var headers = $(contentAreaSelector).find("h1:visible, h2:visible, h3:visible, h4:visible, h5:visible, h6:visible, h7:visible, h8:visible, h9:visible");
 	
+	var h = "h1";
+	if(headerTag != null){
+		h = headerTag;
+	}
 	//------------------------------
 	//Loop all visible headers
 	currentLevel = 1;
-	resultHTML = "<h1>Table of Contents</h1><ul>";
+	resultHTML = '<'+h+'>Table of Contents</'+h+'><ul>';
 	for(i = 0; i < headers.length ; i++){
 		head = headers[i];
 		headLevel = head.tagName[1];

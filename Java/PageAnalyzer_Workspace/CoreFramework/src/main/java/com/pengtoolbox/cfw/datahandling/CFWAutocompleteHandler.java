@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public abstract class CFWAutocompleteHandler {
@@ -33,8 +33,9 @@ public abstract class CFWAutocompleteHandler {
 		return maxResults;
 	}
 
-	public void setMaxResults(int maxResults) {
+	public CFWAutocompleteHandler setMaxResults(int maxResults) {
 		this.maxResults = maxResults;
+		return this;
 	}
 
 	public CFWField getParent() {

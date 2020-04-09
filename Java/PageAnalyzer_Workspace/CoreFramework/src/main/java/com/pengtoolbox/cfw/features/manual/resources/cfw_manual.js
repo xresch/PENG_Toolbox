@@ -107,7 +107,9 @@ function cfw_manual_printContent(domElement){
 	var id = $(domElement).attr('id');
 	var page = CFW_MANUAL_GUID_PAGE_MAP[id];
 	
+	var titleTarget = $('#cfw-manual-page-title');
 	var target = $('#cfw-manual-page-content');
+	titleTarget.html('');
 	target.html('');
 	
 	CFW.http.fetchAndCacheData("./manual", {action: "fetch", item: "page", path: page.path}, "page"+page.path, function (data){
@@ -116,13 +118,20 @@ function cfw_manual_printContent(domElement){
 			
 			CFW.http.setURLParam("page", pageData.path);
 			
-			target.html(pageData.content);
-			target.prepend('<h1>'+pageData.title+'</h1>');
+			titleTarget.append('<h1>'+pageData.title+'</h1>');
 			
+			target.html(pageData.content);
+			
+			//------------------------------
+			// Highlight Code Blocks
 			target.find('pre code').each(function(index, element){
 				console.log("highlight");
 				hljs.highlightBlock(element);
 			})
+			
+			//------------------------------
+			// Create TOC
+			CFW.ui.toc(target, "#manual-toc", 'h2');
 		}
 	})
 	

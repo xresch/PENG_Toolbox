@@ -97,12 +97,24 @@ public class FeatureManual extends CFWAppFeature {
 				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_admin_00_intro.html")
 			);
 		
+		TOP_PAGE_ADMIN.addChild(new ManualPage("Configuration")
+				.faicon("fas fa-cog")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_admin_configuration.html")
+		);
+		
+		
 		TOP_PAGE_ADMIN.addChild(new ManualPage("User Management")
 				.faicon("fas fa-users")
 				.addPermission(PERMISSION_ADMIN_MANUAL)
 				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_admin_usermanagement.html")
-			);
+		);
 
+		TOP_PAGE_ADMIN.addChild(new ManualPage("Context Settings")
+				.faicon("fas fa-cogs")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_admin_contextsettings.html")
+		);
 	}
 	
 	/*****************************************************************
@@ -181,6 +193,13 @@ public class FeatureManual extends CFWAppFeature {
 					.faicon("fas fa-th-large")
 					.addPermission(PERMISSION_ADMIN_MANUAL)
 					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_cfwobject.html")
+				);
+		
+		quickstart.addChild(
+				new ManualPage("Creating CFWFields")
+					.faicon("far fa-square")
+					.addPermission(PERMISSION_ADMIN_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_cfwfields.html")
 				);
 		
 		quickstart.addChild(

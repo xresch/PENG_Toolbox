@@ -42,11 +42,12 @@ public class CFWObjectMockup extends CFWObject{
 	
 	private CFWField<String> tags = CFWField.newString(FormFieldType.TAGS, "TAGS")
 			.setValue("foo,test,bar,bla")
+			.addAttribute("maxTags", "20")
 			.setAutocompleteHandler(new CFWAutocompleteHandler(5) {
 				
 				public LinkedHashMap<Object, Object> getAutocompleteData(HttpServletRequest request, String inputValue) {
 					LinkedHashMap<Object, Object>  array = new LinkedHashMap<Object, Object>() ;
-					for(int i = 0; i < 25; i++ ) {
+					for(int i = 0; i < this.getMaxResults(); i++ ) {
 						String tag = "Tag_"+inputValue+"_"+i;
 						array.put(tag, tag);
 					}
