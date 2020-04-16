@@ -86,8 +86,7 @@ public class LDAPLoginProvider implements LoginProvider {
 		    	Attributes attr = context.getAttributes(userInNamespace);
 		    	
 		    	//-------------------------------
-		    	// attempt another authentication, now with the user
-		    	
+		    	// Attempt another authentication, now with the user
 	            Properties authEnv = new Properties();
 	            authEnv.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 	            authEnv.put(Context.PROVIDER_URL, CFWProperties.LDAP_URL);
@@ -96,6 +95,9 @@ public class LDAPLoginProvider implements LoginProvider {
 	            // fails if wrong password
 	            new InitialDirContext(authEnv);
 	            
+	            
+		    	//-------------------------------
+		    	// 
 		    	Attribute mail = attr.get(CFW.Properties.LDAP_ATTRIBUTE_EMAIL);
 		    	String emailString = null;
 		    	if(mail != null) {

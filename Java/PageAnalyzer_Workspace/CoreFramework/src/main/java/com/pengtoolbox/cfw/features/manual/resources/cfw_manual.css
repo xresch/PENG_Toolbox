@@ -29,9 +29,22 @@ p{
     width: 16px;
     float: left;
     margin-right: 0px; 
+    line-height: 2.0em;
 }
 
+.nav-side-menu li{
+    padding: 2px;
+}
 ul > li.cfw-manual-selected, .nav-side-menu ul .sub-menu > li.cfw-manual-selected:hover{
     background-color: var(--primary);
     color:	var(--light);
+}
+
+.nav-side-menu a {
+    display: flex;
+    align-items: baseline;
+}
+
+.nav-side-menu li span {
+	line-height: 2.0em;
 }
