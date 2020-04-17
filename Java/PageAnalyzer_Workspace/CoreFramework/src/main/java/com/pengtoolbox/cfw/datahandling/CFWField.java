@@ -1,5 +1,7 @@
 package com.pengtoolbox.cfw.datahandling;
 
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Array;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -7,16 +9,20 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.cache.Cache;
@@ -44,7 +50,10 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	
 	private static Logger logger = CFWLog.getLogger(CFWField.class.getName());
 	
-	private static String PASSWORD_PLACEHOLDER = "cfwStubPW-";
+	private static String PASSWORD_STUB_PREFIX = "cfwStubPW-";
+	private static String ENCRYPT_PREFIX = "cfwenc:";
+	private static String ENCRYPT_ALGORITHM = "AES";
+	
 	private static Cache<String, String> pwCache = CacheBuilder.newBuilder()
 		       											.maximumSize(1000)
 		       											.expireAfterWrite(10, TimeUnit.HOURS)
@@ -56,6 +65,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private String description = null;
 	private Class<T> valueClass;
 	private ArrayList<String> invalidMessages;
+	private byte[] encryptionSalt = null;
 	private boolean allowHTML = false;
 	private boolean sanitizeStrings = true;
 	private boolean preventFormSubmitOnEnter = true;
@@ -553,7 +563,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private void createPasswordField(StringBuilder html) {
 		
 		if(this.value != null && !value.toString().isEmpty()) {
-			String placeholderName = PASSWORD_PLACEHOLDER + CFW.Security.createRandomStringAtoZ(7);
+			String placeholderName = PASSWORD_STUB_PREFIX + CFW.Security.createRandomStringAtoZ(7);
 			pwCache.put(placeholderName, this.value.toString());
 			this.addAttribute("value", placeholderName);
 		}
@@ -756,13 +766,25 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	}
 	
 	/******************************************************************************************************
-	 * 
+	 * Enable Encryption of values for storing them into the database. 32 bytes of the string
+	 * will be used, additional bytes will be ignored, bytes will be added if the string is shorter.
+	 ******************************************************************************************************/
+	public CFWField<T> enableEncryption(String encryptionSalt) {
+		if( String.class.isAssignableFrom(this.getValueClass()) ){
+			this.encryptionSalt = Arrays.copyOf(encryptionSalt.getBytes(), 32);
+		}
+		return this;
+	}
+	
+	/******************************************************************************************************
+	 * Allow HTML content and do not sanitize the input values. 
 	 ******************************************************************************************************/
 	public CFWField<T> disableSecurity() {
 		this.allowHTML = true;
 		this.sanitizeStrings = false;
 		return this;
 	}
+
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
@@ -944,6 +966,79 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return saneValue;
 	}
 	
+	
+	/******************************************************************************************************
+	 * Returns true if this value should be stored encrypted when writing it to the database.
+	 ******************************************************************************************************/
+	public boolean persistEncrypted() {
+		return encryptionSalt != null;
+	}
+	
+	/******************************************************************************************************
+	 * Returns the value encrypted.
+	 * Will be ignored 
+	 ******************************************************************************************************/
+	public  T getValueEncrypted() {
+		if(encryptionSalt == null 
+		|| value == null ) {
+			return (T)value;
+		}else {
+			String encryptedValue = null;
+			try { 
+				//---------------------------
+				// Prepare Cipher
+				Key key = new SecretKeySpec(encryptionSalt, ENCRYPT_ALGORITHM);
+		        Cipher cipher = Cipher.getInstance(ENCRYPT_ALGORITHM);
+		        cipher.init(Cipher.ENCRYPT_MODE, key);
+		      
+		        //---------------------------
+		      	// Encode Value
+		        byte[] encodedBytes = cipher.doFinal(value.toString().getBytes());
+		        encryptedValue = Base64.getEncoder().encodeToString(encodedBytes);
+		        encryptedValue = ENCRYPT_PREFIX + encryptedValue;
+		       
+			}catch (Exception e) {
+				new CFWLog(logger)
+					.method("getValueDecrypted")
+					.severe("Could not encrypt the value.", e);
+			}
+			
+			return (T)encryptedValue;
+		}
+    }
+	
+	/******************************************************************************************************
+	 * 
+	 ******************************************************************************************************/
+	public T decryptValue(T value) {
+		if(encryptionSalt == null 
+		|| value == null
+		|| !value.toString().startsWith(ENCRYPT_PREFIX)) {
+			return (T)value;
+		}else {
+			String decryptedValue = null;
+			try {
+				Key key = new SecretKeySpec(encryptionSalt, ENCRYPT_ALGORITHM);
+		        Cipher cipher;
+	
+					cipher = Cipher.getInstance(ENCRYPT_ALGORITHM);
+	
+		        cipher.init(Cipher.DECRYPT_MODE, key);
+		        String encryptedValue = value.toString().replaceFirst(ENCRYPT_PREFIX, "");
+		        byte[] decryptedBytes = Base64.getDecoder().decode(encryptedValue);
+		        byte[] decodedValue = cipher.doFinal(decryptedBytes);
+		        decryptedValue = new String(decodedValue);
+		        
+			} catch (Exception e) {
+				new CFWLog(logger)
+					.method("getValueDecrypted")
+					.severe("Could not decrypt value.", e);
+			}
+			
+			return (T)decryptedValue;
+		}
+    }
+    
 	/******************************************************************************************************
 	 * Change the value by first converting it to the correct type.
 	 * 
@@ -1028,10 +1123,18 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		boolean result = true;
 		
 		//--------------------------------
+		// Decryption
+		if(this.encryptionSalt != null
+		&& value != null
+		&& value.toString().startsWith(ENCRYPT_PREFIX)) {
+			value = decryptValue(value);
+		}
+		
+		//--------------------------------
 		// Resolve Password Field
 		if(type == FormFieldType.PASSWORD
 		&& value != null
-		&& value.toString().startsWith(PASSWORD_PLACEHOLDER)) {
+		&& value.toString().startsWith(PASSWORD_STUB_PREFIX)) {
 			String retrievedPW;
 			try {
 				retrievedPW = pwCache.get(value.toString(), new Callable<String>() {

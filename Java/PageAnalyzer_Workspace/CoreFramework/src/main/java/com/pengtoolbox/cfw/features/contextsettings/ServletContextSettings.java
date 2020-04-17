@@ -20,7 +20,7 @@ import com.pengtoolbox.cfw.utils.CFWArrayUtils;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class ServletContextSettings extends HttpServlet
@@ -207,7 +207,7 @@ public class ServletContextSettings extends HttpServlet
 						CFWObject typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(type);
 						
 						if(typeSettings.mapRequestParameters(request) && areFieldsValid) {
-							settings.settings(typeSettings.toJSON());
+							settings.settings(typeSettings.toJSONEncrypted());
 	
 							if( CFW.DB.ContextSettings.createGetPrimaryKey(settings) != null ) {
 								CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Context Settings created successfully!");
@@ -261,7 +261,7 @@ public class ServletContextSettings extends HttpServlet
 							CFWObject typeSettings = CFW.Registry.ContextSettings.createContextSettingInstance(settings.type());
 							
 							if(typeSettings.mapRequestParameters(request) && areFieldsValid) {
-								settings.settings(typeSettings.toJSON());
+								settings.settings(typeSettings.toJSONEncrypted());
 		
 								if( CFW.DB.ContextSettings.update(settings) ) {
 									CFW.Context.Request.addAlertMessage(MessageType.SUCCESS, "Update successful!");

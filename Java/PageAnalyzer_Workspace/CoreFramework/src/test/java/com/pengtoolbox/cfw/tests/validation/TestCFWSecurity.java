@@ -44,7 +44,6 @@ public class TestCFWSecurity {
 		System.out.println(CFW.Security.sanitizeHTML("<ol><li>List Element</li></ol>"));
 		//Assertions.assertNotNull(result, "Result was found.");
 		
-
 	}
 
 }

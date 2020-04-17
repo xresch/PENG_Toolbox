@@ -91,6 +91,16 @@ public class CFWSQL {
 	}
 	
 	/****************************************************************
+	 * Adds the value of the field, encrypts it if necessary.
+	 ****************************************************************/
+	private void addFieldValue(CFWField field) {
+		if(!field.persistEncrypted()) {
+			this.values.add(field.getValue());
+		}else {
+			this.values.add(field.getValueEncrypted());
+		}
+	}
+	/****************************************************************
 	 * Caches the query with the specified name for lower performance
 	 * impact.
 	 * @param Class of the class using the query.
@@ -360,7 +370,7 @@ public class CFWSQL {
 						columnNames.append(field.getName()).append(",");
 						placeholders.append("?,");
 					}
-					values.add(field.getValue());
+					this.addFieldValue(field);
 				}
 			}
 			
@@ -405,7 +415,7 @@ public class CFWSQL {
 						columnNames.append(field.getName()).append(",");
 						placeholders.append("?,");
 					}
-					values.add(field.getValue());
+					this.addFieldValue(field);
 				}
 			}
 			
@@ -450,7 +460,7 @@ public class CFWSQL {
 					columnNames.append(field.getName()).append(",");
 					placeholders.append("?,");
 				}
-				values.add(field.getValue());
+				this.addFieldValue(field);
 			}
 		}
 		
@@ -460,7 +470,7 @@ public class CFWSQL {
 			placeholders.deleteCharAt(placeholders.length()-1);
 		}
 		
-		values.add(object.getPrimaryField().getValue());
+		this.addFieldValue(object.getPrimaryField());
 		
 		if(!isQueryCached()) {
 			query.append("UPDATE "+object.getTableName()+" SET ("+columnNames
@@ -493,7 +503,7 @@ public class CFWSQL {
 						columnNames.append(field.getName()).append(",");
 						placeholders.append("?,");
 					}
-					values.add(field.getValue());
+					this.addFieldValue(field);
 				}
 			}
 		}
@@ -504,7 +514,7 @@ public class CFWSQL {
 			placeholders.deleteCharAt(placeholders.length()-1);
 		}
 		
-		values.add(object.getPrimaryField().getValue());
+		this.addFieldValue(object.getPrimaryField());
 		
 		if(!isQueryCached()) {
 			query.append("UPDATE "+object.getTableName()+" SET ("+columnNames

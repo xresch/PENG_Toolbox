@@ -127,12 +127,31 @@ public class CFWObject {
 	}
 	
 	/****************************************************************
+	 * Return a JSON string containing all values of the fields of this 
+	 * object. The fields that have encryption enabled will have 
+	 * encrypted values.
+	 ****************************************************************/
+	public String toJSONEncrypted() {		
+		return CFW.JSON.toJSONEncrypted(this);
+	}
+	
+	/****************************************************************
 	 * Return a JSON Element containing all values of the fields of this 
 	 * object.
 	 ****************************************************************/
 	public JsonElement toJSONElement() {		
 		return CFW.JSON.toJSONElement(this);
 	}
+	
+	/****************************************************************
+	 * Return a JSON Element containing all values of the fields of this 
+	 * object. The fields that have encryption enabled will have 
+	 * encrypted values.
+	 ****************************************************************/
+	public JsonElement toJSONElementEncrypted() {		
+		return CFW.JSON.toJSONElementEncrypted(this);
+	}
+	
 	/****************************************************************
 	 * 
 	 ****************************************************************/

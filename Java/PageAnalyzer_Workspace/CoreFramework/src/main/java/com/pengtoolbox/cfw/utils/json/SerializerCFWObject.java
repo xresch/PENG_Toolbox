@@ -13,18 +13,22 @@ import com.pengtoolbox.cfw.datahandling.CFWObject;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class SerializerCFWObject implements JsonSerializer<CFWObject> {
 
+	boolean enableEncryptedValues = false;
+	public SerializerCFWObject(boolean enableEncryptedValues) {
+		this.enableEncryptedValues = enableEncryptedValues;
+	}
 	@Override
 	public JsonElement serialize(CFWObject object, Type type, JsonSerializationContext context) {
 		
 		JsonObject result = new JsonObject();
 		
 		for(CFWField field : object.getFields().values()) {
-			CFW.JSON.addFieldAsProperty(result, field);
+			CFW.JSON.addFieldAsProperty(result, field, enableEncryptedValues);
 		}
 		
 		JsonArray children = new JsonArray();

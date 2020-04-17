@@ -65,7 +65,7 @@ public class FeatureConfiguration extends CFWAppFeature {
 			CFW.DB.RolePermissionMap.addPermissionToRole(permission, adminRole, true);
 
 		}
-
+		
 	}
 
 	@Override

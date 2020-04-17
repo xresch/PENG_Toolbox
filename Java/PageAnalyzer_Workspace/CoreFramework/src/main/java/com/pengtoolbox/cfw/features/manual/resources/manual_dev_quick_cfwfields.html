@@ -53,6 +53,18 @@ Default the default column definition set by newString() is "VARCHAR".
 </code>
 </pre>
 
+<h3>Password Field</h3>
+<p>
+Creates a password field. Password fields will be treated special, in case the value of the field is not null, a dummy value will be put into the form. 
+This will prevent that the actual password can be extracted from the HTML source.
+</p>
+<pre>
+<code>private CFWField&lt;String&gt; dbPassword = 
+	CFWField.newString(FormFieldType.PASSWORD, DBFields.DB_PASSWORD)
+			.setDescription("The password of the DB user.");
+</code>
+</pre>
+
 
 <h3>TextArea as CLOB with 2MB Limit</h3>
 <p>

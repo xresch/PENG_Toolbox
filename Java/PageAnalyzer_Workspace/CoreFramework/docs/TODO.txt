@@ -39,8 +39,7 @@ TODO
 - cfw.js: Create Pagination Renderer
 - cfw.js: Finish javascript CFWFormField
 
-- Security: Configuration - do not send Passwords to Browser
-- Security: Create Encryption/Decryption for DB
+- Security: Enable Decryption for ResultSet to JSON on CFWSQL
 - Security: Change login to two steps, first username, then password field 
 - Security: Add table class to Sanitizer for tables
 
@@ -84,6 +83,8 @@ TODO
 
 DONE
 ====
+- Security: Create Encryption/Decryption for DB
+- Security: Configuration - do not send Passwords to Browser
 - Security: Check Sanitation of Array Fields
 - CFW: Configuration - Add feature to listen for config changes.
 - Manual: Highlight and expand menu entry on page-parameter links

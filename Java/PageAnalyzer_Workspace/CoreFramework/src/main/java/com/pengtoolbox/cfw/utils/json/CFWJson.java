@@ -32,12 +32,18 @@ public class CFWJson {
 	
 	public static Gson gsonInstance;
 	
+	public static Gson gsonInstanceEncrypted;
 	static{
 		//Type cfwobjectListType = new TypeToken<LinkedHashMap<CFWObject>>() {}.getType();
 		
 		gsonInstance = new GsonBuilder()
-				.registerTypeHierarchyAdapter(CFWObject.class, new SerializerCFWObject())
+				.registerTypeHierarchyAdapter(CFWObject.class, new SerializerCFWObject(false))
 				.registerTypeHierarchyAdapter(ResultSet.class, new SerializerResultSet())
+				.serializeNulls()
+				.create();
+		
+		gsonInstanceEncrypted = new GsonBuilder()
+				.registerTypeHierarchyAdapter(CFWObject.class, new SerializerCFWObject(true))
 				.serializeNulls()
 				.create();
 	}
@@ -76,8 +82,22 @@ public class CFWJson {
 	/*************************************************************************************
 	 * 
 	 *************************************************************************************/
+	public static String toJSONEncrypted(CFWObject object) {
+		return gsonInstanceEncrypted.toJson(object);
+	}
+	
+	/*************************************************************************************
+	 * 
+	 *************************************************************************************/
 	public static JsonElement toJSONElement(Object object) {
 		return gsonInstance.toJsonTree(object);
+	}
+	
+	/*************************************************************************************
+	 * 
+	 *************************************************************************************/
+	public static JsonElement toJSONElementEncrypted(CFWObject object) {
+		return gsonInstanceEncrypted.toJsonTree(object);
 	}
 	
 	/*************************************************************************************
@@ -187,10 +207,10 @@ public class CFWJson {
 	/*************************************************************************************
 	 * 
 	 *************************************************************************************/
-	public static void addFieldAsProperty(JsonObject target, CFWField field) {
+	public static void addFieldAsProperty(JsonObject target, CFWField field, boolean encryptValues) {
 		
 		String name = field.getName();
-		Object value = field.getValue();
+		Object value = (!encryptValues) ? field.getValue() : field.getValueEncrypted();
 		
 		if(name.toUpperCase().startsWith("JSON")) {
 			if(value == null) {

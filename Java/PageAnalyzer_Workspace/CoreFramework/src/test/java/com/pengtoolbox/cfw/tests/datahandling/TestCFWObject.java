@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.tests.various;
+package com.pengtoolbox.cfw.tests.datahandling;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
