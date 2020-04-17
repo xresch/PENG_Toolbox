@@ -39,6 +39,8 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	
 	private static Logger logger = CFWLog.getLogger(CFWField.class.getName());
 	
+	public static String PASSWORD_PLACEHOLDER = "cfwStubPW-";
+ 
 	//--------------------------------
 	// General
 	private String name = "";
@@ -50,7 +52,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private boolean sanitizeStrings = true;
 	private boolean preventFormSubmitOnEnter = true;
 	
-	private ArrayList<IValidator> validatorArray = new ArrayList<IValidator>();
+	private ArrayList<IValidator> validatorArray;
 
 	@SuppressWarnings("rawtypes")
 	private CFWFieldChangeHandler changeHandler = null;
@@ -80,7 +82,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	// CONSTRUCTORS
 	//###################################################################################
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private CFWField(Class clazz, FormFieldType type, String fieldName) {
+	protected CFWField(Class clazz, FormFieldType type, String fieldName) {
 		this.valueClass = clazz;
 		this.type = type;
 		this.name = fieldName;
@@ -163,7 +165,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		return new CFWField<Object[]>(Object[].class, type, fieldName)
 				.setColumnDefinition("ARRAY");
 	}
-	
+		
 	//===========================================
 	// TAGS SELECTOR
 	//===========================================
@@ -576,13 +578,16 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public boolean validate(){
 		
 		boolean isValid = true;
-		invalidMessages = new ArrayList<String>();
 		
-		for(IValidator validator : validatorArray){
+		if(validatorArray != null) {
 			
-			if(!validator.validate(value)){
-				invalidMessages.add(validator.getInvalidMessage());
-				isValid=false;
+			invalidMessages = new ArrayList<String>();
+			for(IValidator validator : validatorArray){
+				
+				if(!validator.validate(value)){
+					invalidMessages.add(validator.getInvalidMessage());
+					isValid=false;
+				}
 			}
 		}
 		
@@ -597,14 +602,15 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public boolean validateValue(Object value){
 		
 		boolean isValid = true;
-		invalidMessages = new ArrayList<String>();
-		
-		for(IValidator validator : validatorArray){
-			
-			if(!validator.validate(value)){
-				invalidMessages.add(validator.getInvalidMessage());
+		if(validatorArray != null) {
+			invalidMessages = new ArrayList<String>();
+			for(IValidator validator : validatorArray){
 				
-				isValid=false;
+				if(!validator.validate(value)){
+					invalidMessages.add(validator.getInvalidMessage());
+					
+					isValid=false;
+				}
 			}
 		}
 		
@@ -627,6 +633,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @return instance for chaining
 	 *************************************************************************/ 
 	public CFWField<T> addValidator(IValidator validator) {
+		if(validatorArray == null) {
+			validatorArray = new ArrayList<IValidator>();
+		}
 		if(!validatorArray.contains(validator)) {
 			validatorArray.add(validator);
 			validator.setValidateable(this);
@@ -641,7 +650,10 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 * @return true if the specified validator was in the list
 	 ******************************************************************************************************/
 	public boolean removeValidator(IValidator o) {
-		return validatorArray.remove(o);
+		if(validatorArray != null) {
+			return validatorArray.remove(o);
+		}
+		return false;
 	}
 	
 	//###########################################################################################################
@@ -768,6 +780,13 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		
 	public LinkedHashMap<?, ?> getValueLabelOptions() {
 		return valueLabelOptions;
+	}
+	
+	/******************************************************************************************************
+	 * Returns the type of this fields.
+	 ******************************************************************************************************/
+	public FormFieldType fieldType() {
+		return this.type;
 	}
 	
 	/******************************************************************************************************
@@ -906,7 +925,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	 ******************************************************************************************************/
 	private boolean setValueConvert(T value) {
 		boolean success = true;
-		
+				
 		//-------------------------------------------------
 		// prevent Strings from being empty. Might lead to 
 		// unique constraint violation on DB when not using 
@@ -915,6 +934,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		|| ( valueClass == String.class && (((String)value).trim().equals(""))) ) {
 			return this.changeValue(null);
 		}
+		
 		
 		//-------------------------------------------------
 		// If value is a subclass of the valueClass change 
