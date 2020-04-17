@@ -1,7 +1,6 @@
 package com.pengtoolbox.cfw.datahandling;
 
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Array;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -21,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,14 +48,23 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	
 	private static Logger logger = CFWLog.getLogger(CFWField.class.getName());
 	
+	//--------------------------------------------------
+	// Password Handling Constants
 	private static String PASSWORD_STUB_PREFIX = "cfwStubPW-";
+	private static Cache<String, String> pwCache = 
+			CacheBuilder.newBuilder()
+						.maximumSize(1000)
+						.expireAfterWrite(10, TimeUnit.HOURS)
+						.build();
+	
+	//--------------------------------------------------
+	// Encryption Constants
+	// IMPORTANT!!! Do not change these values, you will
+	// break any application already using this mechanism.
 	private static String ENCRYPT_PREFIX = "cfwenc:";
 	private static String ENCRYPT_ALGORITHM = "AES";
 	
-	private static Cache<String, String> pwCache = CacheBuilder.newBuilder()
-		       											.maximumSize(1000)
-		       											.expireAfterWrite(10, TimeUnit.HOURS)
-		       											.build();
+
 	//--------------------------------
 	// General
 	private String name = "";
