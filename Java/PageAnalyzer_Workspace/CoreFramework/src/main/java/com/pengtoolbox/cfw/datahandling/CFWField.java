@@ -12,10 +12,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
@@ -39,8 +44,11 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	
 	private static Logger logger = CFWLog.getLogger(CFWField.class.getName());
 	
-	public static String PASSWORD_PLACEHOLDER = "cfwStubPW-";
- 
+	private static String PASSWORD_PLACEHOLDER = "cfwStubPW-";
+	private static Cache<String, String> pwCache = CacheBuilder.newBuilder()
+		       											.maximumSize(1000)
+		       											.expireAfterWrite(10, TimeUnit.HOURS)
+		       											.build();
 	//--------------------------------
 	// General
 	private String name = "";
@@ -318,7 +326,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			case TAGS_SELECTOR:		createTagsField(html, FormFieldType.TAGS_SELECTOR);
 									break;						
 									
-			case PASSWORD:  		html.append("<input type=\"password\" class=\"form-control\" "+this.getAttributesString()+"/>");
+			case PASSWORD:  		createPasswordField(html);
 									break;
 			
 			case NONE:				//do nothing
@@ -540,6 +548,20 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	}
 	
 	/***********************************************************************************
+	 * Create a password field.
+	 ***********************************************************************************/
+	private void createPasswordField(StringBuilder html) {
+		
+		if(this.value != null && !value.toString().isEmpty()) {
+			String placeholderName = PASSWORD_PLACEHOLDER + CFW.Security.createRandomStringAtoZ(7);
+			pwCache.put(placeholderName, this.value.toString());
+			this.addAttribute("value", placeholderName);
+		}
+		html.append("<input type=\"password\" class=\"form-control\" "+this.getAttributesString()+"/>");
+
+	}
+	
+	/***********************************************************************************
 	 * Add an attribute to the html tag.
 	 * Adding a value for the same attribute multiple times will overwrite preceding values.
 	 * @param name the name of the attribute.
@@ -618,12 +640,15 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	}
 	
 	/*************************************************************************
-	 * Returns all the InvalidMessages from the last validation execution. 
+	 * 
 	 *************************************************************************/ 
-	public ArrayList<String> getInvalidMessages() {
-		return invalidMessages;
+	protected void addInvalidMessage(String message) {
+		if(invalidMessages == null) {
+			invalidMessages = new ArrayList<String>();
+		}
+		invalidMessages.add(message);
 	}
-	
+		
 	/*************************************************************************
 	 * Add a validator to the field.
 	 * Will be executed when using setValueValidated() 
@@ -1001,16 +1026,40 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	public boolean setValueValidated(T value) {
 		
 		boolean result = true;
+		
+		//--------------------------------
+		// Resolve Password Field
+		if(type == FormFieldType.PASSWORD
+		&& value != null
+		&& value.toString().startsWith(PASSWORD_PLACEHOLDER)) {
+			String retrievedPW;
+			try {
+				retrievedPW = pwCache.get(value.toString(), new Callable<String>() {
+
+					@Override
+					public String call() throws Exception {
+						throw new Exception();
+					}
+				});
+			} catch (Throwable e) {
+				CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Error handling password field. Refresh the page and try again.");
+				return false;
+			}
+
+			value = (T)retrievedPW;
+		}
+		
+		//--------------------------------
+		// Do Validated
 		if(this.validateValue(value)) {
 			result = this.setValueConvert(value);
 		}else {
 			result = false;
-			StringBuilder errorMessage = new StringBuilder("The field '"+formLabel+"' cannot be set to the value '"+value+"': <ul>");
-			for(String message : invalidMessages) {
-				errorMessage.append("<li>"+message+"</li>");
-				CFW.Context.Request.addAlertMessage(MessageType.ERROR, message);
+			if(invalidMessages != null) {
+				for(String message : invalidMessages) {
+					CFW.Context.Request.addAlertMessage(MessageType.ERROR, message);
+				}
 			}
-			errorMessage.append("</ul>");
 		}
 		return result;
 	}
