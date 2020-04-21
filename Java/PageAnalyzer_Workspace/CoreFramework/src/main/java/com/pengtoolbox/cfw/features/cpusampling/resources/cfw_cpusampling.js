@@ -94,17 +94,27 @@ function cfw_cpusampling_prepareData(data){
 	console.log(TOP_ELEMENTS);
 	console.log(BOTTOM_ELEMENTS);
 	
-	cfw_cpusampling_printOverview();
+	cfw_cpusampling_printSamplingTree();
 }
 
 /******************************************************************
  * Print the overview of the apis .
  * 
  ******************************************************************/
-function cfw_cpusampling_printOverview(){
+function cfw_cpusampling_printSamplingTree(){
 	
 	parent = $("#cpusamppling-tree");
 	parent.html('');
+	
+	 cfw_cpusampling_printTopToBottom(parent);
+	
+}
+
+/******************************************************************
+ * Print the overview of the apis .
+ * 
+ ******************************************************************/
+function cfw_cpusampling_printTopToBottom(parent){
 	
 	//------------------------------------------
 	// Calculate Percentages for top elements
@@ -125,8 +135,116 @@ function cfw_cpusampling_printOverview(){
 	
 }
 
+
+/******************************************************************
+ * 
+ ******************************************************************/
+function cfw_cpusampling_printHierarchyDiv(domTarget, element, parentPercentage, parentID){
+	
+	// domTarget is the child container
+	//-------------------------------------
+	// Initialize
+	GUID += 1;
+	var id = 0;
+	var title = "";
+	var children = [];
+	
+	if(element.signature == undefined){
+		id = element.FK_ID_SIGNATURE;
+		title = GLOBAL_SIGNATURES[element.FK_ID_SIGNATURE].signature;
+		children = GLOBAL_SIGNATURES[element.FK_ID_SIGNATURE].children;
+	}else{
+		id = element.id;
+		title = element.signature;
+		children = element.children;
+	}	
+	
+	//-------------------------------------
+	// Check Recursion
+	var signatureID = 'signature-'+id;
+		
+	var isRecursion = false;
+	var recursiveLabel = "";
+//	console.log("===================");
+//	console.log("signatureID = "+signatureID);
+//	console.log("domTarget.parent().attr('id') = "+domTarget.parent().attr('id'));
+//	console.log("domTarget.closest('#'+signatureID).length = "+domTarget.closest('#'+signatureID).length);
+	
+	if(domTarget.closest('#'+signatureID).length > 0 ){
+		recursiveLabel = '<div class="badge badge-danger ml-2">Recursion</div>';
+		isRecursion = true;
+		domTarget.closest('#'+signatureID).find('a').first().after(recursiveLabel);
+	}
+	
+	//-------------------------------------
+	// Create Div
+	var childcontainerID = "children-of-"+GUID;
+
+		
+	var htmlString = '<div id="signature-'+id+'">'
+						+ '<div class="card-header text-light bg-primary w-100 p-0">'
+			 				+ '<div class="cfw-cpusampling-percent-block">'
+				 				+ '<div class="cfw-cpusampling-percent bg-success" style="width: '+element.percentage+'%;">'
+				 				+ '</div>'
+			 				+ '</div>'
+					     + '<a tabindex="0" role="button" class="text-light small"'
+					     	+' id="link-of-'+GUID+'"'
+					     	+' data-signatureid="'+id+'"'
+					     	+' data-parentid="'+parentID+'"'
+					     	+' data-guid="'+GUID+'"'
+					     	+' data-recursive="'+isRecursion+'"'
+					     	+' onclick="cfw_cpusampling_printChildren(this)"'
+					     	+' onkeydown="cfw_cpusampling_navigateChildren(event, this)" >'
+					     		+ Math.round(element.percentage)+'% - '+title
+					     	+'</a>'
+					     	+ recursiveLabel
+					     + '</div>'
+					     + '<div id="'+childcontainerID+'" class="cfw-cpusampling-children w-100" style=" padding-left: 15px;">'
+				   + '</div>';
+	
+	//console.log(domTarget);		   
+	domTarget.append(htmlString);
+	
+	//-------------------------------------
+	// Handle children
+//	var newLevel = level + 1;
+//	for(var i = 0; i < children.length; i++ ){
+//		cfw_cpusampling_printHierarchyDiv(newLevel, domTarget, children[i]);
+//	}
+}
+
 /******************************************************************
  * Print hierarchy div.
+ * 
+ ******************************************************************/
+function cfw_cpusampling_printChildren(domElement){
+	
+	var titleLink = $(domElement);
+	if(titleLink.attr('data-recursive') == "true") return;
+	var guid = titleLink.attr('data-guid');
+	var parentID = titleLink.attr('data-parentid');
+	var signatureID = titleLink.attr('data-signatureid');
+	
+//	console.log("guid-"+guid);
+//	console.log("parentID-"+parentID);
+//	console.log("signatureID-"+signatureID);
+	
+	var domTarget = $("#children-of-"+guid);
+	var element = GLOBAL_SIGNATURES[signatureID];
+	
+	//------------------------------
+	// Change link to collape
+	titleLink.attr('onclick','cfw_cpusampling_collapseChildren(this)');
+	
+	//------------------------------
+	// Print Children
+	domTarget.css('display', 'block');
+	for(var i = 0; i < element.children.length; i++ ){
+		cfw_cpusampling_printHierarchyDiv(domTarget, element.children[i], element.percentage, signatureID);
+	}
+}
+
+/******************************************************************
  * 
  ******************************************************************/
 function cfw_cpusampling_navigateChildren(e, domElement){
@@ -216,8 +334,8 @@ function cfw_cpusampling_navigateChildren(e, domElement){
 		
 	}
 }
+
 /******************************************************************
- * Print hierarchy div.
  * 
  ******************************************************************/
 function cfw_cpusampling_collapseChildren(domElement){
@@ -235,113 +353,6 @@ function cfw_cpusampling_collapseChildren(domElement){
 		domTarget.css('display', 'none');
 	}
 	
-}
-/******************************************************************
- * Print hierarchy div.
- * 
- ******************************************************************/
-function cfw_cpusampling_printChildren(domElement){
-	
-	var titleLink = $(domElement);
-	if(titleLink.attr('data-recursive') == "true") return;
-	var guid = titleLink.attr('data-guid');
-	var parentID = titleLink.attr('data-parentid');
-	var signatureID = titleLink.attr('data-signatureid');
-	
-//	console.log("guid-"+guid);
-//	console.log("parentID-"+parentID);
-//	console.log("signatureID-"+signatureID);
-	
-	var domTarget = $("#children-of-"+guid);
-	var element = GLOBAL_SIGNATURES[signatureID];
-	
-	//------------------------------
-	// Change link to collape
-	titleLink.attr('onclick','cfw_cpusampling_collapseChildren(this)');
-	
-	//------------------------------
-	// Print Children
-	domTarget.css('display', 'block');
-	for(var i = 0; i < element.children.length; i++ ){
-		cfw_cpusampling_printHierarchyDiv(domTarget, element.children[i], element.percentage, signatureID);
-	}
-}
-/******************************************************************
- * Print hierarchy div.
- * 
- ******************************************************************/
-function cfw_cpusampling_printHierarchyDiv(domTarget, element, parentPercentage, parentID){
-	
-	// domTarget is the child container
-	//-------------------------------------
-	// Initialize
-	GUID += 1;
-	var id = 0;
-	var title = "";
-	var children = [];
-	
-	if(element.signature == undefined){
-		id = element.FK_ID_SIGNATURE;
-		title = GLOBAL_SIGNATURES[element.FK_ID_SIGNATURE].signature;
-		children = GLOBAL_SIGNATURES[element.FK_ID_SIGNATURE].children;
-	}else{
-		id = element.id;
-		title = element.signature;
-		children = element.children;
-	}	
-	
-	//-------------------------------------
-	// Check Recursion
-	var signatureID = 'signature-'+id;
-		
-	var isRecursion = false;
-	var recursiveLabel = "";
-//	console.log("===================");
-//	console.log("signatureID = "+signatureID);
-//	console.log("domTarget.parent().attr('id') = "+domTarget.parent().attr('id'));
-//	console.log("domTarget.closest('#'+signatureID).length = "+domTarget.closest('#'+signatureID).length);
-	
-	if(domTarget.closest('#'+signatureID).length > 0 ){
-		recursiveLabel = '<div class="badge badge-danger ml-2">Recursion</div>';
-		isRecursion = true;
-		domTarget.closest('#'+signatureID).find('a').first().after(recursiveLabel);
-	}
-	
-	//-------------------------------------
-	// Create Div
-	var childcontainerID = "children-of-"+GUID;
-
-		
-	var htmlString = '<div id="signature-'+id+'">'
-						+ '<div class="card-header text-light bg-primary w-100 p-0">'
-			 				+ '<div class="cfw-cpusampling-percent-block">'
-				 				+ '<div class="cfw-cpusampling-percent bg-success" style="width: '+element.percentage+'%;">'
-				 				+ '</div>'
-			 				+ '</div>'
-					     + '<a tabindex="0" role="button" class="text-light small"'
-					     	+' id="link-of-'+GUID+'"'
-					     	+' data-signatureid="'+id+'"'
-					     	+' data-parentid="'+parentID+'"'
-					     	+' data-guid="'+GUID+'"'
-					     	+' data-recursive="'+isRecursion+'"'
-					     	+' onclick="cfw_cpusampling_printChildren(this)"'
-					     	+' onkeydown="cfw_cpusampling_navigateChildren(event, this)" >'
-					     		+ Math.round(element.percentage)+'% - '+title
-					     	+'</a>'
-					     	+ recursiveLabel
-					     + '</div>'
-					     + '<div id="'+childcontainerID+'" class="cfw-cpusampling-children w-100" style=" padding-left: 15px;">'
-				   + '</div>';
-	
-	//console.log(domTarget);		   
-	domTarget.append(htmlString);
-	
-	//-------------------------------------
-	// Handle children
-//	var newLevel = level + 1;
-//	for(var i = 0; i < children.length; i++ ){
-//		cfw_cpusampling_printHierarchyDiv(newLevel, domTarget, children[i]);
-//	}
 }
 
 /******************************************************************
