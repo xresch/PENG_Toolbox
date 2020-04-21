@@ -20,6 +20,9 @@ p{
 	padding: 0px;
 }
 
+#cfw-manual-page-title {
+    padding-left: 20px;
+}
 #cfw-manual-page-content {
 	padding: 0px 20px 20px 20px;
 }

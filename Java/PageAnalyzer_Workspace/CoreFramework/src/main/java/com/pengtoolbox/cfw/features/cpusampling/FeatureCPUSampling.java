@@ -40,7 +40,7 @@ public class FeatureCPUSampling extends CFWAppFeature {
 					.faicon("fas fa-microchip")
 					.addPermission(FeatureCore.PERMISSION_APP_ANALYTICS)
 					.href("/app/cpusampling")	
-				, null);
+				, "System Analytics");
 	}
 
 	@Override

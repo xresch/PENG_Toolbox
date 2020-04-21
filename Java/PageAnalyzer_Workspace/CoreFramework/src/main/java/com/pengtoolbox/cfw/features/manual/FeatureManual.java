@@ -115,6 +115,12 @@ public class FeatureManual extends CFWAppFeature {
 				.addPermission(PERMISSION_ADMIN_MANUAL)
 				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_admin_contextsettings.html")
 		);
+		
+		TOP_PAGE_ADMIN.addChild(new ManualPage("System Analytics")
+				.faicon("fas fa-traffic-light")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_admin_analytics.html")
+		);
 	}
 	
 	/*****************************************************************

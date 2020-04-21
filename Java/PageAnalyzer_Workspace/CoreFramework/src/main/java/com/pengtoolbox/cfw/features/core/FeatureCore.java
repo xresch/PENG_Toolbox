@@ -9,6 +9,7 @@ import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.features.usermgmt.Permission;
 import com.pengtoolbox.cfw.features.usermgmt.Role;
+import com.pengtoolbox.cfw.response.bootstrap.MenuItem;
 
 /**************************************************************************************************************
  * 
@@ -18,7 +19,7 @@ import com.pengtoolbox.cfw.features.usermgmt.Role;
 public class FeatureCore extends CFWAppFeature {
 
 	public static final String RESOURCE_PACKAGE = "com.pengtoolbox.cfw.features.core.resources";
-	public static final String PERMISSION_APP_ANALYTICS = "Application Analytics";
+	public static final String PERMISSION_APP_ANALYTICS = "System Analytics";
 	public static final String PERMISSION_ALLOW_HTML = "Allow HTML";
 	public static final String PERMISSION_ALLOW_JAVASCRIPT = "Allow Javascript";
 	
@@ -38,14 +39,12 @@ public class FeatureCore extends CFWAppFeature {
 		//CFW.Registry.Objects.addCFWObject(Configuration.class);
     	
     	//----------------------------------
-    	// Register Regular Menu
-		
-//		CFW.Registry.Components.addAdminCFWMenuItem(
-//				(MenuItem)new MenuItem("Configuration")
-//					.faicon("fas fa-cog")
-//					.addPermission(PERMISSION_CONFIGURATION)
-//					.href("./configuration")	
-//				, null);
+    	// Register Admin Menu
+		CFW.Registry.Components.addAdminCFWMenuItem(
+				(MenuItem)new MenuItem("System Analytics")
+					.faicon("fas fa-traffic-light")
+					.addPermission(FeatureCore.PERMISSION_APP_ANALYTICS)	
+				, null);
 		
 	}
 
