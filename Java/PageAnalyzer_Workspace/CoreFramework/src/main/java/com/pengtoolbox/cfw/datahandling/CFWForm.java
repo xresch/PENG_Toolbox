@@ -65,7 +65,17 @@ public class CFWForm extends HierarchicalHTMLItem {
 	 * @return String html for this item. 
 	 ***********************************************************************************/
 	protected void createHTML(StringBuilder html) {
-
+		
+		//---------------------------
+		// Resolve onClick action
+		String onclick = "cfw_postForm('"+postURL+"', '#"+formID+"', "+resultCallback+")";
+		if(this.getAttributes().containsKey("onclick")) {
+			onclick = this.getAttributeValue("onclick");
+			this.removeAttribute("onclick");
+		}
+		
+		//---------------------------
+		// Create HTML
 		html.append("<form id=\""+formID+"\" class=\"form\" method=\"post\" "+getAttributesString()+">");
 		
 		if(this.hasChildren()) {
@@ -83,8 +93,7 @@ public class CFWForm extends HierarchicalHTMLItem {
 		}
 
 		//---------------------------
-		// Create send button
-		String onclick = "cfw_postForm('"+postURL+"', '#"+formID+"', "+resultCallback+")";
+		// Create Submit Button
 		html.append("<input type=\"button\" onclick=\""+onclick+"\" class=\"form-control btn-primary\" value=\""+submitLabel+"\">");
 		
 		//---------------------------

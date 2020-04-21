@@ -1,8 +1,10 @@
 package com.pengtoolbox.cfw.features.cpusampling;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.features.cpusampling.CPUSample.StatsCPUSampleFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -118,6 +120,28 @@ public class CFWDBCPUSample {
 	}
 	
 	/***************************************************************
+	 * Return a list of the cpuSamples as json string.
+	 * @return Returns a result set with all users or null.
+	 ****************************************************************/
+	public static String getForTimeframeAsJSON(long earliestMillis, long latestMillis) {
+		return getForTimeframeAsJSON(new Timestamp(earliestMillis), new Timestamp(latestMillis));
+	}
+	
+	/***************************************************************
+	 * Return a list of the cpuSamples as json string.
+	 * @return Returns a result set with all users or null.
+	 ****************************************************************/
+	public static String getForTimeframeAsJSON(Timestamp earliest, Timestamp latest) {
+		
+		return new CPUSample()
+				.queryCache(CFWDBCPUSample.class, "getForTimeframeAsJSON")
+				.loadSQLResource(FeatureCPUSampling.RESOURCE_PACKAGE, "cpusampling_fetch_by_timeframe.sql", 
+						earliest, 
+						latest)
+				.getAsJSON();
+	}
+	
+	/***************************************************************
 	 * Aggregates the statistics in the given timeframe.
 	 * 
 	 * @return true if successful, false otherwise
@@ -171,7 +195,7 @@ public class CFWDBCPUSample {
 						"			DATEDIFF(SECOND, MIN(TIME), MAX(TIME)) / 2," + 
 						"			MIN(TIME)" + 
 						"		)) AS NewTime," + 
-						" FK_ID_SIGNATURE, FK_ID_PARENT, SUM(COUNT), MIN(MIN), AVG(AVG), MAX(MAX), ?"+ 
+						" FK_ID_SIGNATURE, FK_ID_PARENT, SUM(COUNT), MIN(MIN), SUM(COUNT)/COUNT(*), MAX(MAX), ?"+ 
 						" FROM CFW_STATS_CPUSAMPLE" + 
 						" WHERE TIME >= ?" + 
 						" AND TIME < ?" + 

@@ -29,7 +29,6 @@ function cfw_randomString(maxChars){
 	return Math.random().toString(maxChars).substring(2, maxChars /2) + Math.random().toString(36).substring(2, maxChars /2);
 }
 
-
 /**************************************************************************************
  * Filters items in the selected DOM nodes.
  * The items that should be filtered(based on their HTML content) have to be found with

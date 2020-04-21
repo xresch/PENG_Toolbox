@@ -23,10 +23,16 @@ function cfw_cpusampling_prepareData(data){
 	console.log(data);
 	
 	//------------------------------------------
-	// Convert Signatures
+	// Initialize
 	var signatures = data.payload.signatures;
 	GLOBAL_SIGNATURES = {}
+	TOP_ELEMENTS = [];
+	TOP_ELEMENTS_TOTALCALLS = 0;
+	BOTTOM_ELEMENTS = [];
+	CALL_HIERARCHY = {};
 	
+	//------------------------------------------
+	// Convert Signatures
 	for(var i = 0; i < signatures.length; i++){
 		var current = signatures[i];
 		GLOBAL_SIGNATURES[current.PK_ID] = 
@@ -97,11 +103,9 @@ function cfw_cpusampling_prepareData(data){
  ******************************************************************/
 function cfw_cpusampling_printOverview(){
 	
-	parent = $("#cfw-container");
+	parent = $("#cpusamppling-tree");
+	parent.html('');
 	
-	parent.append("<h1>CPU Sampling</h1>");
-	parent.append("<p>Internal CPU sampling allows you to see where your application is spending the most time. " +
-				  "Use the arrow keys to navigate through the tree.</p>");
 	//------------------------------------------
 	// Calculate Percentages for top elements
 	var totalTopCalls = 0;
@@ -344,6 +348,18 @@ function cfw_cpusampling_printHierarchyDiv(domTarget, element, parentPercentage,
  * Main method for building the view.
  * 
  ******************************************************************/
+function fetchAndRenderForSelectedTimeframe(){
+	var earliestMillis = $('#EARLIEST').val();
+	var latestMillis = $('#LATEST').val();
+	console.log("earliestMillis:"+earliestMillis);
+	console.log("latestMillis:"+latestMillis);
+	CFW.http.getJSON("./cpusampling", {action: "fetch", item: "cpusampling", EARLIEST: earliestMillis, LATEST: latestMillis }, cfw_cpusampling_prepareData);
+	
+}
+/******************************************************************
+ * Main method for building the view.
+ * 
+ ******************************************************************/
 function cfw_cpusampling_draw(){
 	
 	CFW.ui.toogleLoader(true);
@@ -351,7 +367,7 @@ function cfw_cpusampling_draw(){
 	window.setTimeout( 
 	function(){
 
-		CFW.http.fetchAndCacheData("./cpusampling", {action: "fetch", item: "cpusampling"}, "cpusampling", cfw_cpusampling_prepareData);
+		fetchAndRenderForSelectedTimeframe();
 		
 		CFW.ui.toogleLoader(false);
 	}, 100);
