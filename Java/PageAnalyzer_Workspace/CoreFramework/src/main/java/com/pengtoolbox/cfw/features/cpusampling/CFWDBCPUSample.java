@@ -195,7 +195,7 @@ public class CFWDBCPUSample {
 						"			DATEDIFF(SECOND, MIN(TIME), MAX(TIME)) / 2," + 
 						"			MIN(TIME)" + 
 						"		)) AS NewTime," + 
-						" FK_ID_SIGNATURE, FK_ID_PARENT, SUM(COUNT), MIN(MIN), SUM(COUNT)/COUNT(*), MAX(MAX), ?"+ 
+						" FK_ID_SIGNATURE, FK_ID_PARENT, SUM(COUNT), MIN(MIN), AVG(AVG), MAX(MAX), ?"+ 
 						" FROM CFW_STATS_CPUSAMPLE" + 
 						" WHERE TIME >= ?" + 
 						" AND TIME < ?" + 

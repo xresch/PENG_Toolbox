@@ -60,10 +60,7 @@ public class ServletCPUSampling extends HttpServlet
 			content.append(new TimeInputs().toForm("cfwCPUSamplingTimeInputs", "Load")
 					.onclick("fetchAndRenderForSelectedTimeframe();")
 					.getHTML() 
-				);
-
-			content.append("<div id=\"cpusamppling-tree\" class=\"pt-4\"></div>");
-			
+				);		
 			
 			html.addJavascriptCode("cfw_cpusampling_draw({tab: 'latest'});");
 			

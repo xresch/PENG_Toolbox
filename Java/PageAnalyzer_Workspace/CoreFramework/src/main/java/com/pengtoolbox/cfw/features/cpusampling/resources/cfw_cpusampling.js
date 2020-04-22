@@ -471,7 +471,7 @@ function cfw_cpusampling_draw(){
 		if(pills.length == 0){
 
 
-			parent.append('<ul class="nav nav-pills pb-3" id="cpu-sampling-pills" role="tablist">'
+			parent.append('<ul class="nav nav-pills pt-3 pb-3" id="cpu-sampling-pills" role="tablist">'
 				+ '<li class="nav-item"><a class="nav-link active" data-toggle="pill" href="#" role="tab" onclick="CURRENT_TAB =  \'TopDown\'; cfw_cpusampling_printTopDown();"><i class="fas fa-sort-amount-down mr-2"></i>Top Down</a></li>'
 				+'<li class="nav-item"><a class="nav-link" data-toggle="pill" href="#" role="tab" onclick="CURRENT_TAB =  \'BottomUp\'; cfw_cpusampling_printBottomUp();"><i class="fas fa-sort-amount-up mr-2"></i>Bottom Up</a></li>'
 			+'<ul>');
