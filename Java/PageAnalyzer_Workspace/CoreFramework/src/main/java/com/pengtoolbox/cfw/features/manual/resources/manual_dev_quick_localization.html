@@ -23,13 +23,19 @@ The RequestHandler will search the response for the properties and replace them 
 </pre>
 
 <h2>Server Side - CFW.L()</h2>
-<p>
-To retrieve a string and provide a default value for fallback, you can use the method CFW.L():
-</p>
-
+<p>To retrieve a string and provide a default value for fallback, you can use the method CFW.L():</p>
 <pre>
 	<code>CFW.L("example_property_name", "Default Value");</code>
 </pre>
+
+<p>Here an example on how to do it with placeholders:</p>
+<pre>
+<code>CFW.L("cfw_dashboard_error_usernotresolved",
+	"The the dashboard owner with name '{1}' could not be resolved. Set the owner to the importing user.",
+	dashboardObject.has("username"))
+</code>
+</pre>
+
 
 <h2>Javascript - CFWL()</h2>
 <p>
