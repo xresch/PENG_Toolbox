@@ -59,8 +59,6 @@ TODO
   - Create Cache overview
     
 - CFWField: Add initFormField(method)
-- CFWField: Change Autocomplete to take only value/label input.
-- CFWField: TAGS: Change to take value/label input.
 - CFWField: Form errors add to field.
 - CFWField: FormField.SINGLECOMPLETE
   - how to load key and label? 
@@ -83,6 +81,9 @@ TODO
 
 DONE
 ====
+- Config: Added category panels to UI
+- CFWField: Change Autocomplete to take only value/label input.
+- CFWField: TAGS: Change to take value/label input.
 - Security: Create Encryption/Decryption for DB
 - Security: Configuration - do not send Passwords to Browser
 - Security: Check Sanitation of Array Fields

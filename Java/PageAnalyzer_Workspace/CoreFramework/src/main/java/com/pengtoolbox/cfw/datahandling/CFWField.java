@@ -384,16 +384,18 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			falseChecked = "checked";
 		}
 		
+		this.removeAttribute("value");
+		
 		String disabled = "";
 		if(isDisabled) {	disabled = "disabled=\"disabled\""; };
 		
 		html.append("<div class=\"form-check form-check-inline col-form-labelmt-5\">" + 
-			"  <input class=\"form-check-input\" type=\"radio\" value=\"true\" name="+name+" "+disabled+" "+trueChecked+"/>" + 
+			"  <input class=\"form-check-input\" type=\"radio\" value=\"true\" name=\""+name+"\" "+this.getAttributesString()+" "+disabled+" "+trueChecked+" />" + 
 			"  <label class=\"form-check-label\" for=\"inlineRadio1\">true</label>" + 
 			"</div>");
 		
 		html.append("<div class=\"form-check form-check-inline col-form-label\">" + 
-				"  <input class=\"form-check-input\" type=\"radio\" value=\"false\" name="+name+" "+disabled+" "+falseChecked+"/>" + 
+				"  <input class=\"form-check-input\" type=\"radio\" value=\"false\" name=\""+name+"\" "+this.getAttributesString()+" "+disabled+" "+falseChecked+"/>" + 
 				"  <label class=\"form-check-label\" for=\"inlineRadio1\">false</label>" + 
 				"</div>");
 	}

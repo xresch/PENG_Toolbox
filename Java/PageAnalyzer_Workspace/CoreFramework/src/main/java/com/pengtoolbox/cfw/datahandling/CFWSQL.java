@@ -1207,13 +1207,13 @@ public class CFWSQL {
 	/***************************************************************
 	 * Execute the Query and gets the result as a string array.
 	 ***************************************************************/
-	public String[] getAsStringArray(String columnName) {
+	public String[] getAsStringArray(Object columnName) {
 		return getAsStringArrayList(columnName).toArray(new String[] {});
 	}
 	/***************************************************************
 	 * Execute the Query and gets the result as a string array list.
 	 ***************************************************************/
-	public ArrayList<String> getAsStringArrayList(String columnName) {
+	public ArrayList<String> getAsStringArrayList(Object columnName) {
 		
 		ArrayList<String> stringArray = new ArrayList<String>();
 		
@@ -1225,7 +1225,7 @@ public class CFWSQL {
 			
 			try {
 				while(result.next()) {
-					Object value = result.getObject(columnName);
+					Object value = result.getObject(columnName.toString());
 					stringArray.add(value.toString());
 				}
 			} catch (SQLException e) {

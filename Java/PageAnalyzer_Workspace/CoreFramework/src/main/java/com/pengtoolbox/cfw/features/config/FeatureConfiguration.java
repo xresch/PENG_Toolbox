@@ -22,8 +22,7 @@ public class FeatureConfiguration extends CFWAppFeature {
 
 	public static final String PERMISSION_CONFIGURATION = "Configuration Management";
 	
-
-	public static final String RESOURCE_PACKAGE = "com.pengtoolbox.cfw.features.cpusampling.resources";
+	public static final String RESOURCE_PACKAGE = "com.pengtoolbox.cfw.features.config.resources";
 	
 	@Override
 	public void register() {

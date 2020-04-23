@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWForm;
@@ -52,10 +53,21 @@ public class ServletConfiguration extends HttpServlet
 		
 		if(CFW.Context.Request.hasPermission(FeatureConfiguration.PERMISSION_CONFIGURATION)) {
 			
+			//--------------------------
+			// Add Form
 			content.append("<h1>Configuration Management</h1>");
 			
 			CFWForm configForm = createConfigForm();
 			content.append(configForm.getHTML());
+			
+			//--------------------------
+			// Add Javascript
+			html.addJSFileBottom(HandlingType.JAR_RESOURCE, FeatureConfiguration.RESOURCE_PACKAGE, "cfw_config.js");
+			html.addJavascriptData("categories", CFW.JSON.toJSON(CFW.DB.Config.getCategories()) );
+			html.addJavascriptCode("cfw_config_changeToPanels();");
+
+			
+			
 			
 	        response.setContentType("text/html");
 	        response.setStatus(HttpServletResponse.SC_OK);
@@ -82,7 +94,7 @@ public class ServletConfiguration extends HttpServlet
 			field.setDescription(config.description());
 			field.setOptions(config.options());		
 			field.disableSecurity();
-			
+			field.addAttribute("data-category", config.category());
 			
 			configForm.addField(field);
 		}

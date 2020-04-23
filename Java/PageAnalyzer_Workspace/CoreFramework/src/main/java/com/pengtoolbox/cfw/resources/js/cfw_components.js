@@ -566,11 +566,10 @@ class CFWPanel{
 	 }
 		 
 	 /********************************************
-	  * Append the table to the jquery object.
-	  * @param parent JQuery object
+	  * Return the JQuery Panel object
+	  * @param 
 	  ********************************************/
-	 appendTo(parent){
-		  
+	 getPanel(){
 		//----------------------------
 		// Populate Header
 		this.panelHeader.html("");
@@ -595,8 +594,16 @@ class CFWPanel{
 		collapseContainer.append(panelBody);
 		panelBody.append(this.settings.body);
 		
-		 parent.append(this.panel);
+		return this.panel;
 		 
+	 }
+	 
+	 /********************************************
+	  * Append the panel to the jquery object.
+	  * @param parent JQuery object
+	  ********************************************/
+	 appendTo(parent){
+		 parent.append(this.getPanel()); 
 	 }
  }
 

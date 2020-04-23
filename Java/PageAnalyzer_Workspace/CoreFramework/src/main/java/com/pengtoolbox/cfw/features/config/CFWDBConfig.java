@@ -252,6 +252,21 @@ public class CFWDBConfig {
 	 * @param id of the config
 	 * @return Returns a config or null if not found or in case of exception.
 	 ****************************************************************/
+	public static ArrayList<String> getCategories() {
+		
+		return new Configuration()
+				.queryCache(CFWDBConfig.class, "getCategories")
+				.custom("SELECT DISTINCT(CATEGORY), FROM CFW_CONFIG ")
+				.orderby(ConfigFields.CATEGORY)
+				.getAsStringArrayList(ConfigFields.CATEGORY);
+		
+	}
+	
+	/***************************************************************
+	 * Select a config by it's ID and return it as JSON string.
+	 * @param id of the config
+	 * @return Returns a config or null if not found or in case of exception.
+	 ****************************************************************/
 	public static String getConfigAsJSON(String id) {
 		
 		return new Configuration()

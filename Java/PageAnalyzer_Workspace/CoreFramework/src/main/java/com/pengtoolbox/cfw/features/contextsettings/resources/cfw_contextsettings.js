@@ -38,7 +38,7 @@ function cfw_contextsettings_reset(){
 }
 
 /******************************************************************
- * Create Role
+ * Create
  ******************************************************************/
 function cfw_contextsettings_create(type){
 	
@@ -63,7 +63,7 @@ function cfw_contextsettings_create(type){
 	
 }
 /******************************************************************
- * Edit Role
+ * Edit
  ******************************************************************/
 function cfw_contextsettings_edit(id){
 	
@@ -110,7 +110,7 @@ function cfw_contextsettings_delete(id){
 }
 
 /******************************************************************
- * Delete
+ * Duplicate
  ******************************************************************/
 function cfw_contextsettings_duplicate(id){
 	
@@ -125,7 +125,7 @@ function cfw_contextsettings_duplicate(id){
 }
 
 /******************************************************************
- * Print the list of roles;
+ * Print the list of context settings.
  * 
  * @param data as returned by CFW.http.getJSON()
  * @return 
