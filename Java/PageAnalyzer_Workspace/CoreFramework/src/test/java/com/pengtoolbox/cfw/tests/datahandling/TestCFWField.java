@@ -39,6 +39,31 @@ public class TestCFWField {
 		Assertions.assertEquals("myValue", valueDecrypted, "The value is decoded.");
 		Assertions.assertEquals("defaultValue", decryptField.getValue(), "The value of the field is untouched.");
 		
+		
+		//-----------------------
+		// Encrypt Value
+		CFWField<String> specialfield = CFWField.newString(FormFieldType.NONE, "field")
+				.enableEncryption("myTestSalt123")
+				.setValue("my:Value\\\\Special!{}Chars!ü()%$*#");
+		
+		String specialEncrypted = specialfield.getValueEncrypted();
+		System.out.println("specialEncrypted: "+specialEncrypted);
+		
+		Assertions.assertEquals("cfwenc:qUyYuDi/22yaZmQf0pU9Qna7CgIfguHZOqEtjvgqDNnOxQh0InsyCtFmYuwvSega", specialEncrypted, "The value is encoded as expected.");
+		
+		//-----------------------
+		// Decrypt Special Chars
+		CFWField<String> decryptSpecialField = CFWField.newString(FormFieldType.NONE, "decryptfield")
+				.enableEncryption("myTestSalt123")
+				.setValue("defaultValue");
+
+		String specialDecrypted = decryptSpecialField.decryptValue(specialEncrypted);
+		System.out.println("specialDecrypted: "+specialDecrypted);
+		
+		Assertions.assertEquals("my:Value\\\\Special!{}Chars!ü()%$*#", specialDecrypted, "The value is decoded.");
+		
+		
+		
 		//-----------------------
 		// Encrypt Null Value
 		CFWField<String> fieldNull = CFWField.newString(FormFieldType.NONE, "field")
@@ -52,7 +77,7 @@ public class TestCFWField {
 		
 		//-----------------------
 		// Decrypt Null Value
-		String nullvalueDecrypted = decryptField.decryptValue(null);
+		String nullvalueDecrypted = decryptSpecialField.decryptValue(null);
 		System.out.println("nullvalueDecrypted: "+nullvalueDecrypted);
 		
 		Assertions.assertEquals(null, nullvalueDecrypted, "The null value is returned as is and not decoded.");
@@ -71,5 +96,24 @@ public class TestCFWField {
 		
 				
 	}
+	
+	@Test
+	public void testEncryptAndDecryptSpecial() throws SQLException {
 		
+		String valueToEncrypt = "jhtW:lM1K!T6}\\\\ISN$zX";
+		String salt = "awa_DB_PW_Salt";
+		//-----------------------
+		// Encrypt Value
+		CFWField<String> field = CFWField.newString(FormFieldType.NONE, "field")
+				.enableEncryption(salt)
+				.setValue(valueToEncrypt);
+
+		//cfwenc:YX3GfH1WA3Pzz+pz+4sREvyCjhalQPEYOkqCoXBqDxQ\u003d
+		//cfwenc:bxrnX1Lr3COXiX8qJgs34qukjyJBpgrUcteJ4eh7XdY=
+		String valueEncrypted = field.getValueEncrypted();
+		String valueDecrypted = field.decryptValue(valueEncrypted);
+		System.out.println("Encrypted: "+valueEncrypted);
+		System.out.println("Decrypted: "+valueDecrypted);
+		
+	}
 }
