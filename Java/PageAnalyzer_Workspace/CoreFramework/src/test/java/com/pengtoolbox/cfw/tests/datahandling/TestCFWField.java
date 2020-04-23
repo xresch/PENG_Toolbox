@@ -100,8 +100,8 @@ public class TestCFWField {
 	@Test
 	public void testEncryptAndDecryptSpecial() throws SQLException {
 		
-		String valueToEncrypt = "jhtW:lM1K!T6}\\\\ISN$zX";
-		String salt = "awa_DB_PW_Salt";
+		String valueToEncrypt = "my Test String";
+		String salt = "my salt";
 		//-----------------------
 		// Encrypt Value
 		CFWField<String> field = CFWField.newString(FormFieldType.NONE, "field")
