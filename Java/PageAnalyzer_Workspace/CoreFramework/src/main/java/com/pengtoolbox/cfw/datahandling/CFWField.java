@@ -92,7 +92,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 	private boolean isDisabled = false;
 	
 	public enum FormFieldType{
-		TEXT, TEXTAREA, PASSWORD, NUMBER, EMAIL, HIDDEN, BOOLEAN, SELECT, WYSIWYG, DATEPICKER, DATETIMEPICKER, TAGS, TAGS_SELECTOR, NONE
+		TEXT, TEXTAREA, PASSWORD, NUMBER, EMAIL, HIDDEN, BOOLEAN, SELECT, LIST, WYSIWYG, DATEPICKER, DATETIMEPICKER, TAGS, TAGS_SELECTOR, NONE
 	}
 	
 	//--------------------------------
@@ -327,7 +327,9 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 									
 			case SELECT:  			createSelect(html);
 									break;	
-			
+									
+			case LIST:  			createList(html);
+									break;	
 			case EMAIL:  			html.append("<input type=\"email\" class=\"form-control\" "+this.getAttributesString()+"/>");
 									break;
 								
@@ -408,7 +410,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 		this.removeAttribute("value");
 		
 		String stringVal = (value == null) ? "" : value.toString();
-
+		
 		html.append("<select class=\"form-control\" "+this.getAttributesString()+" >");
 		
 		//-----------------------------------
@@ -426,6 +428,29 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					.append("</option>");
 				}
 			}
+		}
+		
+		html.append("</select>");
+	}
+	
+	/***********************************************************************************
+	 * Create List
+	 ***********************************************************************************/
+	private void createList(StringBuilder html) {
+		
+		html.append("<input list=\"list-"+name+"\" class=\"form-control\" "+this.getAttributesString()+"/>");
+
+		//-----------------------------------
+		// handle options
+		if(valueLabelOptions != null) {
+			html.append("<datalist id=\"list-"+name+"\">");
+			for(Object optionValue : valueLabelOptions.keySet()) {
+				String currentLabel = valueLabelOptions.get(optionValue).toString();
+				html.append("<option value=\""+optionValue+"\">")
+					.append(currentLabel)
+					.append("</option>");
+			}
+			html.append("</datalist>");
 		}
 		
 		html.append("</select>");

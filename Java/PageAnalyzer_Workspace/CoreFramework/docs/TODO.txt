@@ -12,8 +12,6 @@ ALWAYS ON
 TODO
 ====
 
-- Theusinator: Fix Dropdown Issue
-
 - Dashboard: Check Settings - Provide a bulk action to show all settings of all widgets as an overview. 
 - Dashboard: Text Alignment
 - Dashboard: Merge forms, only one button.
@@ -21,9 +19,12 @@ TODO
 - Dashboard: Favorites
 - Dashboard: Fit Squeeze
 - Dashboard: Filter Widgets
-- Dashboard: Check if resizing/dragging is possible.
+- Dashboard: Check if resizing/dragging is possible on mobile.
 - Dashboard: Default Error / No Access Tile
 - Dashboard: Default No Data Tile
+- Dashboard: Add Anchor Chooser to Image Widget
+- Dashboard: Add format to reload time widget
+
 
 - Widget: Link
 - Widget: Dashboard Link
@@ -35,6 +36,7 @@ TODO
 - Widget: Nest other Dashboard
 - Widget: Nest Widget from other Dashboard
 - Widget: Fontawesome Icon 
+- Widget: Current Time Widget
 
 - cfw.js: Create Pagination Renderer
 - cfw.js: Finish javascript CFWFormField
@@ -81,6 +83,7 @@ TODO
 
 DONE
 ====
+- Theusinator: Fix Dropdown Issue
 - Config: Added category panels to UI
 - CFWField: Change Autocomplete to take only value/label input.
 - CFWField: TAGS: Change to take value/label input.

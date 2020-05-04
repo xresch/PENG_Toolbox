@@ -31,15 +31,17 @@ public class WidgetRefreshTime extends WidgetDefinition {
 						.setDescription("{!cfw_dashboard_sizefactor_desc!}")
 						.setOptions(new String[]{"0.5", "1", "1.25", "1.5", "1.75", "2.0", "2.5", "3.0", "4.0"})
 						.setValue("1")
+				).addField(CFWField.newString(FormFieldType.LIST, "format")
+						.setLabel("{!cfw_widget_cfwrefreshtime_format!}")
+						.setDescription("{!cfw_widget_cfwrefreshtime_format_desc!}")
+						.setOptions(new String[]{"HH:mm", "HH:mm:ss", "HH:mm:ss.SSS", "DD.MM.YYYY HH:mm", "MM/DD/YYYY HH:mm", "YYYY-MM-DDTHH:mm:ss.SSS", "DD.MM.YY" })
+						.setValue("HH:mm")
 				)
 		;
 	}
 
 	@Override
-	public void fetchData(JSONResponse response, JsonObject settings) {
-		
-		response.getContent().append(System.currentTimeMillis());
-	}
+	public void fetchData(JSONResponse response, JsonObject settings) {}
 
 	@Override
 	public ArrayList<FileDefinition> getJavascriptFiles() {

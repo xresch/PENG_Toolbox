@@ -10,6 +10,26 @@
 
 
 /**************************************************************************************
+ * Chains the function after the existing window.onload function.
+ *
+ *************************************************************************************/
+function cfw_chainedOnload(func) {
+  var oldonload = window.onload;
+  if (typeof window.onload != 'function') {
+    window.onload = func;
+  } else {
+    window.onload = function() {
+      if (oldonload) {
+        oldonload();
+      }
+      func();
+    }
+  }
+}
+
+
+
+/**************************************************************************************
  * Either executes a function or evaluates a string a s javascript code.
  *
  *************************************************************************************/
@@ -1737,7 +1757,6 @@ var CFW = {
 	global: {
 		autocompleteCounter: 0,
 		isLocaleFetching: null,
-		
 	},
 	lang: {
 		get: cfw_lang,
@@ -1791,7 +1810,8 @@ var CFW = {
 	},
 	utils: {
 		executeCodeOrFunction: cfw_executeCodeOrFunction,
-		randomString: cfw_randomString
+		randomString: cfw_randomString,
+		chainedOnload: cfw_chainedOnload
 	},
 	ui: {
 		createToggleButton: cfw_createToggleButton,
@@ -1817,8 +1837,8 @@ var CFW = {
  ********************************************************************/
 CFW.lang.loadLocalization();
 
-$(function () {
-	
+CFW.utils.chainedOnload(function () {
+
 	//-----------------------------------
 	// Initialize tooltipy
 	$('[data-toggle="tooltip"]').tooltip();
@@ -1826,12 +1846,15 @@ $(function () {
 	//-----------------------------------
 	// Setup Bootstrap hierarchical menu
 	$('.dropdown-menu a.dropdown-toggle').on('click', function(e) {
-		if (!$(this).next().hasClass('show')) {
-		  $(this).parents('.dropdown-menu').first().find('.show').removeClass("show");
+		var clickedMenuItem = $(this);
+		var submenuContainer = $(this).next();
+
+		if (!submenuContainer.hasClass('show')) {
+			clickedMenuItem.parents('.dropdown-menu').first().find('.show').removeClass("show");
 		}
+
 		var $subMenu = $(this).next(".dropdown-menu");
 		$subMenu.toggleClass('show');
-
 
 		$(this).parents('li.nav-item.dropdown.show').on('hidden.bs.dropdown', function(e) {
 		  $('.dropdown-submenu .show').removeClass("show");

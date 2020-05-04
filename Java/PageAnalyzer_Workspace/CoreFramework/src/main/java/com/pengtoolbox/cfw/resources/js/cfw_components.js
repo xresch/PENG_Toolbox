@@ -336,6 +336,34 @@ class CFWDate{
 	 }
 	
 	 /********************************************
+	  * Returns a String formatted as defined by the
+	  * parameter.
+	  * 	YYYY: 4-digit year
+	  * 	YY: 2-digit year
+	  *		MM: 2-digit month (where January is 01 and December is 12)
+	  *		DD: 2-digit date (0 to 31)
+	  *		HH: 24-digit hour (0 to 23)
+	  *		mm: Minutes (0 to 59)
+	  *		ss: Seconds (0 to 59)
+	  *		SSS: Milliseconds (0 to 999)
+	  *
+	  ********************************************/
+	 getDateFormatted(dateFormatString){
+		 
+		dateFormatString = 
+			dateFormatString
+				.replace("YYYY", this.date.getFullYear()) 
+				.replace("YY", (this.date.getFullYear()+'').substring(2))
+				.replace("MM", this.fillDigits(this.date.getMonth()+1, 2))
+				.replace("DD", this.fillDigits(this.date.getDate(), 2))
+				.replace("HH", this.fillDigits(this.date.getHours(), 2))
+				.replace("mm", this.fillDigits(this.date.getMinutes(), 2))
+				.replace("SSS", this.fillDigits(this.date.getMilliseconds(), 3))
+				.replace("ss", this.fillDigits(this.date.getSeconds(), 2)); 
+
+		 return dateFormatString;
+	 }
+	 /********************************************
 	  * Returns a String in the format YYYY-MM-DD
 	  ********************************************/
 	 getDateForInput(){
