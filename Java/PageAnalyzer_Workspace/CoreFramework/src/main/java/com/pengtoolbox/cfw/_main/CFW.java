@@ -37,6 +37,7 @@ import com.pengtoolbox.cfw.mail.CFWMail;
 import com.pengtoolbox.cfw.schedule.CFWSchedule;
 import com.pengtoolbox.cfw.utils.CFWDump;
 import com.pengtoolbox.cfw.utils.CFWFiles;
+import com.pengtoolbox.cfw.utils.CFWScripting;
 import com.pengtoolbox.cfw.utils.CFWSecurity;
 import com.pengtoolbox.cfw.utils.CFWTime;
 import com.pengtoolbox.cfw.utils.json.CFWJson;
@@ -94,6 +95,7 @@ public class CFW {
 		public class Widgets extends CFWRegistryWidgets {} 
 	}
 	public class Schedule extends CFWSchedule {}
+	public class Scripting extends CFWScripting {}
 	public class Time extends CFWTime {}
 	public class Validation extends CFWValidation {}
 	

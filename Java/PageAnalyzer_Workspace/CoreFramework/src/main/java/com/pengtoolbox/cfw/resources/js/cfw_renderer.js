@@ -60,7 +60,9 @@ CFW.render.registerRenderer("tiles",
 				// show or hide labels
 				showlabels: false, 
 				// the border style of the tile, choose between: null | 'none' | 'round' | 'superround' | 'asymmetric' | 'superasymmetric' | 'ellipsis'
-				borderstyle: null
+				borderstyle: null,
+				// the border that should be applied, like '1px solid black'
+				border: null
 			};
 			
 			var settings = Object.assign({}, defaultSettings, renderDef.rendererSettings.tiles);
@@ -102,6 +104,10 @@ CFW.render.registerRenderer("tiles",
 					currentTile.addClass('text-'+currentRecord[renderDef.textstylefield]);
 				}
 				
+				if(settings.border != null){
+					currentTile.css('border', settings.border);
+				}
+				
 				if(settings.borderstyle != null){
 					var baseradius = 10;
 					switch(settings.borderstyle.toLowerCase()){
@@ -130,7 +136,9 @@ CFW.render.registerRenderer("tiles",
 				//=====================================
 				// Add Details Click
 				currentTile.data('record', currentRecord)
-				currentTile.click(function() {
+				currentTile.bind('click', function(e) {
+					
+					e.stopPropagation();
 					//-------------------------
 					// Create render definition
 					var definition = Object.assign({}, renderDef);
@@ -185,7 +193,12 @@ CFW.render.registerRenderer("tiles",
 							}
 						}else{
 							var customizer = renderDef.customizers[fieldname];
-							currentTile.append('<span style="font-size: '+12*settings.sizefactor+'px;"><strong>'+renderDef.labels[fieldname]+':&nbsp;</strong>'+customizer(currentRecord, value)+'</span>');
+							var customizedValue = customizer(currentRecord, value);
+							if(customizedValue != null){
+								var span = $('<span style="font-size: '+12*settings.sizefactor+'px;"><strong>'+renderDef.labels[fieldname]+':&nbsp;</strong></span>');
+								span.append(customizedValue);
+								currentTile.append(span);
+							}
 						}
 					}
 				} else {
@@ -227,9 +240,10 @@ CFW.render.registerRenderer("table",
 				return "<span>Unable to convert data into table.</span>";
 			}
 			
+			var settings = renderDef.rendererSettings.table;
 			//-----------------------------------
 			// Verticalize Single Records
-			if(renderDef.data.length == 1 && renderDef.rendererSettings.table.verticalize){
+			if(renderDef.data.length == 1 && settings.verticalize){
 				var singleRecordData = [];
 				var singleRecord = renderDef.data[0]
 				
@@ -277,7 +291,7 @@ CFW.render.registerRenderer("table",
 			//===================================================
 			// Create Table
 			//===================================================
-			var cfwTable = new CFWTable(renderDef.rendererSettings.table);
+			var cfwTable = new CFWTable(settings.verticalize);
 			
 			//-----------------------------------
 			// Create Headers
@@ -344,14 +358,26 @@ CFW.render.registerRenderer("table",
 					var value = currentRecord[fieldname];
 					
 					if(renderDef.customizers[fieldname] == null){
-						if(value != null){
+						
+						if(settings.verticalize){
+							var cell = $('<td>');
+							cell.append(value);
+							row.append(cell);
+						}else if(value != null){
 							cellHTML += '<td>'+value+'</td>';
 						}else{
 							cellHTML += '<td>&nbsp;</td>';
 						}
 					}else{
+						row.append(cellHTML);
+						cellHTML = "";
 						var customizer = renderDef.customizers[fieldname];
-						cellHTML += '<td>'+customizer(currentRecord, value)+'</td>';
+						var customizedValue = customizer(currentRecord, value);
+						console.log(customizedValue);
+						var cell = $('<td>');
+						cell.append(customizedValue);
+						row.append(cell);
+						
 					}
 				}
 				
@@ -481,25 +507,31 @@ CFW.render.registerRenderer("panels",
 				
 				//-------------------------
 				// Add field Values as Unordered List
-				var listHtml = "<ul>";
+				var list = $("<ul>");
+				var itemHTML = '';
 				for(var key in renderDef.visiblefields){
 					var fieldname = renderDef.visiblefields[key];
 					var value = currentRecord[fieldname];
 					
 					if(renderDef.customizers[fieldname] == null){
 						if(value != null){
-							listHtml += '<li><b>' + fieldname + ':</b> ' + value + '</li>';
+							itemHTML += '<li><b>' + renderDef.labels[fieldname] + ':</b> ' + value + '</li>';
 						}else{
-							listHtml += '&nbsp;';
+							itemHTML += '&nbsp;';
 						}
 					}else{
-						
+						list.append(itemHTML);
+						itemHTML = '';
 						var customizer = renderDef.customizers[fieldname];
-						listHtml += '<li><b>' + fieldname + ':</b>	' + customizer(currentRecord, value) + '</li>';
+						var customizedValue = customizer(currentRecord, value)
+						var item = $('<li><b>' + renderDef.labels[fieldname] + ':</b></li>');
+						item.append(customizedValue);
+						list.append(item);
 					}
 				}
-				listHtml += '</ul>';
-				panelSettings.body = listHtml;
+				list.append(itemHTML);
+				
+				panelSettings.body = list;
 				
 				//-------------------------
 				// Add Action buttons

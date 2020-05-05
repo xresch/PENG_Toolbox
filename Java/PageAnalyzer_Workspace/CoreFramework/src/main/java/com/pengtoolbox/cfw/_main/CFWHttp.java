@@ -27,7 +27,6 @@ public class CFWHttp {
 	
 	public static Logger logger = CFWLog.getLogger(CFWHttp.class.getName());
 	
-	
 	public static String encode(String toEncode) {
 		
 		try {
@@ -35,8 +34,7 @@ public class CFWHttp {
 		} catch (UnsupportedEncodingException e) {
 			new CFWLog(logger)
 				.method("encode")
-				.severe("Exception while encoding: "+e.getMessage(), e);
-				
+				.severe("Exception while encoding: "+e.getMessage(), e);	
 		}
 		
 		return toEncode;
@@ -108,6 +106,19 @@ public class CFWHttp {
 		return buffer.toString();
 	
 	}
+	
+	/******************************************************************************************************
+	 * Send a HTTP GET request and returns the result as a String.
+	 * @param url used for the request.
+	 * @return String response
+	 ******************************************************************************************************/
+//	public static URL createProxiedURL(String url) {
+//		
+//
+//		//Proxy instance, proxy ip = 10.0.0.1 with port 8080
+//		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.0.0.1", 8080));
+//		//conn = new URL(url).openConnection(proxy);
+//	}
 	
 	/******************************************************************************************************
 	 * Creates a map of all cookies in a request.
