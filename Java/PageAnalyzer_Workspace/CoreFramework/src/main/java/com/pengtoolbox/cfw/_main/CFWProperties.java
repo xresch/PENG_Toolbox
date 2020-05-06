@@ -63,6 +63,18 @@ public class CFWProperties {
 	
 	
 	//##########################################################################################
+	// PROXY
+	//##########################################################################################	
+	/**  (Property=cfw_proxy_enabled, Default=false) */
+	public static boolean PROXY_ENABLED = false;
+	
+	/**  (Property=cfw_proxy_host, Default="") */
+	public static String PROXY_HOST = "";
+	
+	/**  (Property=cfw_proxy_port, Default="8080") */
+	public static int PROXY_PORT = 8080;
+	
+	//##########################################################################################
 	// PERFORMANCE
 	//##########################################################################################		
 	/** Session Time in Seconds. (Property=cfw_session_timeout, Default=36000) */
@@ -191,6 +203,10 @@ public class CFWProperties {
 		HTTPS_KEYSTORE_PATH 			= CFWProperties.configAsString("cfw_https_keystore_path", HTTPS_KEYSTORE_PATH);
 		HTTPS_KEYSTORE_PASSWORD			= CFWProperties.configAsString("cfw_https_keystore_password", HTTPS_KEYSTORE_PASSWORD);
 		HTTPS_KEYMANAGER_PASSWORD		= CFWProperties.configAsString("cfw_https_keymanager_password", HTTPS_KEYMANAGER_PASSWORD);
+		
+		PROXY_ENABLED 					= CFWProperties.configAsBoolean("cfw_proxy_enabled", PROXY_ENABLED);
+		PROXY_HOST						= CFWProperties.configAsString("cfw_proxy_host", PROXY_HOST);
+		PROXY_PORT						= CFWProperties.configAsInt("cfw_proxy_port", PROXY_PORT);
 		
 		SESSION_TIMEOUT					= CFWProperties.configAsInt("cfw_session_timeout", SESSION_TIMEOUT);
 		BROWSER_RESOURCE_MAXAGE 		= CFWProperties.configAsInt("cfw_browser_resource_maxage", BROWSER_RESOURCE_MAXAGE);

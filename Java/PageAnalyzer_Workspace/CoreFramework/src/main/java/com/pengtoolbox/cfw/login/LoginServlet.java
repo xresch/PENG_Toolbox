@@ -20,7 +20,7 @@ import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class LoginServlet extends HttpServlet
@@ -41,7 +41,8 @@ public class LoginServlet extends HttpServlet
 		String loginHTML = CFW.Files.readPackageResource(FileDefinition.CFW_JAR_RESOURCES_PATH + ".html", "login.html");
 		
 		String url = request.getParameter("url");
-
+		url = CFW.Security.sanitizeHTML(url);
+		
 		if(url == null) { url = "";}
 		loginHTML = loginHTML.replace("urlvalue", url);
 		

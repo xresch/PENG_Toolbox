@@ -15,29 +15,13 @@ public class WebTestMaster {
 
 	protected static CFWApplicationExecutor APP;
 	protected static String TEST_URL;
-	
-	// context path on "/test"
-	protected static ServletContextHandler testContext;
-	
+		
 	public static void addServlet(Class<? extends Servlet> clazz, String contextPath) {
 		
-		boolean alreadyExists = false;
-		for(ServletMapping mappings : testContext.getServletHandler().getServletMappings()) {
-			
-			for(String pathSpec : mappings.getPathSpecs()) {
-				if(contextPath.equals(pathSpec)) {
-					alreadyExists = true;
-					break;
-				}
-			}
-			if(alreadyExists) {
-				break;
-			}
-		}
-		
+		boolean alreadyExists = APP.isServletPathUsed("/test"+contextPath);
 		if(!alreadyExists) {
 			System.out.println("ADD SERVLET:"+contextPath);
-			testContext.addServlet(clazz, contextPath);
+			APP.addUnsecureServlet(clazz, "/test"+contextPath);
 		}
 	}
 	
@@ -55,8 +39,7 @@ public class WebTestMaster {
 			@Override
 			public void startApp(CFWApplicationExecutor app) {
 				APP  = app;
-				
-				//testContext = APP.getUnsecureContext("/test");
+
 				TEST_URL = "http://localhost:"+CFW.Properties.HTTP_PORT+"/test";
 				
 				//Seperate thread to not make the test thread block

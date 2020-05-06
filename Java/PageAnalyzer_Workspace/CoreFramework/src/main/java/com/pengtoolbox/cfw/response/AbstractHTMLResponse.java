@@ -51,7 +51,8 @@ public abstract class AbstractHTMLResponse extends AbstractResponse {
 		
 		this.addSupportInfo("Timestamp:", CFW.Time.currentTimestamp());
 		this.addSupportInfo("RequestID:", requestID);
-		this.addSupportInfo("SessionID:", (String)this.request.getSession().getId());
+		// Removed to enhance security
+		//this.addSupportInfo("SessionID:", (String)this.request.getSession().getId());
 		
 	}
 	

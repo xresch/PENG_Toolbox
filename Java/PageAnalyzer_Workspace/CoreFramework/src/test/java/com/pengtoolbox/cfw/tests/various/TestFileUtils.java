@@ -8,7 +8,7 @@ import com.pengtoolbox.cfw.caching.FileDefinition;
 import com.pengtoolbox.cfw.caching.FileDefinition.HandlingType;
 import com.pengtoolbox.cfw.utils.CFWFiles;
 
-public class FileUtilsTests {
+public class TestFileUtils {
 	
 	public static final String INTERNAL_RESOURCES_PATH = "com/pengtoolbox/cfw/resources";
 	

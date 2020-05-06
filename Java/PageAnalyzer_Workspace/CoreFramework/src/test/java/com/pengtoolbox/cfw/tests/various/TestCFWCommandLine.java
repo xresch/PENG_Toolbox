@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.cli.ArgumentsException;
 
-public class CFWCommandLineTests {
+public class TestCFWCommandLine {
 	
 	@Test
 	public void testLoadArguments() throws ArgumentsException {

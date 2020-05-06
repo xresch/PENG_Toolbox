@@ -13,6 +13,7 @@ import javax.servlet.SessionTrackingMode;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -34,6 +35,7 @@ import org.eclipse.jetty.server.session.SessionCache;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlet.ServletMapping;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 
@@ -91,6 +93,27 @@ public class CFWApplicationExecutor {
          
 	}
 	
+	
+	/**************************************************************************************************
+	 * Check if the a servlet is already mapped to the specified path.
+	 **************************************************************************************************/
+	public boolean isServletPathUsed(String path){
+		boolean alreadyExists = false;
+		for(ServletMapping mappings : servletContext.getServletHandler().getServletMappings()) {
+			
+			for(String pathSpec : mappings.getPathSpecs()) {
+				if(path.equals(pathSpec)) {
+					alreadyExists = true;
+					break;
+				}
+			}
+			if(alreadyExists) {
+				break;
+			}
+		}
+		
+		return alreadyExists;
+	}
 	/**************************************************************************************************
 	 * Adds a servlet to the secure application context that needs authentication to access.
 	 * The resulting path will be CFW.Properties.BASE_URL + "/app" + path.
@@ -274,6 +297,7 @@ public class CFWApplicationExecutor {
 	    trackingModes.add(SessionTrackingMode.COOKIE);
 	    sessionHandler.setSessionTrackingModes(trackingModes);
 	    sessionHandler.getSessionCookieConfig().setPath("/");
+	    sessionHandler.getSessionCookieConfig().setHttpOnly(true);
 	    sessionHandler.getSessionCookieConfig().setName("CFWSESSIONID");
 	    
 	    //prevent URL rewrite

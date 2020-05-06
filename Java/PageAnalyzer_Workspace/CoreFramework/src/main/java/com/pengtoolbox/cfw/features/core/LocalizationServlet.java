@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.http.HttpStatus;
+
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFWProperties;
 import com.pengtoolbox.cfw.response.JSONResponse;
@@ -15,7 +17,7 @@ import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class LocalizationServlet extends HttpServlet
@@ -35,12 +37,17 @@ public class LocalizationServlet extends HttpServlet
 		
 		//-----------------------
 		// Fetch LanguagePack
+		JSONResponse json = new JSONResponse();
 		String localeIdentifier = request.getParameter("id");
 		Properties languagePack = CFW.Localization.getLanguagePackeByIdentifier(localeIdentifier);
 
-		int fileEtag = languagePack.hashCode();
+		if(languagePack == null) {
+			json.setSuccess(false);
+			response.setStatus(HttpStatus.NOT_FOUND_404);
+			return;
+		}
 		
-		JSONResponse json = new JSONResponse();
+		int fileEtag = languagePack.hashCode();
 
 		if(languagePack.size() > 0) {
 			//-----------------------

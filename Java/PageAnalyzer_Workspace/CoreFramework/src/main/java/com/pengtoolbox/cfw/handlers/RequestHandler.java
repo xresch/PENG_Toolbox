@@ -14,7 +14,6 @@ import org.eclipse.jetty.server.handler.HandlerWrapper;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw._main.CFW.Context;
-import com.pengtoolbox.cfw._main.CFWApplicationExecutor;
 import com.pengtoolbox.cfw._main.SessionData;
 import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
@@ -69,10 +68,8 @@ public class RequestHandler extends HandlerWrapper
     	
     	request.setAttribute(CFW.REQUEST_ATTR_STARTNANOS, startNanos);
     	
-
     	//---------------------------------------
     	//ReqestID used in logging
-    	
     	String requestID = request.getHeader(CFW.REQUEST_ATTR_ID);
     	if(requestID == null){
     		requestID = UUID.randomUUID().toString();
