@@ -128,6 +128,12 @@ public class FeatureManual extends CFWAppFeature {
 	 *****************************************************************/
 	private void registerDeveloperManual() {
 		
+		ManualPage philosophy = new ManualPage("Framework Philosophy")
+				.faicon("fas fa-seedling")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_cfw_philosophy.html");
+		TOP_PAGE_DEV.addChild(philosophy);
+		
 		ManualPage quickstart = new ManualPage("Quickstart").faicon("fas fa-fighter-jet").addPermission(PERMISSION_ADMIN_MANUAL);
 		TOP_PAGE_DEV.addChild(quickstart);
 		
@@ -174,26 +180,6 @@ public class FeatureManual extends CFWAppFeature {
 				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_create_servlet.html")
 			);
 		
-		quickstart.addChild(new ManualPage("Add Configuration Items")
-					.faicon("fa fa-cog")
-					.addPermission(PERMISSION_ADMIN_MANUAL)
-					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_configuration.html")
-				);
-		
-		quickstart.addChild(
-				new ManualPage("Create Permissions")
-					.faicon("fa fa-lock")
-					.addPermission(PERMISSION_ADMIN_MANUAL)
-					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_permissions.html")
-				);
-		
-		quickstart.addChild(
-				new ManualPage("Create Manual Pages")
-					.faicon("fa fa-book")
-					.addPermission(PERMISSION_ADMIN_MANUAL)
-					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_manualpages.html")
-				);
-		
 		quickstart.addChild(
 				new ManualPage("Working with CFWObjects")
 					.faicon("fas fa-th-large")
@@ -208,6 +194,32 @@ public class FeatureManual extends CFWAppFeature {
 					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_cfwfields.html")
 				);
 		
+		quickstart.addChild(new ManualPage("Add Configuration Items")
+					.faicon("fa fa-cog")
+					.addPermission(PERMISSION_ADMIN_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_configuration.html")
+				);
+		
+		quickstart.addChild(new ManualPage("Add Context Settings")
+				.faicon("fas fa-city")
+				.addPermission(PERMISSION_ADMIN_MANUAL)
+				.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_contextsettings.html")
+			);
+		
+		quickstart.addChild(
+				new ManualPage("Create Permissions")
+					.faicon("fa fa-lock")
+					.addPermission(PERMISSION_ADMIN_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_permissions.html")
+				);
+		
+		quickstart.addChild(
+				new ManualPage("Create Manual Pages")
+					.faicon("fa fa-book")
+					.addPermission(PERMISSION_ADMIN_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_manualpages.html")
+				);
+				
 		quickstart.addChild(
 				new ManualPage("Localization")
 					.faicon("fas fa-globe-americas")
@@ -215,6 +227,12 @@ public class FeatureManual extends CFWAppFeature {
 					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_localization.html")
 				);
 		
+		quickstart.addChild(
+				new ManualPage("Add an API")
+					.faicon("fas fa-paperclip")
+					.addPermission(PERMISSION_ADMIN_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_api.html")
+				);
 	}
 	
 	/*****************************************************************

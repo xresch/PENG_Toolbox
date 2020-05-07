@@ -11,7 +11,7 @@ import com.pengtoolbox.cfw.utils.CFWArrayUtils;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class APIDefinition {
@@ -102,10 +102,16 @@ public class APIDefinition {
 		return clazz;
 	}
 	
+	/********************************************************************************
+	 * Return the object providing the input fields for the API.
+	 * @return CFWObject or null
+	 ********************************************************************************/
 	public CFWObject createObjectInstance() {
 		CFWObject object = null;
 		try {
-			object = getObjectClass().newInstance();
+			if(this.clazz != null) {
+				object = this.clazz.newInstance();
+			}
 		} catch (Exception e) {
 			new CFWLog(logger)
 				.method("handleRequest")
@@ -162,7 +168,7 @@ public class APIDefinition {
 		
 		//-----------------------------------
 		//resolve parameters
-		if(inputFieldnames != null) {
+		if(inputFieldnames != null && instance != null) {
 			json.append(", \"params\"").append(": [");
 			
 			int counter = 0;

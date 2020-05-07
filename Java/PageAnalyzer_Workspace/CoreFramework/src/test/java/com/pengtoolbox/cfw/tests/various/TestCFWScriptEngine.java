@@ -31,19 +31,4 @@ public class TestCFWScriptEngine {
 		Assertions.assertEquals("Hello 456", result2, "The method returned the expected value.");
 	}
 	
-	@Test
-	public void testPACFileExecution() {
-		
-		CFW.Files.addAllowedPackage("com.pengtoolbox.cfw.tests");
-		String pacScript = CFW.Files.readPackageResource("com.pengtoolbox.cfw.tests.various", "test_proxy.pac");
-				
-		//--------------------------------
-		// With parameter List
-		Object result = CFW.Scripting.executeJavascript(pacScript, "FindProxyForURL", "https://www.example.com:8080/test", "www.example.com");
-		
-		System.out.println(result);
-		//Assertions.assertEquals("Test 123", result, "The method returned the expected value.");
-		
-
-	}
 }

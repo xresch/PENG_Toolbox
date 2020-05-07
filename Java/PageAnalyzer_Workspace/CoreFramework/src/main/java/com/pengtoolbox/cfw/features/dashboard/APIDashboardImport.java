@@ -5,18 +5,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWField;
-import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
+import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.features.api.APIDefinition;
 import com.pengtoolbox.cfw.features.api.APIRequestHandler;
-import com.pengtoolbox.cfw.features.api.ReturnFormat;
-import com.pengtoolbox.cfw.features.dashboard.Dashboard.DashboardFields;
 import com.pengtoolbox.cfw.response.JSONResponse;
 import com.pengtoolbox.cfw.utils.CFWArrayUtils;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class APIDashboardImport extends APIDefinition{
@@ -32,7 +30,7 @@ public class APIDashboardImport extends APIDefinition{
 
 		super(Dashboard.class, apiName, actionName, inputFieldnames, outputFieldnames);
 
-		this.setDescription("Export one or all dashboards as a JSON string that can be inported through the import API.");
+		this.setDescription("Import one or all dashboards represented as a JSON string that was be exported through the export API.");
 		
 		this.setRequestHandler(new APIRequestHandler() {
 			

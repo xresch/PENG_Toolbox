@@ -20,7 +20,7 @@ import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class ServletAPI extends HttpServlet
@@ -154,7 +154,13 @@ public class ServletAPI extends HttpServlet
 		//--------------------------------------
 		// Create User Form
 		CFWObject instance = definition.createObjectInstance();
-		CFWForm sampleForm = instance.toForm("cfwAPIFormExample"+apiName+action, "Submit", definition.getInputFieldnames());
+		CFWForm sampleForm;
+		if(instance != null) {
+			sampleForm = instance.toForm("cfwAPIFormExample"+apiName+action, "Submit", definition.getInputFieldnames());
+		}else {
+			sampleForm = new CFWForm("cfwAPIFormExample"+apiName+action, "Submit");
+		}
+		
 		sampleForm.isAPIForm(true);
 		sampleForm.setResultCallback(callbackMethod);
 		sampleForm.setFormHandler(new CFWFormHandler() {
