@@ -841,7 +841,7 @@ public class CFWSQL {
 	 ****************************************************************/
 	public CFWSQL orderby(Object fieldname) {
 		if(!isQueryCached()) {
-			if(fields.get(fieldname.toString()).getValueClass() == String.class) {
+			if(fields != null && fields.get(fieldname.toString()).getValueClass() == String.class) {
 				query.append(" ORDER BY LOWER("+fieldname+")");
 			}else {
 				query.append(" ORDER BY "+fieldname);
@@ -859,7 +859,7 @@ public class CFWSQL {
 		if(!isQueryCached()) {
 			query.append(" ORDER BY");
 			for(Object fieldname : fieldnames) {
-				if(fields.get(fieldname.toString()).getValueClass() == String.class) {
+				if(fields != null && fields.get(fieldname.toString()).getValueClass() == String.class) {
 					query.append(" LOWER(").append(fieldname).append("),");
 				}else {
 					query.append(" ").append(fieldname).append(",");
@@ -878,7 +878,7 @@ public class CFWSQL {
 	 ****************************************************************/
 	public CFWSQL orderbyDesc(Object fieldname) {
 		if(!isQueryCached()) {				
-			if(fields.get(fieldname.toString()).getValueClass() == String.class) {
+			if(fields != null && fields.get(fieldname.toString()).getValueClass() == String.class) {
 				query.append(" ORDER BY LOWER(").append(fieldname).append(") DESC");
 			}else {
 				query.append(" ORDER BY ").append(fieldname).append(" DESC");

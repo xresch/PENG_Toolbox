@@ -195,6 +195,13 @@ public class FeatureManual extends CFWAppFeature {
 				);
 		
 		quickstart.addChild(
+				new ManualPage("Accessing Databases")
+					.faicon("fas fa-database")
+					.addPermission(PERMISSION_ADMIN_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_database.html")
+				);
+		
+		quickstart.addChild(
 				new ManualPage("Executing SQL")
 					.faicon("fas fa-bolt")
 					.addPermission(PERMISSION_ADMIN_MANUAL)

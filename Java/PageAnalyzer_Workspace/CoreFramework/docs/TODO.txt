@@ -49,6 +49,7 @@ TODO
 - Manual: Multilingual manual
 - Manual: Print View Button
 
+- CFW: Add loading icon to Form Submit button when waiting for reply.
 - CFW: CFWApplicationExecutor - ForwardedRequestCustomizer make it work with reverse proxy
 - CFW: Implement custom shutdown stopping database, application, features, etc...
 - CFW: Move core stuff to core feature
