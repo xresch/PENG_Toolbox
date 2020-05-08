@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.db.CFWSQL;
 import com.pengtoolbox.cfw.features.api.APIDefinition;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
@@ -39,7 +40,7 @@ public class CFWObject {
 	
 
 	
-	class ForeignKeyDefinition{
+	public class ForeignKeyDefinition{
 		public String fieldname;
 		public String foreignFieldname;
 		public Class<? extends CFWObject> foreignObject;

@@ -7,15 +7,15 @@ import java.util.ArrayList;
 import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.db.CFWDB;
+import com.pengtoolbox.cfw.db.CFWSQL;
 import com.pengtoolbox.cfw.features.api.APIDefinition;
 import com.pengtoolbox.cfw.features.api.APIDefinitionFetch;
 import com.pengtoolbox.cfw.features.usermgmt.Role.RoleFields;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class RolePermissionMap extends CFWObject {

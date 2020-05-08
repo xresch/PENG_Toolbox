@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.datahandling.CFWHierarchy;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
-import com.pengtoolbox.cfw.datahandling.CFWSQL;
+import com.pengtoolbox.cfw.db.CFWSQL;
 import com.pengtoolbox.cfw.db.spaces.Space;
 import com.pengtoolbox.cfw.db.spaces.Space.SpaceFields;
 import com.pengtoolbox.cfw.db.spaces.SpaceGroup;

@@ -1,4 +1,4 @@
-package com.pengtoolbox.cfw.datahandling;
+package com.pengtoolbox.cfw.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,8 +12,9 @@ import java.util.logging.Logger;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.pengtoolbox.cfw._main.CFW;
+import com.pengtoolbox.cfw.datahandling.CFWField;
+import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.datahandling.CFWObject.ForeignKeyDefinition;
-import com.pengtoolbox.cfw.db.CFWDB;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
 /**************************************************************************************************************

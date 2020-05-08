@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.pengtoolbox.cfw._main.CFW;
-import com.pengtoolbox.cfw.datahandling.CFWSQL;
 import com.pengtoolbox.cfw.db.CFWDB;
+import com.pengtoolbox.cfw.db.CFWSQL;
 import com.pengtoolbox.cfw.features.usermgmt.RolePermissionMap.RolePermissionMapFields;
 import com.pengtoolbox.cfw.logging.CFWLog;
 
