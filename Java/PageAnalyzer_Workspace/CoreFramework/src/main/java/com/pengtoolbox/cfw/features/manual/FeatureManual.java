@@ -194,6 +194,13 @@ public class FeatureManual extends CFWAppFeature {
 					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_cfwfields.html")
 				);
 		
+		quickstart.addChild(
+				new ManualPage("Executing SQL")
+					.faicon("fas fa-bolt")
+					.addPermission(PERMISSION_ADMIN_MANUAL)
+					.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_sql.html")
+				);
+		
 		quickstart.addChild(new ManualPage("Add Configuration Items")
 					.faicon("fa fa-cog")
 					.addPermission(PERMISSION_ADMIN_MANUAL)

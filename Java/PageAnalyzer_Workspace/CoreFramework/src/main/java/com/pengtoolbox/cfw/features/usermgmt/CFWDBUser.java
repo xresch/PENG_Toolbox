@@ -112,7 +112,7 @@ public class CFWDBUser {
 	 * @return Returns a user or null if not found or in case of exception.
 	 ****************************************************************/
 	public static User selectByID(int id) {
-		
+			
 		
 		return (User)new User()
 				.queryCache(CFWDBUser.class, "selectByID")
