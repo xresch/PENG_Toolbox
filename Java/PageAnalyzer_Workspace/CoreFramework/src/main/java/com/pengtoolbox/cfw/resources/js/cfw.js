@@ -1582,7 +1582,17 @@ function cfw_postForm(url, formID, callback){
 	// switch summernote to wysiwyg view, will not save in code view
 	$('.btn-codeview.active').click();
 	
-	cfw_postJSON(url, CFW.format.formToParams(formID), callback);
+	$(formID+'-submitButton').prepend('<i class="fa fa-cog fa-spin fa-fw mr-1 loaderMarker"></i>')
+	
+		window.setTimeout( 
+		cfw_postJSON(url, CFW.format.formToParams(formID), function (){
+			$(formID+'-submitButton .loaderMarker').remove();
+			if(callback != null){
+				callback();
+			}
+		}),
+	5);
+	
 }
 
 

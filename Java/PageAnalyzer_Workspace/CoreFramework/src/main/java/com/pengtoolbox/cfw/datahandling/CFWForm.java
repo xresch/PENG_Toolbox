@@ -91,10 +91,11 @@ public class CFWForm extends HierarchicalHTMLItem {
 				html.append("\n\t"+child.getHTML());
 			}
 		}
-
+		
 		//---------------------------
 		// Create Submit Button
-		html.append("<input type=\"button\" onclick=\""+onclick+"\" class=\"form-control btn-primary mt-2\" value=\""+submitLabel+"\">");
+		//html.append("<input id=\""+formID+"-submitButton\" type=\"button\" onclick=\""+onclick+"\" class=\"form-control btn-primary mt-2\" value=\""+submitLabel+"\">");
+		html.append("<button id=\""+formID+"-submitButton\" type=\"button\" onclick=\""+onclick+"\" class=\"form-control btn-primary mt-2\">"+submitLabel+"</button>");
 		
 		//---------------------------
 		// Add javascript

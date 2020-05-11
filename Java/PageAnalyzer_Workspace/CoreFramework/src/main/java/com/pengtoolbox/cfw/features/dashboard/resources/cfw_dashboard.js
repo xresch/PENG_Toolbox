@@ -142,11 +142,11 @@ function cfw_dashboard_editWidget(widgetGUID){
 	var customForm = widgetDef.getEditForm(widgetObject);
 	if(customForm != null){
 		customForm = $(customForm);
-		var buttons = customForm.find('input[type="button"]');
+		var buttons = customForm.find('button[type="button"]');
 		if(buttons.length > 0){
 			buttons.remove();
 		}
-		var customFormButton = '<input type="button" onclick="cfw_dashboard_saveCustomSettings(this, \''+widgetGUID+'\')" class="form-control btn-primary" value="'+CFWL('cfw_core_save', 'Save')+'">';
+		var customFormButton = '<button type="button" onclick="cfw_dashboard_saveCustomSettings(this, \''+widgetGUID+'\')" class="form-control btn-primary">'+CFWL('cfw_core_save', 'Save')+'</button>';
 		
 		customForm.append(customFormButton);
 	}
@@ -241,7 +241,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 	
 	//------------------------------
 	// Save Button
-	defaultForm += '<input type="button" onclick="cfw_dashboard_saveDefaultSettings(\''+widgetGUID+'\')" class="form-control btn-primary" value="'+CFWL('cfw_core_save', 'Save')+'">';
+	defaultForm += '<button type="button" onclick="cfw_dashboard_saveDefaultSettings(\''+widgetGUID+'\')" class="form-control btn-primary">'+CFWL('cfw_core_save', 'Save')+'</button>';
 	
 
 
