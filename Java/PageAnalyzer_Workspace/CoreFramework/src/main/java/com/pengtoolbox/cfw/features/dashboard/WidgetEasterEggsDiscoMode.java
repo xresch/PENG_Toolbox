@@ -11,21 +11,22 @@ import com.pengtoolbox.cfw.datahandling.CFWField;
 import com.pengtoolbox.cfw.datahandling.CFWField.FormFieldType;
 import com.pengtoolbox.cfw.datahandling.CFWObject;
 import com.pengtoolbox.cfw.response.JSONResponse;
+import com.pengtoolbox.cfw.validation.NumberRangeValidator;
 
 public class WidgetEasterEggsDiscoMode extends WidgetDefinition {
 
 	@Override
-	public String getWidgetType() {return "emp_discomode";}
+	public String getWidgetType() {return "cfw_discomode";}
 
 	@Override
 	public CFWObject getSettings() {
 		return new CFWObject()
 		
-				.addField(CFWField.newString(FormFieldType.SELECT, "discolevel")
+				.addField(CFWField.newString(FormFieldType.NUMBER, "discolevel")
 						.setLabel("Discolevel")
 						.setDescription("Sets the level of disco-ness!")
-						.setOptions(new String[]{"300", "1000"})
-						.setValue("300")
+						.setValue("500")
+						.addValidator(new NumberRangeValidator(100, 999))
 				)
 		;
 	}
