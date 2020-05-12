@@ -35,6 +35,7 @@ import com.pengtoolbox.cfw.response.bootstrap.HierarchicalHTMLItem;
 import com.pengtoolbox.cfw.utils.TextUtils;
 import com.pengtoolbox.cfw.validation.BooleanValidator;
 import com.pengtoolbox.cfw.validation.EpochOrTimeValidator;
+import com.pengtoolbox.cfw.validation.FloatValidator;
 import com.pengtoolbox.cfw.validation.IValidatable;
 import com.pengtoolbox.cfw.validation.IValidator;
 import com.pengtoolbox.cfw.validation.IntegerValidator;
@@ -142,6 +143,17 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				.addValidator(new IntegerValidator());
 	}
 	
+	//===========================================
+	// Float
+	//===========================================
+	public static CFWField<Integer> newFloat(FormFieldType type, Enum<?> fieldName){
+		return newInteger(type, fieldName.toString());
+	}
+	public static CFWField<Float> newFloat(FormFieldType type, String fieldName){
+		return new CFWField<Float>(Float.class, type, fieldName)
+				.setColumnDefinition("FLOAT")
+				.addValidator(new FloatValidator());
+	}
 	//===========================================
 	// Boolean
 	//===========================================
@@ -1110,6 +1122,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 			
 			if( ((String)value).trim().equals("")) { 
 				if(valueClass == Integer.class) 	    { return this.changeValue(null); }
+				else if(valueClass == Float.class) 		{ return this.changeValue(null); }
 				else if(valueClass == Boolean.class) 	{ return this.changeValue(false); }
 				else if(valueClass == Timestamp.class)  { return this.changeValue(null);  }
 				else if(valueClass == Date.class)  		{ return this.changeValue(null); }
@@ -1122,6 +1135,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 				}
 			}
 			else if(valueClass == Integer.class) 	{ return this.changeValue(Integer.parseInt((String)value)); }
+			else if(valueClass == Float.class) 		{ return this.changeValue(Float.parseFloat((String)value)); }
 			else if(valueClass == Boolean.class) 	{ return this.changeValue(Boolean.parseBoolean( ((String)value).trim()) ); }
 			else if(valueClass == Timestamp.class)  { return this.changeValue(new Timestamp(Long.parseLong( ((String)value).trim()) )); }
 			else if(valueClass == Date.class)  		{ return this.changeValue(new Date(Long.parseLong( ((String)value).trim()) )); }
@@ -1377,6 +1391,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					
 					if     ( String.class.isAssignableFrom(current.getValueClass()) )  { current.setValueValidated(result.getString(colName)); }
 					else if( Integer.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getObject(colName)); }
+					else if( Float.class.isAssignableFrom(current.getValueClass()))    { current.setValueValidated(result.getObject(colName)); }
 					else if( Boolean.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getBoolean(colName)); }
 					else if( Timestamp.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getTimestamp(colName)); }
 					else if( Date.class.isAssignableFrom(current.getValueClass()))  { current.setValueValidated(result.getDate(colName)); }

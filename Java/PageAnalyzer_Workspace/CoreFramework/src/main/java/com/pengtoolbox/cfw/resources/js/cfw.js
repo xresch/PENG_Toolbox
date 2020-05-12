@@ -1757,6 +1757,17 @@ function cfw_lang(key, defaultValue){
 	}
 
 }
+/************************************************************************************************
+ * Check if a string value is null or empty string
+ ************************************************************************************************/
+function cfw_isNullOrEmpty(value){
+
+	if(value === undefined || value === null ||  value === '' || (typeof value === 'string' && value.trim() == '') ){
+		return true;
+	}
+	
+	return false;
+}
 /********************************************************************
  * CFW FRAMEWORK STRUCTURE
  * -----------------------
@@ -1821,7 +1832,8 @@ var CFW = {
 	utils: {
 		executeCodeOrFunction: cfw_executeCodeOrFunction,
 		randomString: cfw_randomString,
-		chainedOnload: cfw_chainedOnload
+		chainedOnload: cfw_chainedOnload,
+		isNullOrEmpty: cfw_isNullOrEmpty
 	},
 	ui: {
 		createToggleButton: cfw_createToggleButton,
