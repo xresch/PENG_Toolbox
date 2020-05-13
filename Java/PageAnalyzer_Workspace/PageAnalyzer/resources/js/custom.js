@@ -963,7 +963,7 @@ function printResultList(parent, data){
 		
 		//Download HAR
 		if (CFW.hasPermission("Download HAR")){
-			rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Dowload HAR" title="Dowload HAR" href=./data?type=har&resultid='+currentData.PK_ID+' download="'+resultName+'.har"><i class="fa fa-download"> HAR</i></a></td>';
+			rowString += '<td><a class="btn btn-primary btn-sm" target="_blank" alt="Dowload HAR" title="Dowload HAR" href=./data?type=hardownload&resultid='+currentData.PK_ID+' download="'+resultName+'.har"><i class="fa fa-download"> HAR</i></a></td>';
 		}
 		
 		//Delete Result

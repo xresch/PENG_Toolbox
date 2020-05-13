@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
 import com.pengtoolbox.cfw.response.JSONResponse;
+import com.pengtoolbox.cfw.response.PlaintextResponse;
 import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 import com.pengtoolbox.pageanalyzer.db.PADBResults;
 import com.pengtoolbox.pageanalyzer.db.PAPermissions;
@@ -19,7 +20,7 @@ import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class DataServlet extends HttpServlet {
@@ -59,8 +60,8 @@ public class DataServlet extends HttpServlet {
 		//-------------------------------------------
 		// Fetch Data
 		//-------------------------------------------
-		JSONResponse plain = new JSONResponse();
-		StringBuffer content = plain.getContent();
+		JSONResponse json = new JSONResponse();
+		StringBuffer content = json.getContent();
 
 		if (type == null) {
 			CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Type was not specified");
@@ -84,6 +85,13 @@ public class DataServlet extends HttpServlet {
 										}
 										break;
 				
+				case "hardownload":		if(CFW.Context.Request.hasPermission(PAPermissions.DOWNLOAD_HAR)) {
+											PlaintextResponse plain = new PlaintextResponse();
+											plain.getContent().append(PADBResults.getHARFileByID(Integer.parseInt(resultID)));
+										}else {
+											CFW.Context.Request.addAlertMessage(MessageType.ERROR, "You don't have the required permission to download HAR files.");
+										}
+				break;
 				case "compareyslow": 	String resultIDs = request.getParameter("resultids");
 										content.append(PADBResults.getResultListForComparison(resultIDs));
 										break;

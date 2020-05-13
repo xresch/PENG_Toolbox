@@ -1,4 +1,17 @@
 ################################################################################
+# Page Analyzer v 2.2
+################################################################################
+- Fixed HAR Download file format
+- Improved LDAP connection with SSL option
+- Added property for configure http connector IP
+- Added general manual pages
+- Fixed random Database force close issue
+- Improved Security
+- Improved CPU Sampling
+- Modals are Draggable
+- Loading Sign for CFWForm Submit Buttons
+
+################################################################################
 # Page Analyzer v 2.1
 ################################################################################
 === MIGRATION INFORMATION ===
