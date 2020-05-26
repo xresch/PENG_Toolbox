@@ -243,3 +243,21 @@ Here is the code:
 And the result will look like this:
 </p>
 <img class="img-fluid" src="/cfw/jarresource?pkg=com.pengtoolbox.cfw.features.manual.resources&file=manual_dev_dashboard_wigdets_screenshot.jpg">
+
+
+<h2>Hierarchical Categories</h2>
+<p>
+You can also create a a hierarchy of categories. Use the pipe symbol like in the sample below to do so.
+</p>
+<pre>
+<code>CFW.dashboard.registerCategory("fas fa-desktop", "Root Category | Sub Category | Sub Sub Category");
+
+CFW.dashboard.registerWidget("example_widget",
+	{
+		category: "Root Category | Sub Category | Sub Sub Category",
+		menuicon: "fas fa-cogs",
+		menulabel: CFWL('cfw_widget_webexservices,
+		[...]
+	}
+);</code>
+</pre>

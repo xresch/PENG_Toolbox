@@ -58,7 +58,7 @@ function cfw_dashboard_registerWidget(widgetUniqueType, widgetObject){
 	
 	CFW_DASHBOARD_WIDGET_REGISTRY[widgetUniqueType] = merged;
 	
-	var category =  widgetObject.category;
+	var category =  widgetObject.category.replace(/[ ]*\|[ ]*/g, '|').trim();;
 	var menulabel =  widgetObject.menulabel;
 	var menuicon = widgetObject.menuicon;
 	
@@ -83,49 +83,72 @@ function cfw_dashboard_getWidgetDefinition(widgetUniqueType){
 }
 
 /************************************************************************************************
- * 
+ * Register a Category in a hierarchical manner. The category name is either a single name, or 
+ * a pipe ('|') separated string like "RootCategory | SubCategory | SubSubCategory".
+ * The label will be used for the last item.
  * @param faiconClasses
  * @param the name of the category, used to reference the category
  * @param the label of the category, used for localization
  ************************************************************************************************/
 function cfw_dashboard_registerCategory(faiconClasses, categoryName, categoryLabel){
 	
-	if(categoryLabel == null){
-		categoryLabel = categoryName;
-	}
-	
 	//----------------------------
-	// Check if exists
-	var categorySubmenu = $('ul[data-submenuof="'+categoryName+'"]');
+	// Check Category Exists
+	var categoryNameTrimmed = categoryName.replace(/[ ]*\|[ ]*/g, '|').trim();
+	
+	var categorySubmenu = $('ul[data-submenuof="'+categoryNameTrimmed+'"]');
 	if(categorySubmenu.length > 0){
 		return;
 	}
 	
 	//----------------------------
-	// Add Category
-	var categoryHTML = 
-		'<li class="dropdown dropdown-submenu show">'
-			+'<a href="#" class="dropdown-item dropdown-toggle" id="cfwMenuDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><div class="cfw-fa-box"><i class="'+faiconClasses+'"></i></div><span class="cfw-menuitem-label">'+categoryLabel+'</span><span class="caret"></span></a>'
-			+'<ul class="dropdown-menu dropdown-submenu" aria-labelledby="cfwMenuDropdown" data-submenuof="'+categoryName+'">'
-			+'</ul>'
-		+'</li>'
+	// Get Tokens
+	var tokens = categoryNameTrimmed.split('|');
+	console.log(tokens);
 		
-	$('#addWidgetDropdown').append(categoryHTML);
-}
+	//----------------------------
+	// Create Category with Parents
+	var parent = $('#addWidgetDropdown');
+	var currentCategoryName = tokens[0];
 
-function cfw_dashboard_createFormField(label, infotext, fieldHTML){
+	for(var i = 0; i < tokens.length; i++ ){
+		
+		//----------------------------
+		// Category Label
+		categoryLabel = tokens[i];
+		if(i == tokens.length-1 && categoryLabel != null){
+			categoryLabel = tokens[tokens.length-1];
+		}
+		//----------------------------
+		// Check exists
+		var currentSubmenu = $('ul[data-submenuof="'+currentCategoryName+'"]');
+		if(currentSubmenu.length == 0){
+
+			//----------------------------
+			// Create
+			var categoryHTML = 
+				'<li class="dropdown dropdown-submenu">'
+					+'<a href="#" class="dropdown-item dropdown-toggle" id="cfwMenuDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><div class="cfw-fa-box"><i class="'+faiconClasses+'"></i></div><span class="cfw-menuitem-label">'+categoryLabel+'</span><span class="caret"></span></a>'
+					+'<ul class="dropdown-menu dropdown-submenu" aria-labelledby="cfwMenuDropdown" data-submenuof="'+currentCategoryName+'">'
+					+'</ul>'
+				+'</li>';
+			parent.append(categoryHTML);
+			
+		}
+		//----------------------------
+		// Update parent and name
+		if(i < tokens.length-1){
+			parent = $('ul[data-submenuof="'+currentCategoryName+'"]');
+			currentCategoryName = currentCategoryName + '|' +tokens[i+1];
+			
+			
+			console.log('currentCategoryName:'+currentCategoryName)
+			console.log(parent)
+		}
+		
+	}
+		
 	
-	var html = 	
-	  '<div class="form-group row ml-1">'
-		+'<label class="col-sm-3 col-form-label" for="3">'+label+':</label>'
-		+'<div class="col-sm-9">'
-			+'<span class="badge badge-info cfw-decorator" data-toggle="tooltip" data-placement="top" data-delay="500" title=""'
-				+'data-original-title="'+infotext+'"><i class="fa fa-sm fa-info"></i></span>'
-				+ fieldHTML
-		+'</div>'
-	+'</div>';
-	
-	return html;
 }
 
 /************************************************************************************************
@@ -199,8 +222,7 @@ function cfw_dashboard_editWidget(widgetGUID){
 		}
 	).createHTML();
 	
-	//defaultForm += cfw_dashboard_createFormField("Footer", 'The footer of the widget.', '<textarea class="form-control" rows="10" name="footer" placeholder="Footer Contents">'+widgetObject.footer+'</textarea>');
-	
+
 	//------------------------------
 	// Color Selectors
 	var selectOptions = {

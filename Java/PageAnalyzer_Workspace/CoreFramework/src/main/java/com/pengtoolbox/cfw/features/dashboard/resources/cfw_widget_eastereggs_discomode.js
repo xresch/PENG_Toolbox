@@ -3,17 +3,8 @@
 	/******************************************************************
 	 * 
 	 ******************************************************************/
-	CFW.dashboard.registerCategory("fas fa-desktop", "Monitoring");
-	
-//	if (current.VALUE == 100) 		{ current.alertstyle = "cfw-excellent"; } 
-//	
-//	else if (current.VALUE >= 75) 	{ current.alertstyle = "cfw-good"; } 
-//	else if (current.VALUE >= 50) 	{ current.alertstyle = "cfw-warning"; } 
-//	else if (current.VALUE >= 25) 	{ current.alertstyle = "cfw-emergency"; } 
-//	else if (current.VALUE >= 0)  	{ current.alertstyle = "cfw-danger"; } 
-//	else if (current.VALUE == 'NaN' 
-//		  || current.VALUE < 0) { 		  current.alertstyle = "cfw-gray"; } 
-	
+	//CFW.dashboard.registerCategory("fas fa-desktop", "Monitoring");
+		
 	/******************************************************************
 	 * 
 	 ******************************************************************/
