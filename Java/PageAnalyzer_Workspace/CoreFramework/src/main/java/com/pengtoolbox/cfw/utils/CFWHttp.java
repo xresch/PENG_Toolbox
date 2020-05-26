@@ -1,9 +1,10 @@
-package com.pengtoolbox.cfw._main;
+package com.pengtoolbox.cfw.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -12,6 +13,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.Strings;
+import com.pengtoolbox.cfw._main.CFW;
 import com.pengtoolbox.cfw.logging.CFWLog;
+import com.pengtoolbox.cfw.response.bootstrap.AlertMessage.MessageType;
 
 /**************************************************************************************************************
  * 
@@ -83,10 +88,20 @@ public class CFWHttp {
 			if(CFW.Properties.PROXY_ENABLED == false) {
 				return (HttpURLConnection)new URL(url).openConnection();
 			}else {
-				InetSocketAddress address = new InetSocketAddress(CFW.Properties.PROXY_HOST, CFW.Properties.PROXY_PORT);
-				Proxy proxy = new Proxy(Proxy.Type.HTTP, address);
-				HttpURLConnection proxiedURL = (HttpURLConnection)new URL(url).openConnection(proxy);
-				return proxiedURL;
+				HttpURLConnection proxiedConnection = null;
+				for(CFWProxy cfwProxy : getProxies(url)) {
+
+					if(cfwProxy.type.trim().toUpperCase().equals("DIRECT")) {
+						proxiedConnection = (HttpURLConnection)new URL(url).openConnection();
+					}else {
+						InetSocketAddress address = new InetSocketAddress(cfwProxy.host, cfwProxy.port);
+						Proxy proxy = new Proxy(Proxy.Type.HTTP, address);
+
+						proxiedConnection = (HttpURLConnection)new URL(url).openConnection(proxy);
+					}
+					return proxiedConnection;
+				}
+				
 			}
 		} catch (MalformedURLException e) {
 			new CFWLog(logger)
@@ -110,9 +125,7 @@ public class CFWHttp {
 	 ******************************************************************************************************/
 	public static CFWHttpResponse sendGETRequest(String url) {
 		
-		try {
-			URL getURL = new URL(url);
-			
+		try {			
 			HttpURLConnection connection = createProxiedURLConnection(url);
 			if(connection != null) {
 				connection.setRequestMethod("GET");
@@ -131,67 +144,153 @@ public class CFWHttp {
 	    	
 	}
 	
-// Note: Doesn't work: Javascript methods are missing	
-//	/******************************************************************************************************
-//	 * Returns a String Array with URLs used as proxies. If the string is "DIRECT", it means the URL should
-//	 * be called without a proxy. This method will only return "DIRECT" when "cfw_proxy_enabled" is set to 
-//	 * false.
-//	 * 
-//	 * @param urlToCall used for the request.
-//	 * @return ArrayList<String> with proxy URLs
-//	 ******************************************************************************************************/
-//	public static ArrayList<String> getProxies(String urlToCall) {
-//		
-//		//------------------------------
-//		// Get Proxy PAC
-//		//------------------------------
-//		if(CFW.Properties.PROXY_ENABLED && proxyPAC == null) {
-//			
-//			CFWHttpResponse response = CFW.HTTP.sendGETRequest(CFW.Properties.PROXY_PAC_URL);
-//			if(response.getStatus() <= 299) {
-//				proxyPAC = response.getResponseBody();
-//				
-//				if(proxyPAC == null || !proxyPAC.contains("FindProxyForURL")) {
-//					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The Proxy .pac-File seems not be in the expected format.");
-//					proxyPAC = null;
-//				}
-//			}else {
-//				CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Error occured while retrieving .pac-File from URL. (HTTP Code: "+response.getStatus()+")");
-//			}
-//		}
-//		
-//		//------------------------------
-//		// Get Proxy PAC
-//		//------------------------------
-//		ArrayList<String> proxies = new ArrayList<String>();
-//		// Default to direct
-//		proxies.add("DIRECT");
-//		
-//		if(CFW.Properties.PROXY_ENABLED && proxyPAC != null) {
-//			 URL tempURL;
-//			try {
-//				tempURL = new URL(urlToCall);
-//				String hostname = tempURL.getHost();
-//				Object result = CFW.Scripting.executeJavascript(proxyPAC, "FindProxyForURL", urlToCall, hostname);
-//				if(result != null) {
-//					String[] proxyArray = result.toString()
-//						.replaceAll("HTTPS[ ]+", "https://")
-//						.replaceAll("HTTP[ ]+", "http://")
-//						.replaceAll("PROXY[ ]+", "")
-//						.split(";");
-//					
-//					proxies.addAll(Arrays.asList(proxyArray));
-//				}
-//				
-//			} catch (MalformedURLException e) {
-//				new CFWLog(logger)
-//					.method("getProxies")
-//					.severe("Resolving URL failed as it is malformed.", e);
-//			}
-//		}
-//		
-//		return proxies;
-//	}
+	/******************************************************************************************************
+	 * Send a HTTP POST request sending JSON with a Content-Type header "application/json; charset=UTF-8".
+	 * Returns the result or null in case of error.
+	 * 
+	 * @param url used for the request.
+	 * @param body the content of the POST body
+	 * @return String response
+	 ******************************************************************************************************/
+	public static CFWHttpResponse sendPOSTRequestJSON(String url, String body) {
+		return sendPOSTRequest(url, "application/json; charset=UTF-8", body);
+	}
+	
+	/******************************************************************************************************
+	 * Send a HTTP POST request and returns the result or null in case of error.
+	 * @param url used for the request.
+	 * @param contentType the value for the Content-Type header, e.g. " "application/json; charset=UTF-8", or null
+	 * @param body the content of the POST body
+	 * @return String response
+	 ******************************************************************************************************/
+	public static CFWHttpResponse sendPOSTRequest(String url, String contentType, String body) {
+		
+		try {
+			HttpURLConnection connection = createProxiedURLConnection(url);
+			if(connection != null) {
+				connection.setRequestMethod("POST");
+				if(!Strings.isNullOrEmpty(contentType)) {
+					connection.setRequestProperty("Content-Type", contentType);
+				}
+				connection.setDoOutput(true);
+				connection.connect();
+				try(OutputStream outStream = connection.getOutputStream()) {
+				    byte[] input = body.getBytes("utf-8");
+				    outStream.write(input, 0, input.length);           
+				}
+				return instance.new CFWHttpResponse(connection);
+			}
+	    
+		} catch (Exception e) {
+			new CFWLog(logger)
+				.method("sendPOSTRequest")
+				.severe("Exception occured.", e);
+		} 
+		
+		return null;
+	    	
+	}
+	
+	/******************************************************************************************************
+	 * 
+	 ******************************************************************************************************/
+	private static void loadPacFile() {
+		
+		if(CFW.Properties.PROXY_ENABLED && proxyPAC == null) {
+		
+			if(CFW.Properties.PROXY_PAC.toLowerCase().startsWith("http")) {
+				//------------------------------
+				// Get PAC from URL
+				CFWHttpResponse response = CFW.HTTP.sendGETRequest(CFW.Properties.PROXY_PAC);
+				if(response.getStatus() <= 299) {
+					proxyPAC = response.getResponseBody();
+					
+					if(proxyPAC == null || !proxyPAC.contains("FindProxyForURL")) {
+						CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The Proxy .pac-File seems not be in the expected format.");
+						proxyPAC = null;
+					}
+				}else {
+					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "Error occured while retrieving .pac-File from URL. (HTTP Code: "+response.getStatus()+")");
+				}
+			}else {
+				//------------------------------
+				// Load from Disk
+				proxyPAC = CFW.Files.getFileContent(CFW.Context.Request.getRequest(), CFW.Properties.PROXY_PAC);
+				
+				if(proxyPAC == null || !proxyPAC.contains("FindProxyForURL")) {
+					CFW.Context.Request.addAlertMessage(MessageType.ERROR, "The Proxy .pac-File seems not be in the expected format.");
+					proxyPAC = null;
+				}
+			}
+		}
+	}
+
+	/******************************************************************************************************
+	 * Returns a String Array with URLs used as proxies. If the string is "DIRECT", it means the URL should
+	 * be called without a proxy. This method will only return "DIRECT" when "cfw_proxy_enabled" is set to 
+	 * false.
+	 * 
+	 * @param urlToCall used for the request.
+	 * @return ArrayList<String> with proxy URLs
+	 ******************************************************************************************************/
+	public static ArrayList<CFWProxy> getProxies(String urlToCall) {
+		
+		//------------------------------
+		// Get Proxy PAC
+		//------------------------------
+		loadPacFile();
+		
+		//------------------------------
+		// Get Proxy PAC
+		//------------------------------
+		ArrayList<CFWProxy> proxies = new ArrayList<CFWProxy>();
+		
+		if(CFW.Properties.PROXY_ENABLED && proxyPAC != null) {
+			 URL tempURL;
+			try {
+				tempURL = new URL(urlToCall);
+				String hostname = tempURL.getHost();
+				Object result = CFW.Scripting.executeJavascript(proxyPAC, CFWHttpPacScriptMethods.class, "FindProxyForURL", urlToCall, hostname);
+				if(result != null) {
+					String[] proxyArray = result.toString()
+						.split(";");
+					
+					for(String proxyDef : proxyArray) {
+						String[] splitted = proxyDef.split(" ");
+						CFWProxy cfwProxy = instance.new CFWProxy();
+						cfwProxy.type = splitted[0];
+						if(splitted.length > 1) {
+							String hostport = splitted[1];
+							cfwProxy.host = hostport.substring(0, hostport.indexOf(":"));
+							String port = hostport.substring(hostport.indexOf(":")+1);
+							try {
+								cfwProxy.port = Integer.parseInt(port);
+							}catch(Throwable e) {
+								new CFWLog(logger)
+									.method("getProxies")
+									.silent(true)
+									.severe("Error parsing port to integer.", e);
+							}
+							proxies.add(cfwProxy);
+						}
+					}
+					
+					
+				}
+				
+			} catch (MalformedURLException e) {
+				new CFWLog(logger)
+					.method("getProxies")
+					.severe("Resolving URL failed as it is malformed.", e);
+			}
+		}
+		if (proxies.size() == 0){
+			CFWProxy direct = instance.new CFWProxy();
+			direct.type = "DIRECT";
+			proxies.add(direct);
+		}
+		return proxies;
+	}
 		
 	/******************************************************************************************************
 	 * Creates a map of all cookies in a request.
@@ -343,6 +442,12 @@ public class CFWHttp {
 			return headers;
 		}
 		
+	}
+	
+	protected class CFWProxy {
+		public String type;
+		public String host;
+		public int port = 80;
 		
 	}
 }

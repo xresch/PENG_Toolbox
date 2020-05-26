@@ -104,7 +104,6 @@ function cfw_dashboard_registerCategory(faiconClasses, categoryName, categoryLab
 	//----------------------------
 	// Get Tokens
 	var tokens = categoryNameTrimmed.split('|');
-	console.log(tokens);
 		
 	//----------------------------
 	// Create Category with Parents
@@ -140,10 +139,6 @@ function cfw_dashboard_registerCategory(faiconClasses, categoryName, categoryLab
 		if(i < tokens.length-1){
 			parent = $('ul[data-submenuof="'+currentCategoryName+'"]');
 			currentCategoryName = currentCategoryName + '|' +tokens[i+1];
-			
-			
-			console.log('currentCategoryName:'+currentCategoryName)
-			console.log(parent)
 		}
 		
 	}
