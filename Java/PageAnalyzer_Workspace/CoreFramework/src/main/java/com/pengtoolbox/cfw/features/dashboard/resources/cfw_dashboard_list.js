@@ -165,7 +165,7 @@ function cfw_dashboardlist_printDashboards(data, type){
 		
 		var resultCount = data.payload.length;
 		if(resultCount == 0){
-			CFW.ui.addAlert("info", "Hmm... seems there aren't any dashboards in the list.");
+			CFW.ui.addToastInfo("Hmm... seems there aren't any dashboards in the list.");
 			return;
 		}
 		

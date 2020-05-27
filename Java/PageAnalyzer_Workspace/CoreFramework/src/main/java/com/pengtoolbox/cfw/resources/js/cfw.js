@@ -1202,6 +1202,11 @@ function cfw_confirmExecution(message, confirmLabel, jsCodeOrFunction){
 
 	modal.modal();
 	
+	//set focus on confirm button
+	modal.on('shown.bs.modal', function(event) {
+		$('#cfw-confirmButton').get(0).focus();
+	});
+	
 	body.prepend(modal);	
 	
 	var closeButton = $('<button type="button" class="close"><span aria-hidden="true">&times</span></button>');
@@ -1212,7 +1217,7 @@ function cfw_confirmExecution(message, confirmLabel, jsCodeOrFunction){
 	cancelButton.attr('onclick', 'cfw_confirmExecution_Execute(this, \'cancel\')');
 	cancelButton.data('modalID', modalID);
 	
-	var confirmButton = $('<button type="button" class="btn btn-primary">'+confirmLabel+'</button>');
+	var confirmButton = $('<button id="cfw-confirmButton" type="button" class="btn btn-primary">'+confirmLabel+'</button>');
 	confirmButton.attr('onclick', 'cfw_confirmExecution_Execute(this, \'confirm\')');
 	confirmButton.data('modalID', modalID);
 	confirmButton.data('jsCode', jsCodeOrFunction);
@@ -1221,6 +1226,7 @@ function cfw_confirmExecution(message, confirmLabel, jsCodeOrFunction){
 	modal.find('.modal-footer').append(cancelButton).append(confirmButton);
 	
 	modal.modal('show');
+
 }
 
 
