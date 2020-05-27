@@ -2,6 +2,7 @@
 var CFW_DASHBOARDVIEW_PARAMS = CFW.http.getURLParamsDecoded();
 
 var CFW_DASHBOARD_EDIT_MODE = false;
+var CFW_DASHBOARD_EDIT_MODE_ADVANCED = false;
 var CFW_DASHBOARD_FULLSCREEN_MODE = false;
 var CFW_DASHBOARD_REFRESH_INTERVAL_ID = null;
 var CFW_DASHBOARD_WIDGET_REGISTRY = {};
@@ -422,22 +423,30 @@ function cfw_dashboard_createWidgetElement(widgetObject){
 		BGCOLORClass = 'bg-'+merged.BGCOLOR;
 	}
 	
-	var settingsDisplayClass = '';
-	if(!CFW_DASHBOARD_EDIT_MODE){
-		settingsDisplayClass = 'd-none';
+	var settingsDisplayClass = 'd-none';
+	if(CFW_DASHBOARD_EDIT_MODE){
+		settingsDisplayClass = '';
+	}
+	
+	var advancedDisplayClass = 'd-none';
+	if(CFW_DASHBOARD_EDIT_MODE_ADVANCED){
+		advancedDisplayClass = '';
 	}
 	
 	var htmlString =
-		'    <div class="grid-stack-item-content card d-flex '+BGCOLORClass+' '+FGCOLORClass+'">'
-		+'		<a role="button" class="cfw-dashboard-widget-settings '+settingsDisplayClass+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
-		+'			<i class="fas fa-cog"></i>'
-		+'		</a>'
+		'<div class="grid-stack-item-content card d-flex '+BGCOLORClass+' '+FGCOLORClass+'">'
+		+'	<div role="button" class="cfw-dashboard-widget-actionicons '+settingsDisplayClass+'">'
+		+'		<div role="button" class="actionicon-delete '+advancedDisplayClass+'" onclick="cfw_dashboard_removeWidget(\''+merged.guid+'\')"><i class="fas fa-times"></i></div>'
+		+'		<div role="button" class="actionicon-duplicate '+advancedDisplayClass+'" onclick="cfw_dashboard_duplicateWidget(\''+merged.guid+'\')"><i class="fas fa-clone"></i></div>'
+		+'		<div role="button" class="actionicon-edit '+advancedDisplayClass+'" onclick="cfw_dashboard_editWidget(\''+merged.guid+'\')"><i class="fas fa-pen"></i></div>'
+		+'		<div role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cog"></i></div>'
 		+'		<div class="dropdown-menu">'
 		+'			<a class="dropdown-item" onclick="cfw_dashboard_editWidget(\''+merged.guid+'\')"><i class="fas fa-pen"></i>&nbsp;'+CFWL('cfw_core_edit', 'Edit')+'</a>'
 		+'			<a class="dropdown-item" onclick="cfw_dashboard_duplicateWidget(\''+merged.guid+'\')"><i class="fas fa-clone"></i>&nbsp;'+CFWL('cfw_core_duplicate', 'Duplicate')+'</a>'
-		//+'		<div class="dropdown-divider"></div>'
+		//'			<div class="dropdown-divider"></div>'
 		+'			<a class="dropdown-item" onclick="cfw_dashboard_removeWidgetConfirmed(\''+merged.guid+'\')"><i class="fas fa-trash"></i>&nbsp;'+CFWL('cfw_core_remove', 'Remove')+'</a>'
 		+'		</div>'
+		+'	</div>'
 
 	if(merged.TITLE != null && merged.TITLE != ''){
 		htmlString += 
@@ -634,6 +643,7 @@ CFW.dashboard = {
 		fetchWidgetData: 		cfw_dashboard_fetchWidgetData,
 };
 
+
 /******************************************************************
  * 
  ******************************************************************/
@@ -678,7 +688,7 @@ function cfw_dashboard_toggleEditMode(){
 	var grid = $('.grid-stack').data('gridstack');
 	if(CFW_DASHBOARD_EDIT_MODE){
 		CFW_DASHBOARD_EDIT_MODE = false;
-		$('.cfw-dashboard-widget-settings').addClass('d-none');
+		$('.cfw-dashboard-widget-actionicons').addClass('d-none');
 		$('#addWidget').addClass('d-none');
 		$('#doneButton').addClass('d-none');
 		$('#editButton').removeClass('d-none');
@@ -686,7 +696,7 @@ function cfw_dashboard_toggleEditMode(){
 		
 	}else{
 		CFW_DASHBOARD_EDIT_MODE = true;
-		$('.cfw-dashboard-widget-settings').removeClass('d-none');
+		$('.cfw-dashboard-widget-actionicons').removeClass('d-none');
 		$('#addWidget').removeClass('d-none');
 		$('#doneButton').removeClass('d-none');
 		$('#editButton').addClass('d-none');
@@ -757,10 +767,31 @@ function cfw_dashboard_initialize(gridStackElementSelector){
 		$('body').keyup(function (e){
 			//--------------------------------
 			// Toggle Edit Mode >> Ctrl+Alt+E
-			console.log(e);
 			if (e.ctrlKey && event.altKey && e.keyCode == 69) {
 				cfw_dashboard_toggleEditMode();
+				return;
 			}
+			
+			//--------------------------------
+			// Toggle Delete/Duplicate Mode >> Ctrl+Alt+A
+			if ( e.ctrlKey && event.altKey && e.keyCode == 65) {
+				
+				if(!CFW_DASHBOARD_EDIT_MODE){
+					cfw_dashboard_toggleEditMode();
+				}
+				
+				var deleteActionButtons = $('.actionicon-delete, .actionicon-duplicate, .actionicon-edit');
+				if(deleteActionButtons.first().hasClass('d-none')){
+					CFW_DASHBOARD_EDIT_MODE_ADVANCED = true;
+					deleteActionButtons.removeClass('d-none');
+				}else{
+					CFW_DASHBOARD_EDIT_MODE_ADVANCED = false;
+					deleteActionButtons.addClass('d-none');
+				}
+				
+				return;
+			}
+			
 			
 		})
 	}

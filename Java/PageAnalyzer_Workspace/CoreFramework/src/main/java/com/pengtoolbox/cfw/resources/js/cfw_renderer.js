@@ -373,7 +373,6 @@ CFW.render.registerRenderer("table",
 						cellHTML = "";
 						var customizer = renderDef.customizers[fieldname];
 						var customizedValue = customizer(currentRecord, value);
-						console.log(customizedValue);
 						var cell = $('<td>');
 						cell.append(customizedValue);
 						row.append(cell);

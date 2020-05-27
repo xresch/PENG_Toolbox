@@ -225,11 +225,15 @@
     background: inherit;
 }
 
-.cfw-dashboard-widget-settings{
+.cfw-dashboard-widget-actionicons{
 	cursor: pointer;
 	position: absolute;
 	top: -12.5px;
     right: -8px;
+    display: flex;
+}
+.cfw-dashboard-widget-actionicons div{
+	padding-left: 6px;
 }
 
 .fullscreenButton{
