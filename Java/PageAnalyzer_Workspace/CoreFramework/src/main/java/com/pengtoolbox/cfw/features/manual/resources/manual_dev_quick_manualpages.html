@@ -17,16 +17,16 @@ CFW.Registry.Manual.addManualPage("Administration", new ManualPage("Development"
 	.addPermission(PERMISSION_ADMIN_MANUAL));
 
 CFW.Registry.Manual.addManualPage("Administration | Development", 
-		new ManualPage("Manual Pages")
+		new ManualPage("Create Manual Pages")
 			.faicon("fa fa-book")
 			.addPermission(PERMISSION_ADMIN_MANUAL)
-			.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_registry_manualpages.html")
+			.content(HandlingType.JAR_RESOURCE, RESOURCE_PACKAGE, "manual_dev_quick_manualpages.html")
 		);
 	</code>
 </pre>
 
 <p>
-Here another example were you directly add a children to a parent page that was already added to the registry. </br>
+Here another example were you directly add children to a parent page that was already added to the registry. </br>
 </p>
 <pre>
 	<code>ManualPage dev = CFW.Registry.Manual.addManualPage(null, new ManualPage("Development").faicon("fa fa-code").addPermission(PERMISSION_ADMIN_MANUAL));

@@ -642,7 +642,7 @@ class CFWPanel{
  * @param data object containing the list of results.
  * 
  ******************************************************************/
-class CFWToogleButton{
+class CFWToggleButton{
 	
 	constructor(url, params, isEnabled){
 		this.url = url;
@@ -737,10 +737,10 @@ class CFWToogleButton{
 }
 
 function cfw_createToggleButton(url, params, isEnabled){
-	return new CFWToogleButton(url, params, isEnabled);
+	return new CFWToggleButton(url, params, isEnabled);
 }
 
 function cfw_toggleTheToggleButton(button){
-	var cfwToogleButton = $(button).data('instance');
-	cfwToogleButton.onClick();
+	var CFWToggleButton = $(button).data('instance');
+	CFWToggleButton.onClick();
 }
