@@ -489,7 +489,7 @@ class CFWDate{
 		 
 		 var wrapper = $('<div class="flex-grow-1">');
 		 if(this.settings.filterable){
-			 var filter = $('<input type="text" class="form-control form-control-sm" onkeyup="cfw_filterTable(this)" placeholder="Filter Table...">');
+			 var filter = $('<input id="'+this.id+'-filter" type="text" class="form-control form-control-sm tablefilter-marker" onkeyup="cfw_filterTable(this)" placeholder="Filter Table...">');
 			 wrapper.append(filter);
 			 //jqueryObject.append('<span style="font-size: xx-small;"><strong>Hint:</strong> The filter searches through the innerHTML of the table rows. Use &quot;&gt;&quot; and &quot;&lt;&quot; to search for the beginning and end of a cell content(e.g. &quot;&gt;Test&lt;&quot; )</span>');
 			 filter.data("table", this.table);

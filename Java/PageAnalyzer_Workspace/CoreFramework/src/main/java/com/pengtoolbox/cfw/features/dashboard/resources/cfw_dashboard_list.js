@@ -11,7 +11,7 @@ var CFW_DASHBOARDLIST_LAST_OPTIONS = null;
 /******************************************************************
  * Reset the view.
  ******************************************************************/
-function cfw_dashboardlist_reset(){
+function cfw_dashboardlist_createTabs(){
 	var pillsTab = $("#pills-tab");
 	
 	if(pillsTab.length == 0){
@@ -21,23 +21,23 @@ function cfw_dashboardlist_reset(){
 		if(CFW.hasPermission('Dashboard Creator') 
 		|| CFW.hasPermission('Dashboard Admin')){
 			list.append(
-				'<li class="nav-item"><a class="nav-link active" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'mydashboards\'})"><i class="fas fa-user-circle mr-2"></i>My Dashboards</a></li>'
-				+'<li class="nav-item"><a class="nav-link" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'shareddashboards\'})"><i class="fas fa-share-alt mr-2"></i>Shared Dashboards</a></li>'
+				'<li class="nav-item"><a class="nav-link" id="tab-mydashboards" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'mydashboards\'})"><i class="fas fa-user-circle mr-2"></i>My Dashboards</a></li>'
+				+'<li class="nav-item"><a class="nav-link" id="tab-shareddashboards" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'shareddashboards\'})"><i class="fas fa-share-alt mr-2"></i>Shared Dashboards</a></li>'
 			);
 		}else if(CFW.hasPermission('Dashboard Viewer')){
-			list.append('<li class="nav-item"><a class="nav-link active" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'shareddashboards\'})"><i class="fas fa-share-alt mr-2"></i>Shared Dashboards</a></li>');
+			list.append('<li class="nav-item"><a class="nav-link" id="tab-shareddashboards" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'shareddashboards\'})"><i class="fas fa-share-alt mr-2"></i>Shared Dashboards</a></li>');
 		}
 		
 		if(CFW.hasPermission('Dashboard Admin')){
 					list.append(
-						'<li class="nav-item"><a class="nav-link" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'admindashboards\'})"><i class="fas fa-tools mr-2"></i>Manage Dashboards</a></li>');
+						'<li class="nav-item"><a class="nav-link" id="tab-admindashboards" data-toggle="pill" href="#" role="tab" onclick="cfw_dashboardlist_draw({tab: \'admindashboards\'})"><i class="fas fa-tools mr-2"></i>Manage Dashboards</a></li>');
 		}
 		
 		var parent = $("#cfw-container");
 		parent.append(list);
 		parent.append('<div id="tab-content"></div>');
 	}
-	$("#tab-content").html("");
+
 }
 
 /******************************************************************
@@ -147,7 +147,7 @@ function cfw_dashboardlist_printAdminDashboards(data){
 function cfw_dashboardlist_printDashboards(data, type){
 	
 	var parent = $("#tab-content");
-	
+
 	//--------------------------------
 	// Button
 	if(type == 'mydashboards'){
@@ -306,20 +306,27 @@ function cfw_dashboardlist_printDashboards(data, type){
  ******************************************************************/
 
 function cfw_dashboardlist_initialDraw(){
+	
+	cfw_dashboardlist_createTabs();
+	
+	var tabToDisplay = CFW.cache.retrieveValue("dashboardlist-lasttab", "mydashboards");
+	
 	if(CFW.hasPermission('Dashboard Viewer') 
 	&& !CFW.hasPermission('Dashboard Creator') 
 	&& !CFW.hasPermission('Dashboard Admin')){
-		cfw_dashboardlist_draw({tab: "shareddashboards"});
-		return;
+		tabToDisplay = "shareddashboards";
 	}
 	
-	cfw_dashboardlist_draw({tab: "mydashboards"});
+	$('#tab-'+tabToDisplay).addClass('active');
+	
+	cfw_dashboardlist_draw({tab: tabToDisplay});
 }
 
 function cfw_dashboardlist_draw(options){
 	CFW_DASHBOARDLIST_LAST_OPTIONS = options;
 	
-	cfw_dashboardlist_reset();
+	CFW.cache.storeValue("dashboardlist-lasttab", options.tab);
+	$("#tab-content").html("");
 	
 	CFW.ui.toogleLoader(true);
 	

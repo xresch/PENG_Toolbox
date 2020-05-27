@@ -62,7 +62,7 @@ function cfw_filterItems(context, searchField, itemSelector){
 
 	var filterContext = $(context);
 	var input = $(searchField);
-
+	
 	filter = input.val().toUpperCase();
 	
 	filterContext.find(itemSelector).each(function( index ) {
@@ -89,7 +89,7 @@ function cfw_filterTable(searchField){
 	
 	var table = $(searchField).data("table");
 	var input = searchField;
-	
+
 	filter = input.value.toUpperCase();
 
 	table.find("tbody tr, >tr").each(function( index ) {
@@ -1632,6 +1632,29 @@ function cfw_fetchAndCacheData(url, params, key, callback){
 	}
 }
 
+/**************************************************************************************
+* Function to store a value in the local storage.
+* @param key name of the cookie
+* @param value value of the cookie
+* @param exdays number of days after which the cookie gets deleted
+ *************************************************************************************/
+function cfw_storeValue(key, value) {
+	window.localStorage.setItem("cfw-"+key, value);
+};
+
+/**************************************************************************************
+* Function to get a cookie
+* @param key name of the cookie to get
+* @return either the value of the cookie or an empty string
+ *************************************************************************************/
+function cfw_retrieveValue(key, defaultValue) {
+	
+	var item = window.localStorage.getItem("cfw-"+key);
+    if(item != null){
+    	return item;
+    }
+	return defaultValue;
+};
 /******************************************************************
  * Method to remove the cached data under the specified key.
  *
@@ -1797,7 +1820,9 @@ var CFW = {
 		data: {},
 		lang: null,
 		removeFromCache: cfw_removeFromCache,
-		clearCache: cfw_clearCache
+		clearCache: cfw_clearCache,
+		storeValue: cfw_storeValue,
+		retrieveValue: cfw_retrieveValue
 	},
 	render: {
 		registry: {},
