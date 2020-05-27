@@ -13,6 +13,9 @@ var CFW_DASHBOARD_WIDGET_GUID = 0;
 
 var CFW_DASHBOARDVIEW_URL = "/app/dashboard/view";
 
+var CFW_DASHBOARD_UNDO_HISTORY = [];
+var CFW_DASHBOARD_UNDO_POSITION = 0;
+
 /************************************************************************************************
  * 
  ************************************************************************************************/
@@ -315,6 +318,10 @@ function cfw_dashboard_duplicateWidget(widgetGUID) {
 				deepCopyWidgetObject.PK_ID = newWidgetObject.PK_ID;
 				delete deepCopyWidgetObject.guid;
 				cfw_dashboard_createWidgetInstance(deepCopyWidgetObject, true);
+				
+				//----------------------------------
+				// Add Undo State
+				cfw_dashboard_addUndoState();
 			}
 		}
 	);
@@ -336,7 +343,7 @@ function cfw_dashboard_saveDefaultSettings(widgetGUID){
 	widgetObject.FGCOLOR = settingsForm.find('select[name="FGCOLOR"]').val();
 	
 	cfw_dashboard_rerenderWidget(widgetGUID);
-	
+		
 }
 
 /************************************************************************************************
@@ -354,7 +361,6 @@ function cfw_dashboard_saveCustomSettings(formButton, widgetGUID){
 	if(success){
 		cfw_dashboard_rerenderWidget(widgetGUID);
 	}
-	
 }
 /************************************************************************************************
  * 
@@ -373,6 +379,10 @@ function cfw_dashboard_removeWidget(widgetGUID) {
 
 			if(data.success){
 				cfw_dashboard_removeWidgetFromGrid(widget);
+				
+				//----------------------------------
+				// Add Undo State
+				cfw_dashboard_addUndoState();
 			}
 		}
 	);
@@ -501,6 +511,10 @@ function cfw_dashboard_addWidget(type) {
 				//var merged = Object.assign({}, widgetDefinition.defaultValues, widgetObject);
 				
 				cfw_dashboard_createWidgetInstance(widgetObject, true);
+				
+				//----------------------------------
+				// Add Undo State
+				cfw_dashboard_addUndoState();
 			}
 		}
 	);
@@ -558,7 +572,10 @@ function cfw_dashboard_fetchWidgetData(widgetObject, callback) {
  * 
  ************************************************************************************************/
 function cfw_dashboard_saveWidgetState(widgetObject, forceSave) {
+	
 	if(forceSave || ( JSDATA.canEdit == true && CFW_DASHBOARD_EDIT_MODE) ){
+		//----------------------------------
+		// Update Object
 		var params = Object.assign({action: 'update', item: 'widget'}, widgetObject); 
 		
 		delete params.content;
@@ -566,7 +583,9 @@ function cfw_dashboard_saveWidgetState(widgetObject, forceSave) {
 		delete params.JSON_SETTINGS;
 		
 		params.JSON_SETTINGS = JSON.stringify(widgetObject.JSON_SETTINGS);
-		
+				
+		//----------------------------------
+		// Update in Database
 		CFW.http.postJSON(CFW_DASHBOARDVIEW_URL, params, function(data){});
 	}
 }
@@ -643,6 +662,90 @@ CFW.dashboard = {
 		fetchWidgetData: 		cfw_dashboard_fetchWidgetData,
 };
 
+/******************************************************************
+ * 
+ ******************************************************************/
+function cfw_dashboard_addUndoState(){
+	
+	//------------------------------------------
+	// Check Position and clear Redo states
+	if(CFW_DASHBOARD_UNDO_HISTORY.length > 0 
+	&& CFW_DASHBOARD_UNDO_HISTORY.length > CFW_DASHBOARD_UNDO_POSITION){
+		console.log("splice history")
+		CFW_DASHBOARD_UNDO_HISTORY = CFW_DASHBOARD_UNDO_HISTORY.splice(0, CFW_DASHBOARD_UNDO_POSITION);
+	}
+	
+	//------------------------------------------
+	// Add State to History
+	var widgetObjectArray = [];
+	
+	$('.grid-stack-item').each(function (){
+		widgetObjectArray.push($(this).data('widgetObject'))
+	});
+	
+	var deepClone = _.cloneDeep(widgetObjectArray);
+	CFW_DASHBOARD_UNDO_HISTORY.push(deepClone);
+	CFW_DASHBOARD_UNDO_POSITION++;
+	console.log("Undo History");
+	console.log(CFW_DASHBOARD_UNDO_HISTORY);
+}
+
+/******************************************************************
+ * 
+ ******************************************************************/
+function cfw_dashboard_triggerUndo(){
+	
+	if(CFW_DASHBOARD_EDIT_MODE){
+		var historyState = [];
+		
+		//----------------------------------
+		// Check Position
+		if(CFW_DASHBOARD_UNDO_POSITION > 1){
+			CFW_DASHBOARD_UNDO_POSITION--;
+			var historyState = CFW_DASHBOARD_UNDO_HISTORY[CFW_DASHBOARD_UNDO_POSITION-1];
+			
+			cfw_dashboard_toggleEditMode();
+				//----------------------------------
+				// Clear All Widgets
+				var grid = $('.grid-stack').data('gridstack');
+				grid.removeAll();
+				
+				//----------------------------------
+				// Clear All Widgets
+				for(var i = 0;i < historyState.length ;i++){
+					cfw_dashboard_createWidgetInstance(historyState[i], false);
+				}
+			cfw_dashboard_toggleEditMode();
+		}
+	}
+}
+
+/******************************************************************
+ * 
+ ******************************************************************/
+function cfw_dashboard_triggerRedo(){
+	if(CFW_DASHBOARD_EDIT_MODE){
+		var historyState = [];
+		
+		//----------------------------------
+		// Check Position
+		if(CFW_DASHBOARD_UNDO_HISTORY.length != CFW_DASHBOARD_UNDO_POSITION){
+			CFW_DASHBOARD_UNDO_POSITION++;
+			var historyState = CFW_DASHBOARD_UNDO_HISTORY[CFW_DASHBOARD_UNDO_POSITION-1];
+			
+			//----------------------------------
+			// Clear All Widgets
+			var grid = $('.grid-stack').data('gridstack');
+			grid.removeAll();
+			
+			//----------------------------------
+			// Clear All Widgets
+			for(var i = 0;i < historyState.length ;i++){
+				cfw_dashboard_createWidgetInstance(historyState[i], false);
+			}
+		}
+	}
+}
 
 /******************************************************************
  * 
@@ -685,6 +788,14 @@ function cfw_dashboard_toggleFullscreenMode(){
  * 
  ******************************************************************/
 function cfw_dashboard_toggleEditMode(){
+	//-----------------------------------------
+	// Add initial State to History
+	if(CFW_DASHBOARD_UNDO_HISTORY.length == 0){
+		cfw_dashboard_addUndoState();
+	}
+	
+	//-----------------------------------------
+	// Toggle Edit Mode
 	var grid = $('.grid-stack').data('gridstack');
 	if(CFW_DASHBOARD_EDIT_MODE){
 		CFW_DASHBOARD_EDIT_MODE = false;
@@ -740,8 +851,7 @@ function cfw_dashboard_setReloadInterval(selector) {
     	if(!CFW_DASHBOARD_EDIT_MODE){
     		// Use gridstack.removeAll() to prevent widgets from jumping around on reload
     		//$('.grid-stack').html('');
-    		var grid = $('.grid-stack').data('gridstack');
-    		grid.removeAll();
+    		
 	    	cfw_dashboard_draw();
 	    };
     }, refreshInterval);
@@ -765,15 +875,30 @@ function cfw_dashboard_initialize(gridStackElementSelector){
 		$('#editButton').removeClass('d-none');
 		
 		$('body').keyup(function (e){
+			
 			//--------------------------------
-			// Toggle Edit Mode >> Ctrl+Alt+E
+			// Ctrl+Y - Trigger Redo
+			if (e.ctrlKey && e.keyCode == 89) {
+				cfw_dashboard_triggerRedo()
+				return;
+			}
+			
+			//--------------------------------
+			// Ctrl+Z - Trigger Undo
+			if (e.ctrlKey && e.keyCode == 90) {
+				cfw_dashboard_triggerUndo();
+				return;
+			}
+			
+			//--------------------------------
+			// Ctrl+Alt+E - Trigger Edit Mode
 			if (e.ctrlKey && event.altKey && e.keyCode == 69) {
 				cfw_dashboard_toggleEditMode();
 				return;
 			}
 			
 			//--------------------------------
-			// Toggle Delete/Duplicate Mode >> Ctrl+Alt+A
+			// Ctrl+Alt+A -  Toggle Delete/Duplicate Mode
 			if ( e.ctrlKey && event.altKey && e.keyCode == 65) {
 				
 				if(!CFW_DASHBOARD_EDIT_MODE){
@@ -814,7 +939,9 @@ function cfw_dashboard_initialize(gridStackElementSelector){
 	//-----------------------------
 	// Set update on dragstop 
 	$(gridStackElementSelector).on('change', function(event, items) {
-		  var grid = this;
+		 
+		
+		var grid = this;
 		  var i = 0;
 		  for(key in items){
 			  var currentItem = items[key].el;
@@ -829,6 +956,10 @@ function cfw_dashboard_initialize(gridStackElementSelector){
 			  
 			  cfw_dashboard_saveWidgetState(widgetObject);
 		  }
+		  
+		//----------------------------------
+		// Add Undo State
+		cfw_dashboard_addUndoState();
 	});
 	
 }
@@ -943,7 +1074,11 @@ function cfw_dashboard_draw(){
 	
 	window.setTimeout( 
 	function(){
-
+		//-----------------------------------
+		// Clear existing Widgets
+		var grid = $('.grid-stack').data('gridstack');
+		grid.removeAll();
+		
 		CFW.http.getJSON(CFW_DASHBOARDVIEW_URL, {action: "fetch", item: "widgets", dashboardid: CFW_DASHBOARDVIEW_PARAMS.id}, function(data){
 			
 			var widgetArray = data.payload;

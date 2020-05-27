@@ -16,7 +16,7 @@ import com.pengtoolbox.cfw.utils.CFWFiles;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class HTMLResponse extends AbstractHTMLResponse {
@@ -53,6 +53,8 @@ public class HTMLResponse extends AbstractHTMLResponse {
 		
 		this.addJSFileBottomCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "summernote-bs4.min.js");
 		this.addJSFileBottomCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "highlight.js");
+		this.addJSFileBottomCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "lodash-full-4.17.15.min.js");
+		
 		this.addJSFileBottomCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "cfw_components.js");
 		this.addJSFileBottomCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "cfw.js");
 		this.addJSFileBottomCFW(FileDefinition.HandlingType.JAR_RESOURCE, FileDefinition.CFW_JAR_RESOURCES_PATH + ".js", "cfw_renderer.js");
