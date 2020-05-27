@@ -750,14 +750,24 @@ function cfw_dashboard_initialize(gridStackElementSelector){
 	$('#dashboardName').text(JSDATA.dashboardName);
 	
 	//-----------------------------
-	// Set options 
+	// Toggle Edit Button
 	if(JSDATA.canEdit){
 		$('#editButton').removeClass('d-none');
+		
+		$('body').keyup(function (e){
+			//--------------------------------
+			// Toggle Edit Mode >> Ctrl+Alt+E
+			console.log(e);
+			if (e.ctrlKey && event.altKey && e.keyCode == 69) {
+				cfw_dashboard_toggleEditMode();
+			}
+			
+		})
 	}
 	
 	
 	//-----------------------------
-	// Set options 
+	// Setup Gridstack
 	$(gridStackElementSelector).gridstack({
 		alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
 		resizable: {
