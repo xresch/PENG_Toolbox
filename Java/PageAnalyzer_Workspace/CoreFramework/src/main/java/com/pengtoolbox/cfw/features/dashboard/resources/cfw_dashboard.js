@@ -28,7 +28,7 @@ var CFW_DASHBOARD_COMMAND_BUNDLE = null;
  ******************************************************************/
 function cfw_dashboard_startCommandBundle(){
 	if(CFW_DASHBOARD_EDIT_MODE){
-		console.log("------ Command Bundle Start ------ ");
+		//sole.log("------ Command Bundle Start ------ ");
 		CFW_DASHBOARD_COMMAND_BUNDLE = [];
 	}
 }
@@ -42,7 +42,6 @@ function cfw_dashboard_completeCommandBundle(){
 		// Check Position and clear Redo states
 		if(CFW_DASHBOARD_COMMAND_HISTORY.length > 0 
 		&& CFW_DASHBOARD_COMMAND_HISTORY.length > CFW_DASHBOARD_HISTORY_POSITION){
-			console.log("splice history")
 			CFW_DASHBOARD_COMMAND_HISTORY = CFW_DASHBOARD_COMMAND_HISTORY.splice(0, CFW_DASHBOARD_HISTORY_POSITION);
 		}
 		
@@ -50,10 +49,9 @@ function cfw_dashboard_completeCommandBundle(){
 		CFW_DASHBOARD_HISTORY_POSITION++;
 		CFW_DASHBOARD_COMMAND_BUNDLE = null;
 		
-		console.log("------ Command Bundle Complete ------ ");
-		console.log("Undo Command History:");
-		console.log(CFW_DASHBOARD_COMMAND_HISTORY);
-		console.log(CFW_DASHBOARD_HISTORY_POSITION);
+		//sole.log("------ Command Bundle Complete ------ ");
+		//sole.log("Undo Command History:");
+		//sole.log(CFW_DASHBOARD_COMMAND_HISTORY);
 	}
 	
 }
@@ -75,39 +73,47 @@ function cfw_dashboard_addUndoableOperation(widgetObjectOld, widgetObjectNew, un
 		CFW_DASHBOARD_COMMAND_BUNDLE.push(command);
 	}
 
-	console.log("  >> Add Command");
+	//sole.log("  >> Add Command");
 }
 
 /******************************************************************
  * 
  ******************************************************************/
 function cfw_dashboard_triggerUndo(){
-	console.log("triggerUndo");
+
 	if(CFW_DASHBOARD_EDIT_MODE){
 		var commandBundle = [];
 		
 		//----------------------------------
 		// Check Position
 		if(CFW_DASHBOARD_HISTORY_POSITION > 0){
+			
 			CFW_DASHBOARD_HISTORY_POSITION--;
-			var commandBundle = CFW_DASHBOARD_COMMAND_HISTORY[CFW_DASHBOARD_HISTORY_POSITION];
-			$.ajaxSetup({async: false});
-				cfw_dashboard_toggleEditMode();
-					//----------------------------------
-					// Iterate all Changes in Bundle
-					for(var i = 0;i < commandBundle.length ;i++){
-						current = commandBundle[i];
-						current.undo(current.undoData);
-						var widgetObject = $("#"+current.undoData.guid).data('widgetObject');
-						if(widgetObject != null){
-							cfw_dashboard_saveWidgetState(widgetObject, true);
-						}
-					}
-				cfw_dashboard_toggleEditMode();
-			$.ajaxSetup({async: true});
+			
+			CFW.ui.toogleLoader(true);
+			window.setTimeout( 
+				function(){
+					var commandBundle = CFW_DASHBOARD_COMMAND_HISTORY[CFW_DASHBOARD_HISTORY_POSITION];
+					$.ajaxSetup({async: false});
+						cfw_dashboard_toggleEditMode();
+							//----------------------------------
+							// Iterate all Changes in Bundle
+							for(var i = 0;i < commandBundle.length ;i++){
+								current = commandBundle[i];
+								current.undo(current.undoData);
+								var widgetObject = $("#"+current.undoData.guid).data('widgetObject');
+								if(widgetObject != null){
+									cfw_dashboard_saveWidgetState(widgetObject, true);
+								}
+							}
+						cfw_dashboard_toggleEditMode();
+					$.ajaxSetup({async: true});
+					
+					CFW.ui.toogleLoader(false);
+				}, 50);
 		}
 		
-		console.log(CFW_DASHBOARD_HISTORY_POSITION);
+		//sole.log(CFW_DASHBOARD_HISTORY_POSITION);
 	}
 }
 
@@ -120,26 +126,30 @@ function cfw_dashboard_triggerRedo(){
 		
 		//----------------------------------
 		// Check Position
-		console.log("triggerRedo: "+CFW_DASHBOARD_COMMAND_HISTORY.length +" = "+CFW_DASHBOARD_HISTORY_POSITION);
 		if(CFW_DASHBOARD_COMMAND_HISTORY.length != CFW_DASHBOARD_HISTORY_POSITION){
 			CFW_DASHBOARD_HISTORY_POSITION++;
 			var commandBundle = CFW_DASHBOARD_COMMAND_HISTORY[CFW_DASHBOARD_HISTORY_POSITION-1];
 			
-			$.ajaxSetup({async: false});
-				cfw_dashboard_toggleEditMode();
-				
-					//----------------------------------
-					// Clear All Widgets
-					for(var i = 0;i < commandBundle.length ;i++){
-						current = commandBundle[i];
-						current.redo(current.redoData);
-						var widgetObject = $("#"+current.redoData.guid).data('widgetObject');
-						if(widgetObject != null){
-							cfw_dashboard_saveWidgetState(widgetObject, true);
-						}
-					}
-				cfw_dashboard_toggleEditMode();
-			$.ajaxSetup({async: true});
+			CFW.ui.toogleLoader(true);
+			window.setTimeout( 
+				function(){
+					$.ajaxSetup({async: false});
+						cfw_dashboard_toggleEditMode();
+						
+							//----------------------------------
+							// Clear All Widgets
+							for(var i = 0;i < commandBundle.length ;i++){
+								current = commandBundle[i];
+								current.redo(current.redoData);
+								var widgetObject = $("#"+current.redoData.guid).data('widgetObject');
+								if(widgetObject != null){
+									cfw_dashboard_saveWidgetState(widgetObject, true);
+								}
+							}
+						cfw_dashboard_toggleEditMode();
+					$.ajaxSetup({async: true});
+					CFW.ui.toogleLoader(false);
+				}, 50);
 		}
 	}
 }
@@ -953,7 +963,7 @@ function cfw_dashboard_toggleFullscreenMode(){
  * 
  ******************************************************************/
 function cfw_dashboard_toggleEditMode(){
-	console.log("cfw_dashboard_toggleEditMode: "+ CFW_DASHBOARD_EDIT_MODE);
+
 	//-----------------------------------------
 	// Toggle Edit Mode
 	var grid = $('.grid-stack').data('gridstack');

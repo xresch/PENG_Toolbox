@@ -924,8 +924,10 @@ function cfw_toogleLoader(isVisible){
 	
 	if(loader.length == 0){
 		loader = $('<div id="cfw-loader">'
-				+'<i class="fa fa-cog fa-spin fa-3x fa-fw margin-bottom"></i>'
-				+'<p>Loading...</p>'
+				+'<div>'
+					+'<i class="fa fa-cog fa-spin fa-3x fa-fw margin-bottom"></i>'
+					+'<p class="m-0">Loading...</p>'
+				+'</div>'
 			+'</div>');	
 		
 //		loader.css("position","absolute");

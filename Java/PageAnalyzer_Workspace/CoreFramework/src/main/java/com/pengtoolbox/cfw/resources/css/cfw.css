@@ -1,7 +1,7 @@
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
  :root {
@@ -431,12 +431,21 @@
 	display: none;
 }
 
-#cfw-loader{
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translateX(-50%) translateY(-50%);
-	visibility: hidden;
+#cfw-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    visibility: hidden;
+    padding: 20px;
+    background-color: inherit;
+    opacity: 75%;
+    width: 110vw;
+    height: 110vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1024;
 }
 
 .cfw-decorator {
