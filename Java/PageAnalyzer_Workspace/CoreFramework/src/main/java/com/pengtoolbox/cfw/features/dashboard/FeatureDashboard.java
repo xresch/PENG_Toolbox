@@ -159,6 +159,17 @@ public class FeatureDashboard extends CFWAppFeature {
 		
 		//----------------------------------
 		//
+		ROOT_MANUAL_PAGE.addChild(
+				new ManualPage("Keyboard Shortcuts")
+					.faicon("fas fa-keyboard")
+					.addPermission(PERMISSION_DASHBOARD_VIEWER)
+					.addPermission(PERMISSION_DASHBOARD_CREATOR)
+					.addPermission(PERMISSION_DASHBOARD_ADMIN)
+					.content(HandlingType.JAR_RESOURCE, PACKAGE_MANUAL, "manual_shortcuts.html")
+			);
+		
+		//----------------------------------
+		//
 		ManualPage widgets = 
 			new ManualPage("Widgets")
 				.faicon("fas fa-th")
