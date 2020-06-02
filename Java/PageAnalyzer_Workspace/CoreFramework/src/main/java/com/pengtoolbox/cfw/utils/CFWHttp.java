@@ -94,7 +94,11 @@ public class CFWHttp {
 					if(cfwProxy.type.trim().toUpperCase().equals("DIRECT")) {
 						proxiedConnection = (HttpURLConnection)new URL(url).openConnection();
 					}else {
+						
 						InetSocketAddress address = new InetSocketAddress(cfwProxy.host, cfwProxy.port);
+						if(address.isUnresolved()) { 
+							continue;
+						};
 						Proxy proxy = new Proxy(Proxy.Type.HTTP, address);
 
 						proxiedConnection = (HttpURLConnection)new URL(url).openConnection(proxy);
@@ -201,7 +205,25 @@ public class CFWHttp {
 			if(CFW.Properties.PROXY_PAC.toLowerCase().startsWith("http")) {
 				//------------------------------
 				// Get PAC from URL
-				CFWHttpResponse response = CFW.HTTP.sendGETRequest(CFW.Properties.PROXY_PAC);
+				CFWHttpResponse response = null;
+				
+				try {			
+					HttpURLConnection connection = (HttpURLConnection)new URL(CFW.Properties.PROXY_PAC).openConnection();
+					if(connection != null) {
+						connection.setRequestMethod("GET");
+						connection.connect();
+						
+						response = instance.new CFWHttpResponse(connection);
+					}
+			    
+				} catch (Exception e) {
+					new CFWLog(logger)
+						.method("sendGETRequest")
+						.severe("Exception occured.", e);
+				} 
+				
+				//------------------------------
+				// Cache PAC Contents
 				if(response.getStatus() <= 299) {
 					proxyPAC = response.getResponseBody();
 					
@@ -256,13 +278,22 @@ public class CFWHttp {
 						.split(";");
 					
 					for(String proxyDef : proxyArray) {
-						String[] splitted = proxyDef.split(" ");
+						if(proxyDef.trim().isEmpty()) { continue; }
+						
+						String[] splitted = proxyDef.trim().split(" ");
 						CFWProxy cfwProxy = instance.new CFWProxy();
+						String port = "80";
 						cfwProxy.type = splitted[0];
 						if(splitted.length > 1) {
 							String hostport = splitted[1];
-							cfwProxy.host = hostport.substring(0, hostport.indexOf(":"));
-							String port = hostport.substring(hostport.indexOf(":")+1);
+							if(hostport.indexOf(":") != -1) {
+								cfwProxy.host = hostport.substring(0, hostport.indexOf(":"));
+								port = hostport.substring(hostport.indexOf(":")+1);
+							}else {
+								cfwProxy.host = hostport;
+								port = "80";	
+							}
+							
 							try {
 								cfwProxy.port = Integer.parseInt(port);
 							}catch(Throwable e) {
@@ -274,7 +305,9 @@ public class CFWHttp {
 							proxies.add(cfwProxy);
 						}
 					}
-					
+					System.out.println("==== Proxies ====");
+					System.out.println(CFW.JSON.toJSON(proxyArray));
+					System.out.println(CFW.JSON.toJSON(proxies));
 					
 				}
 				
