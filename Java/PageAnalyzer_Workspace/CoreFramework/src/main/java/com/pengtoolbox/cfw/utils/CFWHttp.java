@@ -79,123 +79,6 @@ public class CFWHttp {
 	}
 	
 	/******************************************************************************************************
-	 * Return a URL or null in case of exceptions.
-	 * 
-	 ******************************************************************************************************/
-	public static HttpURLConnection createProxiedURLConnection(String url) {
-		
-		try {
-			if(CFW.Properties.PROXY_ENABLED == false) {
-				return (HttpURLConnection)new URL(url).openConnection();
-			}else {
-				HttpURLConnection proxiedConnection = null;
-				for(CFWProxy cfwProxy : getProxies(url)) {
-
-					if(cfwProxy.type.trim().toUpperCase().equals("DIRECT")) {
-						proxiedConnection = (HttpURLConnection)new URL(url).openConnection();
-					}else {
-						
-						InetSocketAddress address = new InetSocketAddress(cfwProxy.host, cfwProxy.port);
-						if(address.isUnresolved()) { 
-							continue;
-						};
-						Proxy proxy = new Proxy(Proxy.Type.HTTP, address);
-
-						proxiedConnection = (HttpURLConnection)new URL(url).openConnection(proxy);
-					}
-					return proxiedConnection;
-				}
-				
-			}
-		} catch (MalformedURLException e) {
-			new CFWLog(logger)
-				.method("createProxiedURLConnection")
-				.severe("The URL is malformed.", e);
-			
-		} catch (IOException e) {
-			new CFWLog(logger)
-				.method("createProxiedURLConnection")
-				.severe("An IO error occured.", e);
-		}
-		
-		return null;
-		
-	}
-	
-	/******************************************************************************************************
-	 * Send a HTTP GET request and returns the result or null in case of error.
-	 * @param url used for the request.
-	 * @return String response
-	 ******************************************************************************************************/
-	public static CFWHttpResponse sendGETRequest(String url) {
-		
-		try {			
-			HttpURLConnection connection = createProxiedURLConnection(url);
-			if(connection != null) {
-				connection.setRequestMethod("GET");
-				connection.connect();
-				
-				return instance.new CFWHttpResponse(connection);
-			}
-	    
-		} catch (Exception e) {
-			new CFWLog(logger)
-				.method("sendGETRequest")
-				.severe("Exception occured.", e);
-		} 
-		
-		return null;
-	    	
-	}
-	
-	/******************************************************************************************************
-	 * Send a HTTP POST request sending JSON with a Content-Type header "application/json; charset=UTF-8".
-	 * Returns the result or null in case of error.
-	 * 
-	 * @param url used for the request.
-	 * @param body the content of the POST body
-	 * @return String response
-	 ******************************************************************************************************/
-	public static CFWHttpResponse sendPOSTRequestJSON(String url, String body) {
-		return sendPOSTRequest(url, "application/json; charset=UTF-8", body);
-	}
-	
-	/******************************************************************************************************
-	 * Send a HTTP POST request and returns the result or null in case of error.
-	 * @param url used for the request.
-	 * @param contentType the value for the Content-Type header, e.g. " "application/json; charset=UTF-8", or null
-	 * @param body the content of the POST body
-	 * @return String response
-	 ******************************************************************************************************/
-	public static CFWHttpResponse sendPOSTRequest(String url, String contentType, String body) {
-		
-		try {
-			HttpURLConnection connection = createProxiedURLConnection(url);
-			if(connection != null) {
-				connection.setRequestMethod("POST");
-				if(!Strings.isNullOrEmpty(contentType)) {
-					connection.setRequestProperty("Content-Type", contentType);
-				}
-				connection.setDoOutput(true);
-				connection.connect();
-				try(OutputStream outStream = connection.getOutputStream()) {
-				    byte[] input = body.getBytes("utf-8");
-				    outStream.write(input, 0, input.length);           
-				}
-				return instance.new CFWHttpResponse(connection);
-			}
-	    
-		} catch (Exception e) {
-			new CFWLog(logger)
-				.method("sendPOSTRequest")
-				.severe("Exception occured.", e);
-		} 
-		
-		return null;
-	    	
-	}
-	
-	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
 	private static void loadPacFile() {
@@ -305,9 +188,9 @@ public class CFWHttp {
 							proxies.add(cfwProxy);
 						}
 					}
-					System.out.println("==== Proxies ====");
-					System.out.println(CFW.JSON.toJSON(proxyArray));
-					System.out.println(CFW.JSON.toJSON(proxies));
+//					System.out.println("==== Proxies ====");
+//					System.out.println(CFW.JSON.toJSON(proxyArray));
+//					System.out.println(CFW.JSON.toJSON(proxies));
 					
 				}
 				
@@ -324,7 +207,139 @@ public class CFWHttp {
 		}
 		return proxies;
 	}
+
+	/******************************************************************************************************
+	 * Return a URL or null in case of exceptions.
+	 * 
+	 ******************************************************************************************************/
+	public static HttpURLConnection createProxiedURLConnection(String url) {
 		
+		try {
+			if(CFW.Properties.PROXY_ENABLED == false) {
+				return (HttpURLConnection)new URL(url).openConnection();
+			}else {
+				HttpURLConnection proxiedConnection = null;
+				ArrayList<CFWProxy> proxiesArray = getProxies(url);
+				
+				//--------------------------------------------------
+				// Return direct if no proxies were returned by PAC
+				if(proxiesArray.isEmpty()) {
+					return proxiedConnection = (HttpURLConnection)new URL(url).openConnection();
+				}
+				
+				//--------------------------------------------------
+				// Iterate PAC Proxies until address is resolved
+				for(CFWProxy cfwProxy : proxiesArray) {
+
+					if(cfwProxy.type.trim().toUpperCase().equals("DIRECT")) {
+						proxiedConnection = (HttpURLConnection)new URL(url).openConnection();
+					}else {
+						
+						InetSocketAddress address = new InetSocketAddress(cfwProxy.host, cfwProxy.port);
+						if(address.isUnresolved()) { 
+							continue;
+						};
+						Proxy proxy = new Proxy(Proxy.Type.HTTP, address);
+
+						proxiedConnection = (HttpURLConnection)new URL(url).openConnection(proxy);
+					}
+					return proxiedConnection;
+				}
+				
+				//-------------------------------------
+				// None of the addresses were resolved
+				new CFWLog(logger)
+					.method("createProxiedURLConnection")
+					.warn("The proxy addresses couldn't be resolved.");
+			}
+		} catch (MalformedURLException e) {
+			new CFWLog(logger)
+				.method("createProxiedURLConnection")
+				.severe("The URL is malformed.", e);
+			
+		} catch (IOException e) {
+			new CFWLog(logger)
+				.method("createProxiedURLConnection")
+				.severe("An IO error occured.", e);
+		}
+		
+		return null;
+		
+	}
+	
+	/******************************************************************************************************
+	 * Send a HTTP GET request and returns the result or null in case of error.
+	 * @param url used for the request.
+	 * @return String response
+	 ******************************************************************************************************/
+	public static CFWHttpResponse sendGETRequest(String url) {
+		
+		try {			
+			HttpURLConnection connection = createProxiedURLConnection(url);
+			if(connection != null) {
+				connection.setRequestMethod("GET");
+				connection.connect();
+				
+				return instance.new CFWHttpResponse(connection);
+			}
+	    
+		} catch (Exception e) {
+			new CFWLog(logger)
+				.method("sendGETRequest")
+				.severe("Exception occured.", e);
+		} 
+		
+		return null;
+	    	
+	}
+	
+	/******************************************************************************************************
+	 * Send a HTTP POST request sending JSON with a Content-Type header "application/json; charset=UTF-8".
+	 * Returns the result or null in case of error.
+	 * 
+	 * @param url used for the request.
+	 * @param body the content of the POST body
+	 * @return String response
+	 ******************************************************************************************************/
+	public static CFWHttpResponse sendPOSTRequestJSON(String url, String body) {
+		return sendPOSTRequest(url, "application/json; charset=UTF-8", body);
+	}
+	
+	/******************************************************************************************************
+	 * Send a HTTP POST request and returns the result or null in case of error.
+	 * @param url used for the request.
+	 * @param contentType the value for the Content-Type header, e.g. " "application/json; charset=UTF-8", or null
+	 * @param body the content of the POST body
+	 * @return String response
+	 ******************************************************************************************************/
+	public static CFWHttpResponse sendPOSTRequest(String url, String contentType, String body) {
+		
+		try {
+			HttpURLConnection connection = createProxiedURLConnection(url);
+			if(connection != null) {
+				connection.setRequestMethod("POST");
+				if(!Strings.isNullOrEmpty(contentType)) {
+					connection.setRequestProperty("Content-Type", contentType);
+				}
+				connection.setDoOutput(true);
+				connection.connect();
+				try(OutputStream outStream = connection.getOutputStream()) {
+				    byte[] input = body.getBytes("utf-8");
+				    outStream.write(input, 0, input.length);           
+				}
+				return instance.new CFWHttpResponse(connection);
+			}
+	    
+		} catch (Exception e) {
+			new CFWLog(logger)
+				.method("sendPOSTRequest")
+				.severe("Exception occured.", e);
+		} 
+		
+		return null;
+	    	
+	}
+	
 	/******************************************************************************************************
 	 * Creates a map of all cookies in a request.
 	 * @param request
