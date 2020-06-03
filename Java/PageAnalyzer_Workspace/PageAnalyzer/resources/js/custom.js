@@ -170,16 +170,26 @@ function prepareYSlowResults(data){
 	//===================================================
 	SUMMARY = {};
 
-	SUMMARY.url				= decodeURIComponent(data.u);
-	SUMMARY.size			= data.w;
-	SUMMARY.sizeCached		= data.w_c;
-	SUMMARY.totalScore		= data.o;
-	SUMMARY.grade			= getGrade(SUMMARY.totalScore);
-	SUMMARY.requests		= data.r;
-	SUMMARY.requestsCached	= data.r_c;
-	SUMMARY.ruleset			= data.i;
-	SUMMARY.loadtime		= data.resp;
+	SUMMARY.url					= decodeURIComponent(data.u);
+	SUMMARY.size				= data.w;
+	SUMMARY.sizeCached			= data.w_c;
+	SUMMARY.totalScore			= data.o;
+	SUMMARY.grade				= getGrade(SUMMARY.totalScore);
+	SUMMARY.requests			= data.r;
+	SUMMARY.requestsCachable 	= data.r_c;
+	SUMMARY.requestsFromCache 	= data.fromcache;
+	SUMMARY.ruleset				= data.i;
+	SUMMARY.loadtime			= data.resp;
 
+	//===================================================
+	// 
+	//===================================================
+	if (SUMMARY.requestsFromCache > 0){
+
+		CFW.ui.addToast('This result contains '+SUMMARY.requestsFromCache+' requests that were loaded from cache. It is recommended to disable caching in the developer tools when taking HAR file snapshots.',
+		null,		
+		"warning");
+	} 
 	
 	//===================================================
 	// Load Rules
@@ -407,7 +417,7 @@ function printComparison(parent, data){
 	var sizeRow = {"Metric": "Page Size"}; compareTableData.push(sizeRow);
 	var sizeCachedRow = {"Metric": "Page Size Cached"}; compareTableData.push(sizeCachedRow);
 	var requestCountRow = {"Metric": "Total Requests"}; compareTableData.push(requestCountRow);
-	var requestsCachedRow = {"Metric": "Cached Requests"}; compareTableData.push(requestsCachedRow);
+	var requestsCachableRow = {"Metric": "Cached Requests"}; compareTableData.push(requestsCachableRow);
 	
 	//-------------------------------
 	// Push rules to table
@@ -451,7 +461,7 @@ function printComparison(parent, data){
 		sizeCachedRow[time]	 		= result.w_c + " Bytes";
 		loadtimeRow[time]	 		= result.resp + "ms";
 		requestCountRow[time]	 	= result.r;
-		requestsCachedRow[time]	 	= result.r_c;
+		requestsCachableRow[time]	= result.r_c;
 		
 		//----------------------------
 		// Rule Rows
@@ -1402,7 +1412,9 @@ function printSummary(parent){
 	if(SUMMARY.size != null){ 				list.append('<li><strong>Page Size:&nbsp;</strong>'+SUMMARY.size+' Bytes</li>');}
 	if(SUMMARY.sizeCached != null){ 		list.append('<li><strong>Page Size(cached):&nbsp;</strong>'+SUMMARY.sizeCached+' Bytes</li>');}
 	if(SUMMARY.requests != null){ 			list.append('<li><strong>Request Count:&nbsp;</strong>'+SUMMARY.requests+'</li>');}
-	if(SUMMARY.requestsCached != null){ 	list.append('<li><strong>Cached Requests Count:&nbsp;</strong>'+SUMMARY.requestsCached+'</li>');}
+	if(SUMMARY.requestsCachable != null){ 	list.append('<li><strong>Cachable Requests Count:&nbsp;</strong>'+SUMMARY.requestsCachable+'</li>');}
+	if(SUMMARY.requestsFromCache != null
+	&& SUMMARY.requestsFromCache > 0){ 		list.append('<li><strong>Requests Loaded from Cache:&nbsp;</strong>'+SUMMARY.requestsFromCache+'</li>');}
 	if(SUMMARY.loadtime != null 
 	&& SUMMARY.loadtime != "-1"){ 			list.append('<li><strong>Load Time:&nbsp;</strong>'+SUMMARY.loadtime+' ms</li>');}
 	

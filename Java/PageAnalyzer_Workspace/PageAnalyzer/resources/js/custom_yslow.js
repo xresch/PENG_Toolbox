@@ -683,6 +683,7 @@ YSLOW.ComponentSet.isValidURL = function (url) {
 YSLOW.Component = function (url, type, parent_set, o) {
     var obj = o && o.obj,
         comp = (o && o.comp) || {};
+        comp.entry = o.entry;
 
     /*********************************************************************************************************
      * URL of the component
@@ -811,6 +812,7 @@ YSLOW.Component.prototype.setComponentDetails = function (o) {
                 request = entry.request;
 
             // copy from the response object
+            comp.entry = entry;
             comp.status = response.status;
             comp.headers = {};
             comp.raw_headers = '';
@@ -1216,9 +1218,10 @@ YSLOW.context.prototype = {
             hCount = {},
             hSize = {}, // hashes where the key is the object type
             nHttpRequests = 0;
+        	fromCacheCount = 0;
 
         if (!this.component_set) {
-            /* need to run peeler first *********************************************************************************************************/
+            /* need to run peeler first */
             return;
         }
 
@@ -1251,6 +1254,12 @@ YSLOW.context.prototype = {
                 }
                 hSize[compType] = (typeof hSize[compType] === 'undefined' ? size : hSize[compType] + size);
             }
+            
+            //------------------------
+            // Count fromCache
+            if(comp.entry != null && comp.entry._fromCache != null){
+            	fromCacheCount++;
+            }
         }
 
         totalSize = 0;
@@ -1270,9 +1279,11 @@ YSLOW.context.prototype = {
         return {
             'total_size': totalSize,
             'num_requests': nHttpRequests,
+            'num_from_cache': fromCacheCount,
             'count_obj': hCount,
             'size_obj': hSize,
             'canvas_data': canvas_data
+            
         };
     },
 
@@ -1287,6 +1298,7 @@ YSLOW.context.prototype = {
             this.PAGE.totalObjCount = stats.count_obj;
             this.PAGE.totalObjSize = stats.size_obj;
             this.PAGE.canvas_data.empty = stats.canvas_data;
+            this.PAGE.num_from_cache = stats.num_from_cache;
         }
 
         stats = this.computeStats(true);
@@ -2399,6 +2411,7 @@ YSLOW.util = {
         params.o = parseInt(yscontext.PAGE.overallScore, 10);
         params.u = encodeURIComponent(yscontext.result_set.url);
         params.r = parseInt(yscontext.PAGE.totalRequests, 10);
+        params.fromcache = parseInt(yscontext.PAGE.num_from_cache, 10);
         params.resp = parseInt(yscontext.PAGE.duration, 10);
         
         spaceid = YSLOW.util.getPageSpaceid(yscontext.component_set);
@@ -5138,9 +5151,9 @@ function run (doct, har, ruleset) {
         entries = log.entries || [];
     
     if(YSLOW.DEBUG){ console.log("================= run() ================"); }
-    console.log(JSON.stringify(log).substr(0,100));
-    console.log(JSON.stringify(pages).substr(0,100));
-    console.log(JSON.stringify(entries).substr(0,100));
+    //console.log(JSON.stringify(log).substr(0,100));
+    //console.log(JSON.stringify(pages).substr(0,100));
+    //console.log(JSON.stringify(entries).substr(0,100));
     
     //----------------------------------------------------
     // If pages are defined, loop through all pages

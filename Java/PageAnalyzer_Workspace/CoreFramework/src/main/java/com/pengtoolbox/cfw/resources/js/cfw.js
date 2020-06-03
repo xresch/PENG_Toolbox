@@ -951,7 +951,7 @@ function cfw_toogleLoader(isVisible){
  * @param toastTitle the title for the toast
  * @param toastBody the body of the toast (can be null)
  * @param style bootstrap style like 'info', 'success', 'warning', 'danger'
- * @param delay in milliseconds for autohide
+ * @param (optional)delay in milliseconds for autohide
  * @return nothing
  *************************************************************************************/
 function cfw_addToast(toastTitle, toastBody, style, delay){
