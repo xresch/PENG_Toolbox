@@ -95,6 +95,7 @@ public class CFW {
 		public class Objects extends CFWRegistryObjects {} 
 		public class Widgets extends CFWRegistryWidgets {} 
 	}
+	public class AppSettings extends CFWAppSettings {}
 	public class Schedule extends CFWSchedule {}
 	public class Scripting extends CFWScripting {}
 	public class Time extends CFWTime {}
@@ -158,7 +159,7 @@ public class CFW {
 		CFW.initializeCore(args);
 		
 	    //--------------------------------
-	    // Handle Shutdown reguest.
+	    // Handle Shutdown request.
 	    if (CFW.CLI.isArgumentLoaded(CLI.STOP)) {
     		CFWApplicationExecutor.stop();
     		appToStart.stopApp();
@@ -166,6 +167,10 @@ public class CFW {
     		return;
 	    }
 		
+	    //--------------------------------
+	    // Register Components
+	    appToStart.settings();
+	    
 	    //--------------------------------
 	    // Register Components
 	    doRegister(appToStart);
@@ -209,12 +214,20 @@ public class CFW {
 		// Register Features
 		CFW.Registry.Features.addFeature(FeatureCore.class);	
 		CFW.Registry.Features.addFeature(FeatureConfiguration.class);	
-		CFW.Registry.Features.addFeature(FeatureContextSettings.class);	
+		
+		if(CFW.AppSettings.isContextSettingsEnabled()) {
+			CFW.Registry.Features.addFeature(FeatureContextSettings.class);	
+		}
+		
 		CFW.Registry.Features.addFeature(FeatureUserManagement.class);	
 		CFW.Registry.Features.addFeature(FeatureAPI.class);	
 		CFW.Registry.Features.addFeature(FeatureCPUSampling.class);		
-		CFW.Registry.Features.addFeature(FeatureManual.class);		
-		CFW.Registry.Features.addFeature(FeatureDashboard.class);	
+		CFW.Registry.Features.addFeature(FeatureManual.class);	
+		
+		if(CFW.AppSettings.isDashboardingEnabled()) {
+			CFW.Registry.Features.addFeature(FeatureDashboard.class);	
+		}
+		
 		
 		//---------------------------
 		// Application Register

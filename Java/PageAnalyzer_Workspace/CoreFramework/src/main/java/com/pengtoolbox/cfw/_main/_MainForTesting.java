@@ -27,6 +27,10 @@ public class _MainForTesting implements CFWAppInterface {
     }
 
 	@Override
+	public void settings() {
+		
+	}
+	@Override
 	public void register() {
 		
 		CFW.Localization.registerLocaleFile(Locale.ENGLISH, "/general", new FileDefinition(HandlingType.FILE, "./testdata", "testlang_en.properties"));

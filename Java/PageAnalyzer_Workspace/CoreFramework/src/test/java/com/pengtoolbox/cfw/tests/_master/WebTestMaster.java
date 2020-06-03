@@ -31,6 +31,10 @@ public class WebTestMaster {
 		CFW.initializeApp(new CFWAppInterface() {
 			
 			@Override
+			public void settings() {
+				
+			}
+			@Override
 			public void stopApp() {
 				// TODO Auto-generated method stub
 				

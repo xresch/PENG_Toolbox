@@ -54,6 +54,11 @@ public class Main extends Application implements CFWAppInterface {
     }
     
 	@Override
+	public void settings() {
+		
+	}
+	
+	@Override
 	public void register() {
     	
 		//----------------------------------
