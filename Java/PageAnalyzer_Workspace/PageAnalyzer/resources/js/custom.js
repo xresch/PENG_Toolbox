@@ -143,6 +143,8 @@ function getGrade(score){
 }
 
 
+
+
 /******************************************************************
  * Prepare the fetched yslow results so they can be easily displayed.
  * This method doesn't return a value, everything is stored in 
@@ -595,6 +597,17 @@ function analyzeCookiesOrHeaders(key, type){
 			resultHTML);
 	
 	
+}
+
+/******************************************************************
+ * Print the gantt chart for the entries.
+ * 
+ * @param parent JQuery object 
+ * @param data HAR file data
+ * 
+ ******************************************************************/
+function openGanttChartForResult(){
+	var w = window.open(CFW.http.getHostURL()+"/app/ganttchart?resultid="+URL_PARAMETERS.resultid);	
 }
 /******************************************************************
  * Print the gantt chart for the entries.

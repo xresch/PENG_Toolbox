@@ -1635,6 +1635,14 @@ function cfw_fetchAndCacheData(url, params, key, callback){
 }
 
 /**************************************************************************************
+* Returns the current URL of the page without the query part.
+ *************************************************************************************/
+function cfw_getHostURL() {
+	return location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+};
+
+
+/**************************************************************************************
 * Function to store a value in the local storage.
 * @param key name of the cookie
 * @param value value of the cookie
@@ -1851,6 +1859,7 @@ var CFW = {
 		getURLParams: cfw_getURLParams,
 		getURLParamsDecoded: cfw_getURLParamsDecoded,
 		setURLParam: cfw_setURLParam,
+		getHostURL: cfw_getHostURL,
 		secureDecodeURI: cfw_secureDecodeURI,
 		getJSON: cfw_getJSON,
 		postJSON: cfw_postJSON,
