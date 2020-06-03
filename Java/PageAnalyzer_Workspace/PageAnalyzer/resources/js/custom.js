@@ -937,7 +937,7 @@ function printResultList(parent, data){
 		rowString += '<td>'+resultName+'</td>';
 		// URL Column
 		url = CFW.http.secureDecodeURI(currentData.PAGE_URL);
-		rowString += '<td>'+url+'</td>';
+		rowString += '<td class="mvw-30 word-break-word">'+url+'</td>';
 		
 		// View Result Icon
 		rowString += '<td><a class="btn btn-primary btn-sm" alt="View Result" title="View Result" href="./resultview?resultid='+currentData.PK_ID+'"><i class="fa fa-eye"></i></a></td>';

@@ -57,6 +57,7 @@ public class CFW {
 	public static String L(String key, String defaultText) { return CFW.Localization.getLocalized(key, defaultText); }
 	public static String L(String key, String defaultTextWithPlaceholders, Object placeholderValues) { return CFW.Localization.getLocalized(key, defaultTextWithPlaceholders, placeholderValues); }
 	
+	public class AppSettings extends CFWAppSettings {}
 	public static class DB extends CFWDB {
 		public static class Config extends CFWDBConfig{};
 		public static class ContextSettings extends CFWDBContextSettings{};
@@ -95,7 +96,6 @@ public class CFW {
 		public class Objects extends CFWRegistryObjects {} 
 		public class Widgets extends CFWRegistryWidgets {} 
 	}
-	public class AppSettings extends CFWAppSettings {}
 	public class Schedule extends CFWSchedule {}
 	public class Scripting extends CFWScripting {}
 	public class Time extends CFWTime {}
