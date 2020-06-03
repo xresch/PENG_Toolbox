@@ -397,6 +397,7 @@ function printComparison(parent, data){
 	//-----------------------------------------
 	
 	var resultNameRow = {"Metric": "Result Name"}; compareTableData.push(resultNameRow);
+	var resultOpenRow = {"Metric": "View"}; compareTableData.push(resultOpenRow);
 	var urlRow = {"Metric": "URL"}; compareTableData.push(urlRow);
 	var scoreRow = {"Metric": "Score"}; compareTableData.push(scoreRow);
 	var gradeRow = {"Metric": "Grade"}; compareTableData.push(gradeRow);
@@ -422,9 +423,15 @@ function printComparison(parent, data){
 		resultNameRow[time]	= '<p>'+data[key].NAME+'</p>';
 		
 		//----------------------------
+		// Name Row
+		resultOpenRow[time]	= 
+			 '<a class="btn btn-sm btn-primary m-1" target="_blank" href="./resultview?resultid='+data[key].PK_ID+'">Results</a>'
+			+'<a class="btn btn-sm btn-primary m-1" target="_blank" href="./ganttchart?resultid='+data[key].PK_ID+'">Gantt Chart</a>';
+		
+		//----------------------------
 		// URL Row
 		url = CFW.http.secureDecodeURI(result.u);
-		urlRow[time]	= '<a target="_blank" href="'+url+'">'+url+'</a>';
+		urlRow[time]	= '<a class="mvw-30 word-break-word" target="_blank" href="'+url+'">'+url+'</a>';
 		
 		//----------------------------
 		// Score Row
@@ -1378,7 +1385,7 @@ function printSummary(parent){
 	
 	if(SUMMARY.grade != null){ 				list.append('<li><strong>Grade:&nbsp;<span class="btn btn-'+GRADE_CLASS[SUMMARY.grade]+'">'+SUMMARY.grade+'</strong></li>');}
 	if(SUMMARY.totalScore != null){ 		list.append('<li><strong>Total Score:&nbsp;</strong>'+SUMMARY.totalScore+'%</li>');}
-	if(SUMMARY.url != null){ 				list.append('<li><strong>URL:&nbsp;</strong><a href="'+SUMMARY.url+'">'+SUMMARY.url+'</a></li>');}
+	if(SUMMARY.url != null){ 				list.append('<li><strong>URL:&nbsp;</strong><a class="word-break-word" href="'+SUMMARY.url+'">'+SUMMARY.url+'</a></li>');}
 	if(SUMMARY.size != null){ 				list.append('<li><strong>Page Size:&nbsp;</strong>'+SUMMARY.size+' Bytes</li>');}
 	if(SUMMARY.sizeCached != null){ 		list.append('<li><strong>Page Size(cached):&nbsp;</strong>'+SUMMARY.sizeCached+' Bytes</li>');}
 	if(SUMMARY.requests != null){ 			list.append('<li><strong>Request Count:&nbsp;</strong>'+SUMMARY.requests+'</li>');}
