@@ -617,7 +617,13 @@ function analyzeCookiesOrHeaders(key, type){
  * 
  ******************************************************************/
 function openGanttChartForResult(){
-	var w = window.open(CFW.http.getHostURL()+"/app/ganttchart?resultid="+URL_PARAMETERS.resultid);	
+	
+	if(URL_PARAMETERS.resultid != null){
+		var w = window.open(CFW.http.getHostURL()+"/app/ganttchart?resultid="+URL_PARAMETERS.resultid);	
+	}else{
+		CFW.ui.showSmallModal('Limited Feature', 'This currently only works when the result is saved and opened from the History page.');
+	}
+	
 }
 /******************************************************************
  * Print the gantt chart for the entries.

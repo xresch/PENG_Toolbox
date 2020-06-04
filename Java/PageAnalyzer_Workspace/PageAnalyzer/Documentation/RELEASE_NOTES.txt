@@ -1,4 +1,14 @@
 ################################################################################
+# Page Analyzer v 2.3
+################################################################################
+- Fixed table layout when displaying long URLs
+- Result View: Added Gantt Chart Entry to Statistics Menu
+- Comparison View: Added buttons to open results
+- Gantt Chart: Details Popover
+- Check are requests cached (for Chromium based HAR files, Edge/Chrome)
+- Various smaller improvements
+
+################################################################################
 # Page Analyzer v 2.2
 ################################################################################
 - Fixed HAR Download file format
