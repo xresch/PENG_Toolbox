@@ -16,7 +16,7 @@ import com.pengtoolbox.pageanalyzer.db.PADBResults;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class GanttChartServlet extends HttpServlet
@@ -37,7 +37,7 @@ public class GanttChartServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doPost");
 		log.info(request.getRequestURL().toString());
 			
-		HTMLResponse html = new HTMLResponse("View Result");
+		HTMLResponse html = new HTMLResponse("Gantt Chart");
 		StringBuffer content = html.getContent();
 
 		//content.append("<h1>Gantt Chart</h1>");

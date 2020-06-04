@@ -663,27 +663,42 @@ function printGanttChart(parent, data){
 		
 		//--------------------------
 		// Gantt Chart Column
-		var  rowString = '';
+
 		var gd = currentEntry.ganttdata;
 		//workaround for wrong timing deviations
 		var shortPercentDelta = (gd.percentdelta >= 1) ? Math.floor(gd.percentdelta-1): gd.percentdelta;
 		var shortPercentTime = (gd.percenttime >= 2) ? Math.floor(gd.percenttime-1): gd.percenttime;
+				
+		var ganttWrapper = $('<div class="ganttWrapper" style="width: 500px;">');
+		ganttWrapper.popover({
+			trigger: 'hover',
+			html: true,
+			placement: 'top',
+			title: 'Details',
+			sanitize: false,
+			content: createGanttTimingDetails(currentEntry)
+		})
 		
-		rowString += '<td> <div class="ganttWrapper" style="width: 500px;">';
-			rowString += '<div class="ganttBlock percentdelta" style="width: '+shortPercentDelta+'%">&nbsp;</div>';
-			rowString += '<div class="ganttBlock ganttTimings" style="width: '+shortPercentTime+'%">';
-				rowString += createGanttBar(currentEntry, "blocked");
-				rowString += createGanttBar(currentEntry, "dns");
-				rowString += createGanttBar(currentEntry, "connect");
+		console.log(createGanttTimingDetails(currentEntry));
+		ganttWrapper.append(
+			 '<div class="ganttBlock percentdelta" style="width: '+shortPercentDelta+'%">&nbsp;</div>'
+			+'<div class="ganttBlock ganttTimings" style="width: '+shortPercentTime+'%">'
+			+ createGanttBar(currentEntry, "blocked")
+			+ createGanttBar(currentEntry, "dns")
+			+ createGanttBar(currentEntry, "connect")
 				//rowString += createGanttBar(currentEntry, "ssl");
-				rowString += createGanttBar(currentEntry, "send");
-				rowString += createGanttBar(currentEntry, "wait");
-				rowString += createGanttBar(currentEntry, "receive");
-			rowString += '</div>';
-		rowString += 	'</div></td>';
+			+ createGanttBar(currentEntry, "send")
+			+ createGanttBar(currentEntry, "wait")
+			+ createGanttBar(currentEntry, "receive")
+		);
+		
+		var cell = $('<td>');
+		cell.append(ganttWrapper);
+		row.append(cell);
 		
 		// --------------------------
 		// Other Columns
+		var  rowString = '';
 		rowString += '<td>'+createHTTPStatusBadge(currentEntry.response.status)+'</td>';
 		rowString += '<td>'+Math.round(currentEntry.time)+' ms</td>';
 		rowString += '<td>'+CFW.http.secureDecodeURI(currentEntry.request.url)+'</td>';
@@ -701,6 +716,7 @@ function printGanttChart(parent, data){
 	
 }
 
+
 /******************************************************************
  * Create the gantt chart part for the given metric.
  * 
@@ -714,7 +730,7 @@ function createGanttBar(entry, metric){
 	
 	// Workaround: Reduce size by 5% with "/100*95" to minimize display issues
 	if(entry.ganttdata[percentString] > 0){ 
-		return '<div class="ganttBlock '+percentString+'" alt="test" style="width: '+Math.floor(entry.ganttdata[percentString]/100*95)+'%">&nbsp;</div>'
+		return '<div class="ganttBlock '+percentString+'" style="width: '+Math.floor(entry.ganttdata[percentString]/100*95)+'%">&nbsp;</div>'
 	}else{
 		return "";
 	}
@@ -776,7 +792,7 @@ function updateGanttDetails(tab){
 	var details = '';
 	if(tab === 'request'){
 		var request = entry.request;
-		details += '<table class="table table-striped">';
+		details += '<table class="table table-striped table-sm">';
 		details += '	<tr><td><b>Timestamp:</b></td><td>'+entry.startedDateTime+'</td></tr>';
 		details += '	<tr><td><b>Duration:</b></td><td>'+Math.ceil(entry.time)+'ms</td></tr>';
 		details += '	<tr><td><b>Version:</b></td><td>'+request.httpVersion+'</td></tr>';
@@ -795,7 +811,7 @@ function updateGanttDetails(tab){
 		
 	}else 	if(tab === 'response'){
 		var response = entry.response;
-		details += '<table class="table table-striped">';
+		details += '<table class="table table-striped table-sm">';
 		details += '	<tr><td><b>Version:</b></td><td>'+response.httpVersion+'</td></tr>';
 		details += '	<tr><td><b>Status:</b></td><td>'+createHTTPStatusBadge(response.status)+' '+response.statusText+'</td></tr>';
 		details += '	<tr><td><b>RedirectURL:</b></td><td>'+response.redirectURL+'</td></tr>';
@@ -812,49 +828,63 @@ function updateGanttDetails(tab){
 	
 	}
 	else if(tab === 'headers'){
-		details += '<table class="table table-striped">';
+		details += '<table class="table table-striped table-sm">';
 		details += convertNameValueArrayToRow("Request Headers", entry.request.headers);
 		details += convertNameValueArrayToRow("Response Headers", entry.response.headers);
 		details += '</table>';
 		
 	}else if(tab === 'cookies'){
-		details += '<table class="table table-striped">';
+		details += '<table class="table table-striped table-sm">';
 		details += convertNameValueArrayToRow("Request Cookies", entry.request.cookies);
 		details += convertNameValueArrayToRow("Response Cookies", entry.response.cookies);
 		details += '</table>';
 		
 	}else if(tab === 'timings'){
-		
-		details += createGanttChartLegend();
-		
-		details += '<div class="ganttBlock ganttTimings" style="width: 100%">';
-		details += createGanttBar(entry, "blocked");
-		details += createGanttBar(entry, "dns");
-		details += createGanttBar(entry, "connect");
-		//details += createGanttBar(currentEntry, "ssl");
-		details += createGanttBar(entry, "send");
-		details += createGanttBar(entry, "wait");
-		details += createGanttBar(entry, "receive");
-		details += '</div>';
-		
-		details += '<table class="table table-striped">';
-		details += '<thead><th>Metric</th><th>Time</th><th>Percent</th></thead>'
-		var metrics = ['blocked','dns','connect','ssl','send','wait','receive'];
-		for(i = 0; i < metrics.length; i++){
-			var metric = metrics[i];
-			details += '<tr>';
-			details += '	<td><b>'+metric+':</b></td>';
-			details += '	<td>'+Math.round(entry.timings[metric] * 100) / 100+' ms</td>';
-			details += '	<td>'+Math.round(entry.ganttdata["percent"+metric] * 100) / 100+'%</td>'
-			details += '</tr>'; 
-		}
-		details += '</table>';
-		details += '<p><b>TOTAL TIME: '+Math.round(entry.time * 100) / 100+' ms</b></p>';
+				
+		details += createGanttTimingDetails(entry);
 		
 	}
 	
 	target.append(details);
 	
+}
+
+/******************************************************************
+ * Create a table with the timings for the provided entry.
+ * 
+ * @return html string
+ ******************************************************************/
+function createGanttTimingDetails(entry){
+	var htmlString = '';
+	htmlString += '<div>';
+		htmlString += '<div class="ganttBlock ganttTimings" style="width: 100%">';
+		htmlString += createGanttBar(entry, "blocked");
+		htmlString += createGanttBar(entry, "dns");
+		htmlString += createGanttBar(entry, "connect");
+		//htmlString += createGanttBar(currentEntry, "ssl");
+		htmlString += createGanttBar(entry, "send");
+		htmlString += createGanttBar(entry, "wait");
+		htmlString += createGanttBar(entry, "receive");
+		htmlString += '</div>';
+		
+		htmlString += '<table class="table table-striped table-sm">';
+		htmlString += '<thead><tr><th>&nbsp;</th><th>Metric</th><th>Time</th><th>Percent</th></tr></thead>'
+		var metrics = ['blocked','dns','connect','ssl','send','wait','receive'];
+
+		for(i = 0; i < metrics.length; i++){
+			
+			var metric = metrics[i];
+			htmlString += '<tr>';
+			htmlString += '	<td><div class="gantt-legend-square percent'+metric+'">&nbsp;</div></td>';
+			htmlString += '	<td><b>'+metric+':</b></td>';
+			htmlString += '	<td>'+Math.round(entry.timings[metric] * 100) / 100+' ms</td>';
+			htmlString += '	<td>'+Math.round(entry.ganttdata["percent"+metric] * 100) / 100+'%</td>'
+			htmlString += '</tr>'; 
+		}
+		htmlString += '</table>';
+		htmlString += '<p><b>TOTAL TIME: '+Math.round(entry.time * 100) / 100+' ms</b></p>';
+	htmlString += '</div>';
+	return htmlString;
 }
 
 /******************************************************************

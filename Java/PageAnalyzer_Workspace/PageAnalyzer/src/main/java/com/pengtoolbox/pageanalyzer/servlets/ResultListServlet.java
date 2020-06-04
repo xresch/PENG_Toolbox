@@ -18,7 +18,7 @@ import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class ResultListServlet extends HttpServlet
@@ -39,7 +39,7 @@ public class ResultListServlet extends HttpServlet
 		CFWLog log = new CFWLog(logger).method("doGet");
 		log.info(request.getRequestURL().toString());
 			
-		HTMLResponse html = new HTMLResponse("View Result");
+		HTMLResponse html = new HTMLResponse("History");
 		StringBuffer content = html.getContent();
 
 		

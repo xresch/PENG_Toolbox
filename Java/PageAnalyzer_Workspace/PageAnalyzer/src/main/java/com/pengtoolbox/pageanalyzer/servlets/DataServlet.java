@@ -42,7 +42,7 @@ public class DataServlet extends HttpServlet {
 		
 		String type = request.getParameter("type");
 		String resultID = request.getParameter("resultid");
-		if(resultID != null) resultID.replace("#", "");
+		if(resultID != null) resultID = resultID.replace("#", "");
 
 //		//-------------------------------------------
 //		// Resolve User ID
