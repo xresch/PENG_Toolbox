@@ -51,7 +51,7 @@ function cfw_usermgmt_createToggleTable(parent, mapName, itemID){
 					row.append(buttonCell);
 					
 					row.append('<td>'+current.NAME+'</td>'
-							  +'<td>'+current.DESCRIPTION+'</td>');
+							  +'<td>'+CFW.utils.nullTo(current.DESCRIPTION, '')+'</td>');
 					
 					cfwTable.addRow(row);
 				}
@@ -239,9 +239,9 @@ function cfw_usermgmt_printUserList(data){
 			htmlString += '<tr>';
 			htmlString += '<td>'+current.PK_ID+'</td>';
 			htmlString += '<td>'+current.USERNAME+'</td>';
-			htmlString += '<td>'+current.EMAIL+'</td>';
-			htmlString += '<td>'+current.FIRSTNAME+'</td>';
-			htmlString += '<td>'+current.LASTNAME+'</td>';
+			htmlString += '<td>'+CFW.utils.nullTo(current.EMAIL, '-')+'</td>';
+			htmlString += '<td>'+CFW.utils.nullTo(current.FIRSTNAME, '-')+'</td>';
+			htmlString += '<td>'+CFW.utils.nullTo(current.LASTNAME, '-')+'</td>';
 			htmlString += '<td><span class="badge badge-'+((current.STATUS.toLowerCase() == "active")? 'success' : 'danger') +'">'+current.STATUS+'</td>';
 			htmlString += '<td>'+CFW.format.epochToTimestamp(current.DATE_CREATED)+'</td>';
 			
@@ -321,7 +321,7 @@ function cfw_usermgmt_printRoleList(data){
 			htmlString += '<tr>';
 			htmlString += '<td>'+current.PK_ID+'</td>';
 			htmlString += '<td>'+current.NAME+'</td>';
-			htmlString += '<td>'+current.DESCRIPTION+'</td>';
+			htmlString += '<td>'+CFW.utils.nullTo(current.DESCRIPTION, '')+'</td>';
 			
 			//Edit Button
 			htmlString += '<td><button class="btn btn-primary btn-sm" alt="Edit" title="Edit" '
@@ -376,7 +376,7 @@ function cfw_usermgmt_printPermissionList(data){
 			htmlString += '<tr>';
 			htmlString += '<td>'+current.PK_ID+'</td>';
 			htmlString += '<td>'+current.NAME+'</td>';
-			htmlString += '<td>'+current.DESCRIPTION+'</td>';			
+			htmlString += '<td>'+CFW.utils.nullTo(current.DESCRIPTION, '')+'</td>';			
 			htmlString += '</tr>';
 		}
 		

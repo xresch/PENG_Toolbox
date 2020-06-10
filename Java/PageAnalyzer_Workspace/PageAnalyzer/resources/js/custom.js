@@ -417,7 +417,7 @@ function printComparison(parent, data){
 	var sizeRow = {"Metric": "Page Size"}; compareTableData.push(sizeRow);
 	var sizeCachedRow = {"Metric": "Page Size Cached"}; compareTableData.push(sizeCachedRow);
 	var requestCountRow = {"Metric": "Total Requests"}; compareTableData.push(requestCountRow);
-	var requestsCachableRow = {"Metric": "Cached Requests"}; compareTableData.push(requestsCachableRow);
+	var requestsCachableRow = {"Metric": "Cachable Requests"}; compareTableData.push(requestsCachableRow);
 	
 	//-------------------------------
 	// Push rules to table

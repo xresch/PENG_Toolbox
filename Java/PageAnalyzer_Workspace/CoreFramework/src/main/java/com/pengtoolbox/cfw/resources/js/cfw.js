@@ -1807,6 +1807,19 @@ function cfw_isNullOrEmpty(value){
 	
 	return false;
 }
+
+/************************************************************************************************
+ * Converts null and undefined to the specified nullToThis value.
+ * 
+ ************************************************************************************************/
+function cfw_nullTo(value, nullToThis){
+
+	if(value === undefined || value === null ){
+		return nullToThis;
+	}
+	
+	return value;
+}
 /********************************************************************
  * CFW FRAMEWORK STRUCTURE
  * -----------------------
@@ -1875,7 +1888,8 @@ var CFW = {
 		executeCodeOrFunction: cfw_executeCodeOrFunction,
 		randomString: cfw_randomString,
 		chainedOnload: cfw_chainedOnload,
-		isNullOrEmpty: cfw_isNullOrEmpty
+		isNullOrEmpty: cfw_isNullOrEmpty,
+		nullTo: cfw_nullTo
 	},
 	ui: {
 		createToggleButton: cfw_createToggleButton,
