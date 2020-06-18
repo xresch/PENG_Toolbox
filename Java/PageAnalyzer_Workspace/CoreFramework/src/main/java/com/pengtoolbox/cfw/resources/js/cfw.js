@@ -293,7 +293,7 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 					params.cfwAutocompleteFieldname = fieldName;
 					params.cfwAutocompleteSearchstring = inputField.value;
 					
-					cfw_getJSON('/cfw/autocomplete', params, 
+					cfw_postJSON('/cfw/autocomplete', params, 
 						function(data) {
 							showAutocomplete(inputField, data.payload);
 						})
@@ -371,12 +371,13 @@ function cfw_initializeAutocomplete(formID, fieldName, maxResults, array){
 	    
 	    inputField.parentNode.appendChild(itemList);
 	    
+	    console.log(values);
 	    //----------------------------
 	    // Iterate values object
 	    for (key in values) {
 	    	
 		   	var currentValue = key;
-		   	var label = values[key];
+		   	var label = ""+values[key];
 		   			
 			//----------------------------
 			// Create Item
@@ -561,17 +562,12 @@ function cfw_sortArrayByValueOfObject(array, key, reverse){
  * @return timestamp as string
  *************************************************************************************/
 function cfw_format_epochToTimestamp(epoch){
-	
-  var a = new Date(epoch);
-  //a.toLocaleString('en-GB');
-  var year 		= a.getFullYear();
-  var month 	= a.getMonth()+1 < 10 	? "0"+(a.getMonth()+1) : a.getMonth()+1;
-  var day 		= a.getDate() < 10 		? "0"+a.getDate() : a.getDate();
-  var hour 		= a.getHours() < 10 	? "0"+a.getHours() : a.getHours();
-  var min 		= a.getMinutes() < 10 	? "0"+a.getMinutes() : a.getMinutes();
-  var sec 		= a.getSeconds() < 10 	? "0"+a.getSeconds() : a.getSeconds();
-  var time = year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec ;
-  return time;
+
+  if(epoch != null){
+	  return new CFWDate(epoch).getDateFormatted('YYYY-MM-DD HH:mm:ss');
+  }
+  
+  return "";
 }
 
 /**************************************************************************************
@@ -939,9 +935,9 @@ function cfw_toogleLoader(isVisible){
 		$("body").append(loader);
 	}
 	if(isVisible){
-		loader.css("visibility", "visible");
+		loader.css("display", "flex");
 	}else{
-		loader.css("visibility", "hidden");
+		loader.css("display", "none");
 	}
 	
 }
@@ -1546,7 +1542,7 @@ function cfw_getForm(formid, targetElement){
 function cfw_createForm(url, params, targetElement, callback){
 
 	$.get(url, params)
-		  .done(function(response) {
+		  .done(function(response, status, xhr) {
 			  if(response.payload != null){
 			      $(targetElement).append(response.payload.html);
 			      formID = $(targetElement).find('form').attr("id");
@@ -1564,7 +1560,7 @@ function cfw_createForm(url, params, targetElement, callback){
 	              //--------------------------
 	              // Call callback
 	              if(callback != undefined){
-	            	  callback(formID);
+	            	  callback(formID, status, xhr);
 	              }
 			  }
 		  })
@@ -1593,10 +1589,10 @@ function cfw_postForm(url, formID, callback){
 	$(formID+'-submitButton').prepend('<i class="fa fa-cog fa-spin fa-fw mr-1 loaderMarker"></i>')
 	
 		window.setTimeout( 
-		cfw_postJSON(url, CFW.format.formToParams(formID), function (){
+		cfw_postJSON(url, CFW.format.formToParams(formID), function (data,status,xhr){
 			$(formID+'-submitButton .loaderMarker').remove();
 			if(callback != null){
-				callback();
+				callback(data,status,xhr);
 			}
 		}),
 	5);

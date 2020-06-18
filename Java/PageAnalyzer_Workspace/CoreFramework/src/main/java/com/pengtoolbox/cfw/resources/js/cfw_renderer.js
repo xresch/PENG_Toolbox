@@ -195,7 +195,7 @@ CFW.render.registerRenderer("tiles",
 							var customizer = renderDef.customizers[fieldname];
 							var customizedValue = customizer(currentRecord, value);
 							if(customizedValue != null){
-								var span = $('<span style="font-size: '+12*settings.sizefactor+'px;"><strong>'+renderDef.labels[fieldname]+':&nbsp;</strong></span>');
+								var span = $('<span style="font-size: '+10*settings.sizefactor+'px;"><strong>'+renderDef.labels[fieldname]+':&nbsp;</strong></span>');
 								span.append(customizedValue);
 								currentTile.append(span);
 							}

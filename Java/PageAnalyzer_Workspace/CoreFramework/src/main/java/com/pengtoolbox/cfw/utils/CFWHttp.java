@@ -38,6 +38,7 @@ public class CFWHttp {
 	private static Logger logger = CFWLog.getLogger(CFWHttp.class.getName());
 	
 	private static String proxyPAC = null;
+	private static CFWScriptEngine javascriptEngine = CFW.Scripting.createJavascriptEngine(CFWHttpPacScriptMethods.class);
 	
 	private static CFWHttp instance = new CFWHttp();
 	
@@ -127,7 +128,15 @@ public class CFWHttp {
 					proxyPAC = null;
 				}
 			}
+			
+			//------------------------------
+			// Add to engine if load successful
+			if(proxyPAC != null) {
+				javascriptEngine.addScript(proxyPAC);
+			}
 		}
+		
+		
 	}
 
 	/******************************************************************************************************
@@ -155,7 +164,7 @@ public class CFWHttp {
 			try {
 				tempURL = new URL(urlToCall);
 				String hostname = tempURL.getHost();
-				Object result = CFW.Scripting.executeJavascript(proxyPAC, CFWHttpPacScriptMethods.class, "FindProxyForURL", urlToCall, hostname);
+				Object result = javascriptEngine.executeJavascript("FindProxyForURL", urlToCall, hostname);
 				if(result != null) {
 					String[] proxyArray = result.toString()
 						.split(";");

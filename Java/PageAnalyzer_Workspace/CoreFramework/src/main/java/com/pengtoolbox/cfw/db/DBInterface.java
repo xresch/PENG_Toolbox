@@ -564,10 +564,11 @@ public abstract class DBInterface {
 			}
 			//--------------------------------------
 			// Check has results
-			resultSet.beforeFirst();
-			if(!resultSet.isBeforeFirst()) {
-				return "";
-			}
+// Excluded as MSSQL might throw errors			
+//			resultSet.beforeFirst();
+//			if(!resultSet.isBeforeFirst()) {
+//				return "";
+//			}
 			
 			//--------------------------------------
 			// Iterate results
@@ -623,10 +624,11 @@ public abstract class DBInterface {
 			}
 			//--------------------------------------
 			// Check has results
-			resultSet.beforeFirst();
-			if(!resultSet.isBeforeFirst()) {
-				return "<data></data>";
-			}
+// Excluded as MSSQL might throw errors			
+//			resultSet.beforeFirst();
+//			if(!resultSet.isBeforeFirst()) {
+//				return "<data></data>";
+//			}
 			
 			//--------------------------------------
 			// Iterate results

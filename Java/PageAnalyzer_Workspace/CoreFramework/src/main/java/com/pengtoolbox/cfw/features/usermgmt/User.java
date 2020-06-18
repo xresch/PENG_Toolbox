@@ -41,6 +41,7 @@ public class User extends CFWObject {
 		PASSWORD_HASH,
 		PASSWORD_SALT,
 		DATE_CREATED, 
+		LAST_LOGIN,
 		STATUS, 
 		IS_DELETABLE, 
 		IS_RENAMABLE, 
@@ -110,6 +111,9 @@ public class User extends CFWObject {
 			.setDescription("The date and time the user account was created.")
 			.setValue(new Timestamp(new Date().getTime()));
 	
+	private CFWField<Timestamp> lastLogin = CFWField.newTimestamp(FormFieldType.NONE, UserFields.LAST_LOGIN)
+			.setDescription("The date and time the user has last logged in.");
+	
 	private CFWField<Boolean> isDeletable = CFWField.newBoolean(FormFieldType.NONE, UserFields.IS_DELETABLE)
 			.setValue(true)
 			.setDescription("Flag to define if the user can be deleted or not.")
@@ -177,6 +181,7 @@ public class User extends CFWObject {
 				passwordHash,
 				passwordSalt,
 				dateCreated,
+				lastLogin,
 				status,
 				isDeletable,
 				isRenamable,
@@ -290,6 +295,7 @@ public class User extends CFWObject {
 						UserFields.LASTNAME.toString(),
 						UserFields.STATUS.toString(),
 						UserFields.DATE_CREATED.toString(),
+						UserFields.LAST_LOGIN.toString(),
 						UserFields.IS_DELETABLE.toString(),
 						UserFields.IS_RENAMABLE.toString(),
 						UserFields.IS_FOREIGN.toString()
@@ -479,6 +485,15 @@ public class User extends CFWObject {
 	
 	public User dateCreated(Timestamp creationDate) {
 		this.dateCreated.setValue(creationDate);
+		return this;
+	}
+	
+	public Timestamp lastLogin() {
+		return lastLogin.getValue();
+	}
+	
+	public User lastLogin(Timestamp value) {
+		this.lastLogin.setValue(value);
 		return this;
 	}
 	

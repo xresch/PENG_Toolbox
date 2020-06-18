@@ -155,31 +155,6 @@
 .grid-stack > .grid-stack-item[data-gs-max-width="24"] { max-width: 100%; }
 
 /**************************************************************
- * Scrollbar
- **************************************************************/
-/* width */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-  direction: rtl;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: var(--light);
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: var(--gray);
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: var(--gray-dark);
-}
-
-/**************************************************************
  * Dashboard styling
  **************************************************************/
 #cfw-dashboard-control-panel {

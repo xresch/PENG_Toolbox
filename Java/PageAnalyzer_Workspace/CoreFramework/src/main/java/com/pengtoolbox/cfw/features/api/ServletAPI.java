@@ -94,7 +94,7 @@ public class ServletAPI extends HttpServlet
 			html.addJSFileBottom(HandlingType.JAR_RESOURCE, FeatureAPI.RESOURCE_PACKAGE, "cfw_apioverview.js");
 			
 			html.addJavascriptCode("cfw_apioverview_draw();");
-			
+			html.addJavascriptData("id", CFW.Context.Request.getRequest().getSession().getId());
 	        response.setContentType("text/html");
 	        response.setStatus(HttpServletResponse.SC_OK);
 

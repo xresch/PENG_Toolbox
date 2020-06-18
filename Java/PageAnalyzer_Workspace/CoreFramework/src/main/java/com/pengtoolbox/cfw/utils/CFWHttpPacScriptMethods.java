@@ -225,9 +225,9 @@ public class CFWHttpPacScriptMethods {
 				while (addresses.hasMoreElements()) {
 					InetAddress adr = addresses.nextElement();
 					if (cl.isInstance(adr)) {
-						new CFWLog(logger)
-							.method("executeJavascript")
-							.fine("Local address resolved to: "+adr);
+//						new CFWLog(logger)
+//							.method("executeJavascript")
+//							.finest("Local address resolved to: "+adr);
 						return adr.getHostAddress();
 					}
 				}

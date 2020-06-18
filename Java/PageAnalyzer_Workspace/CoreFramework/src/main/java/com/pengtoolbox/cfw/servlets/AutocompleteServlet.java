@@ -29,7 +29,7 @@ public class AutocompleteServlet extends HttpServlet
 	private static final long serialVersionUID = 1L;
 	public static Logger logger = CFWLog.getLogger(AutocompleteServlet.class.getName());
 	@Override
-    protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
+    protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
 		String formid = request.getParameter("cfw-formID");
 		String fieldname = request.getParameter("cfwAutocompleteFieldname");

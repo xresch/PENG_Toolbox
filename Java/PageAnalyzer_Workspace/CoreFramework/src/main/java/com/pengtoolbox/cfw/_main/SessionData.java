@@ -1,5 +1,6 @@
 package com.pengtoolbox.cfw._main;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,7 +38,9 @@ public class SessionData {
 		isLoggedIn = true;
 		menu = CFW.Registry.Components.createMenuInstance(true);
 		footer = CFW.Registry.Components.createDefaultFooterInstance();
-
+		if(user != null) {
+			user.lastLogin(new Timestamp(System.currentTimeMillis())).update();
+		}
 	}
 	
 	public void triggerLogout() {
