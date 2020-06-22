@@ -6,6 +6,7 @@ import java.sql.Clob;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
@@ -197,6 +198,7 @@ public class CFWJson {
 		else if(object instanceof Clob) 		{	target.addProperty(propertyName, ((Clob)object).toString()); }
 		else if(object instanceof Blob) 		{	target.addProperty(propertyName, ((Blob)object).toString()); }
 		else if(object instanceof Timestamp) 	{	target.addProperty(propertyName, ((Timestamp)object).getTime()); }
+		else if(object instanceof OffsetDateTime) {	target.addProperty(propertyName, ((OffsetDateTime)object).toInstant().toEpochMilli()); }
 		else if(object instanceof JsonElement) 	{	target.add(propertyName, (JsonElement)object); }
 		else if(object instanceof Object[]) 	{	target.add(propertyName, CFW.JSON.arrayToJsonArray((Object[])object)); }
 		else {	

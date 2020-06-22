@@ -1,7 +1,7 @@
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, (c) Copyright 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 
@@ -220,7 +220,7 @@ function cfw_dashboardlist_printDashboards(data, type){
 			actionButtons.push(
 				function (record, id){
 					var htmlString = '<td><button class="btn btn-warning btn-sm" alt="Duplicate" title="Duplicate" '
-							+'onclick="CFW.ui.confirmExecute(\'This will create a duplicate of <b>\\\''+record.NAME+'\\\'</b> and add it to your dashboards.\', \'Do it!\', \'cfw_dashboardlist_duplicate('+id+');\')">'
+							+'onclick="CFW.ui.confirmExecute(\'This will create a duplicate of <b>\\\''+record.NAME.replace(/\"/g,'&quot;')+'\\\'</b> and add it to your dashboards.\', \'Do it!\', \'cfw_dashboardlist_duplicate('+id+');\')">'
 							+ '<i class="fas fa-clone"></i>'
 							+ '</button></td>';
 					
@@ -237,7 +237,7 @@ function cfw_dashboardlist_printDashboards(data, type){
 					var htmlString = '';
 					if(JSDATA.userid == record.FK_ID_USER || type == 'admindashboards'){
 						htmlString += '<td><button class="btn btn-danger btn-sm" alt="Delete" title="Delete" '
-							+'onclick="CFW.ui.confirmExecute(\'Do you want to delete the dashboard <b>\\\''+record.NAME+'\\\'</b>?\', \'Delete\', \'cfw_dashboardlist_delete('+id+');\')">'
+							+'onclick="CFW.ui.confirmExecute(\'Do you want to delete the dashboard <b>\\\''+record.NAME.replace(/\"/g,'&quot;')+'\\\'</b>?\', \'Delete\', \'cfw_dashboardlist_delete('+id+');\')">'
 							+ '<i class="fa fa-trash"></i>'
 							+ '</button></td>';
 					}else{
