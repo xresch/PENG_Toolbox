@@ -15,7 +15,7 @@ import com.pengtoolbox.cfw._main.CFW;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, ï¿½ 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class SerializerResultSet implements JsonSerializer<ResultSet> {
@@ -40,7 +40,7 @@ public class SerializerResultSet implements JsonSerializer<ResultSet> {
 						row.add(name, asElement);
 					}else {
 						Object value = resultSet.getObject(i);
-						if(! (value instanceof Clob)) {
+						if(!(value instanceof Clob)) {
 							CFW.JSON.addObject(row, name, value);
 						}else {
 							CFW.JSON.addObject(row, name, resultSet.getString(i));

@@ -1417,7 +1417,7 @@ public class CFWField<T> extends HierarchicalHTMLItem implements IValidatable<T>
 					new CFWLog(logger)
 						.method("mapResultSetColumnsToFields")
 						.silent(true)
-						.warn("The object doesn't contain a field with name '"+colName+"'.", new Throwable());
+						.finest("The object doesn't contain a field with name '"+colName+"'.");
 				}
 			}
 		

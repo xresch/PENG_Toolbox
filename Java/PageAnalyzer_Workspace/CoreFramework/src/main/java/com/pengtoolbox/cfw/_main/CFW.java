@@ -187,7 +187,7 @@ public class CFW {
     	
 	    //--------------------------------
 	    // Start Application
-		CFWApplicationExecutor app = new CFWApplicationExecutor(args, appToStart);
+		CFWApplicationExecutor app = new CFWApplicationExecutor(args);
 		
 		for(CFWAppFeature feature : features) {
 			feature.addFeature(app);

@@ -13,7 +13,10 @@ import javax.servlet.SessionTrackingMode;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.eclipse.jetty.http.HttpCookie;
+import org.eclipse.jetty.security.ConstraintMapping;
+import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.SpnegoLoginService;
+import org.eclipse.jetty.security.authentication.SpnegoAuthenticator;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -36,6 +39,7 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlet.ServletMapping;
+import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 
@@ -74,7 +78,7 @@ public class CFWApplicationExecutor {
 	
 	public WebAppContext applicationContext;
 	
-	public CFWApplicationExecutor(String[] args, CFWAppInterface application) throws Exception {  
+	public CFWApplicationExecutor(String[] args) throws Exception {  
 		sessionHandler = CFWApplicationExecutor.createSessionHandler("/");
 		
     	//---------------------------------------
@@ -275,6 +279,82 @@ public class CFWApplicationExecutor {
 	    ErrorHandler handler = new ErrorHandler();
 	    return handler;
 	}
+	
+
+	/**************************************************************************************************
+	 * Create an security handler.
+	 * @throws Exception
+	 **************************************************************************************************/
+	public static ConstraintSecurityHandler createSPNEGOSecurityHandler() throws Exception {
+		
+		System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
+	    System.setProperty("java.security.auth.login.config", "./config/kerberos/spnego.conf");
+	    System.setProperty("java.security.krb5.conf", "./config/kerberos/krb5.conf");
+	    System.setProperty("sun.security.krb5.debug", "true");
+	    System.setProperty("sun.security.jgss.debug", "true");
+	    System.setProperty("java.security.debug", "all");
+
+        //System.setProperty("java.security.krb5.realm","EXAMPLE.COM");
+        //System.setProperty("java.security.krb5.kdc","example.net:60088");
+	    
+	    String domainRealm = "EXAMPLE.COM";
+
+	    Constraint constraint = new Constraint();
+	    constraint.setName(Constraint.__SPNEGO_AUTH);
+	    constraint.setRoles(new String[]{domainRealm});
+	    constraint.setAuthenticate(true);
+
+	    ConstraintMapping cm = new ConstraintMapping();
+	    cm.setConstraint(constraint);
+	    cm.setPathSpec("/app/*");
+
+	    SpnegoLoginService loginService = new SpnegoLoginService();
+	    loginService.setConfig("./config/kerberos/spnego.properties");
+	    loginService.setName(domainRealm);
+
+	    ConstraintSecurityHandler sh = new ConstraintSecurityHandler();
+	    sh.setAuthenticator(new SpnegoAuthenticator());
+	    sh.setLoginService(loginService);
+	    sh.setConstraintMappings(new ConstraintMapping[]{cm});
+	    sh.setRealmName(domainRealm);
+	    
+	    return sh;
+	}
+	/**************************************************************************************************
+	 * Create an security handler.
+	 * @throws Exception
+	 **************************************************************************************************/
+//	public static ConstraintSecurityHandler createSPNEGOSecurityHandler() throws Exception {
+//		
+//		System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
+//	    System.setProperty("java.security.auth.login.config", "./config/kerberos/spnego.conf");
+//	    System.setProperty("java.security.krb5.conf", "./config/kerberos/krb5.ini");
+//	    
+//		String domainRealm = "MY.COM";
+//
+//		Constraint constraint = new Constraint();
+//		constraint.setName(Constraint.__SPNEGO_AUTH);
+//		constraint.setRoles(new String[]{domainRealm});
+//		constraint.setAuthenticate(true);
+//		
+//		ConstraintMapping cm = new ConstraintMapping();
+//		cm.setConstraint(constraint);
+//		cm.setPathSpec("/*");
+//		
+//		ConfigurableSpnegoLoginService loginService = new ConfigurableSpnegoLoginService("realm"));
+//
+//		loginService.setKeyTabPath(Paths.get(new URI("./config/kerberos/cfw.keytab")));
+//		loginService.setServiceName("HTTP");
+//		loginService.setHostName("example.com");
+//		
+//		ConstraintSecurityHandler sh = new ConstraintSecurityHandler();
+//		sh.setAuthenticator(new SpnegoAuthenticator());
+//		sh.setLoginService(loginService);
+//		sh.setConstraintMappings(new ConstraintMapping[]{cm});
+//		sh.setRealmName(domainRealm);
+//	    return sh;
+//	}
+   
 
 	/***********************************************************************
 	 * Setup and returns a SessionHandler
@@ -412,6 +492,7 @@ public class CFWApplicationExecutor {
         new HandlerChainBuilder(contextHandler)
 	        .chain(new GzipHandler())
 	    	.chain(new RequestHandler())
+	    	//.chain(createSPNEGOSecurityHandler())
 	        .chain(new AuthenticationHandler("/app", defaultURL))
 	        .chain(servletContext);
         
