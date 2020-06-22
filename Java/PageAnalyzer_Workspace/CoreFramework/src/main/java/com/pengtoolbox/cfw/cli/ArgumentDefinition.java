@@ -7,7 +7,7 @@ import com.pengtoolbox.cfw.validation.AbstractValidatable;
  * The ArgumentDefinition represents an argument with a key value pair.
  * It contains the default value, syntax and a description of the argument.
  *  
- * @author Reto Scheiwiller, � 2019 
+ * @author Reto Scheiwiller, (c) Copyright 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class ArgumentDefinition extends AbstractValidatable<String> {

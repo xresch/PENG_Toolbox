@@ -6,7 +6,7 @@ import com.pengtoolbox.cfw.utils.Ternary;
  * The BooleanArgumentValidator will validate if the value of the ArgumentDefinition
  * is a string representation of "true" or "false".
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, (c) Copyright 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class BooleanValidator extends AbstractValidator {

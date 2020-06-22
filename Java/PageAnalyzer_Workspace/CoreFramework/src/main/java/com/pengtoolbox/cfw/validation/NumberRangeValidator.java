@@ -7,7 +7,7 @@ import com.pengtoolbox.cfw.utils.Ternary;
  * The StringLengthArgumentValidator will validate if the value of the ArgumentDefinition
  * has a certain lenght in a minimum and maximum range.
  * 
- * @author Reto Scheiwiller, � 2019 
+ * @author Reto Scheiwiller, (c) Copyright 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class NumberRangeValidator extends AbstractValidator {

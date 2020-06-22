@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**************************************************************************************************************
  *  This exception is thrown when arguments could not be read correctly.
  *  
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, (c) Copyright 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 

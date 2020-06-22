@@ -8,7 +8,7 @@ import com.pengtoolbox.cfw.utils.Ternary;
  * The AbstractArgumentValidator provides some default implementation of the 
  * methods defined by the IArgumentValidator interface.
  * 
- * @author Reto Scheiwiller, � 2019 
+ * @author Reto Scheiwiller, (c) Copyright 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public abstract class AbstractValidator implements IValidator {

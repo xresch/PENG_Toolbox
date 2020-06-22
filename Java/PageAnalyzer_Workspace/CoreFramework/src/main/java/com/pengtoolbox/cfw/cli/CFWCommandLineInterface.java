@@ -13,7 +13,7 @@ import com.pengtoolbox.cfw.validation.ValidationEngine;
  * command line arguments.
  * It provides default arguments for a configuration file and handling of log levels.
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, (c) Copyright 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public abstract class CFWCommandLineInterface {

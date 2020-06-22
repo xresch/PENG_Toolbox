@@ -17,7 +17,7 @@ import com.pengtoolbox.pageanalyzer.db.PAPermissions;
 
 /**************************************************************************************************************
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, (c) Copyright 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class DeleteResultServlet extends HttpServlet

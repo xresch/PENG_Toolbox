@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * The validators are added to the validator engine and can be exuted 
  * all at once or filtered by their corresponding tags.
  * 
- * @author Reto Scheiwiller, © 2019 
+ * @author Reto Scheiwiller, (c) Copyright 2019 
  * @license Creative Commons: Attribution-NonCommercial-NoDerivatives 4.0 International
  **************************************************************************************************************/
 public class ValidationEngine {
