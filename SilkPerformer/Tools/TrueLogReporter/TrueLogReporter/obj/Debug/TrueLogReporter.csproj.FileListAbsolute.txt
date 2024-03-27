@@ -1,5 +1,0 @@
-D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Debug\TrueLogReporter.csprojResolveAssemblyReference.cache
-D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Debug\MainWindow.g.cs
-D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Debug\App.g.cs
-D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Debug\TrueLogReporter_MarkupCompile.cache
-D:\Dev\VisualStudio\TrueLogReporter\TrueLogReporter\obj\Debug\TrueLogReporter_MarkupCompile.lref
