@@ -6,7 +6,7 @@ REM open dashboard in default browser
 REM start http://localhost:5665
 
 REM execute test
-k6 run --summary-mode=full --out csv=k6_script_results.csv k6_script.js
+k6 run --summary-mode=full --out csv=k6_simulationAverageLoad_results.csv k6_simulationAverageLoad.js
 
 REM pause to not close execution window
 pause
