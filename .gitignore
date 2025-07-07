@@ -10,3 +10,5 @@
 /Java/PageAnalyzer_Workspace/CoreFramework/log
 /Java/PageAnalyzer_Workspace/CoreFramework/temp
 /K6/k6_script_results.csv
+/K6/summary.html
+/K6/k6_simulationAverageLoad_results.csv
